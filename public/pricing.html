@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Pricing | Sleek Academia</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#702ae1",
+              "primary-dim": "#6411d5",
+              "primary-container": "#b28cff",
+              secondary: "#994100",
+              "secondary-container": "#ffc5a8",
+              surface: "#f5f7f9",
+              "surface-container-low": "#eef1f3",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#dfe3e6",
+              "on-surface": "#2c2f31",
+              "on-surface-variant": "#595c5e",
+              outline: "#747779"
+            },
+            fontFamily: {
+              headline: ["Plus Jakarta Sans", "sans-serif"],
+              body: ["Inter", "sans-serif"]
+            },
+            animation: {
+              "float": "float 3s ease-in-out infinite",
+              "slide-up": "slide-up 0.6s ease-out",
+              "pulse-soft": "pulse-soft 2s ease-in-out infinite",
+            },
+            keyframes: {
+              float: {
+                "0%, 100%": { transform: "translateY(0px)" },
+                "50%": { transform: "translateY(-10px)" },
+              },
+              "slide-up": {
+                "from": { opacity: "0", transform: "translateY(20px)" },
+                "to": { opacity: "1", transform: "translateY(0)" },
+              },
+              "pulse-soft": {
+                "0%, 100%": { opacity: "1" },
+                "50%": { opacity: "0.8" },
+              },
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      html {
+        background: #f5f7f9;
+      }
+      body {
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 220ms ease, transform 220ms ease;
+      }
+      html.page-ready body {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+      body { font-family: "Inter", sans-serif; }
+      h1, h2, h3, h4 { font-family: "Plus Jakarta Sans", sans-serif; }
+      
+      /* Pricing Card Animations */
+      .pricing-card {
+        transition: all 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        animation: slide-up 0.6s ease-out both;
+      }
+      
+      .pricing-card:nth-child(1) { animation-delay: 0.1s; }
+      .pricing-card:nth-child(2) { animation-delay: 0.2s; }
+      .pricing-card:nth-child(3) { animation-delay: 0.3s; }
+      
+      .pricing-card:hover {
+        transform: translateY(-16px);
+      }
+      
+      .pricing-card.featured {
+        transform: scale(1.08);
+      }
+      
+      .pricing-card.featured:hover {
+        transform: scale(1.08) translateY(-16px);
+      }
+      
+      /* Badge Animation */
+      .badge-float {
+        animation: float 3s ease-in-out infinite;
+      }
+      
+      /* Feature List Animation */
+      .feature-item {
+        animation: slide-up 0.6s ease-out backwards;
+      }
+      
+      .pricing-card:nth-child(1) .feature-item:nth-child(1) { animation-delay: 0.3s; }
+      .pricing-card:nth-child(1) .feature-item:nth-child(2) { animation-delay: 0.4s; }
+      .pricing-card:nth-child(1) .feature-item:nth-child(3) { animation-delay: 0.5s; }
+      .pricing-card:nth-child(1) .feature-item:nth-child(4) { animation-delay: 0.6s; }
+      .pricing-card:nth-child(1) .feature-item:nth-child(5) { animation-delay: 0.7s; }
+      
+      .pricing-card:nth-child(2) .feature-item:nth-child(1) { animation-delay: 0.4s; }
+      .pricing-card:nth-child(2) .feature-item:nth-child(2) { animation-delay: 0.5s; }
+      .pricing-card:nth-child(2) .feature-item:nth-child(3) { animation-delay: 0.6s; }
+      .pricing-card:nth-child(2) .feature-item:nth-child(4) { animation-delay: 0.7s; }
+      .pricing-card:nth-child(2) .feature-item:nth-child(5) { animation-delay: 0.8s; }
+      
+      .pricing-card:nth-child(3) .feature-item:nth-child(1) { animation-delay: 0.5s; }
+      .pricing-card:nth-child(3) .feature-item:nth-child(2) { animation-delay: 0.6s; }
+      .pricing-card:nth-child(3) .feature-item:nth-child(3) { animation-delay: 0.7s; }
+      .pricing-card:nth-child(3) .feature-item:nth-child(4) { animation-delay: 0.8s; }
+      .pricing-card:nth-child(3) .feature-item:nth-child(5) { animation-delay: 0.9s; }
+      .pricing-card:nth-child(3) .feature-item:nth-child(6) { animation-delay: 1s; }
+      
+      /* Highlight Button */
+      .btn-pulse {
+        animation: pulse-soft 2s ease-in-out infinite;
+      }
+      
+      /* Checkmark Animation */
+      .check-animate {
+        animation: checkmark 0.6s ease-out backwards;
+      }
+      
+      @keyframes checkmark {
+        0% {
+          opacity: 0;
+          transform: scale(0) rotate(-45deg);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.2);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      
+      .pricing-card:nth-child(1) .check-animate:nth-child(1) { animation-delay: 0.4s; }
+      .pricing-card:nth-child(1) .check-animate:nth-child(2) { animation-delay: 0.5s; }
+      .pricing-card:nth-child(1) .check-animate:nth-child(3) { animation-delay: 0.6s; }
+      .pricing-card:nth-child(1) .check-animate:nth-child(4) { animation-delay: 0.7s; }
+      .pricing-card:nth-child(1) .check-animate:nth-child(5) { animation-delay: 0.8s; }
+      
+      .pricing-card:nth-child(2) .check-animate:nth-child(1) { animation-delay: 0.5s; }
+      .pricing-card:nth-child(2) .check-animate:nth-child(2) { animation-delay: 0.6s; }
+      .pricing-card:nth-child(2) .check-animate:nth-child(3) { animation-delay: 0.7s; }
+      .pricing-card:nth-child(2) .check-animate:nth-child(4) { animation-delay: 0.8s; }
+      .pricing-card:nth-child(2) .check-animate:nth-child(5) { animation-delay: 0.9s; }
+      
+      .pricing-card:nth-child(3) .check-animate:nth-child(1) { animation-delay: 0.6s; }
+      .pricing-card:nth-child(3) .check-animate:nth-child(2) { animation-delay: 0.7s; }
+      .pricing-card:nth-child(3) .check-animate:nth-child(3) { animation-delay: 0.8s; }
+      .pricing-card:nth-child(3) .check-animate:nth-child(4) { animation-delay: 0.9s; }
+      .pricing-card:nth-child(3) .check-animate:nth-child(5) { animation-delay: 1s; }
+      .pricing-card:nth-child(3) .check-animate:nth-child(6) { animation-delay: 1.1s; }
+    </style>
+  </head>
+  <body class="bg-surface text-on-surface">
+    <nav class="fixed top-0 z-50 w-full bg-white/75 backdrop-blur-xl shadow-xl shadow-slate-900/5">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+        <a class="font-headline text-2xl font-black tracking-tight text-violet-700" href="/">Sleek Academia</a>
+        <div class="hidden items-center gap-8 md:flex">
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/">Home</a>
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/about.html">About Us</a>
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/blog.html">Blog</a>
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/store.html">Store</a>
+          <a class="border-b-2 border-violet-600 pb-1 text-sm font-bold text-violet-700" href="/pricing.html">Pricing</a>
+        </div>
+        <div class="flex items-center gap-3">
+          <a class="rounded-xl bg-gradient-to-br from-primary to-primary-container px-5 py-2.5 text-sm font-bold text-white shadow-xl shadow-primary/20" href="/onboard.html">Get Started</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="pt-24">
+      <!-- Hero Section -->
+      <section class="relative overflow-hidden px-6 py-20 lg:px-8">
+        <div class="mx-auto max-w-7xl">
+          <div class="space-y-6 text-center">
+            <span class="inline-block rounded-full bg-violet-600 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.25em] text-white">Tutoring Packages</span>
+            <h1 class="font-headline text-5xl font-extrabold leading-tight md:text-6xl">Choose Your Learning Path</h1>
+            <p class="mx-auto max-w-2xl text-lg text-on-surface-variant">Expert-led tutoring designed for Nursing, Law, ICT, and Finance professionals at every level.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pricing Cards -->
+      <section class="relative px-6 py-16 lg:px-8">
+        <div class="mx-auto max-w-7xl">
+          <div class="grid gap-8 md:grid-cols-3">
+            <!-- Written Materials Package -->
+            <div class="pricing-card rounded-3xl bg-white p-8 shadow-lg shadow-violet-900/10">
+              <div class="space-y-6">
+                <div>
+                  <h3 class="font-headline text-2xl font-bold">Written Materials</h3>
+                  <p class="mt-2 text-sm text-on-surface-variant">Essays, reports & documents assistance</p>
+                </div>
+                
+                <div class="space-y-2">
+                  <div class="font-headline text-5xl font-bold text-primary">$15</div>
+                  <p class="text-sm text-on-surface-variant">One-time purchase</p>
+                </div>
+
+                <ul class="space-y-3 border-t border-outline/20 pt-6">
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-violet-600 flex-shrink-0">check_circle</span>
+                    <span class="text-sm">Essay review & feedback</span>
+                  </li>
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-violet-600 flex-shrink-0">check_circle</span>
+                    <span class="text-sm">Report writing assistance</span>
+                  </li>
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-violet-600 flex-shrink-0">check_circle</span>
+                    <span class="text-sm">Quick turnaround (24 hours)</span>
+                  </li>
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-violet-600 flex-shrink-0">check_circle</span>
+                    <span class="text-sm">Email support</span>
+                  </li>
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-slate-400 flex-shrink-0">cancel</span>
+                    <span class="text-sm text-slate-500">Live tutoring</span>
+                  </li>
+                </ul>
+
+                <button data-product="Written Materials" data-price="15" class="w-full rounded-xl border-2 border-primary px-6 py-4 font-bold text-primary transition-all hover:bg-violet-50 hover:shadow-lg">
+                  Start Now
+                </button>
+              </div>
+            </div>
+
+            <!-- Alpha Package (Featured) -->
+            <div class="pricing-card featured rounded-3xl bg-gradient-to-br from-violet-600 via-violet-600 to-violet-700 p-8 shadow-2xl shadow-violet-900/40">
+              <div class="space-y-6">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h3 class="font-headline text-2xl font-bold text-white">Alpha</h3>
+                    <p class="mt-2 text-sm text-violet-100">Most popular</p>
+                  </div>
+                  <span class="badge-float rounded-full bg-white/20 px-4 py-1 text-xs font-bold uppercase tracking-[0.2em] text-white backdrop-blur-sm">Popular</span>
+                </div>
+                
+                <div class="space-y-2">
+                  <div class="font-headline text-6xl font-bold text-white">$300</div>
+                  <p class="text-sm text-violet-100">Monthly subscription</p>
+                </div>
+
+                <ul class="space-y-3 border-t border-white/20 pt-6">
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-white flex-shrink-0">check_circle</span>
+                    <span class="text-sm text-white">4 live tutoring sessions/month</span>
+                  </li>
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-white flex-shrink-0">check_circle</span>
+                    <span class="text-sm text-white">Personalized study plan</span>
+                  </li>
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-white flex-shrink-0">check_circle</span>
+                    <span class="text-sm text-white">Email support (24-48hr)</span>
+                  </li>
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-white flex-shrink-0">check_circle</span>
+                    <span class="text-sm text-white">Full study materials access</span>
+                  </li>
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-white flex-shrink-0">check_circle</span>
+                    <span class="text-sm text-white">Progress tracking</span>
+                  </li>
+                </ul>
+
+                <button data-product="Alpha — Monthly Tutoring" data-price="300" class="btn-pulse w-full rounded-xl bg-white px-6 py-4 font-bold text-violet-700 transition-all hover:bg-violet-50 hover:shadow-lg active:scale-95">
+                  Start Now
+                </button>
+              </div>
+            </div>
+
+            <!-- Omega Package -->
+            <div class="pricing-card rounded-3xl bg-white p-8 shadow-lg shadow-violet-900/10">
+              <div class="space-y-6">
+                <div>
+                  <h3 class="font-headline text-2xl font-bold">Omega</h3>
+                  <p class="mt-2 text-sm text-on-surface-variant">Premium expert coaching</p>
+                </div>
+                
+                <div class="space-y-2">
+                  <div class="font-headline text-5xl font-bold text-primary">$450</div>
+                  <p class="text-sm text-on-surface-variant">Monthly subscription</p>
+                </div>
+
+                <ul class="space-y-3 border-t border-outline/20 pt-6">
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-violet-600 flex-shrink-0">check_circle</span>
+                    <span class="text-sm">8 live tutoring sessions/month</span>
+                  </li>
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-violet-600 flex-shrink-0">check_circle</span>
+                    <span class="text-sm">One-on-one expert coaching</span>
+                  </li>
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-violet-600 flex-shrink-0">check_circle</span>
+                    <span class="text-sm">Priority support (same-day)</span>
+                  </li>
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-violet-600 flex-shrink-0">check_circle</span>
+                    <span class="text-sm">Customized curriculum</span>
+                  </li>
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-violet-600 flex-shrink-0">check_circle</span>
+                    <span class="text-sm">Career mentorship</span>
+                  </li>
+                  <li class="feature-item flex items-start gap-3">
+                    <span class="check-animate material-symbols-outlined text-violet-600 flex-shrink-0">check_circle</span>
+                    <span class="text-sm">Lifetime material access</span>
+                  </li>
+                </ul>
+
+                <button data-product="Omega — Monthly Tutoring" data-price="450" class="w-full rounded-xl bg-primary px-6 py-4 font-bold text-white transition-all hover:bg-primary-dim hover:shadow-lg active:scale-95">
+                  Start Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Comparison Table -->
+      <section class="relative px-6 py-16 lg:px-8">
+        <div class="mx-auto max-w-7xl">
+          <h2 class="font-headline text-3xl font-bold text-center mb-12">Compare All Features</h2>
+          <div class="overflow-x-auto rounded-2xl bg-white shadow-lg shadow-violet-900/10">
+            <table class="w-full">
+              <thead class="bg-surface-container-low">
+                <tr>
+                  <th class="px-6 py-4 text-left font-bold">Feature</th>
+                  <th class="px-6 py-4 text-center font-bold">Written Materials</th>
+                  <th class="px-6 py-4 text-center font-bold">Alpha</th>
+                  <th class="px-6 py-4 text-center font-bold">Omega</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-outline/10">
+                <tr class="hover:bg-surface-container-low transition-colors">
+                  <td class="px-6 py-4 font-semibold">Live Tutoring Sessions</td>
+                  <td class="px-6 py-4 text-center">—</td>
+                  <td class="px-6 py-4 text-center font-semibold">4/month</td>
+                  <td class="px-6 py-4 text-center font-semibold">8/month</td>
+                </tr>
+                <tr class="hover:bg-surface-container-low transition-colors">
+                  <td class="px-6 py-4 font-semibold">Personalized Plans</td>
+                  <td class="px-6 py-4 text-center">—</td>
+                  <td class="px-6 py-4 text-center"><span class="material-symbols-outlined text-green-600">check</span></td>
+                  <td class="px-6 py-4 text-center"><span class="material-symbols-outlined text-green-600">check</span></td>
+                </tr>
+                <tr class="hover:bg-surface-container-low transition-colors">
+                  <td class="px-6 py-4 font-semibold">Study Materials</td>
+                  <td class="px-6 py-4 text-center text-sm">Limited</td>
+                  <td class="px-6 py-4 text-center font-semibold">Full Access</td>
+                  <td class="px-6 py-4 text-center font-semibold">Lifetime</td>
+                </tr>
+                <tr class="hover:bg-surface-container-low transition-colors">
+                  <td class="px-6 py-4 font-semibold">Support Response</td>
+                  <td class="px-6 py-4 text-center text-sm">Email only</td>
+                  <td class="px-6 py-4 text-center text-sm">24-48 hours</td>
+                  <td class="px-6 py-4 text-center text-sm font-semibold">Same day</td>
+                </tr>
+                <tr class="hover:bg-surface-container-low transition-colors">
+                  <td class="px-6 py-4 font-semibold">Career Mentorship</td>
+                  <td class="px-6 py-4 text-center">—</td>
+                  <td class="px-6 py-4 text-center">—</td>
+                  <td class="px-6 py-4 text-center"><span class="material-symbols-outlined text-green-600">check</span></td>
+                </tr>
+                <tr class="hover:bg-surface-container-low transition-colors">
+                  <td class="px-6 py-4 font-semibold">Flexible Scheduling</td>
+                  <td class="px-6 py-4 text-center">—</td>
+                  <td class="px-6 py-4 text-center"><span class="material-symbols-outlined text-green-600">check</span></td>
+                  <td class="px-6 py-4 text-center"><span class="material-symbols-outlined text-green-600">check</span></td>
+                </tr>
+                <tr class="hover:bg-surface-container-low transition-colors">
+                  <td class="px-6 py-4 font-semibold">Progress Reports</td>
+                  <td class="px-6 py-4 text-center">—</td>
+                  <td class="px-6 py-4 text-center"><span class="material-symbols-outlined text-green-600">check</span></td>
+                  <td class="px-6 py-4 text-center"><span class="material-symbols-outlined text-green-600">check</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section class="relative px-6 py-16 lg:px-8">
+        <div class="mx-auto max-w-3xl">
+          <h2 class="font-headline text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+          <div class="space-y-4">
+            <details class="group rounded-2xl border-2 border-outline/20 p-6 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-violet-900/10">
+              <summary class="flex cursor-pointer items-center justify-between font-bold">
+                <span>Can I switch plans anytime?</span>
+                <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+              </summary>
+              <div class="mt-4 text-sm text-on-surface-variant">
+                Yes! Upgrade or downgrade at any time. Changes take effect at your next billing cycle with no penalties.
+              </div>
+            </details>
+
+            <details class="group rounded-2xl border-2 border-outline/20 p-6 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-violet-900/10">
+              <summary class="flex cursor-pointer items-center justify-between font-bold">
+                <span>What's the cancellation policy?</span>
+                <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+              </summary>
+              <div class="mt-4 text-sm text-on-surface-variant">
+                Cancel anytime with no fees. Your access continues through your paid period. It typically takes 5-10 business days to process refunds.
+              </div>
+            </details>
+
+            <details class="group rounded-2xl border-2 border-outline/20 p-6 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-violet-900/10">
+              <summary class="flex cursor-pointer items-center justify-between font-bold">
+                <span>Do you offer group or student discounts?</span>
+                <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+              </summary>
+              <div class="mt-4 text-sm text-on-surface-variant">
+                Absolutely! Contact us for bulk discounts on 5+ subscriptions. We also offer special pricing for schools and universities.
+              </div>
+            </details>
+
+            <details class="group rounded-2xl border-2 border-outline/20 p-6 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-violet-900/10">
+              <summary class="flex cursor-pointer items-center justify-between font-bold">
+                <span>What if I need sessions beyond my plan?</span>
+                <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+              </summary>
+              <div class="mt-4 text-sm text-on-surface-variant">
+                You can purchase extra sessions at $50 each, or upgrade to a higher tier anytime. Custom packages are available for specific needs.
+              </div>
+            </details>
+
+            <details class="group rounded-2xl border-2 border-outline/20 p-6 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-violet-900/10">
+              <summary class="flex cursor-pointer items-center justify-between font-bold">
+                <span>Are there refunds for unused services?</span>
+                <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+              </summary>
+              <div class="mt-4 text-sm text-on-surface-variant">
+                For the first 7 days, we offer a full refund if you're not satisfied. After that, unused sessions can be rolled over to your next month.
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- Value Proposition -->
+      <section class="relative bg-gradient-to-r from-violet-50 to-transparent px-6 py-16 lg:px-8">
+        <div class="mx-auto max-w-7xl">
+          <div class="grid items-center gap-12 lg:grid-cols-2">
+            <div>
+              <h2 class="font-headline text-4xl font-bold">Why Choose Sleek Academia?</h2>
+              <div class="mt-8 space-y-6">
+                <div class="flex gap-4">
+                  <span class="material-symbols-outlined text-violet-600 text-3xl flex-shrink-0">verified</span>
+                  <div>
+                    <h3 class="font-bold">Expert Tutors</h3>
+                    <p class="text-sm text-on-surface-variant mt-1">Industry professionals with real-world experience in your field</p>
+                  </div>
+                </div>
+                <div class="flex gap-4">
+                  <span class="material-symbols-outlined text-violet-600 text-3xl flex-shrink-0">schedule</span>
+                  <div>
+                    <h3 class="font-bold">Flexible Scheduling</h3>
+                    <p class="text-sm text-on-surface-variant mt-1">Book sessions around your life, with 24-hour cancellation</p>
+                  </div>
+                </div>
+                <div class="flex gap-4">
+                  <span class="material-symbols-outlined text-violet-600 text-3xl flex-shrink-0">trending_up</span>
+                  <div>
+                    <h3 class="font-bold">Proven Results</h3>
+                    <p class="text-sm text-on-surface-variant mt-1">98% pass rate with measurable progress tracking</p>
+                  </div>
+                </div>
+                <div class="flex gap-4">
+                  <span class="material-symbols-outlined text-violet-600 text-3xl flex-shrink-0">support_agent</span>
+                  <div>
+                    <h3 class="font-bold">Dedicated Support</h3>
+                    <p class="text-sm text-on-surface-variant mt-1">Real humans ready to help with your questions</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="relative">
+              <div class="absolute -inset-4 rounded-full bg-primary/10 blur-3xl"></div>
+              <div class="relative rounded-3xl bg-white p-8 shadow-2xl shadow-violet-900/20">
+                <div class="space-y-6">
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold text-on-surface-variant uppercase tracking-[0.2em]">Client Satisfaction</span>
+                    <span class="text-2xl font-bold text-primary">98%</span>
+                  </div>
+                  <div class="h-2 w-full rounded-full bg-surface-container-low">
+                    <div class="h-2 w-11/12 rounded-full bg-primary"></div>
+                  </div>
+                  <div class="border-t border-outline/20 pt-6 space-y-4">
+                    <div>
+                      <p class="text-xs font-bold text-on-surface-variant uppercase">500+ Active Tutors</p>
+                      <p class="text-2xl font-bold mt-2">Across all fields</p>
+                    </div>
+                    <div>
+                      <p class="text-xs font-bold text-on-surface-variant uppercase">10,000+ Students</p>
+                      <p class="text-2xl font-bold mt-2">Achieve their goals yearly</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section class="relative px-6 py-24 lg:px-8">
+        <div class="mx-auto max-w-2xl text-center">
+          <h2 class="font-headline text-5xl font-bold">Start Your Journey Today</h2>
+          <p class="mt-4 text-lg text-on-surface-variant">Choose a plan and connect with an expert tutor in your field within 48 hours.</p>
+          <div class="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
+            <a href="/onboard.html" class="inline-flex items-center justify-center rounded-2xl bg-primary px-10 py-4 font-bold text-white shadow-xl shadow-primary/10 transition-all hover:bg-primary-dim hover:-translate-y-1">
+              Get Started
+              <span class="material-symbols-outlined ml-2">arrow_forward</span>
+            </a>
+            <a href="/store.html" class="inline-flex items-center justify-center rounded-2xl border-2 border-primary px-10 py-4 font-bold text-primary transition-all hover:bg-violet-50">
+              Browse Resources
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mt-20 rounded-t-[2.5rem] bg-slate-50">
+      <div class="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-8 py-16 md:grid-cols-4">
+        <div>
+          <div class="font-headline text-xl font-bold text-violet-700">Sleek Academia</div>
+          <p class="mt-6 text-sm leading-relaxed text-slate-500">Empowering professionals through high-end digital learning and expert-led guidance.</p>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.25em] text-slate-900">Explore</h4>
+          <ul class="mt-6 space-y-4 text-sm text-slate-500">
+            <li><a class="hover:text-violet-700" href="/">Home</a></li>
+            <li><a class="hover:text-violet-700" href="/about.html">About Us</a></li>
+            <li><a class="hover:text-violet-700" href="/courses.html">All Courses</a></li>
+            <li><a class="hover:text-violet-700" href="/blog.html">Blog</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.25em] text-slate-900">Programs</h4>
+          <ul class="mt-6 space-y-4 text-sm text-slate-500">
+            <li>NCLEX</li><li>UBE</li><li>CompTIA</li><li>CFA</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.25em] text-slate-900">Access</h4>
+          <ul class="mt-6 space-y-4 text-sm text-slate-500">
+            <li><a class="hover:text-violet-700" href="/pricing.html">Pricing</a></li>
+            <li><a class="hover:text-violet-700" href="/store.html">Store</a></li>
+            <li><a class="hover:text-violet-700" href="/login.html">Login</a></li>
+            <li><a class="hover:text-violet-700" href="/sign-up.html">Sign Up</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-slate-200/60 px-8 py-8 md:flex-row">
+        <span class="text-xs font-medium uppercase tracking-[0.25em] text-slate-400">© 2026 Sleek Academia. All rights reserved.</span>
+        <div class="flex gap-6 text-xs font-medium text-slate-400"><span>Privacy</span><span>Terms</span><span>Cookies</span></div>
+      </div>
+    </footer>
+
+    <script>
+      document.documentElement.classList.add('page-ready');
+
+      // ── Gateway state ──────────────────────────────────────────────────────────
+      let stripe = null;
+      let stripeCard = null;
+      let stripeCardMounted = false;
+      let stripePayReq = null;
+      let siteConfig = null;
+
+      fetch('/api/config').then(r => r.json()).then(cfg => {
+        siteConfig = cfg;
+        const pk = cfg.stripePublishableKey;
+        if (pk && !pk.includes('REPLACE')) stripe = Stripe(pk);
+      }).catch(() => {});
+
+      // ── Popover ─────────────────────────────────────────────────────────────────
+      document.querySelectorAll('button[data-product]').forEach(btn => {
+        btn.addEventListener('click', () => openPaymentPopover(btn));
+      });
+
+      function openPaymentPopover(btn) {
+        closePopover();
+        stripeCardMounted = false; stripeCard = null; stripePayReq = null;
+
+        const { product, price } = btn.dataset;
+        const rect = btn.getBoundingClientRect();
+
+        const pop = document.createElement('div');
+        pop.id = 'pay-pop';
+        pop.style.cssText = `position:fixed;z-index:200;width:min(420px,calc(100vw - 32px));background:#fff;border-radius:16px;box-shadow:0 8px 40px rgba(112,42,225,0.18),0 2px 12px rgba(0,0,0,0.10);padding:24px;border:1.5px solid #e5e7eb;`;
+        pop.innerHTML = `
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">
+            <div>
+              <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;color:#1e1b4b;margin:0;">${product}</p>
+              <p style="font-size:13px;color:#6b7280;margin:4px 0 0;">Complete your subscription</p>
+            </div>
+            <button onclick="closePopover()" style="background:none;border:none;cursor:pointer;color:#9ca3af;padding:0;margin-left:12px;">
+              <span class="material-symbols-outlined" style="font-size:20px;">close</span>
+            </button>
+          </div>
+          <p style="font-size:22px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;color:#702ae1;margin:12px 0 16px;">$${price}<span style="font-size:14px;font-weight:500;color:#6b7280;">/month</span></p>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;">
+            <button data-ptab="card" onclick="popSwitchTab(this,'${product}','${price}')" style="border:2px solid #702ae1;background:#f5f3ff;color:#702ae1;border-radius:10px;padding:10px 4px;font-size:12px;font-weight:700;cursor:pointer;">
+              <span class="material-symbols-outlined" style="display:block;font-size:18px;margin:0 auto 2px;">credit_card</span>Card
+            </button>
+            <button data-ptab="paypal" onclick="popSwitchTab(this,'${product}','${price}')" style="border:2px solid #e5e7eb;background:#fff;color:#6b7280;border-radius:10px;padding:10px 4px;font-size:12px;font-weight:700;cursor:pointer;">
+              <span class="material-symbols-outlined" style="display:block;font-size:18px;margin:0 auto 2px;color:#3b82f6;">payment</span>PayPal
+            </button>
+            <button data-ptab="gpay" onclick="popSwitchTab(this,'${product}','${price}')" style="border:2px solid #e5e7eb;background:#fff;color:#6b7280;border-radius:10px;padding:10px 4px;font-size:12px;font-weight:700;cursor:pointer;">
+              <span class="material-symbols-outlined" style="display:block;font-size:18px;margin:0 auto 2px;">smartphone</span>Google Pay
+            </button>
+          </div>
+
+          <div id="pop-pane-card">
+            <div id="stripe-card-slot" style="background:#f5f7f9;border:2px solid #e2e5e8;border-radius:10px;padding:12px 14px;margin-bottom:8px;"></div>
+            <div id="stripe-card-err" style="color:#e11d48;font-size:12px;min-height:16px;margin-bottom:8px;"></div>
+            <button id="pop-pay-btn" onclick="popProcessCard('${product}','${price}')"
+              style="width:100%;background:#702ae1;color:#fff;font-weight:700;font-size:14px;padding:12px;border:none;border-radius:10px;cursor:pointer;">
+              Pay $${price}/month
+            </button>
+          </div>
+
+          <div id="pop-pane-paypal" style="display:none;">
+            <div id="pop-paypal-buttons"></div>
+            <p id="pop-paypal-err" style="color:#e11d48;font-size:12px;min-height:16px;margin-top:6px;"></p>
+          </div>
+
+          <div id="pop-pane-gpay" style="display:none;">
+            <div id="pop-pr-button"></div>
+            <p id="pop-gpay-msg" style="display:none;font-size:13px;color:#6b7280;text-align:center;padding:16px 0;">Google Pay not available on this browser. Use Card or PayPal.</p>
+          </div>
+
+          <p style="font-size:11px;color:#9ca3af;text-align:center;margin-top:12px;">🔒 Secured by Stripe &amp; PayPal</p>
+        `;
+
+        document.body.appendChild(pop);
+        setTimeout(() => popMountStripeCard(product, price), 50);
+
+        const popH = pop.offsetHeight;
+        const popW = pop.offsetWidth;
+        let top = rect.top + window.scrollY - popH - 10;
+        let left = rect.left + window.scrollX + rect.width / 2 - popW / 2;
+        left = Math.max(16, Math.min(left, window.innerWidth - popW - 16));
+        if (top < window.scrollY + 16) top = rect.bottom + window.scrollY + 10;
+        pop.style.top = top + 'px';
+        pop.style.left = left + 'px';
+
+        setTimeout(() => document.addEventListener('click', outsideClose), 0);
+      }
+
+      function popSwitchTab(clickedBtn, product, price) {
+        ['card','paypal','gpay'].forEach(t => {
+          const b = document.querySelector(`[data-ptab="${t}"]`);
+          const p = document.getElementById(`pop-pane-${t}`);
+          const on = t === clickedBtn.dataset.ptab;
+          if (b) { b.style.border = `2px solid ${on ? '#702ae1' : '#e5e7eb'}`; b.style.background = on ? '#f5f3ff' : '#fff'; b.style.color = on ? '#702ae1' : '#6b7280'; }
+          if (p) p.style.display = on ? 'block' : 'none';
+        });
+        const tab = clickedBtn.dataset.ptab;
+        if (tab === 'paypal') popInitPayPal(product, price);
+        if (tab === 'gpay') popInitGPay(product, price);
+      }
+
+      function popMountStripeCard(product, price) {
+        if (!stripe || stripeCardMounted) return;
+        const el = document.getElementById('stripe-card-slot');
+        if (!el) return;
+        const elements = stripe.elements();
+        stripeCard = elements.create('card', {
+          style: { base: { fontSize: '14px', color: '#2c2f31', fontFamily: 'Inter,sans-serif', '::placeholder': { color: '#9ca3af' } }, invalid: { color: '#e11d48' } },
+        });
+        stripeCard.mount('#stripe-card-slot');
+        stripeCard.on('change', e => { const errEl = document.getElementById('stripe-card-err'); if (errEl) errEl.textContent = e.error ? e.error.message : ''; });
+        stripeCardMounted = true;
+      }
+
+      async function popProcessCard(product, price) {
+        if (!stripe || !stripeCard) { const e = document.getElementById('stripe-card-err'); if (e) e.textContent = 'Card gateway not configured.'; return; }
+        const amountCents = Math.round(parseFloat(price) * 100);
+        const payBtn = document.getElementById('pop-pay-btn');
+        payBtn.disabled = true; payBtn.textContent = 'Processing...';
+        try {
+          const { clientSecret, error: apiErr } = await fetch('/api/stripe/create-payment-intent', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: amountCents, description: `Sleek Academia — ${product}` }),
+          }).then(r => r.json());
+          if (apiErr) throw new Error(apiErr);
+          const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, { payment_method: { card: stripeCard } });
+          if (error) { const errEl = document.getElementById('stripe-card-err'); if (errEl) errEl.textContent = error.message; payBtn.disabled = false; payBtn.textContent = `Pay $${price}/month`; }
+          else if (paymentIntent.status === 'succeeded') { payBtn.style.background = '#16a34a'; payBtn.textContent = '✓ Payment Successful!'; setTimeout(closePopover, 2000); }
+        } catch (err) { const errEl = document.getElementById('stripe-card-err'); if (errEl) errEl.textContent = 'Payment failed. Please try again.'; payBtn.disabled = false; payBtn.textContent = `Pay $${price}/month`; }
+      }
+
+      function popInitPayPal(product, price) {
+        const clientId = siteConfig?.paypalClientId;
+        if (!clientId || clientId.includes('REPLACE')) { const e = document.getElementById('pop-paypal-err'); if (e) e.textContent = 'PayPal not configured yet.'; return; }
+        const amountCents = Math.round(parseFloat(price) * 100);
+        const container = document.getElementById('pop-paypal-buttons');
+        if (!container || container.children.length) return;
+        const loadAndRender = () => {
+          if (typeof paypal === 'undefined') return;
+          paypal.Buttons({
+            createOrder: () => fetch('/api/paypal/create-order', {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ amount: amountCents, description: `Sleek Academia — ${product}` }),
+            }).then(r => r.json()).then(d => { if (!d.id) throw new Error(d.error || 'Failed'); return d.id; }),
+            onApprove: (data) => fetch(`/api/paypal/capture-order/${data.orderID}`, { method: 'POST' }).then(r => r.json()).then(details => {
+              if (details.status === 'COMPLETED') { if (container) container.innerHTML = '<p style="color:#16a34a;font-weight:700;text-align:center;padding:12px;">✓ Paid!</p>'; setTimeout(closePopover, 1500); }
+            }),
+            onError: () => { const e = document.getElementById('pop-paypal-err'); if (e) e.textContent = 'PayPal payment failed.'; },
+            style: { layout: 'vertical', color: 'blue', shape: 'rect', label: 'pay' },
+          }).render('#pop-paypal-buttons');
+        };
+        if (typeof paypal !== 'undefined') { loadAndRender(); return; }
+        if (document.getElementById('paypal-sdk')) { setTimeout(loadAndRender, 500); return; }
+        const s = document.createElement('script');
+        s.id = 'paypal-sdk'; s.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=USD`;
+        s.onload = loadAndRender; s.onerror = () => { const e = document.getElementById('pop-paypal-err'); if (e) e.textContent = 'Failed to load PayPal.'; };
+        document.head.appendChild(s);
+      }
+
+      function popInitGPay(product, price) {
+        if (!stripe) { const m = document.getElementById('pop-gpay-msg'); if (m) m.style.display = 'block'; return; }
+        const amountCents = Math.round(parseFloat(price) * 100);
+        const prButton = document.getElementById('pop-pr-button');
+        if (!prButton || prButton.children.length) return;
+        stripePayReq = stripe.paymentRequest({
+          country: 'US', currency: 'usd',
+          total: { label: `Sleek Academia — ${product}`, amount: amountCents },
+          requestPayerName: true, requestPayerEmail: true,
+        });
+        const elements = stripe.elements();
+        const btn = elements.create('paymentRequestButton', { paymentRequest: stripePayReq, style: { paymentRequestButton: { type: 'buy', theme: 'dark', height: '48px' } } });
+        stripePayReq.canMakePayment().then(result => {
+          if (result) btn.mount('#pop-pr-button');
+          else { const m = document.getElementById('pop-gpay-msg'); if (m) m.style.display = 'block'; }
+        });
+        stripePayReq.on('paymentmethod', async ev => {
+          try {
+            const { clientSecret, error: apiErr } = await fetch('/api/stripe/create-payment-intent', {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ amount: amountCents, description: `Sleek Academia — ${product}` }),
+            }).then(r => r.json());
+            if (apiErr) throw new Error(apiErr);
+            const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, { payment_method: ev.paymentMethod.id }, { handleActions: false });
+            if (error) { ev.complete('fail'); return; }
+            ev.complete('success');
+            if (paymentIntent.status === 'requires_action') await stripe.confirmCardPayment(clientSecret);
+            if (prButton) prButton.innerHTML = '<p style="color:#16a34a;font-weight:700;text-align:center;padding:12px;">✓ Paid!</p>';
+            setTimeout(closePopover, 1500);
+          } catch (_) { ev.complete('fail'); }
+        });
+      }
+
+      function closePopover() {
+        document.getElementById('pay-pop')?.remove();
+        document.removeEventListener('click', outsideClose);
+        stripeCardMounted = false; stripeCard = null; stripePayReq = null;
+      }
+
+      function outsideClose(e) {
+        const pop = document.getElementById('pay-pop');
+        if (pop && !pop.contains(e.target)) closePopover();
+      }
+    </script>
+  </body>
+</html>

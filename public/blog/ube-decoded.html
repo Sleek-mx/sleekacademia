@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>The UBE Decoded | Sleek Academia</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#702ae1", "primary-dim": "#6411d5", "primary-container": "#b28cff",
+              surface: "#f5f7f9", "surface-container-low": "#eef1f3",
+              "on-surface": "#2c2f31", "on-surface-variant": "#595c5e", outline: "#747779"
+            },
+            fontFamily: { headline: ["Plus Jakarta Sans", "sans-serif"], body: ["Inter", "sans-serif"] }
+          }
+        }
+      };
+    </script>
+    <style>
+      html { background: #f5f7f9; }
+      body { opacity: 0; transform: translateY(18px); transition: opacity 220ms ease, transform 220ms ease; font-family: "Inter", sans-serif; }
+      html.page-ready body { opacity: 1; transform: translateY(0); }
+      h1, h2, h3, h4 { font-family: "Plus Jakarta Sans", sans-serif; }
+      .material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; }
+      .prose p { margin-bottom: 1.25rem; line-height: 1.8; color: #374151; }
+      .prose h2 { font-family: "Plus Jakarta Sans", sans-serif; font-size: 1.5rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; color: #1e1b4b; }
+      .prose h3 { font-family: "Plus Jakarta Sans", sans-serif; font-size: 1.125rem; font-weight: 700; margin-top: 1.75rem; margin-bottom: 0.5rem; color: #2c2f31; }
+      .prose ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
+      .prose ul li { margin-bottom: 0.4rem; color: #374151; line-height: 1.7; }
+      .prose strong { color: #1e1b4b; }
+    </style>
+  </head>
+  <body class="bg-surface text-on-surface">
+    <nav class="fixed top-0 z-50 w-full bg-white/75 backdrop-blur-xl shadow-xl shadow-slate-900/5">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+        <a class="font-headline text-2xl font-black tracking-tight text-violet-700" href="/">Sleek Academia</a>
+        <div class="hidden items-center gap-8 md:flex">
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/">Home</a>
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/about.html">About Us</a>
+          <a class="border-b-2 border-violet-600 pb-1 text-sm font-bold text-violet-700" href="/blog.html">Blog</a>
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/store.html">Store</a>
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/pricing.html">Pricing</a>
+        </div>
+        <div class="flex items-center gap-3">
+          <a class="rounded-xl bg-gradient-to-br from-primary to-primary-container px-5 py-2.5 text-sm font-bold text-white shadow-xl shadow-primary/20" href="/onboard.html">Get Started</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="pt-20">
+      <div class="relative h-80 overflow-hidden md:h-96">
+        <img src="/assets/hero1.png" alt="Law exam preparation" class="h-full w-full object-cover object-top" />
+        <div class="absolute inset-0" style="background: linear-gradient(135deg, rgba(99,102,241,0.78) 0%, rgba(55,48,163,0.68) 100%);"></div>
+        <div class="absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-white">
+          <span class="mb-4 inline-block rounded-full bg-white/20 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.25em] backdrop-blur-sm">Law</span>
+          <h1 class="font-headline text-3xl font-extrabold leading-tight md:text-5xl">The UBE Decoded: Everything Law Graduates Need to Know</h1>
+          <p class="mt-4 text-base text-white/80 md:text-lg">Your complete breakdown of the Uniform Bar Exam — format, scoring, and how to prepare</p>
+          <div class="mt-4 flex items-center gap-4 text-sm text-white/70">
+            <span>May 2026</span><span>•</span><span>10 min read</span>
+          </div>
+        </div>
+      </div>
+
+      <article class="mx-auto max-w-3xl px-6 py-16 lg:px-8">
+        <div class="prose">
+          <p>The Uniform Bar Exam has become the dominant bar exam format across the United States, now adopted in 41 jurisdictions. For recent law graduates, this is both good news and a source of fresh confusion. The UBE is portable — a passing score can transfer to other UBE jurisdictions — but it is also more demanding than many state-specific exams that preceded it. Here is what you actually need to know.</p>
+
+          <h2>How the UBE Is Structured</h2>
+          <p>The UBE spans two days and consists of three components, each weighted differently toward your final score:</p>
+          <ul>
+            <li><strong>Multistate Bar Examination (MBE) — 50% of total score.</strong> 200 multiple-choice questions across two three-hour sessions. Tested subjects: Civil Procedure, Constitutional Law, Contracts, Criminal Law and Procedure, Evidence, Real Property, and Torts.</li>
+            <li><strong>Multistate Essay Examination (MEE) — 30% of total score.</strong> Six 30-minute essays covering a broader subject pool including Business Associations, Conflict of Laws, Family Law, Secured Transactions, Trusts and Estates, and all MBE subjects.</li>
+            <li><strong>Multistate Performance Test (MPT) — 20% of total score.</strong> Two 90-minute tasks requiring you to complete a lawyering task (a brief, memo, or client letter) using a provided file and library. No outside knowledge tested — only professional skill.</li>
+          </ul>
+          <p>The total UBE score is out of 400. Most jurisdictions require a score between 260 and 280 to pass, though this varies. Check your target jurisdiction's specific requirement before you begin.</p>
+
+          <h2>The MBE: Where Most Candidates Win or Lose</h2>
+          <p>The MBE is the fulcrum of your UBE score. A strong MBE performance (140+ raw score) can compensate for a weaker written component. The key to MBE success is not memorizing rules — it is pattern recognition. The NCBE uses recurring fact patterns, and the correct answer often hinges on a single distinction: was there an offer? Was there consideration? Did the police have probable cause?</p>
+          <p>Study strategy: Work through released NCBE questions by subject, and for every wrong answer, identify whether you missed a rule or misread the facts. The latter is more common and more fixable.</p>
+
+          <h2>The MEE: Writing Under Time Pressure</h2>
+          <p>Six essays in three hours means 30 minutes per essay — and that is non-negotiable. Graders reward organized, complete answers over elegant prose. Use the IRAC (Issue, Rule, Application, Conclusion) structure consistently. Even an incomplete essay earns partial credit if it identifies the right issue and states the applicable rule correctly.</p>
+          <p>High-yield MEE subjects rotate, but Contracts, Torts, and Business Associations appear with regularity. Trusts and Estates trips up many candidates who deprioritize it during prep — do not make that mistake.</p>
+
+          <h2>The MPT: The Component Most Candidates Underestimate</h2>
+          <p>The MPT tests whether you can function as a competent junior attorney. You are given a file (client documents, witness interviews, case notes) and a library (cases, statutes, regulations) and asked to produce a lawyering work product. You cannot bring in outside law — everything you need is in the library.</p>
+          <p>The most effective MPT strategy: spend the first 10–12 minutes reading the task memo and skimming the library to understand what the task requires. Then read the file selectively for the facts you need. Do not read every word of every document — time kills candidates who try to absorb everything before writing.</p>
+
+          <h2>Score Portability: The Real UBE Advantage</h2>
+          <p>If you pass the UBE in one jurisdiction, you can apply your score to another UBE jurisdiction without retaking the exam — subject to each jurisdiction's admission requirements and score expiration rules (typically 2–5 years). This matters if you're uncertain where you'll practice or plan to work across state lines.</p>
+
+          <h2>Building Your Prep Timeline</h2>
+          <ul>
+            <li><strong>10 weeks out:</strong> Full commercial course or structured self-study. Cover all MBE subjects and the MEE subject pool. Review MPT sample tasks to understand format.</li>
+            <li><strong>6 weeks out:</strong> Shift to practice. 100 MBE questions daily, two MEE essays per day, one MPT per week. Detailed review after each session.</li>
+            <li><strong>2 weeks out:</strong> Simulated exam days. Review weak subjects only. No new material in the final week.</li>
+          </ul>
+          <p>Students who work with a tutor during the essay and MPT phase see measurable improvements in organization and issue spotting — two skills that are difficult to self-assess from practice alone.</p>
+
+          <p>The UBE is a learnable exam. Its structure is consistent, its subject matter is defined, and its grading rewards preparation over brilliance. Approach it systematically and it becomes manageable.</p>
+        </div>
+
+        <div class="mt-16 rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100 p-8 text-center">
+          <h3 class="font-headline text-2xl font-bold text-indigo-900">Preparing for the UBE?</h3>
+          <p class="mt-2 text-indigo-700">Work one-on-one with a legal tutor on MEE essays and MPT strategy.</p>
+          <a href="/onboard.html?goal=exam" class="mt-6 inline-block rounded-xl bg-indigo-600 px-8 py-3 font-bold text-white shadow-lg shadow-indigo-600/25 transition-all hover:bg-indigo-700">Book a Tutoring Session</a>
+        </div>
+
+        <div class="mt-10 border-t border-slate-200 pt-8">
+          <a href="/blog.html" class="inline-flex items-center gap-2 text-sm font-semibold text-violet-700 hover:text-violet-600">
+            <span class="material-symbols-outlined text-base">arrow_back</span>
+            Back to Blog
+          </a>
+        </div>
+      </article>
+    </main>
+
+    <footer class="mt-8 rounded-t-[2.5rem] bg-slate-50">
+      <div class="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-8 py-16 md:grid-cols-4">
+        <div>
+          <div class="font-headline text-xl font-bold text-violet-700">Sleek Academia</div>
+          <p class="mt-6 text-sm leading-relaxed text-slate-500">Empowering professionals through high-end digital learning and expert-led guidance.</p>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.25em] text-slate-900">Explore</h4>
+          <ul class="mt-6 space-y-4 text-sm text-slate-500">
+            <li><a class="hover:text-violet-700" href="/">Home</a></li>
+            <li><a class="hover:text-violet-700" href="/about.html">About Us</a></li>
+            <li><a class="hover:text-violet-700" href="/courses.html">All Courses</a></li>
+            <li><a class="hover:text-violet-700" href="/blog.html">Blog</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.25em] text-slate-900">Programs</h4>
+          <ul class="mt-6 space-y-4 text-sm text-slate-500">
+            <li>NCLEX</li><li>UBE</li><li>CompTIA</li><li>CFA</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.25em] text-slate-900">Access</h4>
+          <ul class="mt-6 space-y-4 text-sm text-slate-500">
+            <li><a class="hover:text-violet-700" href="/pricing.html">Pricing</a></li>
+            <li><a class="hover:text-violet-700" href="/store.html">Store</a></li>
+            <li><a class="hover:text-violet-700" href="/login.html">Login</a></li>
+            <li><a class="hover:text-violet-700" href="/sign-up.html">Sign Up</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-slate-200/60 px-8 py-8 md:flex-row">
+        <span class="text-xs font-medium uppercase tracking-[0.25em] text-slate-400">© 2026 Sleek Academia. All rights reserved.</span>
+        <div class="flex gap-6 text-xs font-medium text-slate-400"><span>Privacy</span><span>Terms</span><span>Cookies</span></div>
+      </div>
+    </footer>
+
+    <script>document.documentElement.classList.add('page-ready');</script>
+  </body>
+</html>

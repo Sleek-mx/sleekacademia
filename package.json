@@ -1,0 +1,21 @@
+{
+  "name": "sleek-academia-backend",
+  "version": "1.0.0",
+  "description": "Backend infrastructure and Clerk authentication for Sleek Academia",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@clerk/express": "^1.7.29",
+    "body-parser": "^2.2.2",
+    "dotenv": "^16.4.7",
+    "ejs": "^5.0.2",
+    "express": "^4.22.1",
+    "stripe": "^22.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

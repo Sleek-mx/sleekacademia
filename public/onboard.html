@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to Sleek Academia | Chatbot Onboarding</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#702ae1",
+            "primary-dim": "#6411d5",
+            "primary-container": "#b28cff",
+            secondary: "#994100",
+            "secondary-container": "#ffc5a8",
+            surface: "#f5f7f9",
+            "surface-container": "#e5e9eb",
+            "surface-container-low": "#eef1f3",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-high": "#dfe3e6",
+            "on-surface": "#2c2f31",
+            "on-surface-variant": "#595c5e",
+            outline: "#747779"
+          },
+          fontFamily: {
+            headline: ["Plus Jakarta Sans", "sans-serif"],
+            body: ["Inter", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    html { background: #f5f7f9; }
+    body {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+    html.page-ready body { opacity: 1; transform: translateY(0); }
+    .material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; }
+    body { font-family: "Inter", sans-serif; }
+    h1, h2, h3, h4 { font-family: "Plus Jakarta Sans", sans-serif; }
+    .step { display: none; }
+    .step.active { display: block; animation: slideIn 300ms ease; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+  <nav class="fixed top-0 z-50 w-full bg-white/75 backdrop-blur-xl shadow-xl shadow-violet-900/5">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+      <a class="font-headline text-2xl font-black tracking-tight text-violet-700" href="/">Sleek Academia</a>
+      <a class="text-sm font-semibold text-slate-600 transition-colors hover:text-violet-500" href="/">Back to Home</a>
+    </div>
+  </nav>
+
+  <main class="overflow-x-hidden pt-24">
+    <section class="mx-auto flex min-h-[calc(100vh-6rem)] max-w-2xl items-center justify-center px-6 py-12">
+      <div class="w-full space-y-8">
+        <div class="rounded-3xl bg-white p-8 shadow-xl shadow-violet-900/10">
+          <div id="chatbot" class="space-y-6">
+
+            <!-- Step 1: Field of Study -->
+            <div id="step-field" class="step active space-y-6">
+              <div class="space-y-2">
+                <div class="inline-block rounded-full bg-violet-600 px-4 py-1 text-xs font-bold uppercase tracking-[0.25em] text-white">Welcome</div>
+                <h2 class="font-headline text-3xl font-bold">Let's get to know you</h2>
+                <p class="text-slate-600">Help us understand your goals so we can tailor your experience.</p>
+              </div>
+              <div class="space-y-3">
+                <p class="font-semibold text-on-surface">What's your primary field of study?</p>
+                <button class="field-btn w-full text-left rounded-2xl border-2 border-outline/20 p-4 transition-all hover:border-primary hover:bg-violet-50" data-field="business">
+                  <span class="material-symbols-outlined mr-3 align-middle">business_center</span>
+                  Business Administration
+                </button>
+                <button class="field-btn w-full text-left rounded-2xl border-2 border-outline/20 p-4 transition-all hover:border-primary hover:bg-violet-50" data-field="engineering">
+                  <span class="material-symbols-outlined mr-3 align-middle">engineering</span>
+                  Engineering
+                </button>
+                <button class="field-btn w-full text-left rounded-2xl border-2 border-outline/20 p-4 transition-all hover:border-primary hover:bg-violet-50" data-field="cs">
+                  <span class="material-symbols-outlined mr-3 align-middle">computer</span>
+                  Computer Science & IT
+                </button>
+                <button class="field-btn w-full text-left rounded-2xl border-2 border-outline/20 p-4 transition-all hover:border-primary hover:bg-violet-50" data-field="health">
+                  <span class="material-symbols-outlined mr-3 align-middle">health_and_safety</span>
+                  Health Sciences & Pre-Med
+                </button>
+                <button class="field-btn w-full text-left rounded-2xl border-2 border-outline/20 p-4 transition-all hover:border-primary hover:bg-violet-50" data-field="law">
+                  <span class="material-symbols-outlined mr-3 align-middle">gavel</span>
+                  Law & Legal Studies
+                </button>
+                <button class="field-btn w-full text-left rounded-2xl border-2 border-outline/20 p-4 transition-all hover:border-primary hover:bg-violet-50" data-field="finance">
+                  <span class="material-symbols-outlined mr-3 align-middle">trending_up</span>
+                  Finance & Economics
+                </button>
+                <button class="field-btn w-full text-left rounded-2xl border-2 border-outline/20 p-4 transition-all hover:border-primary hover:bg-violet-50" data-field="other">
+                  <span class="material-symbols-outlined mr-3 align-middle">more_horiz</span>
+                  Other / Not Sure
+                </button>
+              </div>
+            </div>
+
+            <!-- Step 2: Goal Selection (Radio - Single Choice) -->
+            <div id="step-goal" class="step space-y-6">
+              <div class="space-y-2">
+                <div class="inline-block rounded-full bg-violet-600 px-4 py-1 text-xs font-bold uppercase tracking-[0.25em] text-white">Your Goal</div>
+                <h2 class="font-headline text-3xl font-bold">What do you need help with?</h2>
+                <p class="text-slate-600">Choose one option to get started</p>
+              </div>
+              <div class="space-y-3">
+                <label class="goal-option flex items-start rounded-2xl border-2 border-outline/20 p-4 transition-all cursor-pointer hover:border-primary hover:bg-violet-50">
+                  <input type="radio" name="goal" value="exam" class="mt-1 mr-4 w-5 h-5" />
+                  <div class="flex-1">
+                    <p class="font-semibold">Help pass my exam</p>
+                    <p class="text-sm text-on-surface-variant">Prepare for tests and certifications</p>
+                  </div>
+                </label>
+                <label class="goal-option flex items-start rounded-2xl border-2 border-outline/20 p-4 transition-all cursor-pointer hover:border-primary hover:bg-violet-50">
+                  <input type="radio" name="goal" value="essay" class="mt-1 mr-4 w-5 h-5" />
+                  <div class="flex-1">
+                    <p class="font-semibold">Help with Essay/Report</p>
+                    <p class="text-sm text-on-surface-variant">Writing assistance and feedback</p>
+                  </div>
+                </label>
+                <label class="goal-option flex items-start rounded-2xl border-2 border-outline/20 p-4 transition-all cursor-pointer hover:border-primary hover:bg-violet-50">
+                  <input type="radio" name="goal" value="materials" class="mt-1 mr-4 w-5 h-5" />
+                  <div class="flex-1">
+                    <p class="font-semibold">Help with study materials</p>
+                    <p class="text-sm text-on-surface-variant">Flashcards, guides, and resources</p>
+                  </div>
+                </label>
+                <label class="goal-option flex items-start rounded-2xl border-2 border-outline/20 p-4 transition-all cursor-pointer hover:border-primary hover:bg-violet-50">
+                  <input type="radio" name="goal" value="other" class="mt-1 mr-4 w-5 h-5" />
+                  <div class="flex-1">
+                    <p class="font-semibold">Others/Not sure</p>
+                    <p class="text-sm text-on-surface-variant">I need personalized guidance</p>
+                  </div>
+                </label>
+              </div>
+              <div class="flex gap-3 pt-4">
+                <button class="back-btn flex-1 rounded-xl border-2 border-primary px-6 py-3 font-semibold text-primary transition-all hover:bg-violet-50">Back</button>
+                <button id="continue-goal" class="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-white transition-all hover:bg-primary-dim" disabled>Continue</button>
+              </div>
+            </div>
+
+            <!-- Step 3: Exam Timing -->
+            <div id="step-exam-timing" class="step space-y-6">
+              <div class="space-y-2">
+                <div class="inline-block rounded-full bg-violet-600 px-4 py-1 text-xs font-bold uppercase tracking-[0.25em] text-white">Exam Prep</div>
+                <h2 class="font-headline text-3xl font-bold">When is your exam?</h2>
+                <p class="text-slate-600">This helps us prioritize your preparation</p>
+              </div>
+              <div class="space-y-3">
+                <label class="flex items-center rounded-2xl border-2 border-outline/20 p-4 transition-all cursor-pointer hover:border-primary hover:bg-violet-50">
+                  <input type="radio" name="exam-timing" value="1day" class="mr-4 w-5 h-5" />
+                  <div class="flex-1">
+                    <p class="font-semibold">Tomorrow (1 day)</p>
+                    <p class="text-sm text-on-surface-variant">Intensive prep needed</p>
+                  </div>
+                </label>
+                <label class="flex items-center rounded-2xl border-2 border-outline/20 p-4 transition-all cursor-pointer hover:border-primary hover:bg-violet-50">
+                  <input type="radio" name="exam-timing" value="2days" class="mr-4 w-5 h-5" />
+                  <div class="flex-1">
+                    <p class="font-semibold">In 2 days</p>
+                    <p class="text-sm text-on-surface-variant">Focused study plan</p>
+                  </div>
+                </label>
+                <label class="flex items-center rounded-2xl border-2 border-outline/20 p-4 transition-all cursor-pointer hover:border-primary hover:bg-violet-50">
+                  <input type="radio" name="exam-timing" value="1week" class="mr-4 w-5 h-5" />
+                  <div class="flex-1">
+                    <p class="font-semibold">In 1 week</p>
+                    <p class="text-sm text-on-surface-variant">Standard prep timeline</p>
+                  </div>
+                </label>
+                <label class="flex items-center rounded-2xl border-2 border-outline/20 p-4 transition-all cursor-pointer hover:border-primary hover:bg-violet-50">
+                  <input type="radio" name="exam-timing" value="custom" class="mr-4 w-5 h-5" />
+                  <p class="font-semibold">Custom date & time</p>
+                </label>
+                <div id="custom-datetime" class="hidden">
+                  <input type="datetime-local" id="exam-date" class="w-full rounded-xl border-2 border-outline/20 p-3 transition-all focus:border-primary" />
+                </div>
+              </div>
+              <div class="flex gap-3 pt-4">
+                <button class="back-btn flex-1 rounded-xl border-2 border-primary px-6 py-3 font-semibold text-primary transition-all hover:bg-violet-50">Back</button>
+                <button id="contact-exam" class="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-white transition-all hover:bg-primary-dim">Continue</button>
+              </div>
+            </div>
+
+            <!-- Step 3: Essay Details -->
+            <div id="step-essay-detail" class="step space-y-6">
+              <div class="space-y-2">
+                <div class="inline-block rounded-full bg-violet-600 px-4 py-1 text-xs font-bold uppercase tracking-[0.25em] text-white">Essay Help</div>
+                <h2 class="font-headline text-3xl font-bold">Tell us about your essay</h2>
+              </div>
+              <div class="space-y-4">
+                <div>
+                  <label class="block font-semibold mb-2">How many pages?</label>
+                  <input type="number" id="essay-pages" class="w-full rounded-xl border-2 border-outline/20 p-3 transition-all focus:border-primary" min="1" placeholder="e.g., 5" />
+                </div>
+                <div>
+                  <label class="block font-semibold mb-2">Citation format</label>
+                  <div class="grid grid-cols-2 gap-2">
+                    <label class="flex items-center rounded-lg cursor-pointer">
+                      <input type="radio" name="format" value="APA" class="mr-2 w-4 h-4" />
+                      <span>APA</span>
+                    </label>
+                    <label class="flex items-center rounded-lg cursor-pointer">
+                      <input type="radio" name="format" value="MLA" class="mr-2 w-4 h-4" />
+                      <span>MLA</span>
+                    </label>
+                    <label class="flex items-center rounded-lg cursor-pointer">
+                      <input type="radio" name="format" value="Chicago" class="mr-2 w-4 h-4" />
+                      <span>Chicago</span>
+                    </label>
+                    <label class="flex items-center rounded-lg cursor-pointer">
+                      <input type="radio" name="format" value="AMA" class="mr-2 w-4 h-4" />
+                      <span>AMA</span>
+                    </label>
+                    <label class="flex items-center rounded-lg cursor-pointer">
+                      <input type="radio" name="format" value="Harvard" class="mr-2 w-4 h-4" />
+                      <span>Harvard</span>
+                    </label>
+                    <label class="flex items-center rounded-lg cursor-pointer">
+                      <input type="radio" name="format" value="Turabian" class="mr-2 w-4 h-4" />
+                      <span>Turabian</span>
+                    </label>
+                  </div>
+                </div>
+                <div>
+                  <label class="block font-semibold mb-2">Deadline</label>
+                  <div class="space-y-2">
+                    <label class="flex items-start rounded-lg cursor-pointer">
+                      <input type="radio" name="deadline" value="6hours" class="mt-1 mr-3 w-4 h-4" />
+                      <div class="flex-1">
+                        <p class="font-medium">6 hours (Urgent - +10% per page)</p>
+                        <p class="text-xs text-red-500">⚠ Expedited fee applies</p>
+                      </div>
+                    </label>
+                    <label class="flex items-center rounded-lg cursor-pointer">
+                      <input type="radio" name="deadline" value="12hours" class="mr-3 w-4 h-4" />
+                      <span>12 hours</span>
+                    </label>
+                    <label class="flex items-center rounded-lg cursor-pointer">
+                      <input type="radio" name="deadline" value="24hours" class="mr-3 w-4 h-4" />
+                      <span>24 hours</span>
+                    </label>
+                    <label class="flex items-center rounded-lg cursor-pointer">
+                      <input type="radio" name="deadline" value="2days" class="mr-3 w-4 h-4" />
+                      <span>2 days</span>
+                    </label>
+                    <label class="flex items-center rounded-lg cursor-pointer">
+                      <input type="radio" name="deadline" value="5days" class="mr-3 w-4 h-4" />
+                      <span>5 days</span>
+                    </label>
+                    <label class="flex items-center rounded-lg cursor-pointer">
+                      <input type="radio" name="deadline" value="1week" class="mr-3 w-4 h-4" />
+                      <span>1 week</span>
+                    </label>
+                    <label class="flex items-center rounded-lg cursor-pointer">
+                      <input type="radio" name="deadline" value="1month" class="mr-3 w-4 h-4" />
+                      <span>1 month</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-3 pt-4">
+                <button class="back-btn flex-1 rounded-xl border-2 border-primary px-6 py-3 font-semibold text-primary transition-all hover:bg-violet-50">Back</button>
+                <button id="contact-essay" class="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-white transition-all hover:bg-primary-dim">Send Details</button>
+              </div>
+            </div>
+
+            <!-- Step 3: Study Materials -->
+            <div id="step-materials-select" class="step space-y-6">
+              <div class="space-y-2">
+                <div class="inline-block rounded-full bg-violet-600 px-4 py-1 text-xs font-bold uppercase tracking-[0.25em] text-white">Study Materials</div>
+                <h2 class="font-headline text-3xl font-bold">What type of material?</h2>
+              </div>
+              <div class="space-y-3">
+                <label class="flex items-center rounded-2xl border-2 border-outline/20 p-4 transition-all cursor-pointer hover:border-primary hover:bg-violet-50">
+                  <input type="radio" name="material-type" value="flashcards" class="mr-4 w-5 h-5" />
+                  <div class="flex-1">
+                    <p class="font-semibold">Flashcards</p>
+                    <p class="text-sm text-on-surface-variant">Digital flashcard sets</p>
+                  </div>
+                </label>
+                <label class="flex items-center rounded-2xl border-2 border-outline/20 p-4 transition-all cursor-pointer hover:border-primary hover:bg-violet-50">
+                  <input type="radio" name="material-type" value="guides" class="mr-4 w-5 h-5" />
+                  <div class="flex-1">
+                    <p class="font-semibold">Exam Guides</p>
+                    <p class="text-sm text-on-surface-variant">Comprehensive study guides</p>
+                  </div>
+                </label>
+                <label class="flex items-center rounded-2xl border-2 border-outline/20 p-4 transition-all cursor-pointer hover:border-primary hover:bg-violet-50">
+                  <input type="radio" name="material-type" value="quizzes" class="mr-4 w-5 h-5" />
+                  <div class="flex-1">
+                    <p class="font-semibold">Quizzes & Answers</p>
+                    <p class="text-sm text-on-surface-variant">Practice questions with solutions</p>
+                  </div>
+                </label>
+                <label class="flex items-center rounded-2xl border-2 border-outline/20 p-4 transition-all cursor-pointer hover:border-primary hover:bg-violet-50">
+                  <input type="radio" name="material-type" value="books" class="mr-4 w-5 h-5" />
+                  <div class="flex-1">
+                    <p class="font-semibold">Books & PDFs</p>
+                    <p class="text-sm text-on-surface-variant">E-books and study materials</p>
+                  </div>
+                </label>
+                <label class="flex items-center rounded-2xl border-2 border-outline/20 p-4 transition-all cursor-pointer hover:border-primary hover:bg-violet-50">
+                  <input type="radio" name="material-type" value="cases" class="mr-4 w-5 h-5" />
+                  <div class="flex-1">
+                    <p class="font-semibold">Case Studies</p>
+                    <p class="text-sm text-on-surface-variant">Real-world case analyses</p>
+                  </div>
+                </label>
+                <label class="flex items-center rounded-2xl border-2 border-outline/20 p-4 transition-all cursor-pointer hover:border-primary hover:bg-violet-50">
+                  <input type="radio" name="material-type" value="testbanks" class="mr-4 w-5 h-5" />
+                  <div class="flex-1">
+                    <p class="font-semibold">Test Banks</p>
+                    <p class="text-sm text-on-surface-variant">Comprehensive test bank questions</p>
+                  </div>
+                </label>
+              </div>
+              <div>
+                <label class="block font-semibold mb-2">What course or material?</label>
+                <input type="text" id="material-name" class="w-full rounded-xl border-2 border-outline/20 p-3 transition-all focus:border-primary" placeholder="e.g., NCLEX Pharmacology, CPA Audit" />
+              </div>
+              <div class="flex gap-3 pt-4">
+                <button class="back-btn flex-1 rounded-xl border-2 border-primary px-6 py-3 font-semibold text-primary transition-all hover:bg-violet-50">Back</button>
+                <button id="search-materials" class="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-white transition-all hover:bg-primary-dim">Search Materials</button>
+              </div>
+            </div>
+
+            <!-- Step 3: Others/Contact -->
+            <div id="step-others" class="step space-y-6">
+              <div class="space-y-2">
+                <div class="inline-block rounded-full bg-violet-600 px-4 py-1 text-xs font-bold uppercase tracking-[0.25em] text-white">Let's Chat</div>
+                <h2 class="font-headline text-3xl font-bold">Tell us more</h2>
+                <p class="text-slate-600">We'll help guide you to the right solution</p>
+              </div>
+              <div>
+                <label class="block font-semibold mb-2">What do you need?</label>
+                <textarea id="custom-message" class="w-full rounded-xl border-2 border-outline/20 p-3 transition-all focus:border-primary" placeholder="Tell us about your needs..." rows="4"></textarea>
+              </div>
+              <div class="flex gap-3 pt-4">
+                <button class="back-btn flex-1 rounded-xl border-2 border-primary px-6 py-3 font-semibold text-primary transition-all hover:bg-violet-50">Back</button>
+                <button id="send-others" class="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-white transition-all hover:bg-primary-dim">Get Help</button>
+              </div>
+            </div>
+
+            <!-- Step 4: Payment -->
+            <div id="step-payment" class="step space-y-6">
+              <div class="space-y-2">
+                <div class="inline-block rounded-full bg-violet-600 px-4 py-1 text-xs font-bold uppercase tracking-[0.25em] text-white">Order Summary</div>
+                <h2 class="font-headline text-3xl font-bold">Ready to get started?</h2>
+              </div>
+
+              <!-- Summary -->
+              <div class="rounded-2xl bg-surface-container-low p-5 space-y-2">
+                <p class="text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant">What you're getting</p>
+                <p id="payment-summary-text" class="text-sm text-on-surface whitespace-pre-wrap leading-relaxed"></p>
+              </div>
+
+              <!-- Price -->
+              <div class="rounded-2xl border-2 border-primary/20 bg-violet-50 p-6 flex items-end justify-between">
+                <div>
+                  <p class="text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-1">Total Due</p>
+                  <p id="payment-total" class="text-5xl font-black text-primary" style="font-family:'Plus Jakarta Sans',sans-serif;"></p>
+                  <p id="payment-note" class="text-xs text-on-surface-variant mt-2"></p>
+                </div>
+                <span class="material-symbols-outlined text-primary/30 text-6xl">receipt_long</span>
+              </div>
+
+              <!-- Payment Method Selector -->
+              <div>
+                <p class="font-semibold text-sm mb-3">Choose payment method</p>
+                <div class="grid grid-cols-3 gap-2 mb-5">
+                  <button data-tab="card" class="pay-tab rounded-xl border-2 border-primary bg-violet-50 py-2.5 text-xs font-bold text-primary transition-all">
+                    <span class="material-symbols-outlined text-base block mx-auto mb-0.5">credit_card</span>Card
+                  </button>
+                  <button data-tab="paypal" class="pay-tab rounded-xl border-2 border-outline/20 py-2.5 text-xs font-bold text-slate-500 transition-all hover:border-primary/40">
+                    <span class="material-symbols-outlined text-base block mx-auto mb-0.5 text-blue-500">payment</span>PayPal
+                  </button>
+                  <button data-tab="gpay" class="pay-tab rounded-xl border-2 border-outline/20 py-2.5 text-xs font-bold text-slate-500 transition-all hover:border-primary/40">
+                    <span class="material-symbols-outlined text-base block mx-auto mb-0.5 text-slate-500">smartphone</span>Google Pay
+                  </button>
+                </div>
+
+                <!-- Card pane -->
+                <div id="pane-card" class="pay-pane space-y-3">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-on-surface-variant">Card Details</p>
+                  <div id="stripe-card-element" style="background:#f5f7f9;border:2px solid #e2e5e8;border-radius:12px;padding:14px 16px;"></div>
+                  <div id="stripe-card-errors" style="color:#e11d48;font-size:13px;min-height:18px;"></div>
+                  <button id="confirm-pay" class="w-full rounded-xl bg-primary px-6 py-4 font-bold text-white transition-all hover:bg-primary-dim">Pay Now</button>
+                </div>
+
+                <!-- PayPal pane -->
+                <div id="pane-paypal" class="pay-pane hidden">
+                  <p class="text-xs text-on-surface-variant mb-3">You'll be redirected to PayPal to complete your payment securely.</p>
+                  <div id="paypal-buttons-container"></div>
+                  <p id="paypal-error" style="color:#e11d48;font-size:13px;min-height:18px;margin-top:6px;"></p>
+                </div>
+
+                <!-- Google / Apple Pay pane -->
+                <div id="pane-gpay" class="pay-pane hidden">
+                  <div id="payment-request-button"></div>
+                  <p id="gpay-unavailable" class="hidden text-sm text-slate-500 text-center py-4">Google Pay is not available on this device or browser. Please use Card or PayPal.</p>
+                </div>
+              </div>
+
+              <div class="pt-2">
+                <button id="pay-back-btn" class="w-full rounded-xl border-2 border-primary px-6 py-3 font-semibold text-primary transition-all hover:bg-violet-50">Back</button>
+              </div>
+              <p class="text-xs text-on-surface-variant text-center">🔒 Payments secured by Stripe &amp; PayPal</p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div class="flex justify-center gap-2">
+          <div class="progress-dot h-2 w-2 rounded-full bg-primary transition-all"></div>
+          <div class="progress-dot h-2 w-2 rounded-full bg-outline/40 transition-all"></div>
+          <div class="progress-dot h-2 w-2 rounded-full bg-outline/40 transition-all"></div>
+          <div class="progress-dot h-2 w-2 rounded-full bg-outline/40 transition-all"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ── State ──────────────────────────────────────────────────────────────────
+    let currentStep = 'step-field';
+    let selectedField = '';
+    let selectedGoal = '';
+    let orderData = {};
+
+    // Read intent from URL e.g. /onboard.html?goal=essay or ?goal=exam
+    const presetGoal = new URLSearchParams(window.location.search).get('goal'); // 'essay' | 'exam' | null
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+    function showStep(id) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      currentStep = id;
+      updateDots();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateDots() {
+      const sequence = presetGoal
+        ? ['step-field', presetGoal === 'essay' ? 'step-essay-detail' : 'step-exam-timing', 'step-payment']
+        : ['step-field', 'step-goal', currentStep.includes('essay') ? 'step-essay-detail' : currentStep.includes('exam') ? 'step-exam-timing' : currentStep, 'step-payment'];
+      const dots = document.querySelectorAll('.progress-dot');
+      const idx = sequence.indexOf(currentStep);
+      dots.forEach((d, i) => {
+        d.classList.toggle('bg-primary', i <= idx);
+        d.classList.toggle('bg-outline/40', i > idx);
+      });
+    }
+
+    function fieldLabel(f) {
+      const map = { business: 'Business Administration', engineering: 'Engineering', cs: 'Computer Science & IT', health: 'Health Sciences', law: 'Law & Legal Studies', finance: 'Finance & Economics', other: 'Other' };
+      return map[f] || f;
+    }
+
+    // ── Pricing rules ──────────────────────────────────────────────────────────
+    const ESSAY_RATE = 15;           // $ per page
+    const ESSAY_URGENT_RATE = 16.50; // $ per page for 6-hour deadline
+    const EXAM_PRICES = {
+      '1day':   { amount: 150, desc: '2 intensive sessions (emergency rate)' },
+      '2days':  { amount: 150, desc: '2 focused sessions' },
+      '1week':  { amount: 300, desc: '4 sessions — Alpha Package' },
+      'custom': { amount: 300, desc: '4 sessions — Alpha Package' },
+    };
+
+    // ── Step: Field of study ───────────────────────────────────────────────────
+    document.querySelectorAll('.field-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedField = btn.dataset.field;
+        if (presetGoal === 'essay') {
+          selectedGoal = 'essay';
+          showStep('step-essay-detail');
+        } else if (presetGoal === 'exam') {
+          selectedGoal = 'exam';
+          showStep('step-exam-timing');
+        } else {
+          showStep('step-goal');
+        }
+      });
+    });
+
+    // ── Step: Goal selection ───────────────────────────────────────────────────
+    document.querySelectorAll('input[name="goal"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        document.getElementById('continue-goal').disabled = false;
+      });
+    });
+
+    document.getElementById('continue-goal').addEventListener('click', () => {
+      selectedGoal = document.querySelector('input[name="goal"]:checked').value;
+      if (selectedGoal === 'exam')      showStep('step-exam-timing');
+      else if (selectedGoal === 'essay') showStep('step-essay-detail');
+      else if (selectedGoal === 'materials') window.location.href = '/store.html';
+      else window.location.href = '/pricing.html'; // other / class management
+    });
+
+    // ── Back buttons ───────────────────────────────────────────────────────────
+    document.querySelectorAll('.back-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (currentStep === 'step-goal') showStep('step-field');
+        else if (['step-exam-timing', 'step-essay-detail', 'step-materials-select', 'step-others'].includes(currentStep)) {
+          presetGoal ? showStep('step-field') : showStep('step-goal');
+        }
+      });
+    });
+
+    document.getElementById('pay-back-btn').addEventListener('click', () => {
+      selectedGoal === 'essay' ? showStep('step-essay-detail') : showStep('step-exam-timing');
+    });
+
+    // ── Step: Exam timing ──────────────────────────────────────────────────────
+    document.querySelectorAll('input[name="exam-timing"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        document.getElementById('custom-datetime').classList.toggle('hidden', radio.value !== 'custom');
+      });
+    });
+
+    document.getElementById('contact-exam').addEventListener('click', () => {
+      const timing = document.querySelector('input[name="exam-timing"]:checked')?.value;
+      if (!timing) { alert('Please select when your exam is.'); return; }
+
+      let timingLabel = timing;
+      if (timing === 'custom') {
+        const d = document.getElementById('exam-date').value;
+        timingLabel = d ? new Date(d).toLocaleString() : 'Custom date';
+      }
+
+      const p = EXAM_PRICES[timing] || EXAM_PRICES['custom'];
+      orderData = { type: 'exam', timingLabel, amount: p.amount, desc: p.desc };
+      goToPayment();
+    });
+
+    // ── Step: Essay details ────────────────────────────────────────────────────
+    document.getElementById('contact-essay').addEventListener('click', () => {
+      const pages = parseInt(document.getElementById('essay-pages').value) || 0;
+      if (!pages) { alert('Please enter the number of pages.'); return; }
+      const format = document.querySelector('input[name="format"]:checked')?.value || 'Not specified';
+      const deadline = document.querySelector('input[name="deadline"]:checked')?.value;
+      if (!deadline) { alert('Please select a deadline.'); return; }
+
+      const rate = deadline === '6hours' ? ESSAY_URGENT_RATE : ESSAY_RATE;
+      const total = Math.round(pages * rate * 100) / 100;
+      const note = deadline === '6hours'
+        ? `${pages} pages × $${rate.toFixed(2)}/page (expedited rate)`
+        : `${pages} pages × $${rate.toFixed(2)}/page`;
+
+      orderData = { type: 'essay', pages, format, deadline, amount: total, desc: note };
+      goToPayment();
+    });
+
+    // ── Step: Study materials → store ──────────────────────────────────────────
+    document.getElementById('search-materials').addEventListener('click', () => {
+      window.location.href = '/store.html';
+    });
+
+    // ── Step: Others → pricing ─────────────────────────────────────────────────
+    document.getElementById('send-others').addEventListener('click', () => {
+      window.location.href = '/pricing.html';
+    });
+
+    // ── Payment gateway state ──────────────────────────────────────────────────
+    let stripe = null;
+    let stripeCard = null;
+    let stripeCardReady = false;
+    let stripePayReq = null;
+    let paypalLoaded = false;
+    let activeTab = 'card';
+    let siteConfig = null;
+
+    // ── Tab switcher ───────────────────────────────────────────────────────────
+    document.querySelectorAll('.pay-tab').forEach(btn => {
+      btn.addEventListener('click', () => switchPayTab(btn.dataset.tab));
+    });
+
+    function switchPayTab(tab) {
+      activeTab = tab;
+      document.querySelectorAll('.pay-tab').forEach(b => {
+        const on = b.dataset.tab === tab;
+        b.classList.toggle('border-primary', on);
+        b.classList.toggle('bg-violet-50', on);
+        b.classList.toggle('text-primary', on);
+        b.classList.toggle('border-outline/20', !on);
+        b.classList.toggle('text-slate-500', !on);
+      });
+      document.querySelectorAll('.pay-pane').forEach(p => p.classList.add('hidden'));
+      document.getElementById('pane-' + tab).classList.remove('hidden');
+
+      if (tab === 'paypal' && !paypalLoaded) initPayPal();
+      if (tab === 'gpay') initGPay();
+    }
+
+    // ── Stripe card ────────────────────────────────────────────────────────────
+    function initStripeCard() {
+      if (!stripe || stripeCardReady) return;
+      const elements = stripe.elements();
+      stripeCard = elements.create('card', {
+        style: { base: { fontSize: '15px', color: '#2c2f31', fontFamily: 'Inter,sans-serif', '::placeholder': { color: '#9ca3af' } }, invalid: { color: '#e11d48' } },
+      });
+      stripeCard.mount('#stripe-card-element');
+      stripeCard.on('change', e => {
+        document.getElementById('stripe-card-errors').textContent = e.error ? e.error.message : '';
+      });
+      stripeCardReady = true;
+    }
+
+    // Card pay button
+    document.getElementById('confirm-pay').addEventListener('click', async () => {
+      if (!stripe || !stripeCard) {
+        document.getElementById('stripe-card-errors').textContent = 'Card gateway not configured. Please use PayPal or contact support.';
+        return;
+      }
+      const btn = document.getElementById('confirm-pay');
+      const label = orderData.type === 'essay' ? 'Essay Help' : 'Exam Prep Tutoring';
+      const amountCents = Math.round(orderData.amount * 100);
+      btn.disabled = true;
+      btn.textContent = 'Processing...';
+      try {
+        const { clientSecret, error: apiErr } = await fetch('/api/stripe/create-payment-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: amountCents, description: `Sleek Academia — ${label}` }),
+        }).then(r => r.json());
+        if (apiErr) throw new Error(apiErr);
+        const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, { payment_method: { card: stripeCard } });
+        if (error) {
+          document.getElementById('stripe-card-errors').textContent = error.message;
+          btn.disabled = false; btn.textContent = 'Pay Now';
+        } else if (paymentIntent.status === 'succeeded') {
+          btn.textContent = '✓ Payment Successful!';
+          setTimeout(() => { window.location.href = '/dashboard.html'; }, 1500);
+        }
+      } catch (err) {
+        document.getElementById('stripe-card-errors').textContent = 'Payment failed. Please try again.';
+        btn.disabled = false; btn.textContent = 'Pay Now';
+      }
+    });
+
+    // ── PayPal ─────────────────────────────────────────────────────────────────
+    function initPayPal() {
+      const clientId = siteConfig?.paypalClientId;
+      if (!clientId || clientId.includes('REPLACE')) {
+        document.getElementById('paypal-error').textContent = 'PayPal is not configured yet.';
+        return;
+      }
+      if (document.getElementById('paypal-sdk')) { renderPayPalButtons(); return; }
+      const s = document.createElement('script');
+      s.id = 'paypal-sdk';
+      s.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=USD`;
+      s.onload = () => { paypalLoaded = true; renderPayPalButtons(); };
+      s.onerror = () => { document.getElementById('paypal-error').textContent = 'Failed to load PayPal. Check your connection.'; };
+      document.head.appendChild(s);
+    }
+
+    function renderPayPalButtons() {
+      const container = document.getElementById('paypal-buttons-container');
+      container.innerHTML = '';
+      const label = orderData.type === 'essay' ? 'Essay Help' : 'Exam Prep Tutoring';
+      const amountCents = Math.round(orderData.amount * 100);
+
+      paypal.Buttons({
+        createOrder: () => fetch('/api/paypal/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: amountCents, description: `Sleek Academia — ${label}` }),
+        }).then(r => r.json()).then(d => {
+          if (!d.id) throw new Error(d.error || 'Order creation failed');
+          return d.id;
+        }),
+        onApprove: (data) => fetch(`/api/paypal/capture-order/${data.orderID}`, { method: 'POST' })
+          .then(r => r.json()).then(details => {
+            if (details.status === 'COMPLETED') {
+              document.getElementById('paypal-buttons-container').innerHTML = '<p style="color:#16a34a;font-weight:700;text-align:center;padding:16px;">✓ Payment Successful! Redirecting...</p>';
+              setTimeout(() => { window.location.href = '/dashboard.html'; }, 1500);
+            }
+          }),
+        onError: (err) => {
+          document.getElementById('paypal-error').textContent = 'PayPal payment failed. Please try again.';
+        },
+        style: { layout: 'vertical', color: 'blue', shape: 'rect', label: 'pay' },
+      }).render('#paypal-buttons-container');
+    }
+
+    // ── Google Pay / Apple Pay (Stripe Payment Request) ────────────────────────
+    function initGPay() {
+      if (!stripe) {
+        document.getElementById('gpay-unavailable').classList.remove('hidden');
+        return;
+      }
+      const label = orderData.type === 'essay' ? 'Essay Help' : 'Exam Prep Tutoring';
+      const amountCents = Math.round(orderData.amount * 100);
+
+      if (stripePayReq) {
+        stripePayReq.update({ total: { label: `Sleek Academia — ${label}`, amount: amountCents } });
+        return;
+      }
+
+      stripePayReq = stripe.paymentRequest({
+        country: 'US',
+        currency: 'usd',
+        total: { label: `Sleek Academia — ${label}`, amount: amountCents },
+        requestPayerName: true,
+        requestPayerEmail: true,
+      });
+
+      const elements = stripe.elements();
+      const prButton = elements.create('paymentRequestButton', {
+        paymentRequest: stripePayReq,
+        style: { paymentRequestButton: { type: 'buy', theme: 'dark', height: '48px' } },
+      });
+
+      stripePayReq.canMakePayment().then(result => {
+        if (result) {
+          prButton.mount('#payment-request-button');
+        } else {
+          document.getElementById('gpay-unavailable').classList.remove('hidden');
+        }
+      });
+
+      stripePayReq.on('paymentmethod', async (ev) => {
+        try {
+          const { clientSecret, error: apiErr } = await fetch('/api/stripe/create-payment-intent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: amountCents, description: `Sleek Academia — ${label}` }),
+          }).then(r => r.json());
+          if (apiErr) throw new Error(apiErr);
+          const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, { payment_method: ev.paymentMethod.id }, { handleActions: false });
+          if (error) { ev.complete('fail'); return; }
+          ev.complete('success');
+          if (paymentIntent.status === 'requires_action') {
+            await stripe.confirmCardPayment(clientSecret);
+          }
+          document.getElementById('payment-request-button').innerHTML = '<p style="color:#16a34a;font-weight:700;text-align:center;padding:16px;">✓ Payment Successful!</p>';
+          setTimeout(() => { window.location.href = '/dashboard.html'; }, 1500);
+        } catch (_) { ev.complete('fail'); }
+      });
+    }
+
+    // ── Payment step ───────────────────────────────────────────────────────────
+    function goToPayment() {
+      let summary = '';
+      if (orderData.type === 'essay') {
+        summary = `Essay / Report Help\nField: ${fieldLabel(selectedField)}\nPages: ${orderData.pages}\nFormat: ${orderData.format}\nDeadline: ${orderData.deadline}`;
+      } else {
+        summary = `Exam Prep Tutoring\nField: ${fieldLabel(selectedField)}\nTimeframe: ${orderData.timingLabel}`;
+      }
+      document.getElementById('payment-summary-text').textContent = summary;
+      document.getElementById('payment-total').textContent = `$${orderData.amount.toFixed ? orderData.amount.toFixed(2) : orderData.amount}`;
+      document.getElementById('payment-note').textContent = orderData.desc;
+      showStep('step-payment');
+
+      // Load config once, then init Stripe card
+      fetch('/api/config').then(r => r.json()).then(cfg => {
+        siteConfig = cfg;
+        const pk = cfg.stripePublishableKey;
+        if (pk && !pk.includes('REPLACE')) {
+          stripe = Stripe(pk);
+          initStripeCard();
+        }
+      }).catch(() => {});
+    }
+
+    // ── Boot ───────────────────────────────────────────────────────────────────
+    document.documentElement.classList.add('page-ready');
+  </script>
+</body>
+</html>

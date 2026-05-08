@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Store | Sleek Academia</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#702ae1",
+              "primary-dim": "#6411d5",
+              "primary-container": "#b28cff",
+              secondary: "#994100",
+              "secondary-container": "#ffc5a8",
+              surface: "#f5f7f9",
+              "surface-container-low": "#eef1f3",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#dfe3e6",
+              "on-surface": "#2c2f31",
+              "on-surface-variant": "#595c5e",
+              outline: "#747779"
+            },
+            fontFamily: {
+              headline: ["Plus Jakarta Sans", "sans-serif"],
+              body: ["Inter", "sans-serif"]
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      html {
+        background: #f5f7f9;
+      }
+      body {
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 220ms ease, transform 220ms ease;
+      }
+      html.page-ready body {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+      body { font-family: "Inter", sans-serif; }
+      h1, h2, h3, h4 { font-family: "Plus Jakarta Sans", sans-serif; }
+      
+      .product-card {
+        transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .product-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 60px rgba(112, 42, 225, 0.2);
+      }
+      
+      .badge-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+      }
+    </style>
+  </head>
+  <body class="bg-surface text-on-surface">
+    <nav class="fixed top-0 z-50 w-full bg-white/75 backdrop-blur-xl shadow-xl shadow-slate-900/5">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+        <a class="font-headline text-2xl font-black tracking-tight text-violet-700" href="/">Sleek Academia</a>
+        <div class="hidden items-center gap-8 md:flex">
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/">Home</a>
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/about.html">About Us</a>
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/blog.html">Blog</a>
+          <a class="border-b-2 border-violet-600 pb-1 text-sm font-bold text-violet-700" href="/store.html">Store</a>
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/pricing.html">Pricing</a>
+        </div>
+        <div class="flex items-center gap-3">
+          <a class="rounded-xl bg-gradient-to-br from-primary to-primary-container px-5 py-2.5 text-sm font-bold text-white shadow-xl shadow-primary/20" href="/onboard.html">Get Started</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="pt-24">
+      <!-- Hero Section -->
+      <section class="relative overflow-hidden px-6 py-12 lg:px-8">
+        <div class="mx-auto max-w-7xl">
+          <div class="space-y-4 text-center">
+            <span class="inline-block rounded-full bg-violet-600 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.25em] text-white">Digital Resources</span>
+            <h1 class="font-headline text-4xl font-extrabold leading-tight md:text-5xl">Powerful Tools & Materials for Your Success</h1>
+            <p class="mx-auto max-w-2xl text-base text-on-surface-variant">Access premium exam guides, flashcards, quizzes, and AI-powered tools designed to accelerate your learning.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- AI Tools Section -->
+      <section class="relative px-6 py-10 lg:px-8">
+        <div class="mx-auto max-w-7xl">
+          <div class="mb-10 text-center">
+            <h2 class="font-headline text-3xl font-bold">AI-Powered Tools</h2>
+            <p class="mt-1 text-sm text-on-surface-variant">Technology that enhances your work quality and saves time</p>
+          </div>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <!-- AI Humanizer -->
+            <div class="product-card rounded-2xl bg-white p-6 shadow-lg shadow-violet-900/5">
+              <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
+                <span class="material-symbols-outlined text-2xl">smart_toy</span>
+              </div>
+              <span class="inline-block rounded-full bg-red-100 px-2 py-1 text-xs font-bold text-red-700 uppercase">save 20%</span>
+              <h3 class="font-headline mt-3 text-lg font-bold">AI Humanizer</h3>
+              <p class="mt-1 text-xs text-on-surface-variant">Transform AI-generated content into natural, human-like writing.</p>
+              <div class="mt-4 space-y-2">
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                  <span>Preserve meaning & intent</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                  <span>Add authentic voice</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                  <span>Avoid AI detection</span>
+                </div>
+              </div>
+              <div class="mt-4 border-t border-outline/20 pt-4">
+                <div class="flex items-baseline gap-2">
+                  <span class="font-headline text-2xl font-bold">$20</span>
+                  <span class="line-through text-xs text-on-surface-variant">$25</span>
+                  <span class="text-xs font-semibold text-on-surface-variant">/month</span>
+                </div>
+              </div>
+              <button data-product="AI Humanizer" data-price="20" class="mt-4 w-full rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white transition-all hover:bg-primary-dim">
+                Get Access
+              </button>
+            </div>
+
+            <!-- Content Check -->
+            <div class="product-card rounded-2xl bg-white p-6 shadow-lg shadow-violet-900/5">
+              <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+                <span class="material-symbols-outlined text-2xl">verified_user</span>
+              </div>
+              <span class="inline-block rounded-full bg-red-100 px-2 py-1 text-xs font-bold text-red-700 uppercase">save 15%</span>
+              <h3 class="font-headline mt-3 text-lg font-bold">Content Check</h3>
+              <p class="mt-1 text-xs text-on-surface-variant">Detect AI-generated content in submissions. Ensure academic integrity.</p>
+              <div class="mt-4 space-y-2">
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="material-symbols-outlined text-emerald-600 text-sm">check</span>
+                  <span>Real-time detection</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="material-symbols-outlined text-emerald-600 text-sm">check</span>
+                  <span>Detailed reports</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="material-symbols-outlined text-emerald-600 text-sm">check</span>
+                  <span>HIPAA compliant</span>
+                </div>
+              </div>
+              <div class="mt-4 border-t border-outline/20 pt-4">
+                <div class="flex items-baseline gap-2">
+                  <span class="font-headline text-2xl font-bold">$18</span>
+                  <span class="line-through text-xs text-on-surface-variant">$21</span>
+                  <span class="text-xs font-semibold text-on-surface-variant">/month</span>
+                </div>
+              </div>
+              <button data-product="Content Check" data-price="18" class="mt-4 w-full rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white transition-all hover:bg-primary-dim">
+                Get Access
+              </button>
+            </div>
+
+            <!-- Chat with PDF -->
+            <div class="product-card rounded-2xl bg-white p-6 shadow-lg shadow-violet-900/5">
+              <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                <span class="material-symbols-outlined text-2xl">summarize</span>
+              </div>
+              <span class="inline-block rounded-full bg-red-100 px-2 py-1 text-xs font-bold text-red-700 uppercase">save 30%</span>
+              <h3 class="font-headline mt-3 text-lg font-bold">Chat with PDF</h3>
+              <p class="mt-1 text-xs text-on-surface-variant">Upload PDFs and interact with them using AI. Extract key information instantly.</p>
+              <div class="mt-4 space-y-2">
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="material-symbols-outlined text-blue-600 text-sm">check</span>
+                  <span>Fast PDF analysis</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="material-symbols-outlined text-blue-600 text-sm">check</span>
+                  <span>Natural language queries</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="material-symbols-outlined text-blue-600 text-sm">check</span>
+                  <span>Batch processing</span>
+                </div>
+              </div>
+              <div class="mt-4 border-t border-outline/20 pt-4">
+                <div class="flex items-baseline gap-2">
+                  <span class="font-headline text-2xl font-bold">$5</span>
+                  <span class="line-through text-xs text-on-surface-variant">$7.99</span>
+                  <span class="text-xs font-semibold text-on-surface-variant">/month</span>
+                </div>
+              </div>
+              <button data-product="Chat with PDF" data-price="5" class="mt-4 w-full rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white transition-all hover:bg-primary-dim">
+                Get Access
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Study Materials Section -->
+      <section class="relative bg-white px-6 py-10 lg:px-8">
+        <div class="mx-auto max-w-7xl">
+          <div class="mb-10 text-center">
+            <h2 class="font-headline text-3xl font-bold">Study Materials & Guides</h2>
+            <p class="mt-1 text-sm text-on-surface-variant">Comprehensive resources for every field and certification</p>
+          </div>
+
+          <!-- Multi-Field Resources -->
+          <div class="mb-14">
+            <h3 class="font-headline text-xl font-bold mb-6 flex items-center gap-2">
+              <span class="material-symbols-outlined text-purple-600 text-2xl">collections</span>
+              Multi-Field Resources
+            </h3>
+            <div class="grid gap-6 md:grid-cols-2">
+              <!-- Flashcard Bundle -->
+              <div class="product-card rounded-2xl bg-surface p-6 shadow-lg shadow-violet-900/5">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
+                  <span class="material-symbols-outlined text-purple-600 text-xl">collections</span>
+                </div>
+                <span class="inline-block rounded-full bg-red-100 px-2 py-1 text-xs font-bold text-red-700 uppercase">save 25%</span>
+                <h3 class="mt-2 font-headline text-lg font-bold">Comprehensive Flashcard Bundle</h3>
+                <p class="mt-1 text-xs text-on-surface-variant">2000+ digital flashcards across Nursing, Law, ICT, and Finance.</p>
+                <div class="mt-3 space-y-1 text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>2000+ cards</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>Sync all devices</span>
+                  </div>
+                </div>
+                <div class="mt-4 border-t border-outline/20 pt-3">
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-headline text-xl font-bold">$19.99</span>
+                    <span class="line-through text-xs text-on-surface-variant">$26.99</span>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mt-1">Lifetime access</p>
+                </div>
+                <button data-product="Comprehensive Flashcard Bundle" data-price="19.99" class="mt-3 w-full rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white transition-all hover:bg-primary-dim">
+                  Get Bundle
+                </button>
+              </div>
+
+              <!-- Quiz Bank -->
+              <div class="product-card rounded-2xl bg-surface p-6 shadow-lg shadow-violet-900/5">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-100">
+                  <span class="material-symbols-outlined text-yellow-600 text-xl">help</span>
+                </div>
+                <span class="inline-block rounded-full bg-red-100 px-2 py-1 text-xs font-bold text-red-700 uppercase">save 20%</span>
+                <h3 class="mt-2 font-headline text-lg font-bold">Practice Quiz Bank</h3>
+                <p class="mt-1 text-xs text-on-surface-variant">1500+ questions with detailed explanations and instant feedback.</p>
+                <div class="mt-3 space-y-1 text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>1500+ questions</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>Performance tracking</span>
+                  </div>
+                </div>
+                <div class="mt-4 border-t border-outline/20 pt-3">
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-headline text-xl font-bold">$24.99</span>
+                    <span class="line-through text-xs text-on-surface-variant">$31.99</span>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mt-1">Lifetime access</p>
+                </div>
+                <button data-product="Practice Quiz Bank" data-price="24.99" class="mt-3 w-full rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white transition-all hover:bg-primary-dim">
+                  Get Bundle
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Health Sciences -->
+          <div class="mb-14">
+            <h3 class="font-headline text-xl font-bold mb-6 flex items-center gap-2">
+              <span class="material-symbols-outlined text-red-600 text-2xl">health_and_safety</span>
+              Health Sciences & Pre-Med
+            </h3>
+            <div class="grid gap-6 md:grid-cols-2">
+              <!-- NCLEX Exam Guide -->
+              <div class="product-card rounded-2xl bg-surface p-6 shadow-lg shadow-violet-900/5">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-red-100">
+                  <span class="material-symbols-outlined text-red-600 text-xl">description</span>
+                </div>
+                <span class="inline-block rounded-full bg-red-100 px-2 py-1 text-xs font-bold text-red-700 uppercase">save 18%</span>
+                <h3 class="mt-2 font-headline text-lg font-bold">NCLEX-RN Exam Guide</h3>
+                <p class="mt-1 text-xs text-on-surface-variant">500+ pages covering all NCLEX content areas with practice tests.</p>
+                <div class="mt-3 space-y-1 text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>500+ pages</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>2025 edition</span>
+                  </div>
+                </div>
+                <div class="mt-4 border-t border-outline/20 pt-3">
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-headline text-xl font-bold">$29.99</span>
+                    <span class="line-through text-xs text-on-surface-variant">$36.99</span>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mt-1">One-time purchase</p>
+                </div>
+                <button data-product="NCLEX-RN Exam Guide" data-price="29.99" class="mt-3 w-full rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white transition-all hover:bg-primary-dim">
+                  Get Now
+                </button>
+              </div>
+              <!-- USMLE Step 1 -->
+              <div class="product-card rounded-2xl bg-surface p-6 shadow-lg shadow-violet-900/5">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-rose-100">
+                  <span class="material-symbols-outlined text-rose-600 text-xl">medical_information</span>
+                </div>
+                <span class="inline-block rounded-full bg-red-100 px-2 py-1 text-xs font-bold text-red-700 uppercase">save 21%</span>
+                <h3 class="mt-2 font-headline text-lg font-bold">USMLE Step 1 Rapid Review</h3>
+                <p class="mt-1 text-xs text-on-surface-variant">High-yield facts and mnemonics for USMLE Step 1 mastery.</p>
+                <div class="mt-3 space-y-1 text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>High-yield mnemonics</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>Systems-based review</span>
+                  </div>
+                </div>
+                <div class="mt-4 border-t border-outline/20 pt-3">
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-headline text-xl font-bold">$34.99</span>
+                    <span class="line-through text-xs text-on-surface-variant">$44.99</span>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mt-1">One-time purchase</p>
+                </div>
+                <button data-product="USMLE Step 1 Rapid Review" data-price="34.99" class="mt-3 w-full rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white transition-all hover:bg-primary-dim">
+                  Get Now
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Law & Legal Studies -->
+          <div class="mb-14">
+            <h3 class="font-headline text-xl font-bold mb-6 flex items-center gap-2">
+              <span class="material-symbols-outlined text-indigo-600 text-2xl">gavel</span>
+              Law & Legal Studies
+            </h3>
+            <div class="grid gap-6 md:grid-cols-2">
+              <!-- Bar Exam Study Notes -->
+              <div class="product-card rounded-2xl bg-surface p-6 shadow-lg shadow-violet-900/5">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-100">
+                  <span class="material-symbols-outlined text-indigo-600 text-xl">gavel</span>
+                </div>
+                <span class="inline-block rounded-full bg-red-100 px-2 py-1 text-xs font-bold text-red-700 uppercase">save 22%</span>
+                <h3 class="mt-2 font-headline text-lg font-bold">Bar Exam Study Notes</h3>
+                <p class="mt-1 text-xs text-on-surface-variant">Comprehensive outline of all bar exam subjects with case summaries.</p>
+                <div class="mt-3 space-y-1 text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>All 7 subjects</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>Memory aids</span>
+                  </div>
+                </div>
+                <div class="mt-4 border-t border-outline/20 pt-3">
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-headline text-xl font-bold">$34.99</span>
+                    <span class="line-through text-xs text-on-surface-variant">$44.99</span>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mt-1">One-time purchase</p>
+                </div>
+                <button data-product="Bar Exam Study Notes" data-price="34.99" class="mt-3 w-full rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white transition-all hover:bg-primary-dim">
+                  Get Now
+                </button>
+              </div>
+              <!-- MBE Practice Questions -->
+              <div class="product-card rounded-2xl bg-surface p-6 shadow-lg shadow-violet-900/5">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-100">
+                  <span class="material-symbols-outlined text-indigo-600 text-xl">quiz</span>
+                </div>
+                <span class="inline-block rounded-full bg-red-100 px-2 py-1 text-xs font-bold text-red-700 uppercase">save 19%</span>
+                <h3 class="mt-2 font-headline text-lg font-bold">MBE Practice Questions Bank</h3>
+                <p class="mt-1 text-xs text-on-surface-variant">1200+ MBE-style questions with detailed answer explanations.</p>
+                <div class="mt-3 space-y-1 text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>1200+ questions</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>Scored by subject</span>
+                  </div>
+                </div>
+                <div class="mt-4 border-t border-outline/20 pt-3">
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-headline text-xl font-bold">$29.99</span>
+                    <span class="line-through text-xs text-on-surface-variant">$36.99</span>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mt-1">One-time purchase</p>
+                </div>
+                <button data-product="MBE Practice Questions Bank" data-price="29.99" class="mt-3 w-full rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white transition-all hover:bg-primary-dim">
+                  Get Now
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- IT & Technology -->
+          <div class="mb-14">
+            <h3 class="font-headline text-xl font-bold mb-6 flex items-center gap-2">
+              <span class="material-symbols-outlined text-cyan-600 text-2xl">terminal</span>
+              IT & Technology Certifications
+            </h3>
+            <div class="grid gap-6 md:grid-cols-2">
+              <!-- CompTIA & Cloud Certifications -->
+              <div class="product-card rounded-2xl bg-surface p-6 shadow-lg shadow-violet-900/5">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-cyan-100">
+                  <span class="material-symbols-outlined text-cyan-600 text-xl">terminal</span>
+                </div>
+                <span class="inline-block rounded-full bg-red-100 px-2 py-1 text-xs font-bold text-red-700 uppercase">save 28%</span>
+                <h3 class="mt-2 font-headline text-lg font-bold">CompTIA & Cloud Certifications</h3>
+                <p class="mt-1 text-xs text-on-surface-variant">Guides for CompTIA A+, Security+, and major cloud certifications.</p>
+                <div class="mt-3 space-y-1 text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>Multiple certs</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>Lab exercises</span>
+                  </div>
+                </div>
+                <div class="mt-4 border-t border-outline/20 pt-3">
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-headline text-xl font-bold">$39.99</span>
+                    <span class="line-through text-xs text-on-surface-variant">$55.99</span>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mt-1">Lifetime access</p>
+                </div>
+                <button data-product="CompTIA &amp; Cloud Certifications" data-price="39.99" class="mt-3 w-full rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white transition-all hover:bg-primary-dim">
+                  Get Now
+                </button>
+              </div>
+              <!-- AWS & Azure Cloud Labs -->
+              <div class="product-card rounded-2xl bg-surface p-6 shadow-lg shadow-violet-900/5">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-sky-100">
+                  <span class="material-symbols-outlined text-sky-600 text-xl">cloud</span>
+                </div>
+                <span class="inline-block rounded-full bg-red-100 px-2 py-1 text-xs font-bold text-red-700 uppercase">save 24%</span>
+                <h3 class="mt-2 font-headline text-lg font-bold">AWS & Azure Cloud Labs</h3>
+                <p class="mt-1 text-xs text-on-surface-variant">Hands-on labs and practice exams for AWS and Azure cloud certs.</p>
+                <div class="mt-3 space-y-1 text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>50+ guided labs</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>Exam simulators</span>
+                  </div>
+                </div>
+                <div class="mt-4 border-t border-outline/20 pt-3">
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-headline text-xl font-bold">$44.99</span>
+                    <span class="line-through text-xs text-on-surface-variant">$59.99</span>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mt-1">Lifetime access</p>
+                </div>
+                <button data-product="AWS &amp; Azure Cloud Labs" data-price="44.99" class="mt-3 w-full rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white transition-all hover:bg-primary-dim">
+                  Get Now
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Finance & Economics -->
+          <div class="mb-14">
+            <h3 class="font-headline text-xl font-bold mb-6 flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-600 text-2xl">trending_up</span>
+              Finance & Economics
+            </h3>
+            <div class="grid gap-6 md:grid-cols-2">
+              <!-- CFA Level I Notes -->
+              <div class="product-card rounded-2xl bg-surface p-6 shadow-lg shadow-violet-900/5">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
+                  <span class="material-symbols-outlined text-amber-600 text-xl">trending_up</span>
+                </div>
+                <span class="inline-block rounded-full bg-red-100 px-2 py-1 text-xs font-bold text-red-700 uppercase">save 32%</span>
+                <h3 class="mt-2 font-headline text-lg font-bold">CFA Level I Notes & Questions</h3>
+                <p class="mt-1 text-xs text-on-surface-variant">Complete notes covering all 10 topics plus 2000 practice questions.</p>
+                <div class="mt-3 space-y-1 text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>All 10 topics</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>Updated 2025</span>
+                  </div>
+                </div>
+                <div class="mt-4 border-t border-outline/20 pt-3">
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-headline text-xl font-bold">$49.99</span>
+                    <span class="line-through text-xs text-on-surface-variant">$73.99</span>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mt-1">Lifetime access</p>
+                </div>
+                <button data-product="CFA Level I Notes &amp; Questions" data-price="49.99" class="mt-3 w-full rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white transition-all hover:bg-primary-dim">
+                  Get Now
+                </button>
+              </div>
+              <!-- Financial Modeling with Excel -->
+              <div class="product-card rounded-2xl bg-surface p-6 shadow-lg shadow-violet-900/5">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-100">
+                  <span class="material-symbols-outlined text-yellow-600 text-xl">table_chart</span>
+                </div>
+                <span class="inline-block rounded-full bg-red-100 px-2 py-1 text-xs font-bold text-red-700 uppercase">save 26%</span>
+                <h3 class="mt-2 font-headline text-lg font-bold">Financial Modeling with Excel</h3>
+                <p class="mt-1 text-xs text-on-surface-variant">Build professional financial models from scratch — DCF, LBO, and more.</p>
+                <div class="mt-3 space-y-1 text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>DCF, LBO, M&A models</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-violet-600 text-sm">check</span>
+                    <span>Downloadable templates</span>
+                  </div>
+                </div>
+                <div class="mt-4 border-t border-outline/20 pt-3">
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-headline text-xl font-bold">$39.99</span>
+                    <span class="line-through text-xs text-on-surface-variant">$54.99</span>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mt-1">Lifetime access</p>
+                </div>
+                <button data-product="Financial Modeling with Excel" data-price="39.99" class="mt-3 w-full rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white transition-all hover:bg-primary-dim">
+                  Get Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Payment Methods Section -->
+      <section class="relative px-6 py-10 lg:px-8">
+        <div class="mx-auto max-w-7xl">
+          <div class="mb-10 text-center">
+            <h2 class="font-headline text-3xl font-bold">Secure Payment Methods</h2>
+            <p class="mt-1 text-sm text-on-surface-variant">We support multiple payment options for your convenience</p>
+          </div>
+          <div class="grid gap-6 md:grid-cols-3">
+            <!-- Stripe -->
+            <div class="rounded-xl border-2 border-dashed border-violet-300 bg-violet-50 p-6 text-center">
+              <div class="mb-3 flex justify-center">
+                <span class="material-symbols-outlined text-violet-600 text-4xl">credit_card</span>
+              </div>
+              <h3 class="font-headline font-bold text-on-surface">Credit/Debit Cards</h3>
+              <p class="mt-1 text-xs text-on-surface-variant">Visa, Mastercard, Amex — Powered by Stripe</p>
+            </div>
+            <!-- PayPal -->
+            <div class="rounded-xl border-2 border-dashed border-blue-300 bg-blue-50 p-6 text-center">
+              <div class="mb-3 flex justify-center">
+                <span class="material-symbols-outlined text-blue-600 text-4xl">payment</span>
+              </div>
+              <h3 class="font-headline font-bold text-on-surface">PayPal</h3>
+              <p class="mt-1 text-xs text-on-surface-variant">Fast and secure PayPal transfers</p>
+            </div>
+            <!-- Google / Apple Pay -->
+            <div class="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center">
+              <div class="mb-3 flex justify-center">
+                <span class="material-symbols-outlined text-slate-600 text-4xl">smartphone</span>
+              </div>
+              <h3 class="font-headline font-bold text-on-surface">Google Pay</h3>
+              <p class="mt-1 text-xs text-on-surface-variant">One-tap checkout via Google Pay</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bundle Offers -->
+      <section class="relative bg-white px-6 py-12 lg:px-8">
+        <div class="mx-auto max-w-7xl">
+          <div class="mb-10 text-center">
+            <h2 class="font-headline text-3xl font-bold">Complete Bundles</h2>
+            <p class="mt-1 text-sm text-on-surface-variant">Save more with our curated bundles</p>
+          </div>
+          <div class="grid gap-8 md:grid-cols-2">
+            <!-- Student Bundle -->
+            <div class="product-card rounded-2xl bg-gradient-to-br from-violet-50 to-white p-8 shadow-xl shadow-violet-900/5 border-2 border-violet-200">
+              <span class="inline-block rounded-full bg-violet-600 px-4 py-1 text-xs font-bold uppercase tracking-[0.2em] text-white">Popular</span>
+              <h3 class="mt-6 font-headline text-2xl font-bold">Complete Student Bundle</h3>
+              <p class="mt-2 text-on-surface-variant">Everything you need to excel in your field</p>
+              <div class="mt-8 space-y-4">
+                <div class="flex items-start gap-3">
+                  <span class="material-symbols-outlined text-violet-600">check_circle</span>
+                  <div>
+                    <p class="font-semibold">Comprehensive Study Guide</p>
+                    <p class="text-sm text-on-surface-variant">Full exam guide for your field</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <span class="material-symbols-outlined text-violet-600">check_circle</span>
+                  <div>
+                    <p class="font-semibold">2000+ Flashcards</p>
+                    <p class="text-sm text-on-surface-variant">Unlimited digital flashcards</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <span class="material-symbols-outlined text-violet-600">check_circle</span>
+                  <div>
+                    <p class="font-semibold">1500+ Practice Questions</p>
+                    <p class="text-sm text-on-surface-variant">Full question bank with answers</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <span class="material-symbols-outlined text-violet-600">check_circle</span>
+                  <div>
+                    <p class="font-semibold">AI Tools (3 months)</p>
+                    <p class="text-sm text-on-surface-variant">Humanizer, Checker, and Summarizer</p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-8 border-t border-violet-200 pt-6">
+                <div class="flex items-baseline gap-2">
+                  <span class="font-headline text-4xl font-bold">$99.99</span>
+                  <span class="line-through text-on-surface-variant">$139.96</span>
+                </div>
+                <p class="text-xs text-on-surface-variant mt-1">Save $39.97 (28% off)</p>
+              </div>
+              <button data-product="Complete Student Bundle" data-price="99.99" class="mt-6 w-full rounded-xl bg-primary px-6 py-4 font-bold text-white transition-all hover:bg-primary-dim">
+                Get Complete Bundle
+              </button>
+            </div>
+
+            <!-- Premium Bundle -->
+            <div class="product-card rounded-2xl bg-gradient-to-br from-amber-50 to-white p-8 shadow-xl shadow-violet-900/5 border-2 border-amber-200">
+              <span class="inline-block rounded-full bg-amber-600 px-4 py-1 text-xs font-bold uppercase tracking-[0.2em] text-white">Best Value</span>
+              <h3 class="mt-6 font-headline text-2xl font-bold">Premium Pro Bundle</h3>
+              <p class="mt-2 text-on-surface-variant">Maximum resources for ultimate mastery</p>
+              <div class="mt-8 space-y-4">
+                <div class="flex items-start gap-3">
+                  <span class="material-symbols-outlined text-amber-600">check_circle</span>
+                  <div>
+                    <p class="font-semibold">All Study Materials</p>
+                    <p class="text-sm text-on-surface-variant">Guides + flashcards + questions</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <span class="material-symbols-outlined text-amber-600">check_circle</span>
+                  <div>
+                    <p class="font-semibold">All AI Tools (12 months)</p>
+                    <p class="text-sm text-on-surface-variant">Unlimited access to all tools</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <span class="material-symbols-outlined text-amber-600">check_circle</span>
+                  <div>
+                    <p class="font-semibold">Priority Email Support</p>
+                    <p class="text-sm text-on-surface-variant">24-hour response guarantee</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <span class="material-symbols-outlined text-amber-600">check_circle</span>
+                  <div>
+                    <p class="font-semibold">Lifetime Access</p>
+                    <p class="text-sm text-on-surface-variant">All materials forever</p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-8 border-t border-amber-200 pt-6">
+                <div class="flex items-baseline gap-2">
+                  <span class="font-headline text-4xl font-bold">$149.99</span>
+                  <span class="line-through text-on-surface-variant">$219.92</span>
+                </div>
+                <p class="text-xs text-on-surface-variant mt-1">Save $69.93 (32% off)</p>
+              </div>
+              <button data-product="Premium Pro Bundle" data-price="149.99" class="mt-6 w-full rounded-xl bg-primary px-6 py-4 font-bold text-white transition-all hover:bg-primary-dim">
+                Get Premium Bundle
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section class="relative px-6 py-12 lg:px-8">
+        <div class="mx-auto max-w-2xl text-center">
+          <h2 class="font-headline text-3xl font-bold">Need Personalized Guidance?</h2>
+          <p class="mt-2 text-on-surface-variant text-sm">Pair digital resources with our expert tutoring for maximum results.</p>
+          <a href="/pricing.html" class="mt-6 inline-block rounded-2xl bg-primary px-8 py-3 font-bold text-white shadow-xl shadow-primary/10 transition-all hover:bg-primary-dim">
+            View Tutoring Packages
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mt-20 rounded-t-[2.5rem] bg-slate-50">
+      <div class="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-8 py-16 md:grid-cols-4">
+        <div>
+          <div class="font-headline text-xl font-bold text-violet-700">Sleek Academia</div>
+          <p class="mt-6 text-sm leading-relaxed text-slate-500">Empowering professionals through high-end digital learning and expert-led guidance.</p>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.25em] text-slate-900">Explore</h4>
+          <ul class="mt-6 space-y-4 text-sm text-slate-500">
+            <li><a class="hover:text-violet-700" href="/">Home</a></li>
+            <li><a class="hover:text-violet-700" href="/about.html">About Us</a></li>
+            <li><a class="hover:text-violet-700" href="/courses.html">All Courses</a></li>
+            <li><a class="hover:text-violet-700" href="/blog.html">Blog</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.25em] text-slate-900">Programs</h4>
+          <ul class="mt-6 space-y-4 text-sm text-slate-500">
+            <li>NCLEX</li><li>UBE</li><li>CompTIA</li><li>CFA</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.25em] text-slate-900">Access</h4>
+          <ul class="mt-6 space-y-4 text-sm text-slate-500">
+            <li><a class="hover:text-violet-700" href="/pricing.html">Pricing</a></li>
+            <li><a class="hover:text-violet-700" href="/store.html">Store</a></li>
+            <li><a class="hover:text-violet-700" href="/login.html">Login</a></li>
+            <li><a class="hover:text-violet-700" href="/sign-up.html">Sign Up</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-slate-200/60 px-8 py-8 md:flex-row">
+        <span class="text-xs font-medium uppercase tracking-[0.25em] text-slate-400">© 2026 Sleek Academia. All rights reserved.</span>
+        <div class="flex gap-6 text-xs font-medium text-slate-400"><span>Privacy</span><span>Terms</span><span>Cookies</span></div>
+      </div>
+    </footer>
+
+    <script>
+      document.documentElement.classList.add('page-ready');
+
+      // ── Gateway state ──────────────────────────────────────────────────────────
+      let stripe = null;
+      let stripeCard = null;
+      let stripeCardMounted = false;
+      let stripePayReq = null;
+      let siteConfig = null;
+
+      fetch('/api/config').then(r => r.json()).then(cfg => {
+        siteConfig = cfg;
+        const pk = cfg.stripePublishableKey;
+        if (pk && !pk.includes('REPLACE')) stripe = Stripe(pk);
+      }).catch(() => {});
+
+      // ── Popover ─────────────────────────────────────────────────────────────────
+      document.querySelectorAll('button[data-product]').forEach(btn => {
+        btn.addEventListener('click', () => openPaymentPopover(btn));
+      });
+
+      function openPaymentPopover(btn) {
+        closePopover();
+        stripeCardMounted = false;
+        stripeCard = null;
+        stripePayReq = null;
+
+        const { product, price } = btn.dataset;
+        const amountCents = Math.round(parseFloat(price) * 100);
+        const rect = btn.getBoundingClientRect();
+
+        const pop = document.createElement('div');
+        pop.id = 'pay-pop';
+        pop.style.cssText = `position:fixed;z-index:200;width:min(420px,calc(100vw - 32px));background:#fff;border-radius:16px;box-shadow:0 8px 40px rgba(112,42,225,0.18),0 2px 12px rgba(0,0,0,0.10);padding:24px;border:1.5px solid #e5e7eb;`;
+        pop.innerHTML = `
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">
+            <div>
+              <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;color:#1e1b4b;margin:0;">${product}</p>
+              <p style="font-size:13px;color:#6b7280;margin:4px 0 0;">Complete your purchase</p>
+            </div>
+            <button onclick="closePopover()" style="background:none;border:none;cursor:pointer;color:#9ca3af;padding:0;margin-left:12px;">
+              <span class="material-symbols-outlined" style="font-size:20px;">close</span>
+            </button>
+          </div>
+          <p style="font-size:22px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;color:#702ae1;margin:12px 0 16px;">$${price}</p>
+
+          <!-- Method tabs -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;">
+            <button data-ptab="card" onclick="popSwitchTab(this,'${product}','${price}')" style="border:2px solid #702ae1;background:#f5f3ff;color:#702ae1;border-radius:10px;padding:10px 4px;font-size:12px;font-weight:700;cursor:pointer;">
+              <span class="material-symbols-outlined" style="display:block;font-size:18px;margin:0 auto 2px;">credit_card</span>Card
+            </button>
+            <button data-ptab="paypal" onclick="popSwitchTab(this,'${product}','${price}')" style="border:2px solid #e5e7eb;background:#fff;color:#6b7280;border-radius:10px;padding:10px 4px;font-size:12px;font-weight:700;cursor:pointer;">
+              <span class="material-symbols-outlined" style="display:block;font-size:18px;margin:0 auto 2px;color:#3b82f6;">payment</span>PayPal
+            </button>
+            <button data-ptab="gpay" onclick="popSwitchTab(this,'${product}','${price}')" style="border:2px solid #e5e7eb;background:#fff;color:#6b7280;border-radius:10px;padding:10px 4px;font-size:12px;font-weight:700;cursor:pointer;">
+              <span class="material-symbols-outlined" style="display:block;font-size:18px;margin:0 auto 2px;">smartphone</span>Google Pay
+            </button>
+          </div>
+
+          <!-- Card pane -->
+          <div id="pop-pane-card">
+            <div id="stripe-card-slot" style="background:#f5f7f9;border:2px solid #e2e5e8;border-radius:10px;padding:12px 14px;margin-bottom:8px;"></div>
+            <div id="stripe-card-err" style="color:#e11d48;font-size:12px;min-height:16px;margin-bottom:8px;"></div>
+            <button id="pop-pay-btn" onclick="popProcessCard('${product}','${price}')"
+              style="width:100%;background:#702ae1;color:#fff;font-weight:700;font-size:14px;padding:12px;border:none;border-radius:10px;cursor:pointer;">
+              Pay $${price}
+            </button>
+          </div>
+
+          <!-- PayPal pane -->
+          <div id="pop-pane-paypal" style="display:none;">
+            <div id="pop-paypal-buttons"></div>
+            <p id="pop-paypal-err" style="color:#e11d48;font-size:12px;min-height:16px;margin-top:6px;"></p>
+          </div>
+
+          <!-- Google/Apple Pay pane -->
+          <div id="pop-pane-gpay" style="display:none;">
+            <div id="pop-pr-button"></div>
+            <p id="pop-gpay-msg" style="display:none;font-size:13px;color:#6b7280;text-align:center;padding:16px 0;">Google Pay not available on this browser. Use Card or PayPal.</p>
+          </div>
+
+          <p style="font-size:11px;color:#9ca3af;text-align:center;margin-top:12px;">🔒 Secured by Stripe &amp; PayPal</p>
+        `;
+
+        document.body.appendChild(pop);
+        setTimeout(() => popMountStripeCard(product, price), 50);
+
+        const popH = pop.offsetHeight;
+        const popW = pop.offsetWidth;
+        let top = rect.top + window.scrollY - popH - 10;
+        let left = rect.left + window.scrollX + rect.width / 2 - popW / 2;
+        left = Math.max(16, Math.min(left, window.innerWidth - popW - 16));
+        if (top < window.scrollY + 16) top = rect.bottom + window.scrollY + 10;
+        pop.style.top = top + 'px';
+        pop.style.left = left + 'px';
+
+        setTimeout(() => document.addEventListener('click', outsideClose), 0);
+      }
+
+      // Tab switch inside popover
+      function popSwitchTab(clickedBtn, product, price) {
+        ['card','paypal','gpay'].forEach(t => {
+          const b = document.querySelector(`[data-ptab="${t}"]`);
+          const p = document.getElementById(`pop-pane-${t}`);
+          const on = t === clickedBtn.dataset.ptab;
+          if (b) { b.style.border = `2px solid ${on ? '#702ae1' : '#e5e7eb'}`; b.style.background = on ? '#f5f3ff' : '#fff'; b.style.color = on ? '#702ae1' : '#6b7280'; }
+          if (p) p.style.display = on ? 'block' : 'none';
+        });
+        const tab = clickedBtn.dataset.ptab;
+        if (tab === 'paypal') popInitPayPal(product, price);
+        if (tab === 'gpay') popInitGPay(product, price);
+      }
+
+      // Stripe card mount
+      function popMountStripeCard(product, price) {
+        if (!stripe || stripeCardMounted) return;
+        const el = document.getElementById('stripe-card-slot');
+        if (!el) return;
+        const elements = stripe.elements();
+        stripeCard = elements.create('card', {
+          style: { base: { fontSize: '14px', color: '#2c2f31', fontFamily: 'Inter,sans-serif', '::placeholder': { color: '#9ca3af' } }, invalid: { color: '#e11d48' } },
+        });
+        stripeCard.mount('#stripe-card-slot');
+        stripeCard.on('change', e => {
+          const errEl = document.getElementById('stripe-card-err');
+          if (errEl) errEl.textContent = e.error ? e.error.message : '';
+        });
+        stripeCardMounted = true;
+      }
+
+      async function popProcessCard(product, price) {
+        if (!stripe || !stripeCard) {
+          const e = document.getElementById('stripe-card-err');
+          if (e) e.textContent = 'Card gateway not configured.';
+          return;
+        }
+        const amountCents = Math.round(parseFloat(price) * 100);
+        const payBtn = document.getElementById('pop-pay-btn');
+        payBtn.disabled = true; payBtn.textContent = 'Processing...';
+        try {
+          const { clientSecret, error: apiErr } = await fetch('/api/stripe/create-payment-intent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: amountCents, description: `Sleek Academia — ${product}` }),
+          }).then(r => r.json());
+          if (apiErr) throw new Error(apiErr);
+          const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, { payment_method: { card: stripeCard } });
+          if (error) {
+            const errEl = document.getElementById('stripe-card-err');
+            if (errEl) errEl.textContent = error.message;
+            payBtn.disabled = false; payBtn.textContent = `Pay $${price}`;
+          } else if (paymentIntent.status === 'succeeded') {
+            payBtn.style.background = '#16a34a'; payBtn.textContent = '✓ Payment Successful!';
+            setTimeout(closePopover, 2000);
+          }
+        } catch (err) {
+          const errEl = document.getElementById('stripe-card-err');
+          if (errEl) errEl.textContent = 'Payment failed. Please try again.';
+          payBtn.disabled = false; payBtn.textContent = `Pay $${price}`;
+        }
+      }
+
+      // PayPal in popover
+      function popInitPayPal(product, price) {
+        const clientId = siteConfig?.paypalClientId;
+        if (!clientId || clientId.includes('REPLACE')) {
+          const e = document.getElementById('pop-paypal-err');
+          if (e) e.textContent = 'PayPal is not configured yet.';
+          return;
+        }
+        const amountCents = Math.round(parseFloat(price) * 100);
+        const container = document.getElementById('pop-paypal-buttons');
+        if (!container || container.children.length) return;
+
+        const loadAndRender = () => {
+          if (typeof paypal === 'undefined') return;
+          paypal.Buttons({
+            createOrder: () => fetch('/api/paypal/create-order', {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ amount: amountCents, description: `Sleek Academia — ${product}` }),
+            }).then(r => r.json()).then(d => { if (!d.id) throw new Error(d.error || 'Failed'); return d.id; }),
+            onApprove: (data) => fetch(`/api/paypal/capture-order/${data.orderID}`, { method: 'POST' })
+              .then(r => r.json()).then(details => {
+                if (details.status === 'COMPLETED') {
+                  if (container) container.innerHTML = '<p style="color:#16a34a;font-weight:700;text-align:center;padding:12px;">✓ Paid! Closing...</p>';
+                  setTimeout(closePopover, 1500);
+                }
+              }),
+            onError: () => { const e = document.getElementById('pop-paypal-err'); if (e) e.textContent = 'PayPal payment failed.'; },
+            style: { layout: 'vertical', color: 'blue', shape: 'rect', label: 'pay' },
+          }).render('#pop-paypal-buttons');
+        };
+
+        if (typeof paypal !== 'undefined') { loadAndRender(); return; }
+        if (document.getElementById('paypal-sdk')) { setTimeout(loadAndRender, 500); return; }
+        const s = document.createElement('script');
+        s.id = 'paypal-sdk';
+        s.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=USD`;
+        s.onload = loadAndRender;
+        s.onerror = () => { const e = document.getElementById('pop-paypal-err'); if (e) e.textContent = 'Failed to load PayPal.'; };
+        document.head.appendChild(s);
+      }
+
+      // Google/Apple Pay in popover
+      function popInitGPay(product, price) {
+        if (!stripe) {
+          const m = document.getElementById('pop-gpay-msg');
+          if (m) m.style.display = 'block';
+          return;
+        }
+        const amountCents = Math.round(parseFloat(price) * 100);
+        const prButton = document.getElementById('pop-pr-button');
+        if (!prButton || prButton.children.length) return;
+
+        stripePayReq = stripe.paymentRequest({
+          country: 'US', currency: 'usd',
+          total: { label: `Sleek Academia — ${product}`, amount: amountCents },
+          requestPayerName: true, requestPayerEmail: true,
+        });
+        const elements = stripe.elements();
+        const btn = elements.create('paymentRequestButton', {
+          paymentRequest: stripePayReq,
+          style: { paymentRequestButton: { type: 'buy', theme: 'dark', height: '48px' } },
+        });
+        stripePayReq.canMakePayment().then(result => {
+          if (result) { btn.mount('#pop-pr-button'); }
+          else { const m = document.getElementById('pop-gpay-msg'); if (m) m.style.display = 'block'; }
+        });
+        stripePayReq.on('paymentmethod', async ev => {
+          try {
+            const { clientSecret, error: apiErr } = await fetch('/api/stripe/create-payment-intent', {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ amount: amountCents, description: `Sleek Academia — ${product}` }),
+            }).then(r => r.json());
+            if (apiErr) throw new Error(apiErr);
+            const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, { payment_method: ev.paymentMethod.id }, { handleActions: false });
+            if (error) { ev.complete('fail'); return; }
+            ev.complete('success');
+            if (paymentIntent.status === 'requires_action') await stripe.confirmCardPayment(clientSecret);
+            if (prButton) prButton.innerHTML = '<p style="color:#16a34a;font-weight:700;text-align:center;padding:12px;">✓ Paid!</p>';
+            setTimeout(closePopover, 1500);
+          } catch (_) { ev.complete('fail'); }
+        });
+      }
+
+      function closePopover() {
+        document.getElementById('pay-pop')?.remove();
+        document.removeEventListener('click', outsideClose);
+        stripeCardMounted = false;
+        stripeCard = null;
+        stripePayReq = null;
+      }
+
+      function outsideClose(e) {
+        const pop = document.getElementById('pay-pop');
+        if (pop && !pop.contains(e.target)) closePopover();
+      }
+    </script>
+  </body>
+</html>

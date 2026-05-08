@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sleek Academia | Your Professional Journey Begins</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-dim": "#a70138",
+                    "tertiary-fixed-dim": "#f77c9e",
+                    "on-secondary-fixed": "#5b2400",
+                    "on-primary": "#f8f0ff",
+                    "on-tertiary-fixed": "#380016",
+                    "on-tertiary-fixed-variant": "#711036",
+                    "on-error-container": "#510017",
+                    "error-container": "#f74b6d",
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#f5f7f9",
+                    "tertiary-container": "#ff8eac",
+                    "on-secondary": "#fff0e9",
+                    "background": "#f5f7f9",
+                    "on-background": "#2c2f31",
+                    "secondary-fixed-dim": "#ffb28a",
+                    "on-surface-variant": "#595c5e",
+                    "tertiary": "#9e3657",
+                    "surface-container-high": "#dfe3e6",
+                    "primary-fixed-dim": "#a67aff",
+                    "surface-container-highest": "#d9dde0",
+                    "on-secondary-fixed-variant": "#883900",
+                    "surface-tint": "#702ae1",
+                    "tertiary-dim": "#8e294c",
+                    "inverse-on-surface": "#9a9d9f",
+                    "surface-dim": "#d0d5d8",
+                    "on-tertiary-container": "#64042d",
+                    "secondary-dim": "#863800",
+                    "on-primary-container": "#2e006c",
+                    "surface-container-low": "#eef1f3",
+                    "secondary": "#994100",
+                    "primary-container": "#b28cff",
+                    "on-secondary-container": "#793200",
+                    "outline-variant": "#abadaf",
+                    "inverse-surface": "#0b0f10",
+                    "on-primary-fixed": "#000000",
+                    "primary-fixed": "#b28cff",
+                    "primary": "#702ae1",
+                    "secondary-fixed": "#ffc5a8",
+                    "primary-dim": "#6411d5",
+                    "surface-bright": "#f5f7f9",
+                    "inverse-primary": "#a476ff",
+                    "secondary-container": "#ffc5a8",
+                    "surface-variant": "#d9dde0",
+                    "on-surface": "#2c2f31",
+                    "on-error": "#ffefef",
+                    "on-tertiary": "#ffeff1",
+                    "error": "#b41340",
+                    "on-primary-fixed-variant": "#390083",
+                    "outline": "#747779",
+                    "tertiary-fixed": "#ff8eac",
+                    "surface-container": "#e5e9eb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "2xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #702ae1 0%, #b28cff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-primary-gradient {
+            background: linear-gradient(135deg, #702ae1 0%, #b28cff 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-primary-gradient:hover {
+            background: linear-gradient(135deg, #702ae1 0%, #994100 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(112, 42, 225, 0.2);
+        }
+        .floating-student {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-background selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl shadow-xl shadow-violet-900/5 transition-all duration-300">
+<div class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
+<div class="text-2xl font-black text-violet-700 tracking-tight font-headline">Sleek Academia</div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-violet-700 font-bold border-b-2 border-violet-600 font-label text-sm tracking-wide" href="#">Home</a>
+<a class="text-slate-600 font-medium hover:text-violet-500 transition-colors duration-300 font-label text-sm tracking-wide" href="#">About</a>
+<a class="text-slate-600 font-medium hover:text-violet-500 transition-colors duration-300 font-label text-sm tracking-wide" href="#">Courses</a>
+</div>
+<div class="flex items-center space-x-4">
+<button class="px-6 py-2 text-primary font-semibold hover:text-violet-500 transition-all scale-95 active:scale-90 font-label text-sm">Login</button>
+<button class="px-6 py-2 bg-primary text-white rounded-full font-bold shadow-lg hover:shadow-primary/30 transition-all scale-95 active:scale-90 font-label text-sm">Sign Up</button>
+</div>
+</div>
+</nav>
+<main class="pt-24 overflow-x-hidden">
+<!-- Hero Section -->
+<section class="relative px-8 pt-16 pb-24 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+<div class="z-10">
+<span class="inline-block py-1 px-4 mb-6 text-xs font-bold tracking-widest uppercase rounded-full bg-[#7c3aed] text-white">New Semester Enrollment Open</span>
+<h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 font-headline leading-[1.1] mb-6 tracking-tight">
+                    A place where your <span class="text-gradient">professional journey</span> begins.
+                </h1>
+<p class="text-xl text-on-surface-variant max-w-lg mb-10 leading-relaxed">
+                    Reputable tutoring for all courses. Expert-led guidance in Nursing, Law, ICT, and Finance designed for the modern learner.
+                </p>
+<div class="flex flex-wrap gap-4">
+<button class="px-8 py-4 bg-[#7c3aed] text-white rounded-2xl font-bold text-lg shadow-xl hover:bg-[#6d28d9] transition-all scale-95 active:scale-90 flex items-center">
+                        Get Started Now!
+                        <span class="material-symbols-outlined ml-2">arrow_forward</span>
+</button>
+<button class="px-8 py-4 bg-transparent border-2 border-primary text-primary rounded-2xl font-bold text-lg hover:bg-primary/5 transition-all scale-95 active:scale-90">
+                        Choose Course
+                    </button>
+</div>
+</div>
+<div class="relative group">
+<div class="absolute -inset-4 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors"></div>
+<img alt="Student sitting on giant books illustration" class="floating-student relative z-10 w-full max-w-lg mx-auto drop-shadow-2xl rounded-2xl" data-alt="A colorful illustration of a student sitting on a stack of giant books, reading a tablet, surrounded by vibrant abstract leaves and shapes on a purple background." src="https://lh3.googleusercontent.com/aida/ADBb0ujX-E2-Uww-q0Wp5v9-BJ1Mt3D60lqLDyjCfP8RbpIwsXqxjMbmSj5BuUwtENv_6ZPE8B4FVCC22ag9_qaSlkjxhwSVeS1TWIr2stGu8DketAgJe3UH1OLmkgBfjPtpCPYXmSQeCCU2mHff61DhplTruse2rbo95ws_0wNlSerzQpZrnLU38BfxQ4qmzcxzajS156istGbvLl9_UsgZG5a_T68CpkxI89D0qfXsLxLVd2KKQL2kcgf-qal1iQS6V1psQzgZBz5R"/>
+<!-- Floating Decorative UI Elements -->
+<div class="absolute top-10 -left-10 bg-white p-4 rounded-2xl shadow-2xl z-20 floating-student" style="animation-delay: -2s;">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-primary-container rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">menu_book</span>
+</div>
+<div>
+<p class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Next Lesson</p>
+<p class="text-sm font-bold">Nursing Pharmacology</p>
+</div>
+</div>
+</div>
+<div class="absolute bottom-10 right-0 bg-white p-4 rounded-2xl shadow-2xl z-20 floating-student" style="animation-delay: -4s;">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-secondary-container rounded-full flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">verified</span>
+</div>
+<div>
+<p class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Achievement</p>
+<p class="text-sm font-bold">UBE Certification Prep</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Course Search -->
+<section class="px-8 -mt-8 relative z-30">
+<div class="max-w-4xl mx-auto bg-white p-4 rounded-2xl shadow-2xl flex flex-col md:flex-row gap-4 items-center">
+<div class="relative w-full flex-grow">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/40 font-medium" placeholder="Search for Nursing, Law, ICT, Finance courses..." type="text"/>
+</div>
+<button class="w-full md:w-auto px-10 py-4 btn-primary-gradient text-white rounded-xl font-bold whitespace-nowrap">
+                    Search Course
+                </button>
+</div>
+</section>
+<!-- Social Proof Bar -->
+<section class="mt-16 bg-slate-950 py-12 px-8 overflow-hidden">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 opacity-60 grayscale hover:grayscale-0 transition-all">
+<p class="text-slate-500 font-bold tracking-widest text-xs uppercase mb-4 md:mb-0">Trusted by students at</p>
+<div class="flex flex-wrap justify-center gap-12 md:gap-24">
+<span class="text-white text-3xl font-black tracking-tighter font-headline italic">KNACK</span>
+<span class="text-white text-3xl font-black tracking-tighter font-headline italic">UDEMY</span>
+<span class="text-white text-3xl font-black tracking-tighter font-headline italic">UVOCORP</span>
+</div>
+</div>
+</section>
+<!-- Testimonials Section -->
+<section class="py-24 px-8 max-w-7xl mx-auto">
+<div class="text-center mb-16">
+<h2 class="text-4xl font-extrabold text-slate-900 font-headline mb-4">Student Reviews</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto text-lg">Don't just take our word for it. Hear from the professionals who started their journey with Sleek Academia.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Testimonial 1: Arrah A. -->
+<div class="bg-surface-container-low p-8 rounded-2xl relative group hover:bg-white hover:shadow-xl transition-all duration-300">
+<div class="flex text-secondary mb-4">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-lg font-medium italic text-slate-700 mb-8 leading-relaxed">"The tutor is doing an excellent job; the teaching methods are effective, and the emphasis on the material along with the question-and-answer sessions really helps boost confidence."</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg">AA</div>
+<div>
+<h4 class="font-bold text-slate-900">Arrah A.</h4>
+<p class="text-sm text-slate-500">NURS 3365 PHARMACOLOGY</p>
+</div>
+</div>
+</div>
+<!-- Testimonial 2: Oluwadara J. -->
+<div class="bg-white shadow-xl p-8 rounded-2xl relative transform md:-translate-y-4">
+<div class="flex text-secondary mb-4">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-lg font-medium italic text-slate-700 mb-8 leading-relaxed">"The best of the best. It was very helpful the best tutor session i have had. i would love to keep meeting with her. 10/10"</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-white font-bold text-lg">OJ</div>
+<div>
+<h4 class="font-bold text-slate-900">Oluwadara J.</h4>
+<p class="text-sm text-slate-500">NURS-UL 3366 PATHOPHYSIOLOGY</p>
+</div>
+</div>
+<div class="absolute -top-4 -right-4 w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined">format_quote</span>
+</div>
+</div>
+<!-- Testimonial 3: Lashay B. -->
+<div class="bg-surface-container-low p-8 rounded-2xl relative group hover:bg-white hover:shadow-xl transition-all duration-300">
+<div class="flex text-secondary mb-4">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-lg font-medium italic text-slate-700 mb-8 leading-relaxed">"5 stars review for my experience here. The guidance provided was exactly what I needed to master complex topics in advanced pharmacology for practitioners."</p>
+<div class="flex items-center gap-4">
+<img alt="Lashay B. Profile" class="w-12 h-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoicvgtTiTfrwTNVLYyYxSbNTav8Y2I8tDKKXPtyWl_dDGlsIyw4XgOgjtnhLwzWhGsyt3Dnz8zWBr_RcjjyXy6CXyj8of1lGDMxSTC4SSrerVUzLRh7pgCJJyeE6miPrCgL3XgnmHA-6mDtW3jlC_7TcvHoBclUjrUJy2oaue3TLqQmIOyP07ldpwW5xzDXAIZcTwXOb4PDKRikJpuA6iMntSwBKW00HCalVHoAziZ_3oV297Rb5-u49aFGFLFA3np7h21mVGRA"/>
+<div>
+<h4 class="font-bold text-slate-900">Lashay B.</h4>
+<p class="text-sm text-slate-500">NURS 5334 ADVANCED PHARMACOLOGY</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA/Integration Section -->
+<section class="py-20 px-8">
+<div class="max-w-5xl mx-auto bg-primary rounded-[2.5rem] p-12 md:p-20 text-center relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary to-primary-dim opacity-50"></div>
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-24 -left-24 w-64 h-64 bg-secondary/20 rounded-full blur-3xl"></div>
+<div class="relative z-10">
+<h2 class="text-4xl md:text-5xl font-extrabold text-white font-headline mb-8">Ready to start your journey?</h2>
+<p class="text-primary-container text-xl mb-12 max-w-2xl mx-auto font-medium">Join over 10,000 students already excelling in their professional certifications.</p>
+<div class="flex flex-col sm:flex-row justify-center gap-6">
+<button class="px-10 py-5 bg-white text-primary rounded-2xl font-bold text-xl hover:bg-slate-50 transition-all scale-95 active:scale-90 shadow-2xl">
+                            Get Started
+                        </button>
+<button class="px-10 py-5 bg-transparent border-2 border-white/30 text-white rounded-2xl font-bold text-xl hover:bg-white/10 transition-all scale-95 active:scale-90">
+                            Login to Portal
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full rounded-t-[2.5rem] mt-20 bg-slate-50 dark:bg-slate-950">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 px-12 py-16 max-w-7xl mx-auto">
+<div class="col-span-1 md:col-span-1">
+<div class="text-xl font-bold text-violet-700 dark:text-violet-300 mb-6 font-headline">Sleek Academia</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6">Empowering professionals through high-end digital learning and expert-led guidance.</p>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary cursor-pointer hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined">public</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary cursor-pointer hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined">mail</span>
+</div>
+</div>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 mb-6 uppercase tracking-wider text-xs">Exams</h4>
+<ul class="space-y-4">
+<li><a class="text-slate-500 dark:text-slate-400 hover:underline hover:text-violet-700 transition-all font-label" href="#">NCLEX</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:underline hover:text-violet-700 transition-all font-label" href="#">UBE</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:underline hover:text-violet-700 transition-all font-label" href="#">CompTIA</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:underline hover:text-violet-700 transition-all font-label" href="#">CFA</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 mb-6 uppercase tracking-wider text-xs">Company</h4>
+<ul class="space-y-4">
+<li><a class="text-slate-500 dark:text-slate-400 hover:underline hover:text-violet-700 transition-all font-label" href="#">Home</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:underline hover:text-violet-700 transition-all font-label" href="#">About Us</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:underline hover:text-violet-700 transition-all font-label" href="#">All Courses</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:underline hover:text-violet-700 transition-all font-label" href="#">Tutors</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 mb-6 uppercase tracking-wider text-xs">Resources</h4>
+<ul class="space-y-4">
+<li><a class="text-slate-500 dark:text-slate-400 hover:underline hover:text-violet-700 transition-all font-label" href="#">Help Center</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:underline hover:text-violet-700 transition-all font-label" href="#">Privacy Policy</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:underline hover:text-violet-700 transition-all font-label" href="#">Terms of Service</a></li>
+</ul>
+</div>
+</div>
+<div class="px-12 py-8 border-t border-slate-200/50 flex flex-col md:flex-row justify-between items-center gap-4 max-w-7xl mx-auto">
+<span class="text-slate-500 dark:text-slate-400 text-xs font-label uppercase tracking-widest">© 2024 Sleek Academia. All rights reserved.</span>
+<div class="flex gap-6">
+<span class="text-slate-400 text-xs font-medium">Privacy</span>
+<span class="text-slate-400 text-xs font-medium">Terms</span>
+<span class="text-slate-400 text-xs font-medium">Cookies</span>
+</div>
+</div>
+</footer>
+<!-- SEO & Metadata Hidden Content -->
+<div class="sr-only">
+        Nursing pathophysiology NURS-UL 3366, Pharmacology NURS 3365, NCLEX prep, international law tutoring, ICT certifications. Specialist tutoring for professional licensing and university courses.
+    </div>
+</body></html>
