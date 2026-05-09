@@ -1,0 +1,11 @@
+Options -Indexes
+RewriteEngine On
+
+# Route /api/paypal/capture-order/{orderId} → capture-order.php?orderId=…
+RewriteRule ^api/paypal/capture-order/([A-Z0-9]{10,30})$ /api/paypal/capture-order.php?orderId=$1 [L,QSA]
+
+# Auto-route /api/some/endpoint → /api/some/endpoint.php (hides .php extension)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(api/.+)$ $1.php [L]
