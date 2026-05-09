@@ -27,6 +27,20 @@ const adminEmails = splitEmails(process.env.ADMIN_EMAILS);
 const tutorEmails = splitEmails(process.env.TUTOR_EMAILS);
 
 app.use(express.json());
+
+// Allow the static frontend (on a different origin like sleekacademia.com) to call the API
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://sleekacademia.com,http://localhost:3000').split(',');
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  }
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
+
 app.use(clerkMiddleware());
 
 app.get("/", (_req, res) => {

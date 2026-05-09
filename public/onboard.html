@@ -573,13 +573,22 @@
     });
 
     // ── Payment gateway state ──────────────────────────────────────────────────
+    // Set API_BASE to your backend URL once deployed (e.g. https://sleekacademia-api.railway.app).
+    // Leave empty to use relative paths (works when frontend + backend are on the same origin).
+    const API_BASE = '';
     let stripe = null;
     let stripeCard = null;
     let stripeCardReady = false;
     let stripePayReq = null;
     let paypalLoaded = false;
     let activeTab = 'card';
-    let siteConfig = null;
+    // Public keys are safe to inline — they only identify the account, not charge it.
+    // Update these to your live keys (pk_live_ / PayPal live client-id) before going live.
+    const siteConfig = {
+      stripePublishableKey: 'pk_test_51TUcxwAo3k0aFK0fToIrUSG6KYWFaByofdDBxan8tr1U6dDfigEEedklYGyTW6my3JexNiJmf7SBhlQAteBPB1sJ00X0ZZV6pc',
+      paypalClientId: 'ATf8sFRIgqXlFSAOez7l5RrQykpYoS1u0ZyjhizLV00vhJwwQ6wbL83cu12X1OufISwDoOIfvZh2gT50',
+    };
+    stripe = Stripe(siteConfig.stripePublishableKey);
 
     // ── Tab switcher ───────────────────────────────────────────────────────────
     document.querySelectorAll('.pay-tab').forEach(btn => {
@@ -605,7 +614,8 @@
 
     // ── Stripe card ────────────────────────────────────────────────────────────
     function initStripeCard() {
-      if (!stripe || stripeCardReady) return;
+      if (stripeCardReady) return;
+      if (!stripe) return;
       const elements = stripe.elements();
       stripeCard = elements.create('card', {
         style: { base: { fontSize: '15px', color: '#2c2f31', fontFamily: 'Inter,sans-serif', '::placeholder': { color: '#9ca3af' } }, invalid: { color: '#e11d48' } },
@@ -629,7 +639,7 @@
       btn.disabled = true;
       btn.textContent = 'Processing...';
       try {
-        const { clientSecret, error: apiErr } = await fetch('/api/stripe/create-payment-intent', {
+        const { clientSecret, error: apiErr } = await fetch(API_BASE + '/api/stripe/create-payment-intent', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ amount: amountCents, description: `Sleek Academia — ${label}` }),
@@ -653,7 +663,7 @@
     function initPayPal() {
       const clientId = siteConfig?.paypalClientId;
       if (!clientId || clientId.includes('REPLACE')) {
-        document.getElementById('paypal-error').textContent = 'PayPal is not configured yet.';
+        document.getElementById('paypal-error').textContent = 'PayPal is not configured.';
         return;
       }
       if (document.getElementById('paypal-sdk')) { renderPayPalButtons(); return; }
@@ -672,7 +682,7 @@
       const amountCents = Math.round(orderData.amount * 100);
 
       paypal.Buttons({
-        createOrder: () => fetch('/api/paypal/create-order', {
+        createOrder: () => fetch(API_BASE + '/api/paypal/create-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ amount: amountCents, description: `Sleek Academia — ${label}` }),
@@ -680,7 +690,7 @@
           if (!d.id) throw new Error(d.error || 'Order creation failed');
           return d.id;
         }),
-        onApprove: (data) => fetch(`/api/paypal/capture-order/${data.orderID}`, { method: 'POST' })
+        onApprove: (data) => fetch(API_BASE + `/api/paypal/capture-order/${data.orderID}`, { method: 'POST' })
           .then(r => r.json()).then(details => {
             if (details.status === 'COMPLETED') {
               document.getElementById('paypal-buttons-container').innerHTML = '<p style="color:#16a34a;font-weight:700;text-align:center;padding:16px;">✓ Payment Successful! Redirecting...</p>';
@@ -732,7 +742,7 @@
 
       stripePayReq.on('paymentmethod', async (ev) => {
         try {
-          const { clientSecret, error: apiErr } = await fetch('/api/stripe/create-payment-intent', {
+          const { clientSecret, error: apiErr } = await fetch(API_BASE + '/api/stripe/create-payment-intent', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ amount: amountCents, description: `Sleek Academia — ${label}` }),
@@ -762,20 +772,11 @@
       document.getElementById('payment-total').textContent = `$${orderData.amount.toFixed ? orderData.amount.toFixed(2) : orderData.amount}`;
       document.getElementById('payment-note').textContent = orderData.desc;
       showStep('step-payment');
-
-      // Load config once, then init Stripe card
-      fetch('/api/config').then(r => r.json()).then(cfg => {
-        siteConfig = cfg;
-        const pk = cfg.stripePublishableKey;
-        if (pk && !pk.includes('REPLACE')) {
-          stripe = Stripe(pk);
-          initStripeCard();
-        }
-      }).catch(() => {});
+      initStripeCard();
     }
 
     // ── Boot ───────────────────────────────────────────────────────────────────
     document.documentElement.classList.add('page-ready');
-  </script>
+</script>
 </body>
 </html>

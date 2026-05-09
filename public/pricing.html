@@ -588,17 +588,17 @@
       document.documentElement.classList.add('page-ready');
 
       // ── Gateway state ──────────────────────────────────────────────────────────
-      let stripe = null;
+      // Set API_BASE to your backend URL once deployed (e.g. https://sleekacademia-api.railway.app).
+      const API_BASE = '';
       let stripeCard = null;
       let stripeCardMounted = false;
       let stripePayReq = null;
-      let siteConfig = null;
-
-      fetch('/api/config').then(r => r.json()).then(cfg => {
-        siteConfig = cfg;
-        const pk = cfg.stripePublishableKey;
-        if (pk && !pk.includes('REPLACE')) stripe = Stripe(pk);
-      }).catch(() => {});
+      // Public keys — safe to inline. Update to live keys before going live.
+      const siteConfig = {
+        stripePublishableKey: 'pk_test_51TUcxwAo3k0aFK0fToIrUSG6KYWFaByofdDBxan8tr1U6dDfigEEedklYGyTW6my3JexNiJmf7SBhlQAteBPB1sJ00X0ZZV6pc',
+        paypalClientId: 'ATf8sFRIgqXlFSAOez7l5RrQykpYoS1u0ZyjhizLV00vhJwwQ6wbL83cu12X1OufISwDoOIfvZh2gT50',
+      };
+      const stripe = Stripe(siteConfig.stripePublishableKey);
 
       // ── Popover ─────────────────────────────────────────────────────────────────
       document.querySelectorAll('button[data-product]').forEach(btn => {
@@ -690,7 +690,7 @@
       }
 
       function popMountStripeCard(product, price) {
-        if (!stripe || stripeCardMounted) return;
+        if (stripeCardMounted) return;
         const el = document.getElementById('stripe-card-slot');
         if (!el) return;
         const elements = stripe.elements();
@@ -708,7 +708,7 @@
         const payBtn = document.getElementById('pop-pay-btn');
         payBtn.disabled = true; payBtn.textContent = 'Processing...';
         try {
-          const { clientSecret, error: apiErr } = await fetch('/api/stripe/create-payment-intent', {
+          const { clientSecret, error: apiErr } = await fetch(API_BASE + '/api/stripe/create-payment-intent', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ amount: amountCents, description: `Sleek Academia — ${product}` }),
           }).then(r => r.json());
@@ -721,26 +721,35 @@
 
       function popInitPayPal(product, price) {
         const clientId = siteConfig?.paypalClientId;
-        if (!clientId || clientId.includes('REPLACE')) { const e = document.getElementById('pop-paypal-err'); if (e) e.textContent = 'PayPal not configured yet.'; return; }
+        if (!clientId || clientId.includes('REPLACE')) {
+          if (!siteConfig) {
+            const e = document.getElementById('pop-paypal-err'); if (e) e.textContent = 'Loading…';
+            setTimeout(() => popInitPayPal(product, price), 300);
+          } else {
+            const e = document.getElementById('pop-paypal-err'); if (e) e.textContent = 'PayPal not configured yet.';
+          }
+          return;
+        }
         const amountCents = Math.round(parseFloat(price) * 100);
         const container = document.getElementById('pop-paypal-buttons');
         if (!container || container.children.length) return;
         const loadAndRender = () => {
           if (typeof paypal === 'undefined') return;
           paypal.Buttons({
-            createOrder: () => fetch('/api/paypal/create-order', {
+            createOrder: () => fetch(API_BASE + '/api/paypal/create-order', {
               method: 'POST', headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ amount: amountCents, description: `Sleek Academia — ${product}` }),
             }).then(r => r.json()).then(d => { if (!d.id) throw new Error(d.error || 'Failed'); return d.id; }),
-            onApprove: (data) => fetch(`/api/paypal/capture-order/${data.orderID}`, { method: 'POST' }).then(r => r.json()).then(details => {
+            onApprove: (data) => fetch(API_BASE + `/api/paypal/capture-order/${data.orderID}`, { method: 'POST' }).then(r => r.json()).then(details => {
               if (details.status === 'COMPLETED') { if (container) container.innerHTML = '<p style="color:#16a34a;font-weight:700;text-align:center;padding:12px;">✓ Paid!</p>'; setTimeout(closePopover, 1500); }
             }),
             onError: () => { const e = document.getElementById('pop-paypal-err'); if (e) e.textContent = 'PayPal payment failed.'; },
             style: { layout: 'vertical', color: 'blue', shape: 'rect', label: 'pay' },
-          }).render('#pop-paypal-buttons');
+          }).render('#pop-paypal-buttons').catch(() => { const e = document.getElementById('pop-paypal-err'); if (e) e.textContent = 'PayPal failed to render.'; });
         };
         if (typeof paypal !== 'undefined') { loadAndRender(); return; }
-        if (document.getElementById('paypal-sdk')) { setTimeout(loadAndRender, 500); return; }
+        const existingScript = document.getElementById('paypal-sdk');
+        if (existingScript) { existingScript.addEventListener('load', loadAndRender); return; }
         const s = document.createElement('script');
         s.id = 'paypal-sdk'; s.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=USD`;
         s.onload = loadAndRender; s.onerror = () => { const e = document.getElementById('pop-paypal-err'); if (e) e.textContent = 'Failed to load PayPal.'; };
@@ -748,7 +757,6 @@
       }
 
       function popInitGPay(product, price) {
-        if (!stripe) { const m = document.getElementById('pop-gpay-msg'); if (m) m.style.display = 'block'; return; }
         const amountCents = Math.round(parseFloat(price) * 100);
         const prButton = document.getElementById('pop-pr-button');
         if (!prButton || prButton.children.length) return;
@@ -765,7 +773,7 @@
         });
         stripePayReq.on('paymentmethod', async ev => {
           try {
-            const { clientSecret, error: apiErr } = await fetch('/api/stripe/create-payment-intent', {
+            const { clientSecret, error: apiErr } = await fetch(API_BASE + '/api/stripe/create-payment-intent', {
               method: 'POST', headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ amount: amountCents, description: `Sleek Academia — ${product}` }),
             }).then(r => r.json());
