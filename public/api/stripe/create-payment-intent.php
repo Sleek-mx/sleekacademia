@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 // TODO: Replace with your live secret key before going live → sk_live_…
-$STRIPE_SECRET = 'sk_test_51TUcxwAo3k0aFK0fdV4YfsRpPzTxU8FrELv3cuZuQsaqVYm3AyhBp5K9QqllribLwrGqpvU94XqQTE0CArmbKDlm00DygJqTUN';
+$stripe_secret = getenv('STRIPE_SECRET_KEY');
 
 $input  = json_decode(file_get_contents('php://input'), true) ?: [];
 $amount = intval($input['amount'] ?? 0);
