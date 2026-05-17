@@ -137,7 +137,12 @@ const clerkCookieNames = [
 ];
 
 app.get("/api/health", (_req, res) => {
-  res.json({ ok: true, service: "sleek-academia", time: new Date().toISOString() });
+  res.json({
+    ok: true,
+    service: "sleek-academia",
+    deployWebhook: true,
+    time: new Date().toISOString()
+  });
 });
 
 app.get("/logout", (_req, res) => {
