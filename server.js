@@ -1,7 +1,11 @@
 import "dotenv/config";
 import axios from "axios";
+import crypto from "crypto";
+import { exec } from "child_process";
+import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
+import { promisify } from "util";
 import express from "express";
 import Stripe from "stripe";
 import {
@@ -19,6 +23,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const publicDir = path.join(__dirname, "public");
 const assetsDir = path.join(__dirname, "assets");
+const execAsync = promisify(exec);
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -26,6 +31,80 @@ const port = Number(process.env.PORT || 3000);
 const validRoles = new Set(["admin", "tutor", "student"]);
 const adminEmails = splitEmails(process.env.ADMIN_EMAILS);
 const tutorEmails = splitEmails(process.env.TUTOR_EMAILS);
+
+app.post("/deploy.php", express.raw({ type: "application/json", limit: "2mb" }), async (req, res) => {
+  const secret = process.env.GITHUB_WEBHOOK_SECRET || "sleek2026deploy";
+  const rawBody = Buffer.isBuffer(req.body) ? req.body : Buffer.from("");
+  const expectedSignature = `sha256=${crypto.createHmac("sha256", secret).update(rawBody).digest("hex")}`;
+  const receivedSignature = req.get("x-hub-signature-256") || "";
+
+  const expectedBuffer = Buffer.from(expectedSignature);
+  const receivedBuffer = Buffer.from(receivedSignature);
+  if (
+    !receivedSignature ||
+    expectedBuffer.length !== receivedBuffer.length ||
+    !crypto.timingSafeEqual(expectedBuffer, receivedBuffer)
+  ) {
+    return res.status(403).json({ error: "Invalid signature" });
+  }
+
+  let payload;
+  try {
+    payload = JSON.parse(rawBody.toString("utf8"));
+  } catch {
+    return res.status(400).json({ error: "Invalid JSON payload" });
+  }
+
+  if (payload.ref !== "refs/heads/main") {
+    return res.json({ status: "ignored", reason: "not main branch" });
+  }
+
+  const repoPath = process.env.DEPLOY_REPO_PATH || "/home/sleenegb/repositories/sleekacademia";
+  const livePath = process.env.DEPLOY_LIVE_PATH || "/home/sleenegb/public_html/sleekacademianewsite";
+  const npmBin = process.env.DEPLOY_NPM_BIN || "/opt/alt/alt-nodejs20/root/usr/bin/npm";
+  const logFile = process.env.DEPLOY_LOG_FILE || "/home/sleenegb/deploy.log";
+
+  const commands = [
+    `cd ${shellQuote(repoPath)} && git fetch origin main && git reset --hard origin/main`,
+    `/usr/bin/rsync -a --delete --exclude='.git' --exclude='.cpanel.yml' --exclude='node_modules' --exclude='.env' ${shellQuote(`${repoPath}/`)} ${shellQuote(`${livePath}/`)}`,
+    `cd ${shellQuote(livePath)} && ${shellQuote(npmBin)} install --omit=dev`,
+    `mkdir -p ${shellQuote(`${livePath}/tmp`)} && touch ${shellQuote(`${livePath}/tmp/restart.txt`)}`
+  ];
+
+  const results = [];
+  for (const command of commands) {
+    try {
+      const { stdout, stderr } = await execAsync(command, { timeout: 120000 });
+      results.push({ command, code: 0, output: `${stdout}${stderr}`.slice(-4000) });
+    } catch (error) {
+      results.push({
+        command,
+        code: error.code || 1,
+        output: `${error.stdout || ""}${error.stderr || error.message || ""}`.slice(-4000)
+      });
+      break;
+    }
+  }
+
+  const failed = results.filter((step) => step.code !== 0);
+  const logLine = `${new Date().toISOString()} | commit=${payload.after || "unknown"} | pusher=${payload.pusher?.name || "unknown"} | errors=${failed.length}\n`;
+  try {
+    await fs.appendFile(logFile, logLine);
+  } catch (error) {
+    results.push({ command: "write deploy log", code: error.code || 1, output: error.message });
+  }
+
+  return res.status(failed.length ? 500 : 200).json({
+    status: failed.length ? "failed" : "success",
+    commit: payload.after || "unknown",
+    steps: results.length,
+    errors: failed.map((step) => step.command)
+  });
+});
+
+app.get("/deploy.php", (_req, res) => {
+  res.status(404).send("Not found");
+});
 
 app.use(express.json());
 
@@ -412,6 +491,10 @@ app.listen(port, () => {
 
 function splitEmails(value = "") {
   return new Set(value.split(",").map((item) => item.trim().toLowerCase()).filter(Boolean));
+}
+
+function shellQuote(value) {
+  return `'${String(value).replace(/'/g, "'\\''")}'`;
 }
 
 function normalizeRole(value) {
