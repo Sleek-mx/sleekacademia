@@ -235,6 +235,46 @@ app.post("/api/stripe/create-checkout-session", async (req, res) => {
   }
 });
 
+// ── Gumroad Products (public, 5-min server-side cache) ────────────────────
+let _gumroadCache = { products: null, fetchedAt: 0 };
+const GUMROAD_TTL = 5 * 60 * 1000;
+
+app.get('/api/gumroad/products', async (_req, res) => {
+  try {
+    const token = process.env.GUMROAD_ACCESS_TOKEN;
+    if (!token) return res.status(503).json({ error: 'Gumroad not configured.' });
+
+    if (_gumroadCache.products && Date.now() - _gumroadCache.fetchedAt < GUMROAD_TTL) {
+      return res.json({ products: _gumroadCache.products, cached: true });
+    }
+
+    const { data } = await axios.get('https://api.gumroad.com/v2/products', {
+      headers: { Authorization: `Bearer ${token}` },
+      timeout: 10000,
+    });
+
+    if (!data.success) throw new Error('Gumroad API error');
+
+    const products = (data.products || [])
+      .filter(p => p.published)
+      .map(p => ({
+        id: p.id,
+        name: p.name,
+        description: (p.description || '').replace(/<[^>]*>/g, '').slice(0, 120),
+        formattedPrice: p.formatted_price || 'See price',
+        url: p.short_url,
+        permalink: p.permalink,
+        coverUrl: p.cover_url || null,
+      }));
+
+    _gumroadCache = { products, fetchedAt: Date.now() };
+    return res.json({ products, cached: false });
+  } catch (err) {
+    console.error('Gumroad API error:', err.message);
+    return res.status(500).json({ error: 'Failed to fetch Gumroad products.' });
+  }
+});
+
 // ── NVIDIA AI Chat Route (public — no auth required, axios avoids Node v25 fetch bug) ──
 async function nvidiaChat(apiKey, body) {
   const { data } = await axios.post(
