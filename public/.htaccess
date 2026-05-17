@@ -1,4 +1,9 @@
 Options -Indexes
+
+<FilesMatch "\.html$">
+  Header set Cache-Control "no-cache, must-revalidate"
+</FilesMatch>
+
 RewriteEngine On
 
 # Route /api/paypal/capture-order/{orderId} → capture-order.php?orderId=…

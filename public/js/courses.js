@@ -50,6 +50,7 @@ const courseModalContent = {
   nclex: {
     exam: "NCLEX-RN",
     category: "nursing",
+    price: 9700,
     title: "NCLEX-RN / PN Mastery",
     definition:
       "NCLEX preparation at Sleek Academia trains learners to think like safe, entry-level nurses under adaptive exam conditions. The course turns broad nursing content into decisive clinical judgment, prioritization, and delegation skills. It is built for candidates who want structure, clarity, and confidence before test day.",
@@ -65,6 +66,7 @@ const courseModalContent = {
   pathophysiology: {
     exam: "Pathophysiology",
     category: "nursing",
+    price: 9700,
     title: "Pathophysiology Intensive",
     definition:
       "Pathophysiology examines how disease processes alter normal body function across systems and clinical contexts. It helps learners connect symptoms, labs, disease progression, and interventions with real clinical reasoning. The course is designed to make difficult concepts feel coherent, practical, and exam-ready.",
@@ -80,6 +82,7 @@ const courseModalContent = {
   pharmacology: {
     exam: "Pharmacology",
     category: "nursing",
+    price: 9700,
     title: "Pharmacology Mastery",
     definition:
       "Pharmacology focuses on drug classes, mechanisms of action, adverse effects, contraindications, and safe administration principles. The course helps students organize medication reasoning instead of memorizing disconnected facts. It supports both exam performance and stronger bedside confidence.",
@@ -95,6 +98,7 @@ const courseModalContent = {
   hesi: {
     exam: "HESI A2",
     category: "nursing",
+    price: 9700,
     title: "HESI A2 / TEAS Readiness",
     definition:
       "HESI A2 and TEAS preparation strengthens the science, math, reading, and test-taking precision needed for nursing entry success. The learning path combines targeted remediation with strategic pacing to improve confidence across sections. It is designed for students who want both score growth and stronger academic readiness.",
@@ -110,6 +114,7 @@ const courseModalContent = {
   lsat: {
     exam: "LSAT",
     category: "law",
+    price: 14700,
     title: "LSAT Essentials",
     definition:
       "LSAT preparation sharpens logical reasoning, reading precision, and analytical structure under timed pressure. The course is built to strengthen the habits that law-school admissions exams reward most. It combines rigorous breakdowns with repeatable test-day strategy.",
@@ -125,6 +130,7 @@ const courseModalContent = {
   ube: {
     exam: "UBE",
     category: "law",
+    price: 14700,
     title: "UBE Performance Track",
     definition:
       "UBE preparation at Sleek Academia combines doctrinal mastery with practical writing discipline and exam structure. The course helps candidates manage the Multistate Bar Examination with more precision and control. It is designed for serious performance under high cognitive load.",
@@ -140,6 +146,7 @@ const courseModalContent = {
   lpc: {
     exam: "LPC",
     category: "law",
+    price: 14700,
     title: "LPC Preparation",
     definition:
       "LPC preparation focuses on practical legal application, professional competence, and structured exam readiness. The course supports learners who need both technical legal understanding and execution discipline. It is tailored for students aiming to move with confidence into solicitor-track training.",
@@ -155,6 +162,7 @@ const courseModalContent = {
   atp: {
     exam: "ATP",
     category: "law",
+    price: 14700,
     title: "ATP Advocacy Path",
     definition:
       "ATP preparation develops legal thinking, advocacy readiness, and structured exam discipline for advanced professional entry. The course is designed for learners who need sharper application, not just passive review. It combines legal rigor with focused performance coaching.",
@@ -170,6 +178,7 @@ const courseModalContent = {
   cfa: {
     exam: "CFA Level I",
     category: "finance",
+    price: 19700,
     title: "CFA Levels I-III",
     definition:
       "CFA preparation at Sleek Academia is built around disciplined investment reasoning, ethics, valuation, and portfolio thinking. The course helps candidates master both breadth and depth across the curriculum. It is structured for professionals who need serious analytical clarity at every level.",
@@ -185,6 +194,7 @@ const courseModalContent = {
   cpa: {
     exam: "CPA",
     category: "finance",
+    price: 19700,
     title: "CPA Pathway",
     definition:
       "CPA preparation strengthens accounting judgment, reporting accuracy, and exam discipline across core professional domains. The course is designed to make complex material feel more systematic and usable. It supports candidates aiming for both pass performance and long-term technical confidence.",
@@ -200,6 +210,7 @@ const courseModalContent = {
   acca: {
     exam: "ACCA",
     category: "finance",
+    price: 19700,
     title: "ACCA / CIFA Professional Track",
     definition:
       "ACCA and CIFA preparation at Sleek Academia supports learners pursuing financial analysis, reporting, and professional advancement. The learning path blends technical rigor with exam strategy so knowledge translates into results. It is ideal for candidates who need credibility, clarity, and consistency.",
@@ -215,6 +226,7 @@ const courseModalContent = {
   comptia_a: {
     exam: "CompTIA A+",
     category: "ict",
+    price: 9700,
     title: "CompTIA A+ Foundation",
     definition:
       "CompTIA A+ preparation covers essential systems knowledge, troubleshooting logic, and support-ready technical thinking. The course is built for candidates who want a practical and well-structured start in IT. It emphasizes usable understanding, not just checklist memorization.",
@@ -230,6 +242,7 @@ const courseModalContent = {
   security_plus: {
     exam: "CompTIA Security+",
     category: "ict",
+    price: 9700,
     title: "Security+ Readiness",
     definition:
       "Security+ preparation develops security reasoning across risk, controls, threats, and defensive operations. The course is structured to help candidates see how concepts connect in real environments. It is ideal for learners who want both certification progress and applied security confidence.",
@@ -245,6 +258,7 @@ const courseModalContent = {
   aws: {
     exam: "AWS Architect",
     category: "ict",
+    price: 12700,
     title: "AWS Architect",
     definition:
       "AWS Architect preparation strengthens cloud design judgment, architecture tradeoffs, and scalable infrastructure thinking. The course helps learners move beyond service recall into solution reasoning. It is built for candidates who want confidence in both architecture questions and practical design logic.",
@@ -260,6 +274,7 @@ const courseModalContent = {
   ccna: {
     exam: "CCNA",
     category: "ict",
+    price: 9700,
     title: "CCNA / CEH Technical Track",
     definition:
       "CCNA and CEH preparation blends networking depth with security-focused thinking for modern technical careers. The course is designed to build practical confidence as well as certification readiness. It supports learners who want stronger command over infrastructure and cyber fundamentals.",
@@ -286,6 +301,7 @@ function initCoursesPage() {
   const modalPillars = document.getElementById("course-modal-pillars");
   const modalQuote = document.getElementById("course-modal-quote");
   const modalCta = document.getElementById("course-modal-cta");
+  const modalEnroll = document.getElementById("course-modal-enroll");
   const modalScroll = document.getElementById("course-modal-scroll");
   const transition = document.getElementById("funnel-transition");
   const closeModalButton = document.getElementById("close-course-modal");
@@ -367,6 +383,12 @@ function initCoursesPage() {
       category: content.category,
     });
     modalCta.href = `/onboard.html?${params.toString()}`;
+    if (modalEnroll) {
+      modalEnroll.dataset.enrollCourse = content.title;
+      modalEnroll.dataset.enrollPrice = String(content.price);
+      const dollars = Math.round(content.price / 100);
+      modalEnroll.textContent = `Enroll — $${dollars}`;
+    }
 
     console.log("Modal opened. Viewport height:", window.innerHeight);
     modal.classList.add("active");

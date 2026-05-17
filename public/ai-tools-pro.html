@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>AI Tools Pro | Sleek Academia</title>
+    <meta name="description" content="Free AI-powered study tools for Sleek Academia students. AI Study Assistant, Exam Anxiety Coach, Socratic Challenger, Question Predictor, Podcast Generator, and Visual Mind Map." />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#702ae1",
+              "primary-dim": "#6411d5",
+              "primary-container": "#b28cff",
+              secondary: "#994100",
+              "secondary-container": "#ffc5a8",
+              surface: "#f5f7f9",
+              "surface-container": "#e5e9eb",
+              "surface-container-low": "#eef1f3",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#dfe3e6",
+              "on-surface": "#2c2f31",
+              "on-surface-variant": "#595c5e",
+              outline: "#747779"
+            },
+            borderRadius: { "2xl": "1.5rem", "3xl": "2rem" },
+            fontFamily: { headline: ["Plus Jakarta Sans", "sans-serif"], body: ["Inter", "sans-serif"] },
+            boxShadow: { glow: "0 24px 60px -24px rgba(112, 42, 225, 0.35)" }
+          }
+        }
+      };
+    </script>
+    <style>
+      html { background: #f5f7f9; }
+      body { opacity: 0; transform: translateY(18px); transition: opacity 220ms ease, transform 220ms ease; font-family: "Inter", sans-serif; }
+      html.page-ready body { opacity: 1; transform: translateY(0); }
+      html.page-exit body { opacity: 0; transform: translateY(12px); }
+      .material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; }
+      .text-gradient { background: linear-gradient(135deg, #702ae1 0%, #b28cff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+      h1, h2, h3, h4, .brand-font { font-family: "Plus Jakarta Sans", sans-serif; }
+      #chat-messages, #socratic-messages { scrollbar-width: thin; scrollbar-color: #e5e9eb transparent; }
+      #chat-messages::-webkit-scrollbar, #socratic-messages::-webkit-scrollbar { width: 4px; }
+      #chat-messages::-webkit-scrollbar-track, #socratic-messages::-webkit-scrollbar-track { background: transparent; }
+      #chat-messages::-webkit-scrollbar-thumb, #socratic-messages::-webkit-scrollbar-thumb { background: #dfe3e6; border-radius: 99px; }
+      .msg-user { background: #702ae1; color: white; border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; }
+      .msg-ai { background: white; color: #2c2f31; border-radius: 1.25rem 1.25rem 1.25rem 0.25rem; box-shadow: 0 2px 12px rgba(112,42,225,0.08); }
+      .msg-socratic-ai { background: #fffbeb; color: #2c2f31; border-radius: 1.25rem 1.25rem 1.25rem 0.25rem; box-shadow: 0 2px 12px rgba(217,119,6,0.08); border-left: 3px solid #f59e0b; }
+      .tool-card { transition: all 0.2s ease; cursor: pointer; }
+      .tool-card:hover { transform: translateY(-3px); }
+      .tool-card.active { border-color: #702ae1; background: white; box-shadow: 0 0 0 3px rgba(112,42,225,0.12), 0 8px 32px rgba(112,42,225,0.15); }
+      .typing-dot { animation: typingBounce 1.2s infinite; background: #702ae1; border-radius: 50%; width: 7px; height: 7px; }
+      .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+      .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+      .typing-dot-amber { animation: typingBounce 1.2s infinite; background: #d97706; border-radius: 50%; width: 7px; height: 7px; }
+      .typing-dot-amber:nth-child(2) { animation-delay: 0.2s; }
+      .typing-dot-amber:nth-child(3) { animation-delay: 0.4s; }
+      @keyframes typingBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
+      textarea { resize: none; }
+      .subject-btn { transition: all 0.15s ease; }
+      .subject-btn:hover, .subject-btn.selected { background: #702ae1; color: white; border-color: #702ae1; }
+      .socratic-btn { transition: all 0.15s ease; }
+      .socratic-btn:hover, .socratic-btn.selected { background: #d97706; color: white; border-color: #d97706; }
+      #chat-input, #socratic-input { min-height: 44px; max-height: 140px; overflow-y: auto; }
+      #anxiety-input { min-height: 120px; }
+      #podcast-input, #podcast-output { min-height: 200px; }
+      #mindmap-input { min-height: 100px; }
+      .ai-output-panel { line-height: 1.75; font-size: 0.875rem; }
+      .ai-output-panel strong { font-weight: 700; }
+      .mindmap-bg { background: linear-gradient(135deg, #f8f5ff 0%, #f0f9ff 100%); }
+    </style>
+    <link rel="stylesheet" href="/css/chatbot.css">
+</head>
+  <body class="bg-surface font-body text-on-surface">
+    <nav class="fixed top-0 z-50 w-full bg-white/75 backdrop-blur-xl shadow-xl shadow-violet-900/5">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+        <a class="brand-font text-2xl font-black tracking-tight text-violet-700" href="/">Sleek Academia</a>
+        <div class="hidden items-center gap-8 md:flex">
+          <a class="text-sm font-medium text-slate-600 transition-colors hover:text-violet-500" href="/">Home</a>
+          <a class="text-sm font-medium text-slate-600 transition-colors hover:text-violet-500" href="/about.html">About Us</a>
+          <a class="text-sm font-medium text-slate-600 transition-colors hover:text-violet-500" href="/blog.html">Blog</a>
+          <a class="text-sm font-medium text-slate-600 transition-colors hover:text-violet-500" href="/store.html">Store</a>
+          <a class="text-sm font-bold text-violet-700" href="/ai-tools.html">AI Tools</a>
+          <span style="display:inline-flex;align-items:center;gap:4px;background:#fef3c7;border:1.5px solid #f59e0b;color:#92400e;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;">✅ Pro Access</span>
+          <a class="text-sm font-medium text-slate-600 transition-colors hover:text-violet-500" href="/pricing.html">Pricing</a>
+        </div>
+        <div class="flex items-center gap-3">
+          <a class="rounded-full bg-primary px-5 py-2 text-sm font-bold text-white shadow-glow transition-all hover:bg-primary-dim" href="/onboard.html">Get Started</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="pt-24 pb-20">
+      <section class="mx-auto max-w-7xl px-6 pt-10 pb-12 lg:px-8">
+        <div class="mb-2 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-primary">
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1">auto_awesome</span>
+          Powered by NVIDIA AI
+        </div>
+        <h1 class="mt-4 text-4xl font-extrabold tracking-tight md:text-5xl">Your <span class="text-gradient">AI Study Suite</span></h1>
+        <p class="mt-4 max-w-2xl text-lg text-on-surface-variant">Free AI tools built for serious students. Study smarter, write better, stress less.</p>
+      </section>
+
+      <!-- TOOL CARDS -->
+      <section class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+          <div class="tool-card active rounded-2xl border-2 border-outline/20 bg-white p-5" onclick="switchTool('assistant')" id="tab-assistant">
+            <div class="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-primary/10">
+              <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1">school</span>
+            </div>
+            <h3 class="text-sm font-bold text-slate-900">AI Study Assistant</h3>
+            <p class="mt-1 text-xs text-slate-500">Your personal AI tutor, always ready</p>
+          </div>
+          <div class="tool-card rounded-2xl border-2 border-outline/20 bg-surface-container-low p-5" onclick="switchTool('anxiety')" id="tab-anxiety">
+            <div class="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-rose-50">
+              <span class="material-symbols-outlined text-rose-500" style="font-variation-settings:'FILL' 1">psychology</span>
+            </div>
+            <h3 class="text-sm font-bold text-slate-900">Anxiety Coach</h3>
+            <p class="mt-1 text-xs text-slate-500">Beat exam stress with a coaching plan</p>
+          </div>
+          <div class="tool-card rounded-2xl border-2 border-outline/20 bg-surface-container-low p-5" onclick="switchTool('socratic')" id="tab-socratic">
+            <div class="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-amber-50">
+              <span class="material-symbols-outlined text-amber-500" style="font-variation-settings:'FILL' 1">forum</span>
+            </div>
+            <h3 class="text-sm font-bold text-slate-900">Socratic Challenger</h3>
+            <p class="mt-1 text-xs text-slate-500">Deepen understanding via questions</p>
+          </div>
+          <div class="tool-card rounded-2xl border-2 border-outline/20 bg-surface-container-low p-5" onclick="switchTool('predictor')" id="tab-predictor">
+            <div class="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-green-50">
+              <span class="material-symbols-outlined text-green-600" style="font-variation-settings:'FILL' 1">quiz</span>
+            </div>
+            <h3 class="text-sm font-bold text-slate-900">Question Predictor</h3>
+            <p class="mt-1 text-xs text-slate-500">Predict 5 likely exam questions</p>
+          </div>
+          <div class="tool-card rounded-2xl border-2 border-outline/20 bg-surface-container-low p-5" onclick="switchTool('podcast')" id="tab-podcast">
+            <div class="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-sky-50">
+              <span class="material-symbols-outlined text-sky-500" style="font-variation-settings:'FILL' 1">podcasts</span>
+            </div>
+            <h3 class="text-sm font-bold text-slate-900">Podcast from Notes</h3>
+            <p class="mt-1 text-xs text-slate-500">Turn notes into a podcast script</p>
+          </div>
+          <div class="tool-card rounded-2xl border-2 border-outline/20 bg-surface-container-low p-5" onclick="switchTool('mindmap')" id="tab-mindmap">
+            <div class="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-teal-50">
+              <span class="material-symbols-outlined text-teal-600" style="font-variation-settings:'FILL' 1">account_tree</span>
+            </div>
+            <h3 class="text-sm font-bold text-slate-900">Visual Mind Map</h3>
+            <p class="mt-1 text-xs text-slate-500">Generate SVG mind maps from topics</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL: AI STUDY ASSISTANT -->
+      <section id="panel-assistant" class="tool-panel mx-auto mt-8 max-w-7xl px-6 lg:px-8">
+        <div class="rounded-3xl bg-white shadow-xl shadow-violet-900/10 overflow-hidden" style="min-height:600px; display:flex; flex-direction:column;">
+          <div id="subject-bar" class="border-b border-outline/10 bg-surface-container-lowest px-6 py-4">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Study Area:</span>
+              <button class="subject-btn rounded-full border-2 border-outline/20 px-4 py-1.5 text-sm font-semibold text-slate-600" onclick="selectSubject('nursing', this)">🏥 Nursing</button>
+              <button class="subject-btn rounded-full border-2 border-outline/20 px-4 py-1.5 text-sm font-semibold text-slate-600" onclick="selectSubject('law', this)">⚖️ Law</button>
+              <button class="subject-btn rounded-full border-2 border-outline/20 px-4 py-1.5 text-sm font-semibold text-slate-600" onclick="selectSubject('finance', this)">📈 Finance</button>
+              <button class="subject-btn rounded-full border-2 border-outline/20 px-4 py-1.5 text-sm font-semibold text-slate-600" onclick="selectSubject('ict', this)">💻 ICT</button>
+              <span class="ml-auto text-xs text-slate-400 hidden" id="subject-label"></span>
+            </div>
+          </div>
+          <div id="chat-messages" class="flex-1 overflow-y-auto px-6 py-6 space-y-4" style="min-height:380px; max-height:480px;">
+            <div class="flex items-start gap-3">
+              <div class="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full bg-primary/10 mt-1">
+                <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1">smart_toy</span>
+              </div>
+              <div class="msg-ai px-4 py-3 text-sm leading-relaxed max-w-xl">
+                👋 Hi! I'm your Sleek Academia AI tutor.<br><br>
+                Pick your <strong>study area above</strong> and ask me anything — a concept, a practice question, or a topic you're stuck on. I'll keep it sharp and to the point.
+              </div>
+            </div>
+          </div>
+          <div class="border-t border-outline/10 px-6 py-4 bg-surface-container-lowest">
+            <div class="flex items-end gap-3">
+              <textarea id="chat-input" class="flex-1 rounded-2xl border-2 border-outline/20 bg-surface-container-low px-4 py-3 text-sm font-medium placeholder-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Ask your tutor anything..." rows="1" onkeydown="handleChatKey(event)" oninput="autoGrow(this)"></textarea>
+              <button id="send-btn" onclick="sendMessage()" class="grid h-11 w-11 flex-shrink-0 place-items-center rounded-2xl bg-primary text-white shadow-glow transition-all hover:bg-primary-dim disabled:opacity-40">
+                <span class="material-symbols-outlined text-xl">send</span>
+              </button>
+            </div>
+            <p class="mt-2 text-center text-xs text-slate-400">AI can make mistakes — always verify critical information</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL: EXAM ANXIETY COACH -->
+      <section id="panel-anxiety" class="tool-panel hidden mx-auto mt-8 max-w-7xl px-6 lg:px-8">
+        <div class="rounded-3xl bg-white shadow-xl shadow-violet-900/10 p-8">
+          <div class="flex items-start gap-4 mb-6">
+            <div class="grid h-12 w-12 flex-shrink-0 place-items-center rounded-2xl bg-rose-50">
+              <span class="material-symbols-outlined text-rose-500 text-2xl" style="font-variation-settings:'FILL' 1">psychology</span>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold">Exam Anxiety Coach</h2>
+              <p class="mt-1 text-sm text-slate-500">Tell the coach what's making you anxious. You'll get a root-cause analysis and a personalised 5-step coaching routine.</p>
+            </div>
+          </div>
+          <div>
+            <label class="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-400">What's making you anxious?</label>
+            <textarea id="anxiety-input" class="w-full rounded-2xl border-2 border-outline/20 bg-surface-container-low px-4 py-3 text-sm font-medium placeholder-slate-400 focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20 transition-all" placeholder="e.g. I keep blanking on pharmacology questions under timed pressure and I only have 3 weeks left..."></textarea>
+          </div>
+          <div class="mt-6 flex items-center gap-4 flex-wrap">
+            <button onclick="runAnxietyCoach()" id="anxiety-btn" class="inline-flex items-center gap-2 rounded-2xl bg-rose-500 px-8 py-3 font-bold text-white transition-all hover:bg-rose-600 disabled:opacity-50">
+              <span class="material-symbols-outlined text-lg" style="font-variation-settings:'FILL' 1">psychology</span>
+              Get Coaching Plan
+            </button>
+            <span id="anxiety-status" class="text-sm text-slate-400"></span>
+          </div>
+          <div id="anxiety-output" class="hidden mt-8 rounded-2xl border border-rose-100 bg-rose-50/40 px-6 py-6">
+            <div id="anxiety-content" class="ai-output-panel text-slate-700"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL: SOCRATIC CHALLENGER -->
+      <section id="panel-socratic" class="tool-panel hidden mx-auto mt-8 max-w-7xl px-6 lg:px-8">
+        <div class="rounded-3xl bg-white shadow-xl shadow-violet-900/10 overflow-hidden" style="min-height:600px; display:flex; flex-direction:column;">
+          <div class="border-b border-outline/10 bg-amber-50/60 px-6 py-4">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="text-xs font-bold uppercase tracking-widest text-amber-600">Challenge Area:</span>
+              <button class="socratic-btn rounded-full border-2 border-outline/20 px-4 py-1.5 text-sm font-semibold text-slate-600" onclick="selectSocraticSubject('nursing', this)">🏥 Nursing</button>
+              <button class="socratic-btn rounded-full border-2 border-outline/20 px-4 py-1.5 text-sm font-semibold text-slate-600" onclick="selectSocraticSubject('law', this)">⚖️ Law</button>
+              <button class="socratic-btn rounded-full border-2 border-outline/20 px-4 py-1.5 text-sm font-semibold text-slate-600" onclick="selectSocraticSubject('finance', this)">📈 Finance</button>
+              <button class="socratic-btn rounded-full border-2 border-outline/20 px-4 py-1.5 text-sm font-semibold text-slate-600" onclick="selectSocraticSubject('ict', this)">💻 ICT</button>
+              <span class="ml-auto hidden text-xs text-amber-600 font-semibold" id="socratic-label"></span>
+            </div>
+          </div>
+          <div id="socratic-messages" class="flex-1 overflow-y-auto px-6 py-6 space-y-4" style="min-height:380px; max-height:480px;">
+            <div class="flex items-start gap-3">
+              <div class="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full bg-amber-100 mt-1">
+                <span class="material-symbols-outlined text-amber-600 text-sm" style="font-variation-settings:'FILL' 1">forum</span>
+              </div>
+              <div class="msg-socratic-ai px-4 py-3 text-sm leading-relaxed max-w-xl">
+                🤔 I'm your Socratic challenger. I won't give you answers — I'll ask you questions until you find them yourself.<br><br>
+                Select your <strong>challenge area above</strong>, then make a claim or ask about a concept. I'll push back.
+              </div>
+            </div>
+          </div>
+          <div class="border-t border-outline/10 px-6 py-4 bg-amber-50/40">
+            <div class="flex items-end gap-3">
+              <textarea id="socratic-input" class="flex-1 rounded-2xl border-2 border-outline/20 bg-white px-4 py-3 text-sm font-medium placeholder-slate-400 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all" placeholder="Make a claim or ask about a concept..." rows="1" onkeydown="handleSocraticKey(event)" oninput="autoGrow(this)"></textarea>
+              <button id="socratic-send-btn" onclick="sendSocraticMessage()" class="grid h-11 w-11 flex-shrink-0 place-items-center rounded-2xl bg-amber-500 text-white transition-all hover:bg-amber-600 disabled:opacity-40">
+                <span class="material-symbols-outlined text-xl">send</span>
+              </button>
+            </div>
+            <p class="mt-2 text-center text-xs text-slate-400">The Socratic method works best when you commit to an answer, even if you're unsure</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL: EXAM QUESTION PREDICTOR -->
+      <section id="panel-predictor" class="tool-panel hidden mx-auto mt-8 max-w-7xl px-6 lg:px-8">
+        <div class="rounded-3xl bg-white shadow-xl shadow-violet-900/10 p-8">
+          <div class="flex items-start gap-4 mb-6">
+            <div class="grid h-12 w-12 flex-shrink-0 place-items-center rounded-2xl bg-green-50">
+              <span class="material-symbols-outlined text-green-600 text-2xl" style="font-variation-settings:'FILL' 1">quiz</span>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold">Exam Question Predictor</h2>
+              <p class="mt-1 text-sm text-slate-500">Enter a subject, topic, and exam format. The AI will predict 5 high-probability exam questions with model answers.</p>
+            </div>
+          </div>
+          <div class="grid gap-4 md:grid-cols-3">
+            <div>
+              <label class="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-400">Subject</label>
+              <select id="predictor-subject" class="w-full rounded-2xl border-2 border-outline/20 bg-surface-container-low px-4 py-3 text-sm font-medium text-slate-700 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all">
+                <option value="">Select subject...</option>
+                <option value="nursing">Nursing / NCLEX</option>
+                <option value="law">Law / UBE Bar Exam</option>
+                <option value="finance">Finance / CFA Level I</option>
+                <option value="ict">ICT / CompTIA</option>
+              </select>
+            </div>
+            <div>
+              <label class="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-400">Topic</label>
+              <input id="predictor-topic" type="text" class="w-full rounded-2xl border-2 border-outline/20 bg-surface-container-low px-4 py-3 text-sm font-medium placeholder-slate-400 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all" placeholder="e.g. Cardiac pharmacology" />
+            </div>
+            <div>
+              <label class="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-400">Question Format</label>
+              <select id="predictor-format" class="w-full rounded-2xl border-2 border-outline/20 bg-surface-container-low px-4 py-3 text-sm font-medium text-slate-700 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all">
+                <option value="multiple choice">Multiple Choice</option>
+                <option value="short answer">Short Answer</option>
+                <option value="essay">Essay / Long Form</option>
+              </select>
+            </div>
+          </div>
+          <div class="mt-6 flex items-center gap-4 flex-wrap">
+            <button onclick="runPredictor()" id="predictor-btn" class="inline-flex items-center gap-2 rounded-2xl bg-green-600 px-8 py-3 font-bold text-white transition-all hover:bg-green-700 disabled:opacity-50">
+              <span class="material-symbols-outlined text-lg" style="font-variation-settings:'FILL' 1">quiz</span>
+              Predict 5 Questions
+            </button>
+            <button onclick="copyOutput('predictor-content')" class="inline-flex items-center gap-2 rounded-2xl border-2 border-outline/20 px-6 py-3 text-sm font-semibold text-slate-600 transition-all hover:border-green-500 hover:text-green-600">
+              <span class="material-symbols-outlined text-lg">content_copy</span>
+              Copy
+            </button>
+            <span id="predictor-status" class="text-sm text-slate-400"></span>
+          </div>
+          <div id="predictor-output" class="hidden mt-8 rounded-2xl border border-green-100 bg-green-50/30 px-6 py-6">
+            <div id="predictor-content" class="ai-output-panel text-slate-700"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL: PODCAST FROM NOTES -->
+      <section id="panel-podcast" class="tool-panel hidden mx-auto mt-8 max-w-7xl px-6 lg:px-8">
+        <div class="rounded-3xl bg-white shadow-xl shadow-violet-900/10 p-8">
+          <div class="flex items-start gap-4 mb-6">
+            <div class="grid h-12 w-12 flex-shrink-0 place-items-center rounded-2xl bg-sky-50">
+              <span class="material-symbols-outlined text-sky-500 text-2xl" style="font-variation-settings:'FILL' 1">podcasts</span>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold">Podcast from Notes</h2>
+              <p class="mt-1 text-sm text-slate-500">Paste your study notes (max 1,000 words) and get a ready-to-read 3–5 minute podcast script with a hook, segments, and a punchy close.</p>
+            </div>
+          </div>
+          <div class="grid gap-6 md:grid-cols-2">
+            <div>
+              <div class="mb-2 flex items-center justify-between">
+                <label class="text-xs font-bold uppercase tracking-widest text-slate-400">Your Notes</label>
+                <span id="word-counter" class="text-xs text-slate-400">0 / 1000 words</span>
+              </div>
+              <textarea id="podcast-input" oninput="updateWordCount()" class="w-full rounded-2xl border-2 border-outline/20 bg-surface-container-low px-4 py-3 text-sm font-medium placeholder-slate-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all" placeholder="Paste your study notes here..."></textarea>
+            </div>
+            <div>
+              <label class="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-400">Podcast Script</label>
+              <textarea id="podcast-output" class="w-full rounded-2xl border-2 border-outline/20 bg-surface-container-lowest px-4 py-3 text-sm font-medium text-slate-700 placeholder-slate-300" placeholder="Your script will appear here..." readonly></textarea>
+            </div>
+          </div>
+          <div class="mt-6 flex items-center gap-4 flex-wrap">
+            <button onclick="runPodcast()" id="podcast-btn" class="inline-flex items-center gap-2 rounded-2xl bg-sky-500 px-8 py-3 font-bold text-white transition-all hover:bg-sky-600 disabled:opacity-50">
+              <span class="material-symbols-outlined text-lg" style="font-variation-settings:'FILL' 1">podcasts</span>
+              Generate Script
+            </button>
+            <button onclick="copyOutput('podcast-output')" class="inline-flex items-center gap-2 rounded-2xl border-2 border-outline/20 px-6 py-3 text-sm font-semibold text-slate-600 transition-all hover:border-sky-400 hover:text-sky-500">
+              <span class="material-symbols-outlined text-lg">content_copy</span>
+              Copy
+            </button>
+            <span id="podcast-status" class="text-sm text-slate-400"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL: VISUAL MIND MAP -->
+      <section id="panel-mindmap" class="tool-panel hidden mx-auto mt-8 max-w-7xl px-6 lg:px-8">
+        <div class="rounded-3xl bg-white shadow-xl shadow-violet-900/10 p-8">
+          <div class="flex items-start gap-4 mb-6">
+            <div class="grid h-12 w-12 flex-shrink-0 place-items-center rounded-2xl bg-teal-50">
+              <span class="material-symbols-outlined text-teal-600 text-2xl" style="font-variation-settings:'FILL' 1">account_tree</span>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold">Visual Mind Map</h2>
+              <p class="mt-1 text-sm text-slate-500">Enter a topic or paste brief notes. The AI builds a structured mind map and renders it as an interactive SVG — no libraries needed.</p>
+            </div>
+          </div>
+          <div>
+            <label class="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-400">Topic or Notes</label>
+            <textarea id="mindmap-input" class="w-full rounded-2xl border-2 border-outline/20 bg-surface-container-low px-4 py-3 text-sm font-medium placeholder-slate-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all" placeholder="e.g. Cardiac output — factors affecting it, clinical implications, pharmacology..."></textarea>
+          </div>
+          <div class="mt-6 flex items-center gap-4 flex-wrap">
+            <button onclick="runMindMap()" id="mindmap-btn" class="inline-flex items-center gap-2 rounded-2xl bg-teal-600 px-8 py-3 font-bold text-white transition-all hover:bg-teal-700 disabled:opacity-50">
+              <span class="material-symbols-outlined text-lg" style="font-variation-settings:'FILL' 1">account_tree</span>
+              Generate Mind Map
+            </button>
+            <button onclick="downloadMindMap()" id="mindmap-download" class="hidden inline-flex items-center gap-2 rounded-2xl border-2 border-outline/20 px-6 py-3 text-sm font-semibold text-slate-600 transition-all hover:border-teal-500 hover:text-teal-600">
+              <span class="material-symbols-outlined text-lg">download</span>
+              Download SVG
+            </button>
+            <span id="mindmap-status" class="text-sm text-slate-400"></span>
+          </div>
+          <div id="mindmap-container" class="hidden mt-8 overflow-x-auto rounded-2xl mindmap-bg p-6">
+            <div id="mindmap-svg-wrap" class="flex justify-center"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mt-20 rounded-t-[2.5rem] bg-slate-50">
+      <div class="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-8 py-16 md:grid-cols-4">
+        <div>
+          <div class="brand-font text-xl font-bold text-violet-700">Sleek Academia</div>
+          <p class="mt-6 text-sm leading-relaxed text-slate-500">Empowering professionals through high-end digital learning and expert-led guidance.</p>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.25em] text-slate-900">Explore</h4>
+          <ul class="mt-6 space-y-4 text-sm text-slate-500">
+            <li><a class="hover:text-violet-700" href="/">Home</a></li>
+            <li><a class="hover:text-violet-700" href="/about.html">About Us</a></li>
+            <li><a class="hover:text-violet-700" href="/courses.html">All Courses</a></li>
+            <li><a class="hover:text-violet-700" href="/ai-tools.html">AI Tools</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.25em] text-slate-900">Programs</h4>
+          <ul class="mt-6 space-y-4 text-sm text-slate-500">
+            <li>NCLEX</li><li>UBE</li><li>CompTIA</li><li>CFA</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.25em] text-slate-900">Access</h4>
+          <ul class="mt-6 space-y-4 text-sm text-slate-500">
+            <li><a class="hover:text-violet-700" href="/login.html">Login</a></li>
+            <li><a class="hover:text-violet-700" href="/sign-up.html">Sign Up</a></li>
+            <li><a class="hover:text-violet-700" href="/store.html">Store</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-slate-200/60 px-8 py-8 md:flex-row">
+        <span class="text-xs font-medium uppercase tracking-[0.25em] text-slate-400">© 2026 Sleek Academia. All rights reserved.</span>
+        <div class="flex gap-6 text-xs font-medium text-slate-400"><span>Privacy</span><span>Terms</span><span>Cookies</span></div>
+      </div>
+    </footer>
+
+    <script src="/js/site-transitions.js" defer></script>
+    <script>
+      // ── State ──────────────────────────────────────────────────────────────────
+      let currentSubject = null;
+      let chatHistory = [];
+      let socraticSubject = null;
+      let socraticHistory = [];
+      const STORAGE_KEY = 'sleek_ai_subject';
+
+      const subjectPrompts = {
+        nursing: `You are an expert nursing and healthcare tutor for Sleek Academia. You specialize in NCLEX prep, pharmacology, pathophysiology, anatomy, nursing theory, and clinical practice. Your teaching style is precise, direct, and clinically accurate. Give concise answers — use bullet points for lists, bold key terms, and only expand when truly needed. Always prioritize patient safety principles. Never give advice that could harm real patients.`,
+        law: `You are an expert law tutor for Sleek Academia. You specialize in UBE bar exam prep, constitutional law, contracts, torts, criminal law, civil procedure, and evidence. Your teaching style is analytical and Socratic. Give concise answers — cite relevant rules and principles directly, use IRAC structure when applicable, and only expand when the concept demands it. Focus on bar-tested rules and majority positions.`,
+        finance: `You are an expert finance tutor for Sleek Academia. You specialize in CFA Level I prep, financial analysis, portfolio management, economics, fixed income, derivatives, and ethics. Your teaching style is precise and quantitative. Give concise answers — show formulas when relevant, use clear examples with numbers, and only expand when the concept demands it. Focus on CFA curriculum and exam-tested concepts.`,
+        ict: `You are an expert ICT tutor for Sleek Academia. You specialize in CompTIA certifications (A+, Network+, Security+, CySA+), networking, cybersecurity, cloud computing, and IT fundamentals. Your teaching style is practical and technical. Give concise answers — use technical precision, reference CompTIA objectives when relevant, and only expand when needed. Focus on exam-tested concepts and real-world applications.`
+      };
+
+      const subjectNames = { nursing: '🏥 Nursing', law: '⚖️ Law', finance: '📈 Finance', ict: '💻 ICT' };
+
+      // ── Shared AI call ─────────────────────────────────────────────────────────
+      async function callAI({ messages, systemPrompt }) {
+        const res = await fetch('/api/ai/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages, systemPrompt })
+        });
+        if (!res.ok) throw new Error('API error ' + res.status);
+        const data = await res.json();
+        if (!data.reply) throw new Error('No reply from AI');
+        return data.reply;
+      }
+
+      // ── Tool switcher ──────────────────────────────────────────────────────────
+      function switchTool(tool) {
+        document.querySelectorAll('.tool-panel').forEach(p => p.classList.add('hidden'));
+        document.querySelectorAll('.tool-card').forEach(c => {
+          c.classList.remove('active');
+          c.classList.add('bg-surface-container-low');
+          c.classList.remove('bg-white');
+        });
+        document.getElementById('panel-' + tool).classList.remove('hidden');
+        const tab = document.getElementById('tab-' + tool);
+        tab.classList.add('active');
+        tab.classList.remove('bg-surface-container-low');
+        tab.classList.add('bg-white');
+      }
+
+      // ── AI Study Assistant ─────────────────────────────────────────────────────
+      function selectSubject(subject, btn) {
+        currentSubject = subject;
+        localStorage.setItem(STORAGE_KEY, subject);
+        document.querySelectorAll('.subject-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        const label = document.getElementById('subject-label');
+        label.textContent = 'Tutor active: ' + subjectNames[subject];
+        label.classList.remove('hidden');
+        chatHistory = [];
+        const msgs = document.getElementById('chat-messages');
+        msgs.innerHTML = `
+          <div class="flex items-start gap-3">
+            <div class="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full bg-primary/10 mt-1">
+              <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1">smart_toy</span>
+            </div>
+            <div class="msg-ai px-4 py-3 text-sm leading-relaxed max-w-xl">
+              ${subjectNames[subject]} tutor is ready. What would you like to cover today?
+            </div>
+          </div>`;
+      }
+
+      function handleChatKey(e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+      }
+
+      function autoGrow(el) {
+        el.style.height = 'auto';
+        el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+      }
+
+      function appendMessage(role, text) {
+        const msgs = document.getElementById('chat-messages');
+        const isUser = role === 'user';
+        const div = document.createElement('div');
+        div.className = 'flex items-start gap-3' + (isUser ? ' justify-end' : '');
+        div.innerHTML = isUser
+          ? `<div class="msg-user px-4 py-3 text-sm leading-relaxed max-w-xl">${escapeHtml(text)}</div>`
+          : `<div class="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full bg-primary/10 mt-1">
+               <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1">smart_toy</span>
+             </div>
+             <div class="msg-ai px-4 py-3 text-sm leading-relaxed max-w-xl">${formatAIText(text)}</div>`;
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+
+      function showTyping() {
+        const msgs = document.getElementById('chat-messages');
+        const div = document.createElement('div');
+        div.className = 'flex items-start gap-3';
+        div.id = 'typing-indicator';
+        div.innerHTML = `<div class="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full bg-primary/10 mt-1">
+            <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1">smart_toy</span>
+          </div>
+          <div class="msg-ai px-4 py-3 flex items-center gap-1.5">
+            <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+          </div>`;
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+
+      function removeTyping() {
+        const el = document.getElementById('typing-indicator');
+        if (el) el.remove();
+      }
+
+      async function sendMessage() {
+        const input = document.getElementById('chat-input');
+        const text = input.value.trim();
+        if (!text) return;
+        if (!currentSubject) { alert('Please select a study area above first.'); return; }
+
+        input.value = '';
+        input.style.height = 'auto';
+        document.getElementById('send-btn').disabled = true;
+        appendMessage('user', text);
+        chatHistory.push({ role: 'user', content: text });
+        showTyping();
+        try {
+          const res = await fetch('/api/ai/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ subject: currentSubject, messages: chatHistory, systemPrompt: subjectPrompts[currentSubject] })
+          });
+          const data = await res.json();
+          removeTyping();
+          if (data.reply) {
+            chatHistory.push({ role: 'assistant', content: data.reply });
+            appendMessage('assistant', data.reply);
+          } else {
+            appendMessage('assistant', 'Sorry, I ran into an issue. Please try again.');
+          }
+        } catch {
+          removeTyping();
+          appendMessage('assistant', 'Connection error. Please check your internet and try again.');
+        }
+        document.getElementById('send-btn').disabled = false;
+        input.focus();
+      }
+
+      // ── Exam Anxiety Coach ─────────────────────────────────────────────────────
+      async function runAnxietyCoach() {
+        const input = document.getElementById('anxiety-input').value.trim();
+        if (!input) return;
+        const btn = document.getElementById('anxiety-btn');
+        const status = document.getElementById('anxiety-status');
+        btn.disabled = true;
+        status.textContent = 'Analysing...';
+        try {
+          const reply = await callAI({
+            messages: [{ role: 'user', content: input }],
+            systemPrompt: `You are a compassionate exam anxiety coach for Sleek Academia students preparing for high-stakes exams (NCLEX, UBE Bar, CFA, CompTIA).
+
+When a student shares their anxiety, structure your response with these exact sections:
+
+**Root Cause**
+Identify the specific type of anxiety and its most likely underlying cause in 1-2 sentences.
+
+**Your 5-Step Coaching Plan**
+List exactly 5 concrete, immediately actionable steps tailored to what they described. Number each step.
+
+**Remember This**
+End with 1-2 powerful, specific sentences of encouragement tailored to their situation.
+
+Be warm but direct. No generic platitudes — every step must be specific to what they described.`
+          });
+          document.getElementById('anxiety-content').innerHTML = formatAIText(reply);
+          document.getElementById('anxiety-output').classList.remove('hidden');
+          status.textContent = '';
+        } catch {
+          status.textContent = 'Error — please try again.';
+        }
+        btn.disabled = false;
+      }
+
+      // ── Socratic Challenger ────────────────────────────────────────────────────
+      function selectSocraticSubject(subject, btn) {
+        socraticSubject = subject;
+        document.querySelectorAll('.socratic-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        const label = document.getElementById('socratic-label');
+        label.textContent = 'Challenging: ' + subjectNames[subject];
+        label.classList.remove('hidden');
+        socraticHistory = [];
+        const msgs = document.getElementById('socratic-messages');
+        msgs.innerHTML = `
+          <div class="flex items-start gap-3">
+            <div class="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full bg-amber-100 mt-1">
+              <span class="material-symbols-outlined text-amber-600 text-sm" style="font-variation-settings:'FILL' 1">forum</span>
+            </div>
+            <div class="msg-socratic-ai px-4 py-3 text-sm leading-relaxed max-w-xl">
+              ${subjectNames[subject]} — I'm ready to challenge you. Make a claim or ask about a concept. I won't confirm or deny anything. I'll only ask questions.
+            </div>
+          </div>`;
+      }
+
+      function handleSocraticKey(e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendSocraticMessage(); }
+      }
+
+      function appendSocraticMessage(role, text) {
+        const msgs = document.getElementById('socratic-messages');
+        const isUser = role === 'user';
+        const div = document.createElement('div');
+        div.className = 'flex items-start gap-3' + (isUser ? ' justify-end' : '');
+        div.innerHTML = isUser
+          ? `<div class="msg-user px-4 py-3 text-sm leading-relaxed max-w-xl">${escapeHtml(text)}</div>`
+          : `<div class="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full bg-amber-100 mt-1">
+               <span class="material-symbols-outlined text-amber-600 text-sm" style="font-variation-settings:'FILL' 1">forum</span>
+             </div>
+             <div class="msg-socratic-ai px-4 py-3 text-sm leading-relaxed max-w-xl">${formatAIText(text)}</div>`;
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+
+      function showSocraticTyping() {
+        const msgs = document.getElementById('socratic-messages');
+        const div = document.createElement('div');
+        div.className = 'flex items-start gap-3';
+        div.id = 'socratic-typing-indicator';
+        div.innerHTML = `<div class="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full bg-amber-100 mt-1">
+            <span class="material-symbols-outlined text-amber-600 text-sm" style="font-variation-settings:'FILL' 1">forum</span>
+          </div>
+          <div class="msg-socratic-ai px-4 py-3 flex items-center gap-1.5">
+            <span class="typing-dot-amber"></span><span class="typing-dot-amber"></span><span class="typing-dot-amber"></span>
+          </div>`;
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+
+      function removeSocraticTyping() {
+        const el = document.getElementById('socratic-typing-indicator');
+        if (el) el.remove();
+      }
+
+      async function sendSocraticMessage() {
+        const input = document.getElementById('socratic-input');
+        const text = input.value.trim();
+        if (!text) return;
+        if (!socraticSubject) { alert('Please select a challenge area above first.'); return; }
+
+        input.value = '';
+        input.style.height = 'auto';
+        document.getElementById('socratic-send-btn').disabled = true;
+        appendSocraticMessage('user', text);
+        socraticHistory.push({ role: 'user', content: text });
+        showSocraticTyping();
+        try {
+          const reply = await callAI({
+            messages: socraticHistory,
+            systemPrompt: `You are a rigorous Socratic tutor for Sleek Academia students studying ${subjectNames[socraticSubject]}. Your ONLY method is asking probing questions.
+
+Rules:
+- NEVER give direct answers, explanations, or confirmations of whether the student is right or wrong
+- Ask exactly 1-2 probing questions per response
+- Challenge every assertion: "Why?", "How do you know that?", "What evidence supports that?", "What would happen if the opposite were true?"
+- If the student says they don't know, ask a simpler guiding question
+- If they ask you to just tell them the answer, respond with a question instead
+- Be intellectually rigorous but encouraging in tone
+- Keep responses short — just the questions, nothing else`
+          });
+          removeSocraticTyping();
+          socraticHistory.push({ role: 'assistant', content: reply });
+          appendSocraticMessage('assistant', reply);
+        } catch {
+          removeSocraticTyping();
+          appendSocraticMessage('assistant', 'Connection error. Please check your internet and try again.');
+        }
+        document.getElementById('socratic-send-btn').disabled = false;
+        input.focus();
+      }
+
+      // ── Exam Question Predictor ────────────────────────────────────────────────
+      async function runPredictor() {
+        const subject = document.getElementById('predictor-subject').value;
+        const topic = document.getElementById('predictor-topic').value.trim();
+        const format = document.getElementById('predictor-format').value;
+        if (!subject) { alert('Please select a subject.'); return; }
+        if (!topic) { alert('Please enter a topic.'); return; }
+        const btn = document.getElementById('predictor-btn');
+        const status = document.getElementById('predictor-status');
+        btn.disabled = true;
+        status.textContent = 'Predicting...';
+        const subjectLabels = { nursing: 'Nursing / NCLEX', law: 'Law / UBE Bar Exam', finance: 'Finance / CFA Level I', ict: 'ICT / CompTIA' };
+        try {
+          const reply = await callAI({
+            messages: [{ role: 'user', content: `Subject: ${subjectLabels[subject]}\nTopic: ${topic}\nFormat: ${format}` }],
+            systemPrompt: `You are an expert exam question predictor for Sleek Academia. Generate exactly 5 high-probability exam questions for the given subject and topic.
+
+Format your response EXACTLY like this:
+
+**Q1.** [Question text]
+**Answer:** [Model answer in 2-4 sentences — precise and exam-standard]
+
+**Q2.** [Question text]
+**Answer:** [Model answer]
+
+[Continue for Q3, Q4, Q5]
+
+Rules:
+- Match the difficulty and style to the real exam (NCLEX Next Gen, UBE, CFA, CompTIA)
+- For multiple choice, write the question only — no answer choices — then give the correct answer with reasoning
+- Make every question realistic and high-probability
+- Keep answers concise and accurate`
+          });
+          document.getElementById('predictor-content').innerHTML = formatAIText(reply);
+          document.getElementById('predictor-output').classList.remove('hidden');
+          status.textContent = '';
+        } catch {
+          status.textContent = 'Error — please try again.';
+        }
+        btn.disabled = false;
+      }
+
+      // ── Podcast from Notes ─────────────────────────────────────────────────────
+      function updateWordCount() {
+        const input = document.getElementById('podcast-input');
+        const words = input.value.trim() === '' ? 0 : input.value.trim().split(/\s+/).length;
+        const counter = document.getElementById('word-counter');
+        counter.textContent = words + ' / 1000 words';
+        if (words > 1000) {
+          counter.className = 'text-xs font-semibold text-red-500';
+        } else if (words >= 900) {
+          counter.className = 'text-xs font-semibold text-amber-500';
+        } else {
+          counter.className = 'text-xs text-slate-400';
+        }
+      }
+
+      async function runPodcast() {
+        const input = document.getElementById('podcast-input').value.trim();
+        if (!input) return;
+        const wordCount = input.split(/\s+/).length;
+        if (wordCount > 1000) { alert('Please trim your notes to 1,000 words or fewer.'); return; }
+        const btn = document.getElementById('podcast-btn');
+        const status = document.getElementById('podcast-status');
+        btn.disabled = true;
+        status.textContent = 'Writing script...';
+        try {
+          const reply = await callAI({
+            messages: [{ role: 'user', content: input }],
+            systemPrompt: `You are a professional podcast script writer for Sleek Academia. Convert the provided study notes into an engaging educational podcast script.
+
+Structure:
+[INTRO]
+A 2-3 sentence hook that grabs attention and makes the topic immediately relevant.
+
+[SEGMENT 1: Title]
+First major concept from the notes — written as natural speech with a real-world example.
+
+[SEGMENT 2: Title]
+Second major concept — conversational, enthusiastic.
+
+[KEY TAKEAWAYS]
+3 bullet points — the most memorable things to remember.
+
+[CLOSE]
+A punchy 1-2 sentence call to action or forward-looking statement.
+
+Style rules:
+- Write in first person, conversational and enthusiastic
+- Use [PAUSE] for natural breath points, [EMPHASIS: word] for key terms
+- No academic stiffness — talk like a smart friend explaining something
+- Return ONLY the script, no meta-commentary`
+          });
+          document.getElementById('podcast-output').value = reply;
+          status.textContent = 'Done!';
+          setTimeout(() => { status.textContent = ''; }, 3000);
+        } catch {
+          status.textContent = 'Error — please try again.';
+        }
+        btn.disabled = false;
+      }
+
+      // ── Visual Mind Map ────────────────────────────────────────────────────────
+      function parseMindMapJSON(reply) {
+        let text = reply.trim();
+        text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '');
+        try {
+          return JSON.parse(text);
+        } catch {
+          const match = text.match(/\{[\s\S]*\}/);
+          if (match) {
+            try { return JSON.parse(match[0]); } catch { return null; }
+          }
+          return null;
+        }
+      }
+
+      function renderMindMap(data) {
+        const NS = 'http://www.w3.org/2000/svg';
+        const svg = document.createElementNS(NS, 'svg');
+        svg.setAttribute('viewBox', '0 0 900 680');
+        svg.setAttribute('width', '100%');
+        svg.style.maxWidth = '900px';
+        svg.style.display = 'block';
+
+        const defs = document.createElementNS(NS, 'defs');
+        const filter = document.createElementNS(NS, 'filter');
+        filter.setAttribute('id', 'mm-shadow');
+        filter.setAttribute('x', '-30%'); filter.setAttribute('y', '-30%');
+        filter.setAttribute('width', '160%'); filter.setAttribute('height', '160%');
+        const fds = document.createElementNS(NS, 'feDropShadow');
+        fds.setAttribute('dx', '0'); fds.setAttribute('dy', '3');
+        fds.setAttribute('stdDeviation', '5');
+        fds.setAttribute('flood-color', 'rgba(0,0,0,0.12)');
+        filter.appendChild(fds);
+        defs.appendChild(filter);
+        svg.appendChild(defs);
+
+        const cx = 450, cy = 340;
+        const branchR = 175;
+        const childR = 115;
+        const branchColors = ['#702ae1','#e11d48','#d97706','#16a34a','#0284c7','#0d9488','#7c3aed','#dc2626'];
+        const branches = Array.isArray(data.branches) ? data.branches.slice(0, 8) : [];
+        const n = branches.length;
+
+        const linesG = document.createElementNS(NS, 'g');
+        const nodesG = document.createElementNS(NS, 'g');
+
+        branches.forEach((branch, i) => {
+          const angle = (2 * Math.PI * i / n) - Math.PI / 2;
+          const bx = cx + branchR * Math.cos(angle);
+          const by = cy + branchR * Math.sin(angle);
+          const color = branchColors[i % branchColors.length];
+
+          const l1 = document.createElementNS(NS, 'line');
+          l1.setAttribute('x1', cx); l1.setAttribute('y1', cy);
+          l1.setAttribute('x2', bx); l1.setAttribute('y2', by);
+          l1.setAttribute('stroke', color); l1.setAttribute('stroke-width', '2.5');
+          l1.setAttribute('stroke-opacity', '0.45');
+          linesG.appendChild(l1);
+
+          const ell = document.createElementNS(NS, 'ellipse');
+          ell.setAttribute('cx', bx); ell.setAttribute('cy', by);
+          ell.setAttribute('rx', '52'); ell.setAttribute('ry', '21');
+          ell.setAttribute('fill', color);
+          ell.setAttribute('filter', 'url(#mm-shadow)');
+          nodesG.appendChild(ell);
+
+          const bRaw = String(branch.label || '');
+          const bText = bRaw.length > 16 ? bRaw.substring(0, 14) + '…' : bRaw;
+          const bLabel = document.createElementNS(NS, 'text');
+          bLabel.setAttribute('x', bx); bLabel.setAttribute('y', by);
+          bLabel.setAttribute('text-anchor', 'middle');
+          bLabel.setAttribute('dominant-baseline', 'middle');
+          bLabel.setAttribute('fill', 'white');
+          bLabel.setAttribute('font-size', '11');
+          bLabel.setAttribute('font-weight', '700');
+          bLabel.setAttribute('font-family', 'Inter, sans-serif');
+          bLabel.textContent = bText;
+          nodesG.appendChild(bLabel);
+
+          const children = Array.isArray(branch.children) ? branch.children.slice(0, 4) : [];
+          const nc = children.length;
+          children.forEach((child, j) => {
+            const spread = nc <= 1 ? 0 : (j - (nc - 1) / 2) * (Math.PI / 5.5);
+            const childAngle = angle + spread;
+            const chx = bx + childR * Math.cos(childAngle);
+            const chy = by + childR * Math.sin(childAngle);
+
+            const l2 = document.createElementNS(NS, 'line');
+            l2.setAttribute('x1', bx); l2.setAttribute('y1', by);
+            l2.setAttribute('x2', chx); l2.setAttribute('y2', chy);
+            l2.setAttribute('stroke', color); l2.setAttribute('stroke-width', '1.5');
+            l2.setAttribute('stroke-opacity', '0.3');
+            linesG.appendChild(l2);
+
+            const cRaw = String(child);
+            const cText = cRaw.length > 18 ? cRaw.substring(0, 16) + '…' : cRaw;
+            const rw = Math.max(56, cText.length * 7 + 16);
+            const rh = 26;
+
+            const rect = document.createElementNS(NS, 'rect');
+            rect.setAttribute('x', chx - rw / 2); rect.setAttribute('y', chy - rh / 2);
+            rect.setAttribute('width', rw); rect.setAttribute('height', rh);
+            rect.setAttribute('rx', '8'); rect.setAttribute('ry', '8');
+            rect.setAttribute('fill', 'white');
+            rect.setAttribute('stroke', color); rect.setAttribute('stroke-width', '1.5');
+            rect.setAttribute('filter', 'url(#mm-shadow)');
+            nodesG.appendChild(rect);
+
+            const cLabel = document.createElementNS(NS, 'text');
+            cLabel.setAttribute('x', chx); cLabel.setAttribute('y', chy);
+            cLabel.setAttribute('text-anchor', 'middle');
+            cLabel.setAttribute('dominant-baseline', 'middle');
+            cLabel.setAttribute('fill', color);
+            cLabel.setAttribute('font-size', '10');
+            cLabel.setAttribute('font-weight', '600');
+            cLabel.setAttribute('font-family', 'Inter, sans-serif');
+            cLabel.textContent = cText;
+            nodesG.appendChild(cLabel);
+          });
+        });
+
+        svg.appendChild(linesG);
+        svg.appendChild(nodesG);
+
+        const centerEll = document.createElementNS(NS, 'ellipse');
+        centerEll.setAttribute('cx', cx); centerEll.setAttribute('cy', cy);
+        centerEll.setAttribute('rx', '66'); centerEll.setAttribute('ry', '30');
+        centerEll.setAttribute('fill', '#702ae1');
+        centerEll.setAttribute('filter', 'url(#mm-shadow)');
+        svg.appendChild(centerEll);
+
+        const cRaw = String(data.center || 'Topic');
+        const cText = cRaw.length > 18 ? cRaw.substring(0, 16) + '…' : cRaw;
+        const cLabel = document.createElementNS(NS, 'text');
+        cLabel.setAttribute('x', cx); cLabel.setAttribute('y', cy);
+        cLabel.setAttribute('text-anchor', 'middle');
+        cLabel.setAttribute('dominant-baseline', 'middle');
+        cLabel.setAttribute('fill', 'white');
+        cLabel.setAttribute('font-size', '13');
+        cLabel.setAttribute('font-weight', '800');
+        cLabel.setAttribute('font-family', 'Plus Jakarta Sans, sans-serif');
+        cLabel.textContent = cText;
+        svg.appendChild(cLabel);
+
+        return svg;
+      }
+
+      async function runMindMap() {
+        const input = document.getElementById('mindmap-input').value.trim();
+        if (!input) return;
+        const btn = document.getElementById('mindmap-btn');
+        const status = document.getElementById('mindmap-status');
+        btn.disabled = true;
+        status.textContent = 'Building map...';
+        try {
+          const reply = await callAI({
+            messages: [{ role: 'user', content: input }],
+            systemPrompt: `You are a mind map generator. Convert the topic or notes into a structured JSON mind map.
+
+Return ONLY valid JSON — no markdown, no explanation, nothing else:
+
+{"center":"Topic (max 18 chars)","branches":[{"label":"Branch (max 14 chars)","children":["Child 1","Child 2","Child 3"]},{"label":"Branch 2","children":["Child A","Child B"]}]}
+
+Rules:
+- Create 4-6 branches
+- Each branch: 2-3 children
+- All text short: center max 18 chars, branch max 14 chars, children max 18 chars
+- Return raw JSON only, no code fences`
+          });
+          const data = parseMindMapJSON(reply);
+          if (!data || !data.center || !Array.isArray(data.branches)) {
+            status.textContent = 'Could not parse map — please try a clearer topic.';
+            btn.disabled = false;
+            return;
+          }
+          const wrap = document.getElementById('mindmap-svg-wrap');
+          wrap.innerHTML = '';
+          wrap.appendChild(renderMindMap(data));
+          document.getElementById('mindmap-container').classList.remove('hidden');
+          document.getElementById('mindmap-download').classList.remove('hidden');
+          document.getElementById('mindmap-download').classList.add('inline-flex');
+          status.textContent = '';
+        } catch {
+          status.textContent = 'Error — please try again.';
+        }
+        btn.disabled = false;
+      }
+
+      function downloadMindMap() {
+        const svg = document.querySelector('#mindmap-svg-wrap svg');
+        if (!svg) return;
+        const data = new XMLSerializer().serializeToString(svg);
+        const blob = new Blob([data], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'mind-map.svg';
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      // ── Utilities ──────────────────────────────────────────────────────────────
+      function copyOutput(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const text = el.tagName === 'TEXTAREA' ? el.value : (el.innerText || '');
+        if (!text.trim()) return;
+        navigator.clipboard.writeText(text);
+      }
+
+      function escapeHtml(text) {
+        return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+      }
+
+      function formatAIText(text) {
+        return text
+          .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+          .replace(/^• /gm, '&bull; ')
+          .replace(/\n/g,'<br>');
+      }
+
+      // ── Init ───────────────────────────────────────────────────────────────────
+      document.addEventListener('DOMContentLoaded', () => {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const btn = document.querySelector(`[onclick="selectSubject('${saved}', this)"]`);
+          if (btn) selectSubject(saved, btn);
+        }
+        document.documentElement.classList.add('page-ready');
+      });
+    </script>
+  <script src="/js/chatbot.js" defer></script>
+  </body>
+</html>

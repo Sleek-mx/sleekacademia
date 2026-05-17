@@ -1,6 +1,10 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/sleenegb/public_html/sleekacademianewsite/
+    - export DEPLOYPATH=/home/sleenegb/public_html/sleekacademianewsite
+    - export NPM=/opt/alt/alt-nodejs20/root/usr/bin/npm
     - /bin/mkdir -p $DEPLOYPATH
     - /usr/bin/rsync -av --delete --exclude='.git' --exclude='.cpanel.yml' --exclude='node_modules' ./ $DEPLOYPATH
+    - cd $DEPLOYPATH && $NPM install --omit=dev
+    - /bin/mkdir -p $DEPLOYPATH/tmp
+    - /bin/touch $DEPLOYPATH/tmp/restart.txt

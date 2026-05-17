@@ -1,4 +1,5 @@
 import "dotenv/config";
+import axios from "axios";
 import path from "path";
 import { fileURLToPath } from "url";
 import express from "express";
@@ -28,7 +29,6 @@ const tutorEmails = splitEmails(process.env.TUTOR_EMAILS);
 
 app.use(express.json());
 
-// Allow the static frontend (on a different origin like sleekacademia.com) to call the API
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://sleekacademia.com,http://localhost:3000').split(',');
 app.use((req, res, next) => {
   const origin = req.headers.origin;
@@ -53,20 +53,12 @@ app.get("/app", (req, res) => {
 });
 
 const clerkCookieNames = [
-  "__session",
-  "__refresh",
-  "__client_uat",
-  "__clerk_handshake",
-  "__clerk_redirect_count",
-  "__clerk_handshake_nonce",
+  "__session", "__refresh", "__client_uat",
+  "__clerk_handshake", "__clerk_redirect_count", "__clerk_handshake_nonce",
 ];
 
 app.get("/api/health", (_req, res) => {
-  res.json({
-    ok: true,
-    service: "sleek-academia",
-    time: new Date().toISOString(),
-  });
+  res.json({ ok: true, service: "sleek-academia", time: new Date().toISOString() });
 });
 
 app.get("/logout", (_req, res) => {
@@ -79,20 +71,14 @@ app.get("/logout", (_req, res) => {
 app.get("/api/config", (_req, res) => {
   const publishableKey =
     process.env.CLERK_PUBLISHABLE_KEY ||
-    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-    "";
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "";
   const frontendApiUrl =
     process.env.CLERK_FRONTEND_API_URL || frontendApiFromPublishableKey(publishableKey);
   const clerkJsUrl = buildClerkJsUrl(frontendApiUrl);
-
   res.json({
-    publishableKey,
-    frontendApiUrl,
-    clerkJsUrl,
-    signInUrl: "/onboard.html",
-    signUpUrl: "/onboard.html",
-    afterSignInUrl: "/dashboard.html",
-    afterSignUpUrl: "/dashboard.html",
+    publishableKey, frontendApiUrl, clerkJsUrl,
+    signInUrl: "/onboard.html", signUpUrl: "/onboard.html",
+    afterSignInUrl: "/dashboard.html", afterSignUpUrl: "/dashboard.html",
     stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || "",
     paypalClientId: process.env.PAYPAL_CLIENT_ID || "",
   });
@@ -107,88 +93,33 @@ app.get("/api/me", requireSession, async (req, res) => {
     const { userId } = getAuth(req);
     const user = await clerkClient.users.getUser(userId);
     const role = await ensureUserRole(user);
-
-    res.json({
-      user: formatUser(user, role),
-    });
+    res.json({ user: formatUser(user, role) });
   } catch (error) {
-    res.status(500).json({
-      error: "Unable to load the current user profile.",
-      details: error instanceof Error ? error.message : "Unknown error",
-    });
+    res.status(500).json({ error: "Unable to load the current user profile.", details: error instanceof Error ? error.message : "Unknown error" });
   }
 });
 
 app.get("/api/admin/users", requireSession, requireAdmin, async (_req, res) => {
   try {
-    const { data, totalCount } = await clerkClient.users.getUserList({
-      orderBy: "-created_at",
-      limit: 25,
-    });
-
-    const users = await Promise.all(
-      data.map(async (user) => {
-        const role = await ensureUserRole(user);
-        return formatUser(user, role);
-      }),
-    );
-
-    const counts = users.reduce(
-      (accumulator, user) => {
-        accumulator[user.role] += 1;
-        return accumulator;
-      },
-      { admin: 0, tutor: 0, student: 0 },
-    );
-
-    res.json({
-      totalCount,
-      counts,
-      users,
-    });
+    const { data, totalCount } = await clerkClient.users.getUserList({ orderBy: "-created_at", limit: 25 });
+    const users = await Promise.all(data.map(async (user) => { const role = await ensureUserRole(user); return formatUser(user, role); }));
+    const counts = users.reduce((acc, user) => { acc[user.role] += 1; return acc; }, { admin: 0, tutor: 0, student: 0 });
+    res.json({ totalCount, counts, users });
   } catch (error) {
-    res.status(500).json({
-      error: "Unable to load platform users.",
-      details: error instanceof Error ? error.message : "Unknown error",
-    });
+    res.status(500).json({ error: "Unable to load platform users.", details: error instanceof Error ? error.message : "Unknown error" });
   }
 });
 
-app.patch(
-  "/api/admin/users/:userId/role",
-  requireSession,
-  requireAdmin,
-  async (req, res) => {
-    try {
-      const role = normalizeRole(req.body?.role);
-
-      if (!role) {
-        return res.status(400).json({
-          error: "Role must be one of admin, tutor, or student.",
-        });
-      }
-
-      const updatedUser = await clerkClient.users.updateUserMetadata(
-        req.params.userId,
-        {
-          publicMetadata: {
-            role,
-          },
-        },
-      );
-
-      return res.json({
-        success: true,
-        user: formatUser(updatedUser, role),
-      });
-    } catch (error) {
-      return res.status(500).json({
-        error: "Unable to update the user's role.",
-        details: error instanceof Error ? error.message : "Unknown error",
-      });
-    }
-  },
-);
+app.patch("/api/admin/users/:userId/role", requireSession, requireAdmin, async (req, res) => {
+  try {
+    const role = normalizeRole(req.body?.role);
+    if (!role) return res.status(400).json({ error: "Role must be one of admin, tutor, or student." });
+    const updatedUser = await clerkClient.users.updateUserMetadata(req.params.userId, { publicMetadata: { role } });
+    return res.json({ success: true, user: formatUser(updatedUser, role) });
+  } catch (error) {
+    return res.status(500).json({ error: "Unable to update the user's role.", details: error instanceof Error ? error.message : "Unknown error" });
+  }
+});
 
 app.patch("/api/me/profile", requireSession, async (req, res) => {
   try {
@@ -196,39 +127,19 @@ app.patch("/api/me/profile", requireSession, async (req, res) => {
     const user = await clerkClient.users.getUser(userId);
     const currentRole = await ensureUserRole(user);
     const payload = req.body || {};
-
     const publicMetadata = {
       ...(user.publicMetadata || {}),
       role: currentRole,
-      selectedExam:
-        typeof payload.selectedExam === "string" ? payload.selectedExam.trim() : user.publicMetadata?.selectedExam,
-      selectedCategory:
-        typeof payload.selectedCategory === "string"
-          ? payload.selectedCategory.trim().toLowerCase()
-          : user.publicMetadata?.selectedCategory,
-      attemptStatus:
-        typeof payload.attemptStatus === "string" ? payload.attemptStatus.trim() : user.publicMetadata?.attemptStatus,
-      examOption:
-        typeof payload.examOption === "string" ? payload.examOption.trim() : user.publicMetadata?.examOption,
-      assistanceType:
-        typeof payload.assistanceType === "string"
-          ? payload.assistanceType.trim()
-          : user.publicMetadata?.assistanceType,
+      selectedExam: typeof payload.selectedExam === "string" ? payload.selectedExam.trim() : user.publicMetadata?.selectedExam,
+      selectedCategory: typeof payload.selectedCategory === "string" ? payload.selectedCategory.trim().toLowerCase() : user.publicMetadata?.selectedCategory,
+      attemptStatus: typeof payload.attemptStatus === "string" ? payload.attemptStatus.trim() : user.publicMetadata?.attemptStatus,
+      examOption: typeof payload.examOption === "string" ? payload.examOption.trim() : user.publicMetadata?.examOption,
+      assistanceType: typeof payload.assistanceType === "string" ? payload.assistanceType.trim() : user.publicMetadata?.assistanceType,
     };
-
-    const updatedUser = await clerkClient.users.updateUserMetadata(userId, {
-      publicMetadata,
-    });
-
-    res.json({
-      success: true,
-      user: formatUser(updatedUser, currentRole),
-    });
+    const updatedUser = await clerkClient.users.updateUserMetadata(userId, { publicMetadata });
+    res.json({ success: true, user: formatUser(updatedUser, currentRole) });
   } catch (error) {
-    res.status(500).json({
-      error: "Unable to update onboarding metadata.",
-      details: error instanceof Error ? error.message : "Unknown error",
-    });
+    res.status(500).json({ error: "Unable to update onboarding metadata.", details: error instanceof Error ? error.message : "Unknown error" });
   }
 });
 
@@ -259,10 +170,7 @@ app.post("/api/paypal/create-order", async (req, res) => {
     const order = await fetch(`${PAYPAL_BASE()}/v2/checkout/orders`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({
-        intent: "CAPTURE",
-        purchase_units: [{ amount: { currency_code: "USD", value: (cents / 100).toFixed(2) }, description }],
-      }),
+      body: JSON.stringify({ intent: "CAPTURE", purchase_units: [{ amount: { currency_code: "USD", value: (cents / 100).toFixed(2) }, description }] }),
     }).then(r => r.json());
     return res.json({ id: order.id });
   } catch (error) {
@@ -287,23 +195,172 @@ app.post("/api/stripe/create-payment-intent", async (req, res) => {
   try {
     const { amount, currency = "usd", description = "Sleek Academia Service" } = req.body;
     const cents = Math.round(Number(amount));
-    if (!cents || cents < 50) {
-      return res.status(400).json({ error: "Invalid amount. Minimum is $0.50." });
-    }
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: cents,
-      currency,
-      description,
-      automatic_payment_methods: { enabled: true },
-    });
+    if (!cents || cents < 50) return res.status(400).json({ error: "Invalid amount. Minimum is $0.50." });
+    const paymentIntent = await stripe.paymentIntents.create({ amount: cents, currency, description, automatic_payment_methods: { enabled: true } });
     return res.json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
     return res.status(500).json({ error: error instanceof Error ? error.message : "Payment failed." });
   }
 });
 
+app.post("/api/stripe/create-checkout-session", async (req, res) => {
+  try {
+    const { priceAmountCents, productName } = req.body;
+    const cents = Math.round(Number(priceAmountCents));
+    if (!cents || cents < 50) return res.status(400).json({ error: "Invalid amount." });
+    if (!productName || typeof productName !== "string" || productName.length > 200) {
+      return res.status(400).json({ error: "Product name required." });
+    }
+    const baseUrl = (process.env.BASE_URL || `${req.protocol}://${req.get("host")}`).replace(/\/$/, "");
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [{
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: `Sleek Academia — ${productName}`,
+            description: "Exam prep course access",
+          },
+          unit_amount: cents,
+        },
+        quantity: 1,
+      }],
+      mode: "payment",
+      success_url: `${baseUrl}/payment-success.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/courses.html`,
+    });
+    return res.json({ url: session.url });
+  } catch (error) {
+    return res.status(500).json({ error: error instanceof Error ? error.message : "Checkout session failed." });
+  }
+});
+
+// ── NVIDIA AI Chat Route (public — no auth required, axios avoids Node v25 fetch bug) ──
+async function nvidiaChat(apiKey, body) {
+  const { data } = await axios.post(
+    "https://integrate.api.nvidia.com/v1/chat/completions",
+    body,
+    {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      timeout: 30000,
+    }
+  );
+  return data;
+}
+
+app.post("/api/ai/chat", async (req, res) => {
+  try {
+    const { messages, systemPrompt } = req.body;
+
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: "Messages are required." });
+    }
+
+    const apiKey = process.env.NVIDIA_API_KEY;
+    if (!apiKey) return res.status(500).json({ error: "AI service not configured." });
+
+    const result = await nvidiaChat(apiKey, {
+      model: "meta/llama-3.2-1b-instruct",
+      messages: [
+        {
+          role: "system",
+          content: systemPrompt || "You are a helpful academic tutor for Sleek Academia. Be concise, accurate, and impactful.",
+        },
+        ...messages,
+      ],
+      max_tokens: 400,
+      temperature: 0.5,
+      top_p: 0.9,
+    });
+
+    const reply = result.choices?.[0]?.message?.content || "";
+    return res.json({ reply });
+
+  } catch (error) {
+    console.error("AI chat error:", error.message);
+    return res.status(500).json({ error: "AI service error. Please try again." });
+  }
+});
+
+// ── Chatbot intake summary → Resend email (public route — no auth required) ──
+// Uses axios to avoid Node v25 undici/fetch issues.
+app.post("/api/chat/send-summary", async (req, res) => {
+  const { summary } = req.body;
+  if (!summary) return res.status(400).json({ error: "No summary provided." });
+
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return res.status(500).json({ error: "Email service not configured." });
+
+  // Split structured labels (first block) from Aria's narrative (second block)
+  const parts = summary.split(/\n\n/);
+  const labelBlock = parts[0] || "";
+  const narrative  = parts.slice(1).join("\n\n");
+
+  function esc(str) {
+    return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  // Render "Key: Value" lines as a clean table
+  const detailRows = esc(labelBlock)
+    .split(/\n/)
+    .filter(Boolean)
+    .map(function (line) {
+      const colon = line.indexOf(":");
+      if (colon === -1) return `<tr><td colspan="2" style="padding:6px 12px">${line}</td></tr>`;
+      const key = line.slice(0, colon).trim();
+      const val = line.slice(colon + 1).trim();
+      return `<tr>
+        <td style="padding:8px 12px;font-weight:700;color:#0f172a;white-space:nowrap;border-bottom:1px solid #e2e8f0">${key}</td>
+        <td style="padding:8px 12px;color:#334155;border-bottom:1px solid #e2e8f0">${val}</td>
+      </tr>`;
+    })
+    .join("");
+
+  const safeNarrative = esc(narrative).replace(/\n/g, "<br>");
+
+  try {
+    await axios.post(
+      "https://api.resend.com/emails",
+      {
+        from: "Aria at Sleek Academia <onboarding@resend.dev>",
+        to: ["macsinjobs@gmail.com"],
+        subject: "New Student Enquiry | Sleek Academia",
+        html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
+          <h2 style="color:#0f172a;margin-top:0">New Student Enquiry 🎓</h2>
+          <table style="width:100%;border-collapse:collapse;background:#f8fafc;border-radius:8px;overflow:hidden;margin-bottom:20px">
+            ${detailRows}
+          </table>
+          ${safeNarrative ? `<div style="border-left:4px solid #f59e0b;padding:12px 16px;border-radius:4px;font-size:14px;color:#334155;line-height:1.7;background:#fffbeb">${safeNarrative}</div>` : ""}
+          <p style="color:#94a3b8;font-size:12px;margin-top:20px">Sent via Sleek Academia AI Chatbot</p>
+        </div>`,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        timeout: 15000,
+      }
+    );
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("Resend error:", err.response?.data || err.message);
+    return res.status(500).json({ error: "Failed to send email." });
+  }
+});
+
 app.use("/assets", express.static(assetsDir));
-app.use(express.static(publicDir, { extensions: ["html"] }));
+app.use(express.static(publicDir, {
+  extensions: ["html"],
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith(".html")) {
+      res.setHeader("Cache-Control", "no-cache");
+    }
+  }
+}));
 
 app.use((req, res) => {
   res.status(404).sendFile(path.join(publicDir, "404.html"));
@@ -314,12 +371,7 @@ app.listen(port, () => {
 });
 
 function splitEmails(value = "") {
-  return new Set(
-    value
-      .split(",")
-      .map((item) => item.trim().toLowerCase())
-      .filter(Boolean),
-  );
+  return new Set(value.split(",").map((item) => item.trim().toLowerCase()).filter(Boolean));
 }
 
 function normalizeRole(value) {
@@ -330,12 +382,8 @@ function normalizeRole(value) {
 
 function primaryEmail(user) {
   if (!user?.emailAddresses?.length) return "";
-
   const primaryId = user.primaryEmailAddressId;
-  const primary =
-    user.emailAddresses.find((email) => email.id === primaryId) ||
-    user.emailAddresses[0];
-
+  const primary = user.emailAddresses.find((email) => email.id === primaryId) || user.emailAddresses[0];
   return primary?.emailAddress?.toLowerCase() || "";
 }
 
@@ -348,11 +396,8 @@ function inferRoleFromEmail(email) {
 async function ensureUserRole(user) {
   const existingRole = normalizeRole(user?.publicMetadata?.role);
   if (existingRole) return existingRole;
-
   const role = inferRoleFromEmail(primaryEmail(user));
-  await clerkClient.users.updateUserMetadata(user.id, {
-    publicMetadata: { role },
-  });
+  await clerkClient.users.updateUserMetadata(user.id, { publicMetadata: { role } });
   return role;
 }
 
@@ -361,44 +406,26 @@ async function requireAdmin(req, res, next) {
     const { userId } = getAuth(req);
     const user = await clerkClient.users.getUser(userId);
     const role = await ensureUserRole(user);
-
-    if (role !== "admin") {
-      return res.status(403).json({ error: "Admin access is required." });
-    }
-
+    if (role !== "admin") return res.status(403).json({ error: "Admin access is required." });
     req.currentUser = user;
     req.currentRole = role;
     return next();
   } catch (error) {
-    return res.status(500).json({
-      error: "Unable to verify admin access.",
-      details: error instanceof Error ? error.message : "Unknown error",
-    });
+    return res.status(500).json({ error: "Unable to verify admin access.", details: error instanceof Error ? error.message : "Unknown error" });
   }
 }
 
 function requireSession(req, res, next) {
   const auth = getAuth(req);
-
-  if (!auth.isAuthenticated || !auth.userId) {
-    return res.status(401).json({ error: "Authentication is required." });
-  }
-
+  if (!auth.isAuthenticated || !auth.userId) return res.status(401).json({ error: "Authentication is required." });
   return next();
 }
 
 function formatUser(user, role) {
   const email = primaryEmail(user);
-  const fullName =
-    [user.firstName, user.lastName].filter(Boolean).join(" ").trim() ||
-    email ||
-    "Sleek Academia User";
-
+  const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ").trim() || email || "Sleek Academia User";
   return {
-    id: user.id,
-    role,
-    email,
-    fullName,
+    id: user.id, role, email, fullName,
     firstName: user.firstName || "",
     lastName: user.lastName || "",
     imageUrl: user.imageUrl || "",
@@ -415,20 +442,16 @@ function formatUser(user, role) {
 function buildClerkJsUrl(frontendApiUrl) {
   if (process.env.CLERK_JS_URL) return process.env.CLERK_JS_URL;
   if (!frontendApiUrl) return "";
-
   if (frontendApiUrl.startsWith("http://") || frontendApiUrl.startsWith("https://")) {
     return `${frontendApiUrl.replace(/\/$/, "")}/npm/@clerk/clerk-js@5/dist/clerk.browser.js`;
   }
-
   return `https://${frontendApiUrl}/npm/@clerk/clerk-js@5/dist/clerk.browser.js`;
 }
 
 function frontendApiFromPublishableKey(publishableKey) {
   if (!publishableKey) return "";
-
   const encoded = publishableKey.split("_").slice(2).join("_");
   if (!encoded) return "";
-
   try {
     const decoded = Buffer.from(encoded, "base64").toString("utf8").replace(/\$+$/, "");
     return decoded;
