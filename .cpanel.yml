@@ -3,10 +3,4 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/sleenegb/public_html/sleekacademianewsite/
     - /bin/mkdir -p $DEPLOYPATH
-    - /bin/cp -R public $DEPLOYPATH
-    - /bin/cp -R assets $DEPLOYPATH
-    - /bin/cp -R views $DEPLOYPATH
-    - /bin/cp server.js $DEPLOYPATH
-    - /bin/cp package.json $DEPLOYPATH
-    - /bin/cp package-lock.json $DEPLOYPATH
-    - /bin/cp README.md $DEPLOYPATH
+    - /usr/bin/rsync -av --delete --exclude='.git' --exclude='.cpanel.yml' --exclude='node_modules' ./ $DEPLOYPATH
