@@ -10,7 +10,10 @@ test.before(async () => {
     cwd: process.cwd(),
     env: {
       ...process.env,
-      PORT: String(PORT)
+      PORT: String(PORT),
+      CLERK_PUBLISHABLE_KEY: "",
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "",
+      CLERK_SECRET_KEY: ""
     },
     stdio: ["ignore", "pipe", "pipe"]
   });
@@ -32,6 +35,15 @@ test("serves robots.txt for search crawlers", async () => {
   assert.match(body, /Sitemap: https:\/\/sleekacademia\.com\/sitemap\.xml/);
 });
 
+test("serves the public homepage without Clerk configuration", async () => {
+  const response = await fetch(`http://localhost:${PORT}/`);
+  const body = await response.text();
+
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type"), /text\/html/);
+  assert.match(body, /Sleek Academia/);
+});
+
 test("serves sitemap.xml for search crawlers", async () => {
   const response = await fetch(`http://localhost:${PORT}/sitemap.xml`);
   const body = await response.text();
@@ -39,6 +51,15 @@ test("serves sitemap.xml for search crawlers", async () => {
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type"), /application\/xml/);
   assert.match(body, /<loc>https:\/\/sleekacademia\.com\//);
+});
+
+test("serves health without Clerk configuration", async () => {
+  const response = await fetch(`http://localhost:${PORT}/api/health`);
+  const body = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(body.ok, true);
+  assert.equal(body.clerkConfigured, false);
 });
 
 function waitForServer() {

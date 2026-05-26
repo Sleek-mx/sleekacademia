@@ -27,6 +27,18 @@ const execAsync = promisify(exec);
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
+const clerkIsConfigured = Boolean(
+  (process.env.CLERK_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) &&
+  process.env.CLERK_SECRET_KEY
+);
+const staticOptions = {
+  extensions: ["html"],
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith(".html")) {
+      res.setHeader("Cache-Control", "no-cache");
+    }
+  }
+};
 
 const validRoles = new Set(["admin", "tutor", "student"]);
 const adminEmails = splitEmails(process.env.ADMIN_EMAILS);
@@ -120,13 +132,32 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(clerkMiddleware());
-
 app.get("/", (_req, res) => {
   res.sendFile(path.join(publicDir, "index.html"));
 });
 
+app.get("/api/health", (_req, res) => {
+  res.json({
+    ok: true,
+    service: "sleek-academia",
+    deployWebhook: true,
+    clerkConfigured: clerkIsConfigured,
+    time: new Date().toISOString()
+  });
+});
+
+app.use("/assets", express.static(assetsDir));
+app.use((req, res, next) => {
+  if (req.path === "/dashboard.html") return next();
+  return express.static(publicDir, staticOptions)(req, res, next);
+});
+
+if (clerkIsConfigured) {
+  app.use(clerkMiddleware());
+}
+
 app.get("/app", (req, res) => {
+  if (!clerkIsConfigured) return res.redirect("/onboard.html");
   const auth = getAuth(req);
   res.redirect(auth.isAuthenticated ? "/dashboard.html" : "/onboard.html");
 });
@@ -135,15 +166,6 @@ const clerkCookieNames = [
   "__session", "__refresh", "__client_uat",
   "__clerk_handshake", "__clerk_redirect_count", "__clerk_handshake_nonce",
 ];
-
-app.get("/api/health", (_req, res) => {
-  res.json({
-    ok: true,
-    service: "sleek-academia",
-    deployWebhook: true,
-    time: new Date().toISOString()
-  });
-});
 
 app.get("/logout", (_req, res) => {
   clerkCookieNames.forEach((cookieName) => {
@@ -168,7 +190,7 @@ app.get("/api/config", (_req, res) => {
   });
 });
 
-app.get("/dashboard.html", requireAuth(), (_req, res) => {
+app.get("/dashboard.html", requireClerkConfigured, requireAuth(), (_req, res) => {
   res.sendFile(path.join(publicDir, "dashboard.html"));
 });
 
@@ -476,16 +498,6 @@ app.post("/api/chat/send-summary", async (req, res) => {
   }
 });
 
-app.use("/assets", express.static(assetsDir));
-app.use(express.static(publicDir, {
-  extensions: ["html"],
-  setHeaders: (res, filePath) => {
-    if (filePath.endsWith(".html")) {
-      res.setHeader("Cache-Control", "no-cache");
-    }
-  }
-}));
-
 app.use((req, res) => {
   res.status(404).sendFile(path.join(publicDir, "404.html"));
 });
@@ -544,8 +556,18 @@ async function requireAdmin(req, res, next) {
 }
 
 function requireSession(req, res, next) {
+  if (!clerkIsConfigured) {
+    return res.status(503).json({ error: "Authentication service is not configured." });
+  }
   const auth = getAuth(req);
   if (!auth.isAuthenticated || !auth.userId) return res.status(401).json({ error: "Authentication is required." });
+  return next();
+}
+
+function requireClerkConfigured(_req, res, next) {
+  if (!clerkIsConfigured) {
+    return res.redirect("/login.html");
+  }
   return next();
 }
 
