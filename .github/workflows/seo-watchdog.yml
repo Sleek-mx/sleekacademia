@@ -32,5 +32,5 @@ jobs:
         run: npm test
 
       - name: Check live SEO endpoints
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: node scripts/check-live-seo.mjs

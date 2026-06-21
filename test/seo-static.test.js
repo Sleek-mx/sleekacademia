@@ -21,13 +21,13 @@ const indexablePages = [
   "blog/nclex-first-attempt.html",
   "blog/nclex-study-schedule.html",
   "blog/nursg-5315-exam-2-study-pack.html",
-  "blog/students-dread-the-sheer-volume-of-endocrine-and-gi-facts-that-can-feel-like-a-m.html",
   "blog/ube-decoded.html"
 ];
 
 const utilityPages = [
   "404.html",
   "ai-tools-pro.html",
+  "blog/students-dread-the-sheer-volume-of-endocrine-and-gi-facts-that-can-feel-like-a-m.html",
   "blogs.html",
   "dashboard.html",
   "login.html",
@@ -69,10 +69,24 @@ test("sitemap contains every indexable page and no utility page", async () => {
 
 test("public marketing copy avoids unsupported outcome claims", async () => {
   const homepage = await readPublic("index.html");
+  const about = await readPublic("about.html");
   const pricing = await readPublic("pricing.html");
 
   assert.doesNotMatch(homepage, /results guaranteed/i);
-  assert.doesNotMatch(pricing, /98% pass rate/i);
+  for (const html of [about, pricing]) {
+    assert.doesNotMatch(html, /98%/i);
+    assert.doesNotMatch(html, /500\+\s+(active\s+)?tutors/i);
+    assert.doesNotMatch(html, /10,000\+\s+students/i);
+  }
+});
+
+test("every indexable blog post provides Article structured data", async () => {
+  const blogPosts = indexablePages.filter((page) => page.startsWith("blog/"));
+
+  for (const page of blogPosts) {
+    const html = await readPublic(page);
+    assert.match(html, /"@type"\s*:\s*"Article"/, `${page} must provide Article schema`);
+  }
 });
 
 test("homepage presents all tutoring categories under one service", async () => {
