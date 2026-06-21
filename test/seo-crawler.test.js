@@ -62,6 +62,19 @@ test("serves health without Clerk configuration", async () => {
   assert.equal(body.clerkConfigured, false);
 });
 
+test("refuses webhook deployment when no webhook secret is configured", async () => {
+  const response = await fetch(`http://localhost:${PORT}/deploy.php`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ ref: "refs/heads/main" })
+  });
+
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), {
+    error: "Deployment webhook is not configured"
+  });
+});
+
 function waitForServer() {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {

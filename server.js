@@ -45,7 +45,10 @@ const adminEmails = splitEmails(process.env.ADMIN_EMAILS);
 const tutorEmails = splitEmails(process.env.TUTOR_EMAILS);
 
 app.post("/deploy.php", express.raw({ type: "application/json", limit: "2mb" }), async (req, res) => {
-  const secret = process.env.GITHUB_WEBHOOK_SECRET || "sleek2026deploy";
+  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+  if (!secret) {
+    return res.status(503).json({ error: "Deployment webhook is not configured" });
+  }
   const rawBody = Buffer.isBuffer(req.body) ? req.body : Buffer.from("");
   const expectedSignature = `sha256=${crypto.createHmac("sha256", secret).update(rawBody).digest("hex")}`;
   const receivedSignature = req.get("x-hub-signature-256") || "";
