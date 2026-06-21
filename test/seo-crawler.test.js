@@ -62,6 +62,33 @@ test("serves health without Clerk configuration", async () => {
   assert.equal(body.clerkConfigured, false);
 });
 
+test("refuses webhook deployment when no webhook secret is configured", async () => {
+  const response = await fetch(`http://localhost:${PORT}/deploy.php`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ ref: "refs/heads/main" })
+  });
+
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), {
+    error: "Deployment webhook is not configured"
+  });
+});
+
+test("permanently redirects obsolete Search Console URLs", async () => {
+  const redirects = new Map([
+    ["/index.html", "/"],
+    ["/services.html", "/courses.html"],
+    ["/order.html", "/onboard.html"]
+  ]);
+
+  for (const [source, destination] of redirects) {
+    const response = await fetch(`http://localhost:${PORT}${source}`, { redirect: "manual" });
+    assert.equal(response.status, 301, `${source} must permanently redirect`);
+    assert.equal(response.headers.get("location"), destination);
+  }
+});
+
 function waitForServer() {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {

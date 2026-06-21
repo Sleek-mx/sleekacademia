@@ -45,7 +45,10 @@ const adminEmails = splitEmails(process.env.ADMIN_EMAILS);
 const tutorEmails = splitEmails(process.env.TUTOR_EMAILS);
 
 app.post("/deploy.php", express.raw({ type: "application/json", limit: "2mb" }), async (req, res) => {
-  const secret = process.env.GITHUB_WEBHOOK_SECRET || "sleek2026deploy";
+  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+  if (!secret) {
+    return res.status(503).json({ error: "Deployment webhook is not configured" });
+  }
   const rawBody = Buffer.isBuffer(req.body) ? req.body : Buffer.from("");
   const expectedSignature = `sha256=${crypto.createHmac("sha256", secret).update(rawBody).digest("hex")}`;
   const receivedSignature = req.get("x-hub-signature-256") || "";
@@ -135,6 +138,16 @@ app.use((req, res, next) => {
 app.get("/", (_req, res) => {
   res.sendFile(path.join(publicDir, "index.html"));
 });
+
+const legacySeoRedirects = new Map([
+  ["/index.html", "/"],
+  ["/services.html", "/courses.html"],
+  ["/order.html", "/onboard.html"]
+]);
+
+for (const [source, destination] of legacySeoRedirects) {
+  app.get(source, (_req, res) => res.redirect(301, destination));
+}
 
 app.get("/api/health", (_req, res) => {
   res.json({
