@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 
@@ -73,6 +73,32 @@ test("public marketing copy avoids unsupported outcome claims", async () => {
 
   assert.doesNotMatch(homepage, /results guaranteed/i);
   assert.doesNotMatch(pricing, /98% pass rate/i);
+});
+
+test("homepage presents all tutoring categories under one service", async () => {
+  const homepage = await readPublic("index.html");
+
+  for (const category of ["nursing", "law", "IT", "accounting", "finance"]) {
+    assert.match(homepage, new RegExp(`\\b${category}\\b`, "i"), `homepage must mention ${category}`);
+  }
+  assert.match(homepage, /academic tutoring/i);
+});
+
+test("homepage schema describes the educational organization and tutoring catalog", async () => {
+  const homepage = await readPublic("index.html");
+  const jsonLdBlocks = [...homepage.matchAll(/<script\s+type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/gi)]
+    .map((match) => JSON.parse(match[1]));
+  const nodes = jsonLdBlocks.flatMap((block) => block["@graph"] ?? [block]);
+  const types = nodes.map((node) => node["@type"]);
+
+  assert.ok(types.includes("EducationalOrganization"));
+  assert.ok(types.includes("WebSite"));
+  const organization = nodes.find((node) => node["@type"] === "EducationalOrganization");
+  assert.equal(organization.hasOfferCatalog?.["@type"], "OfferCatalog");
+  assert.equal(organization.hasOfferCatalog?.itemListElement?.length, 5);
+
+  const logoPath = new URL(organization.logo).pathname;
+  await access(path.join(process.cwd(), "public", decodeURIComponent(logoPath)));
 });
 
 async function readPublic(relativePath) {
