@@ -139,6 +139,16 @@ app.get("/", (_req, res) => {
   res.sendFile(path.join(publicDir, "index.html"));
 });
 
+const legacySeoRedirects = new Map([
+  ["/index.html", "/"],
+  ["/services.html", "/courses.html"],
+  ["/order.html", "/onboard.html"]
+]);
+
+for (const [source, destination] of legacySeoRedirects) {
+  app.get(source, (_req, res) => res.redirect(301, destination));
+}
+
 app.get("/api/health", (_req, res) => {
   res.json({
     ok: true,

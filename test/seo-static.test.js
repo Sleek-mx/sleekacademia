@@ -126,6 +126,26 @@ test("indexable pages load CTA analytics and the homepage labels primary CTAs", 
   assert.match(homepage, /data-cta-location="homepage_hero"/);
 });
 
+test("about page publishes the verified Sir Maxwell tutor profile", async () => {
+  const about = await readPublic("about.html");
+
+  assert.match(about, /Sir Maxwell/);
+  assert.match(about, /Lead Tutor (?:&amp;|&) Founder/);
+  assert.match(about, /10\+ years/);
+  assert.match(about, /University of Texas at Arlington/);
+  assert.match(about, /United States and United Kingdom/);
+
+  const jsonLdBlocks = [...about.matchAll(/<script\s+type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/gi)]
+    .map((match) => JSON.parse(match[1]));
+  const nodes = jsonLdBlocks.flatMap((block) => block["@graph"] ?? [block]);
+  const person = nodes.find((node) => node["@type"] === "Person");
+
+  assert.equal(person?.name, "Sir Maxwell");
+  assert.equal(person?.jobTitle, "Lead Tutor & Founder");
+  assert.equal(person?.alumniOf?.name, "University of Texas at Arlington");
+  assert.ok(person?.knowsAbout?.includes("NCLEX-RN preparation"));
+});
+
 async function readPublic(relativePath) {
   return readFile(path.join(process.cwd(), "public", relativePath), "utf8");
 }

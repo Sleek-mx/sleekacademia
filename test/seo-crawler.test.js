@@ -75,6 +75,20 @@ test("refuses webhook deployment when no webhook secret is configured", async ()
   });
 });
 
+test("permanently redirects obsolete Search Console URLs", async () => {
+  const redirects = new Map([
+    ["/index.html", "/"],
+    ["/services.html", "/courses.html"],
+    ["/order.html", "/onboard.html"]
+  ]);
+
+  for (const [source, destination] of redirects) {
+    const response = await fetch(`http://localhost:${PORT}${source}`, { redirect: "manual" });
+    assert.equal(response.status, 301, `${source} must permanently redirect`);
+    assert.equal(response.headers.get("location"), destination);
+  }
+});
+
 function waitForServer() {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
