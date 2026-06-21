@@ -101,6 +101,17 @@ test("homepage schema describes the educational organization and tutoring catalo
   await access(path.join(process.cwd(), "public", decodeURIComponent(logoPath)));
 });
 
+test("indexable pages load CTA analytics and the homepage labels primary CTAs", async () => {
+  for (const page of indexablePages) {
+    const html = await readPublic(page);
+    assert.match(html, /<script\s+type="module"\s+src="\/js\/analytics\.js"><\/script>/, `${page} must load CTA analytics`);
+  }
+
+  const homepage = await readPublic("index.html");
+  assert.match(homepage, /data-cta-location="homepage_nav"/);
+  assert.match(homepage, /data-cta-location="homepage_hero"/);
+});
+
 async function readPublic(relativePath) {
   return readFile(path.join(process.cwd(), "public", relativePath), "utf8");
 }
