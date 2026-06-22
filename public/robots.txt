@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://sleekacademia.com/sitemap.xml
-
