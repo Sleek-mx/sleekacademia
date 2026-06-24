@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SY0-701 PBQ Practice Guide: Performance-Based Questions Explained | Sleek Academia</title>
+    <meta name="description" content="A practical guide to CompTIA Security+ SY0-701 Performance-Based Questions (PBQs) — what they test, how they're scored, and a step-by-step strategy for each question type." />
+    <link rel="canonical" href="https://sleekacademia.com/blog/sy0-701-pbq-practice-guide.html" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Sleek Academia" />
+    <meta property="og:title" content="SY0-701 PBQ Practice Guide: Performance-Based Questions Explained | Sleek Academia" />
+    <meta property="og:description" content="A practical guide to CompTIA Security+ SY0-701 Performance-Based Questions (PBQs) — what they test, how they're scored, and a step-by-step strategy for each question type." />
+    <meta property="og:url" content="https://sleekacademia.com/blog/sy0-701-pbq-practice-guide.html" />
+    <meta property="og:image" content="https://sleekacademia.com/images/og-default.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SY0-701 PBQ Practice Guide: Performance-Based Questions Explained | Sleek Academia" />
+    <meta name="twitter:description" content="A practical guide to CompTIA Security+ SY0-701 Performance-Based Questions (PBQs) — what they test, how they're scored, and a step-by-step strategy for each question type." />
+    <meta name="twitter:image" content="https://sleekacademia.com/images/og-default.png" />
+    <link rel="stylesheet" href="../css/tailwind.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <style>
+      html { background: #f5f7f9; scroll-behavior: smooth; }
+      body { opacity: 0; transform: translateY(18px); transition: opacity 220ms ease, transform 220ms ease; font-family: "Inter", sans-serif; }
+      html.page-ready body { opacity: 1; transform: translateY(0); }
+      h1, h2, h3, h4 { font-family: "Plus Jakarta Sans", sans-serif; }
+      .material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; }
+      .prose p { margin-bottom: 1.25rem; line-height: 1.8; color: #374151; }
+      .prose h2 { font-family: "Plus Jakarta Sans", sans-serif; font-size: 1.5rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; color: #1e1b4b; }
+      .prose h3 { font-family: "Plus Jakarta Sans", sans-serif; font-size: 1.125rem; font-weight: 700; margin-top: 1.75rem; margin-bottom: 0.5rem; color: #2c2f31; }
+      .prose ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
+      .prose ul li { margin-bottom: 0.4rem; color: #374151; line-height: 1.7; }
+      .prose strong { color: #1e1b4b; }
+      .prose a { color: #0a7ac1; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+      .prose a:hover { color: #065f9a; }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "SY0-701 PBQ Practice Guide: Performance-Based Questions Explained",
+      "url": "https://sleekacademia.com/blog/sy0-701-pbq-practice-guide.html",
+      "image": "https://sleekacademia.com/assets/hero1.webp",
+      "datePublished": "2026-06-22",
+      "dateModified": "2026-06-22",
+      "author": {
+        "@type": "Person",
+        "name": "Sleek Academia Editorial Team",
+        "url": "https://sleekacademia.com/about.html"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Sleek Academia",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://sleekacademia.com/images/logo.png"
+        }
+      },
+      "about": {
+        "@type": "Thing",
+        "name": "CompTIA Security+ SY0-701 Performance-Based Questions"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://sleekacademia.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://sleekacademia.com/blog.html" },
+        { "@type": "ListItem", "position": 3, "name": "SY0-701 PBQ Practice Guide", "item": "https://sleekacademia.com/blog/sy0-701-pbq-practice-guide.html" }
+      ]
+    }
+    </script>
+
+  <!-- ── Analytics & Tracking ───────────────────────────────────────────── -->
+  <!-- Google Analytics GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CHXSBK3M81"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CHXSBK3M81');
+  </script>
+  <!-- Meta Pixel -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window,document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '2344858129372736');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=2344858129372736&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- TikTok Pixel -->
+  <script>
+  !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];
+  ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"];
+  ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};
+  for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);
+  ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e};
+  ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js";
+  ttq._i=ttq._i||{};ttq._i[e]=[];ttq._i[e]._u=r;ttq._t=ttq._t||{};ttq._t[e]=+new Date;
+  ttq._o=ttq._o||{};ttq._o[e]=n||{};n=d.createElement("script");
+  n.type="text/javascript";n.async=!0;n.src=r+"?sdkid="+e+"&lib="+t;
+  e=d.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+  ttq.load('D84IJPBC77UDS4G4KMO0');ttq.page();
+  }(window,document,'ttq');
+  </script>
+  <!-- ── End Tracking ────────────────────────────────────────────────────── -->
+  </head>
+  <body class="bg-surface text-on-surface">
+    <nav class="fixed top-0 z-50 w-full bg-white/75 backdrop-blur-xl shadow-xl shadow-slate-900/5">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+        <a class="font-headline text-2xl font-black tracking-tight text-violet-700" href="/">Sleek Academia</a>
+        <div class="hidden items-center gap-8 md:flex">
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/">Home</a>
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/about.html">About Us</a>
+          <a class="border-b-2 border-violet-600 pb-1 text-sm font-bold text-violet-700" href="/blog.html">Blog</a>
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/store.html">Store</a>
+          <a class="text-sm font-medium text-slate-600 hover:text-violet-500" href="/pricing.html">Pricing</a>
+        </div>
+        <div class="flex items-center gap-3">
+          <a class="rounded-xl bg-gradient-to-br from-primary to-primary-container px-5 py-2.5 text-sm font-bold text-white shadow-xl shadow-primary/20" href="/onboard.html">Get Started</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="pt-20">
+      <!-- Hero -->
+      <div class="relative h-80 overflow-hidden md:h-96">
+        <img src="/assets/hero1.png" alt="CompTIA Security+ SY0-701 PBQ guide" class="h-full w-full object-cover object-top" />
+        <div class="absolute inset-0" style="background: linear-gradient(135deg, rgba(6,182,212,0.82) 0%, rgba(8,145,178,0.72) 100%);"></div>
+        <div class="absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-white">
+          <span class="mb-4 inline-block rounded-full bg-white/20 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.25em] backdrop-blur-sm">CompTIA</span>
+          <h1 class="font-headline text-3xl font-extrabold leading-tight md:text-5xl">SY0-701 PBQ Practice Guide: Performance-Based Questions Explained</h1>
+          <p class="mt-4 text-base text-white/80 md:text-lg">What PBQs are, how they are scored, and a step-by-step approach for each question type on exam day</p>
+          <div class="mt-4 flex items-center gap-4 text-sm text-white/70">
+            <span>June 2026</span>
+            <span>•</span>
+            <span>10 min read</span>
+          </div>
+          <p class="mt-3 text-sm text-white/80">By the Sleek Academia tutoring team</p>
+        </div>
+      </div>
+
+      <!-- Article -->
+      <article class="mx-auto max-w-3xl px-6 py-16 lg:px-8">
+        <div class="prose">
+          <div class="not-prose pillar-callout mb-8 flex items-center gap-3 rounded-2xl border border-cyan-200 bg-cyan-50 p-4"><span class="material-symbols-outlined text-cyan-600">security</span><span class="text-sm text-slate-700">Part of our <a href="/comptia-security-plus-prep.html" class="font-bold text-cyan-700 hover:text-cyan-600">Complete CompTIA Security+ Prep Guide &rarr;</a></span></div>
+
+          <p>The Performance-Based Questions (PBQs) on the CompTIA Security+ SY0-701 exam are often the difference between a passing score and a retake. Multiple-choice questions test what you know; PBQs test whether you can actually do it — configure a firewall, analyse a log, set up a wireless network, or troubleshoot an access control issue in a simulated environment. They account for roughly 15&ndash;25% of your total score depending on the exam form, and they are almost always the section candidates describe as hardest.</p>
+
+          <p>This guide covers every PBQ format you will see on SY0-701, how each one is scored, and a repeatable approach for each type. If you are still early in your Security+ preparation, start with our <a href="/blog/comptia-security-plus-2026.html">overview of whether CompTIA Security+ is still worth it in 2026</a> and our <a href="/comptia-security-plus-prep.html">full CompTIA Security+ prep guide</a> for the complete domain breakdown.</p>
+
+          <h2>What Exactly Are PBQs on the SY0-701?</h2>
+          <p>PBQs are interactive questions that place you inside a simulated IT environment. Instead of picking the correct answer from four options, you perform a task: drag firewall rules into the correct order, click through a router configuration interface to apply ACLs, or identify vulnerabilities from a packet capture. CompTIA describes them as measuring <em>application</em> of knowledge rather than <em>recall</em> of facts.</p>
+
+          <p>The five SY0-701 domains all appear in PBQ format, but certain domains are heavier on simulations than others:</p>
+          <ul>
+            <li><strong>Domain 3 — Security Architecture</strong>: Implementing secure network designs, configuring firewalls and VPNs.</li>
+            <li><strong>Domain 4 — Security Operations</strong>: Analysing logs, incident response scenarios, vulnerability scanning.</li>
+            <li><strong>Domain 2 — Threats, Vulnerabilities, and Mitigations</strong>: Identifying attack types from traffic data or system indicators.</li>
+            <li><strong>Domain 1 — General Security Concepts</strong>: Access control models and authentication configurations.</li>
+            <li><strong>Domain 5 — Security Program Management</strong>: Occasionally appears as PBQs involving policy or compliance decisions.</li>
+          </ul>
+
+          <h2>The Four PBQ Formats on the SY0-701</h2>
+
+          <h3>1. Drag-and-Drop Build-Outs</h3>
+          <p>You are given a set of items (firewall rules, security controls, configuration steps) and must arrange them in the correct order or into the correct categories. For example, you might be asked to place the phases of an incident response lifecycle — Preparation, Detection and Analysis, Containment, Eradication, Recovery, Post-Incident Activity — into the correct sequence.</p>
+          <p><strong>How to approach:</strong> Look for the logical flow first. If it is a sequence, identify what starts the process and what ends it, then fill in the middle. If it is a classification task (sorting controls into preventive, detective, corrective), start with the items you are certain about and eliminate from there. The SY0-701 objective domains in the exam guide are a reliable reference for what belongs where.</p>
+
+          <h3>2. Network Topology Configuration</h3>
+          <p>This is the most intimidating PBQ type. You are shown a network topology diagram with empty slots or misconfigured devices and must drag correct devices, IP addresses, or security controls into place. A typical scenario: you see a small business network with a DMZ, internal LAN, and management network, and must place a firewall, web server, database server, and IDS sensor into the correct segments.</p>
+          <p><strong>How to approach:</strong> Start with the external-facing components. The web server belongs in the DMZ. The database server belongs in the internal LAN. The management interface should have restricted access. Apply the principle of least privilege to every connection. If the scenario mentions compliance (PCI DSS, HIPAA), factor in which segments must be isolated. Almost all topology PBQs test whether you understand segmentation and the difference between what belongs publicly accessible versus what does not.</p>
+
+          <h3>3. Log Analysis and Forensics</h3>
+          <p>You are given a firewall log, system log, or packet capture output and asked to identify the type of attack, the affected system, or the misconfiguration. The SY0-701 exam frequently uses logs to test your ability to distinguish between a brute-force attack, a DDoS, SQL injection, and a man-in-the-middle attempt.</p>
+          <p><strong>How to approach:</strong> Read the timestamp column first — do the events cluster in a short window? That suggests an automated attack. Look at source IPs: a single external IP with many failed authentication attempts is a brute force; many distributed IPs hitting the same port is a DDoS. Check the destination port: Port 443 with an unusual payload might indicate SSL/TLS abuse. Port 3306 (MySQL) outbound from the DMZ suggests SQL injection or data exfiltration. CompTIA expects you to recognise attack signatures from log output, not memorise every port number, but knowing the common service ports (22, 80, 443, 3389, 3306, 1433) helps significantly.</p>
+
+          <h3>4. Command-Line and Remediation</h3>
+          <p>You interact with a simulated command-line interface (CLI) or configuration panel to apply a fix. For example: you authenticate to a router, run <code>show access-list</code>, identify an overly permissive rule, and edit it. Or you connect to a Linux server and use <code>iptables</code>, <code>chmod</code>, or <code>usermod</code> commands to harden a system.</p>
+          <p><strong>How to approach:</strong> Read the prompt carefully — it tells you exactly what the expected outcome is (e.g., &ldquo;restrict SSH access to the 10.0.1.0/24 subnet&rdquo;). Work backward: what command produces that result? The SY0-701 exam guide lists the command-line tools you need to know: <code>ping</code>, <code>tracert</code>, <code>nslookup</code>, <code>netstat</code>, <code>ipconfig</code>/<code>ifconfig</code>, <code>nmap</code>, <code>iptables</code>, and <code>chmod</code>. If you do not know the exact syntax, eliminate options that produce a different outcome. For example, <code>chmod 777</code> gives full permissions to everyone — if the task says &ldquo;restrict to owner only,&rdquo; <code>chmod 700</code> or <code>chmod 755</code> is the correct choice.</p>
+
+          <h2>PBQ Scoring: What You Need to Know</h2>
+          <p>PBQs are not all-or-nothing. For drag-and-drop and topology questions, each correctly placed item earns partial credit. For log analysis, you may need to identify two indicators of compromise — identifying three out of four still earns most of the points. Multi-step CLI scenarios typically require completing every step to earn full credit, but the simulation gives you feedback (the interface changes when a step succeeds), so you know whether each action is working.</p>
+          <p>Because PBQs carry higher point values per question than multiple-choice, spending extra time on them is usually worth it. A good rule: allocate three to five minutes per PBQ and move on if stuck. The SY0-701 gives you 90 minutes for a maximum of 90 questions, and unfinished multiple-choice questions cost you points just as surely as unfinished PBQs do.</p>
+
+          <h2>How to Practise PBQs Before Exam Day</h2>
+          <p>Reading about PBQs will not prepare you for PBQs. You need hands-on practice in a safe environment that mimics the CompTIA simulation interface. Here is the most effective practice path:</p>
+          <ul>
+            <li><strong>Professor Messer's course notes and videos:</strong> Free resources that walk through every SY0-701 objective with examples. Watch the PBQ walkthroughs specifically.</li>
+            <li><strong>Jason Dion's practice exams on Udemy:</strong> His PBQ simulations are widely regarded as the closest to the real exam interface. Take at least two full-length practice exams that include PBQs before scheduling your test.</li>
+            <li><strong>CompTIA's official CertMaster Labs:</strong> These are expensive but they run in the actual PBQ environment. If you can afford one lab bundle, this is the best investment.</li>
+            <li><strong>Home lab on VirtualBox:</strong> Set up a virtual network with pfSense, Kali Linux, and a Windows target. Practice configuring firewall rules in pfSense and analysing captures in Wireshark. The tools are free and the experience is transferable.</li>
+          </ul>
+
+          <h2>Exam-Day Strategy for PBQs</h2>
+          <p>On exam day, the PBQs appear at the beginning of the test, before the multiple-choice questions. Many candidates spend too much time on them early and rush through the faster multiple-choice section when they could have earned more points there. A better strategy: flag difficult PBQs after 90 seconds and return to them after completing the rest of the exam. The Pearson VUE interface allows flagging and navigating between questions freely within a section.</p>
+          <p>Read each PBQ prompt twice before touching the simulation. The single biggest mistake is clicking into the interface without understanding what the question is asking. The prompt always states the objective clearly; the simulation is just the tool for demonstrating it.</p>
+
+          <h2>Frequently Tested SY0-701 PBQ Scenarios</h2>
+          <p>Based on exam feedback from recent test-takers (2025&ndash;2026), these are the most commonly appearing PBQ scenarios on the SY0-701:</p>
+          <ul>
+            <li><strong>Configure a firewall ACL:</strong> Allow HTTP/HTTPS to a web server, allow SSH from a management subnet, deny all else.</li>
+            <li><strong>Set up a secure wireless network:</strong> Choose WPA3 or WPA2-AES, disable WPS, configure a captive portal for guests.</li>
+            <li><strong>Analyse a phishing email header:</strong> Identify the spoofed sender, the actual originating IP, and the malicious URL.</li>
+            <li><strong>Classify security controls:</strong> Sort given controls into preventive, detective, corrective, deterrent, and compensating categories.</li>
+            <li><strong>Harden a Linux server:</strong> Disable root SSH login, remove unused user accounts, set file permissions, and enable logging.</li>
+            <li><strong>Identify an attack from a packet capture:</strong> Distinguish between a SYN flood and a ping sweep based on TCP flags and packet timing.</li>
+          </ul>
+
+          <p>For a full breakdown of all five SY0-701 domains, exam objectives, and a recommended study timeline, visit our <a href="/comptia-security-plus-prep.html">Comprehensive CompTIA Security+ Prep Guide</a>.</p>
+
+          <p>PBQs are the hardest part of the SY0-701 — but they are also the most learnable. Every PBQ tests a specific skill listed in the exam objectives. If you can describe how to perform that skill step by step, the simulation is just executing what you already know. Practise the scenarios above, use the resources listed, and treat the PBQ section as an opportunity to demonstrate real competence rather than a hurdle to survive.</p>
+        </div>
+
+        <section class="mt-16 border-t border-slate-200 pt-12" aria-label="Frequently asked questions">
+          <h2 class="font-headline text-xl font-bold text-on-surface mb-6">Frequently Asked Questions</h2>
+          <div class="grid gap-4">
+          <div class="rounded-2xl bg-white p-5 ring-1 ring-slate-200">
+            <h3 class="font-headline font-bold text-on-surface mb-2">How many PBQs are on the CompTIA Security+ SY0-701?</h3>
+            <p class="text-slate-600 leading-relaxed">Between 3 and 6 Performance-Based Questions per exam form. They account for 15&ndash;25% of your total score. The exact number depends on the form you receive.</p>
+          </div>
+          <div class="rounded-2xl bg-white p-5 ring-1 ring-slate-200">
+            <h3 class="font-headline font-bold text-on-surface mb-2">Are PBQs harder than the multiple-choice questions on the SY0-701?</h3>
+            <p class="text-slate-600 leading-relaxed">Most candidates find PBQs harder because they test application rather than recall. However, each PBQ item (drag-and-drop slot, configuration step) earns partial credit, so even incomplete answers contribute to your score.</p>
+          </div>
+          <div class="rounded-2xl bg-white p-5 ring-1 ring-slate-200">
+            <h3 class="font-headline font-bold text-on-surface mb-2">Can you skip PBQs and come back to them on the SY0-701?</h3>
+            <p class="text-slate-600 leading-relaxed">Yes. The Pearson VUE interface lets you flag questions and navigate freely within each exam section. It is often strategic to flag a difficult PBQ and return after completing the multiple-choice section.</p>
+          </div>
+          </div>
+        </section>
+
+        <section class="mt-12 rounded-2xl bg-gradient-to-br from-cyan-50 to-cyan-100 p-6">
+          <p class="font-headline font-bold text-on-surface mb-3">Keep going with Sleek Academia</p>
+          <div class="flex flex-wrap gap-3">
+            <a href="/pricing.html" class="inline-flex items-center gap-1 rounded-xl bg-cyan-50 px-4 py-2 text-sm font-semibold text-cyan-700 ring-1 ring-cyan-200 transition-all hover:bg-cyan-100 hover:-translate-y-0.5">Compare CompTIA tutoring plans <span class="material-symbols-outlined text-base">arrow_forward</span></a>
+            <a href="/onboard.html?goal=exam" class="inline-flex items-center gap-1 rounded-xl bg-cyan-50 px-4 py-2 text-sm font-semibold text-cyan-700 ring-1 ring-cyan-200 transition-all hover:bg-cyan-100 hover:-translate-y-0.5">Build your CompTIA study plan <span class="material-symbols-outlined text-base">arrow_forward</span></a>
+            <a href="/store.html" class="inline-flex items-center gap-1 rounded-xl bg-cyan-50 px-4 py-2 text-sm font-semibold text-cyan-700 ring-1 ring-cyan-200 transition-all hover:bg-cyan-100 hover:-translate-y-0.5">Browse Security+ study materials <span class="material-symbols-outlined text-base">arrow_forward</span></a>
+          </div>
+        </section>
+
+        <div class="mt-16 border-t border-slate-200 pt-12">
+          <h2 class="font-headline text-xl font-bold text-on-surface mb-6">Related Articles</h2>
+          <div class="grid gap-4 sm:grid-cols-3">
+            <a href="/blog/comptia-security-plus-2026.html" class="group rounded-2xl bg-white p-5 shadow-sm shadow-slate-900/5 ring-1 ring-slate-200 transition-all hover:shadow-md hover:ring-cyan-300 hover:-translate-y-0.5">
+              <p class="text-xs font-bold uppercase tracking-widest text-cyan-600 mb-2">CompTIA</p>
+              <p class="font-headline font-semibold text-on-surface text-sm leading-snug group-hover:text-cyan-700">Is CompTIA Security+ Still Worth It in 2026?</p>
+            </a>
+            <a href="/comptia-security-plus-prep.html" class="group rounded-2xl bg-white p-5 shadow-sm shadow-slate-900/5 ring-1 ring-slate-200 transition-all hover:shadow-md hover:ring-cyan-300 hover:-translate-y-0.5">
+              <p class="text-xs font-bold uppercase tracking-widest text-cyan-600 mb-2">CompTIA</p>
+              <p class="font-headline font-semibold text-on-surface text-sm leading-snug group-hover:text-cyan-700">Complete CompTIA Security+ Prep Guide 2026</p>
+            </a>
+            <a href="/blog/certifications-new-degree.html" class="group rounded-2xl bg-white p-5 shadow-sm shadow-slate-900/5 ring-1 ring-slate-200 transition-all hover:shadow-md hover:ring-cyan-300 hover:-translate-y-0.5">
+              <p class="text-xs font-bold uppercase tracking-widest text-cyan-600 mb-2">Career</p>
+              <p class="font-headline font-semibold text-on-surface text-sm leading-snug group-hover:text-cyan-700">Why Certifications Are Outpacing Degrees</p>
+            </a>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="mt-16 rounded-2xl bg-gradient-to-br from-cyan-50 to-cyan-100 p-8 text-center">
+          <h3 class="font-headline text-2xl font-bold text-cyan-900">Need help preparing for your SY0-701 exam?</h3>
+          <p class="mt-2 text-cyan-700">Work one-on-one with a CompTIA-certified tutor who can walk you through every PBQ scenario step by step.</p>
+          <a href="/onboard.html?goal=exam" class="mt-6 inline-block rounded-xl bg-cyan-600 px-8 py-3 font-bold text-white shadow-lg shadow-cyan-600/25 transition-all hover:bg-cyan-700">Get Expert Tutoring</a>
+        </div>
+
+        <div class="mt-10 border-t border-slate-200 pt-8">
+          <a href="/blog.html" class="inline-flex items-center gap-2 text-sm font-semibold text-violet-700 hover:text-violet-600">
+            <span class="material-symbols-outlined text-base">arrow_back</span>
+            Back to Blog
+          </a>
+        </div>
+      </article>
+
+      <section class="px-6 pb-20 lg:px-8">
+        <div class="mx-auto max-w-3xl rounded-3xl bg-gradient-to-br from-primary to-violet-800 p-10 text-center shadow-xl shadow-violet-900/20">
+          <h2 class="font-headline text-3xl font-extrabold text-white">Ready to Earn Your Security+?</h2>
+          <p class="mt-3 text-base text-violet-100">Get matched with a Sleek Academia tutor and start your personalised CompTIA study plan today.</p>
+          <a href="/onboard.html" class="mt-6 inline-block rounded-xl bg-white px-8 py-3 font-bold text-primary shadow-lg transition-all hover:bg-violet-50 hover:-translate-y-0.5">Get Started</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mt-8 rounded-t-[2.5rem] bg-slate-50">
+      <div class="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-8 py-16 md:grid-cols-4">
+        <div>
+          <div class="font-headline text-xl font-bold text-violet-700">Sleek Academia</div>
+          <p class="mt-6 text-sm leading-relaxed text-slate-500">Empowering professionals through high-end digital learning and expert-led guidance.</p>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.25em] text-slate-900">Explore</h4>
+          <ul class="mt-6 space-y-4 text-sm text-slate-500">
+            <li><a class="hover:text-violet-700" href="/">Home</a></li>
+            <li><a class="hover:text-violet-700" href="/about.html">About Us</a></li>
+            <li><a class="hover:text-violet-700" href="/courses.html">All Courses</a></li>
+            <li><a class="hover:text-violet-700" href="/blog.html">Blog</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.25em] text-slate-900">Programs</h4>
+          <ul class="mt-6 space-y-4 text-sm text-slate-500">
+            <li><a class="hover:text-violet-700" href="/nclex-prep.html">NCLEX-RN Prep</a></li><li><a class="hover:text-violet-700" href="/ube-bar-exam-prep.html">UBE Bar Exam Prep</a></li><li><a class="hover:text-violet-700" href="/comptia-security-plus-prep.html">CompTIA Security+ Prep</a></li><li><a class="hover:text-violet-700" href="/cfa-level-1-prep.html">CFA Level I Prep</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.25em] text-slate-900">Access</h4>
+          <ul class="mt-6 space-y-4 text-sm text-slate-500">
+            <li><a class="hover:text-violet-700" href="/pricing.html">Pricing</a></li>
+            <li><a class="hover:text-violet-700" href="/store.html">Store</a></li>
+            <li><a class="hover:text-violet-700" href="/login.html">Login</a></li>
+            <li><a class="hover:text-violet-700" href="/sign-up.html">Sign Up</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-slate-200/60 px-8 py-8 md:flex-row">
+        <span class="text-xs font-medium uppercase tracking-[0.25em] text-slate-400">© 2026 Sleek Academia. All rights reserved.</span>
+        <div class="flex gap-6 text-xs font-medium text-slate-400"><span>Privacy</span><span>Terms</span><span>Cookies</span></div>
+      </div>
+    </footer>
+
+    <script>document.documentElement.classList.add('page-ready');</script>
+    <script type="module" src="/js/analytics.js"></script>
+  </body>
+</html>
