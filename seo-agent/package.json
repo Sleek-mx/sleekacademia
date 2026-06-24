@@ -1,0 +1,13 @@
+{
+  "name": "sleek-academia-seo-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Weekly SEO agent tooling for sleekacademia.com — pulls Search Console data and reports progress toward the >=10 organic visitors/day goal.",
+  "type": "module",
+  "scripts": {
+    "fetch": "node fetch-search-console.js"
+  },
+  "dependencies": {
+    "googleapis": "^144.0.0"
+  }
+}

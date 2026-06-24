@@ -1,0 +1,17 @@
+# Secrets & env
+.env
+*.env
+**/service-account.json
+**/*.credentials.json
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# SEO agent local artifacts
+seo-agent/report-data.json
+seo-agent/reports/
+
+# Logs / OS
+*.log
+.DS_Store

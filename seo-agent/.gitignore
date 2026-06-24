@@ -1,0 +1,5 @@
+node_modules/
+service-account.json
+*.credentials.json
+report-data.json
+reports/

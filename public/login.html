@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,follow" />
+    <title>Login | Sleek Academia</title>
+    <meta name="description" content="Log in to your Sleek Academia account to continue your NCLEX, UBE bar exam, CFA, or CompTIA exam prep where you left off." />
+    <link rel="canonical" href="https://sleekacademia.com/login.html" />
+    <link rel="stylesheet" href="/css/tailwind.min.css" />
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    </head>
+  <body class="min-h-screen bg-surface font-body text-ink">
+    <main class="min-h-screen px-6 py-10 lg:px-10">
+      <div class="mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl gap-8 overflow-hidden rounded-[2rem] bg-white shadow-[0_30px_80px_-30px_rgba(37,23,74,0.25)] lg:grid-cols-[1.1fr_0.9fr]">
+        <section class="relative overflow-hidden bg-slate-950 px-8 py-10 text-white sm:px-12 lg:px-14">
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(178,140,255,0.28),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(255,197,168,0.26),_transparent_28%)]"></div>
+          <div class="relative flex h-full flex-col justify-between gap-10">
+            <div class="space-y-6">
+              <div class="inline-flex items-center gap-3 rounded-full bg-white/10 px-4 py-2 backdrop-blur">
+                <div class="grid h-10 w-10 place-items-center rounded-2xl bg-violet-500 font-black">SA</div>
+                <div>
+                  <p class="font-headline text-lg font-extrabold leading-none">Sleek Academia</p>
+                  <p class="text-xs uppercase tracking-[0.28em] text-violet-200">Academic Atelier</p>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <p class="text-xs font-bold uppercase tracking-[0.35em] text-violet-200">
+                  Login Wall
+                </p>
+                <h1 class="max-w-xl font-headline text-4xl font-extrabold leading-tight sm:text-5xl">
+                  Secure access for Admins, Tutors, and Students.
+                </h1>
+                <p class="max-w-lg text-base leading-7 text-slate-300">
+                  Sign in securely using email or Google authentication. Access is granted according to each user's assigned role.
+                </p>
+              </div>
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-3">
+              <div class="rounded-[1.5rem] border border-white/10 bg-white/5 p-5 backdrop-blur">
+                <p class="text-xs font-bold uppercase tracking-[0.3em] text-violet-200">Admin</p>
+                <p class="mt-2 text-sm text-slate-200">Monitor the platform, user roles, and operational health.</p>
+              </div>
+              <div class="rounded-[1.5rem] border border-white/10 bg-white/5 p-5 backdrop-blur">
+                <p class="text-xs font-bold uppercase tracking-[0.3em] text-violet-200">Tutor</p>
+                <p class="mt-2 text-sm text-slate-200">Manage live sessions, materials, and learner engagement.</p>
+              </div>
+              <div class="rounded-[1.5rem] border border-white/10 bg-white/5 p-5 backdrop-blur">
+                <p class="text-xs font-bold uppercase tracking-[0.3em] text-violet-200">Student</p>
+                <p class="mt-2 text-sm text-slate-200">Resume coursework, track progress, and stay on schedule.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="flex items-center bg-white px-6 py-10 sm:px-10 lg:px-14">
+          <div class="mx-auto w-full max-w-md space-y-6">
+            <div class="space-y-2">
+              <p class="text-xs font-bold uppercase tracking-[0.3em] text-slate-500">
+                <a class="hover:text-violet-700" href="/">Back to Site</a>
+                <span class="mx-2">•</span>
+                <a class="hover:text-violet-700" href="/courses.html">Courses</a>
+                <span class="mx-2">•</span>
+                <a class="hover:text-violet-700" href="/about.html">About</a>
+              </p>
+              <p class="text-xs font-bold uppercase tracking-[0.3em] text-violet-600">Welcome back</p>
+              <h2 class="font-headline text-3xl font-extrabold">Sign in to continue</h2>
+              <p class="text-sm leading-6 text-muted">
+                Use email or Google. If you do not have an account yet, you can create one from the sign-up flow.
+              </p>
+            </div>
+
+            <div id="auth-status" class="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-500">
+              Loading authentication...
+            </div>
+
+            <div id="clerk-sign-in" class="min-h-[540px]"></div>
+
+            <p class="text-sm text-muted">
+              New to Sleek Academia?
+              <a class="font-semibold text-violet-700 hover:text-violet-600" href="/sign-up.html">
+                Create your account
+              </a>
+            </p>
+            <p class="text-sm text-muted">
+              Want to browse first?
+              <a class="font-semibold text-violet-700 hover:text-violet-600" href="/">
+                Return to homepage
+              </a>
+            </p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="/js/auth.js" defer></script>
+  </body>
+</html>

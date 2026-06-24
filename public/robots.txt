@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Private / app pages — no SEO value
+Disallow: /dashboard.html
+Disallow: /login.html
+Disallow: /sign-up.html
+Disallow: /onboard.html
+Disallow: /payment-success.html
+Disallow: /api/
+Disallow: /app
+
+# Duplicate blog index redirect page
+Disallow: /blogs.html
+
+# AI tools private tier
+Disallow: /ai-tools-pro.html
+
+Sitemap: https://sleekacademia.com/sitemap.xml
