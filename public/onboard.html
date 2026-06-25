@@ -38,6 +38,7 @@
     .step.active { display: block; animation: slideIn 300ms ease; }
     @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
+  <link rel="stylesheet" href="/css/animations.css" />
 </head>
 <body class="bg-surface font-body text-on-surface">
   <nav class="fixed top-0 z-50 w-full bg-white/75 backdrop-blur-xl shadow-xl shadow-violet-900/5">
@@ -766,5 +767,6 @@
     // ── Boot ───────────────────────────────────────────────────────────────────
     document.documentElement.classList.add('page-ready');
 </script>
+  <script src="/js/animations.js" defer></script>
 </body>
 </html>

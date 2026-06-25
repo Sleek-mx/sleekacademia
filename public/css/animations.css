@@ -1,0 +1,42 @@
+/* Sleek Academia — site-wide motion. Progressive enhancement:
+   everything is fully visible unless JS adds .anim-on AND the user
+   hasn't asked to reduce motion. */
+
+@media (prefers-reduced-motion: no-preference) {
+  html.anim-on [data-anim] {
+    opacity: 0;
+    transform: translateY(26px);
+    transition:
+      opacity 0.7s cubic-bezier(0.16, 0.84, 0.44, 1),
+      transform 0.7s cubic-bezier(0.16, 0.84, 0.44, 1);
+  }
+  html.anim-on [data-anim="left"]  { transform: translateX(-32px); }
+  html.anim-on [data-anim="right"] { transform: translateX(32px); }
+  html.anim-on [data-anim="zoom"]  { transform: scale(0.94); }
+
+  html.anim-on [data-anim].in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Gentle perpetual float for hero accent cards */
+  @keyframes sa-float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+  }
+  .anim-float { animation: sa-float 5.5s ease-in-out infinite; }
+  .anim-float.delay { animation-delay: -2.75s; }
+
+  /* Soft attention pulse for primary CTAs (subtle, runs a few times) */
+  @keyframes sa-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(112, 42, 225, 0.40); }
+    70%  { box-shadow: 0 0 0 14px rgba(112, 42, 225, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(112, 42, 225, 0); }
+  }
+  .anim-cta { animation: sa-pulse 2.6s ease-out 3; }
+}
+
+/* Nav gains depth once you start scrolling (no motion-pref gate: tiny + safe) */
+nav.sa-scrolled {
+  box-shadow: 0 12px 34px -14px rgba(76, 29, 149, 0.28);
+}
