@@ -232,13 +232,15 @@ app.post("/api/service-request", requireSession, async (req, res) => {
     return res.status(400).json({ error: "Service, subject, and details are all required." });
   }
 
+  const resendKey = process.env.RESEND_API_KEY;
   const smtpHost = process.env.SMTP_HOST;
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
-  if (!smtpHost || !smtpUser || !smtpPass) {
+  const smtpPort = Number(process.env.SMTP_PORT || 465);
+  const smtpConfigured = Boolean(smtpHost && smtpUser && smtpPass);
+  if (!resendKey && !smtpConfigured) {
     return res.status(500).json({ error: "Email service not configured." });
   }
-  const smtpPort = Number(process.env.SMTP_PORT || 465);
 
   const notifyTo = (process.env.SERVICE_REQUEST_EMAIL || process.env.TUTOR_EMAILS || process.env.NOTIFICATION_EMAIL || "macsinjobs@gmail.com")
     .split(",").map((addr) => addr.trim()).filter(Boolean);
@@ -272,25 +274,44 @@ app.post("/api/service-request", requireSession, async (req, res) => {
           <p style="color:#94a3b8;font-size:12px;margin-top:20px">Submitted from the Sleek Academia client dashboard</p>
         </div>`;
 
+  const mailSubject = `Service Request: ${subject} | Sleek Academia`;
+  const replyTo = clientEmail !== "unknown" ? clientEmail : undefined;
+
   try {
-    // Dynamic import so a missing module degrades to a 500 here instead of crashing app boot.
-    const nodemailer = (await import("nodemailer")).default;
-    const transporter = nodemailer.createTransport({
-      host: smtpHost,
-      port: smtpPort,
-      secure: smtpPort === 465,
-      auth: { user: smtpUser, pass: smtpPass },
-    });
-    await transporter.sendMail({
-      from: `"Sleek Academia" <${smtpUser}>`,
-      to: notifyTo,
-      replyTo: clientEmail !== "unknown" ? clientEmail : undefined,
-      subject: `Service Request: ${subject} | Sleek Academia`,
-      html,
-    });
+    if (resendKey) {
+      // Preferred channel: Resend (same provider as the chatbot enquiry email).
+      await axios.post(
+        "https://api.resend.com/emails",
+        {
+          from: process.env.RESEND_FROM || "Sleek Academia <onboarding@resend.dev>",
+          to: notifyTo,
+          reply_to: replyTo,
+          subject: mailSubject,
+          html,
+        },
+        { headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" }, timeout: 15000 }
+      );
+    } else {
+      // Fallback: SMTP. Dynamic import so a missing module degrades to a 500 here, not an app-boot crash.
+      const nodemailer = (await import("nodemailer")).default;
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpPort === 465,
+        auth: { user: smtpUser, pass: smtpPass },
+        tls: { rejectUnauthorized: false }, // shared-host mail cert is *.web-hosting.com
+      });
+      await transporter.sendMail({
+        from: `"Sleek Academia" <${smtpUser}>`,
+        to: notifyTo,
+        replyTo,
+        subject: mailSubject,
+        html,
+      });
+    }
     return res.json({ ok: true });
   } catch (err) {
-    console.error("Service request email error:", err && err.message ? err.message : err);
+    console.error("Service request email error:", err.response?.data || (err && err.message) || err);
     return res.status(500).json({ error: "Failed to send your request. Please try again." });
   }
 });
