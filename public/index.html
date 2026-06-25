@@ -141,8 +141,7 @@
           <a class="text-sm font-medium text-slate-600 transition-colors hover:text-violet-500" href="/about.html">About Us</a>
           <a class="text-sm font-medium text-slate-600 transition-colors hover:text-violet-500" href="/blog.html">Blog</a>
           <a class="text-sm font-medium text-slate-600 transition-colors hover:text-violet-500" href="/store.html">Store</a>
-          <a class="text-sm font-medium text-slate-600 transition-colors hover:text-violet-500" href="/ai-tools.html">AI Tools</a>
-          <a class="text-sm font-medium text-slate-600 transition-colors hover:text-violet-500" href="/pricing.html">Pricing</a>
+          <a class="text-sm font-medium text-slate-600 transition-colors hover:text-violet-500" href="/#pricing">Pricing</a>
         </div>
         <div class="flex items-center gap-3">
           <a class="rounded-full bg-primary px-5 py-2 text-sm font-bold text-white shadow-glow transition-all hover:bg-primary-dim" href="/onboard.html">Get Started</a>
@@ -164,7 +163,7 @@
               Get Started
               <span class="material-symbols-outlined ml-2">arrow_forward</span>
             </a>
-            <a class="rounded-2xl border-2 border-primary px-8 py-4 text-lg font-bold text-primary transition-all hover:bg-primary/5" href="/pricing.html">
+            <a class="rounded-2xl border-2 border-primary px-8 py-4 text-lg font-bold text-primary transition-all hover:bg-primary/5" href="/#pricing">
               View Packages
             </a>
           </div>
@@ -228,7 +227,7 @@
                     <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1">school</span>
                     help with exam
                   </a>
-                  <a href="/pricing.html" onclick="document.querySelector('.hero-input').value='I want to check packages'" class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm transition-all hover:border-primary hover:text-primary hover:shadow-md">
+                  <a href="/#pricing" onclick="document.querySelector('.hero-input').value='I want to check packages'" class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm transition-all hover:border-primary hover:text-primary hover:shadow-md">
                     <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1">inventory_2</span>
                     check packages
                   </a>
@@ -404,6 +403,86 @@
         </div>
       </section>
 
+      <!-- Pricing & Packages (folded from former /#pricing) -->
+      <section id="pricing" class="scroll-mt-24 bg-slate-50 px-6 py-24 lg:px-8">
+        <div class="mx-auto max-w-7xl">
+          <div class="mb-16 text-center">
+            <span class="inline-block rounded-full bg-violet-600 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.25em] text-white">Tutoring Packages</span>
+            <h2 class="mt-4 text-4xl font-extrabold md:text-5xl">Choose Your Learning Path</h2>
+            <p class="mx-auto mt-4 max-w-2xl text-lg text-on-surface-variant">Personalized tutoring for nursing, law, IT, and finance students at every stage — from AI-powered self-study to one-on-one expert coaching.</p>
+          </div>
+          <div class="grid gap-8 md:grid-cols-3">
+            <!-- Digital Starter Pack -->
+            <div class="rounded-3xl bg-white p-8 shadow-lg shadow-violet-900/10">
+              <div class="space-y-6">
+                <div>
+                  <h3 class="text-2xl font-bold">Digital Starter Pack</h3>
+                  <p class="mt-2 text-sm text-on-surface-variant">AI-powered study tools for exam prep</p>
+                </div>
+                <div class="space-y-2">
+                  <div class="text-5xl font-bold text-primary">$15</div>
+                  <p class="text-sm text-on-surface-variant">One-time purchase</p>
+                </div>
+                <ul class="space-y-3 border-t border-outline/20 pt-6">
+                  <li class="flex items-start gap-3"><span class="material-symbols-outlined flex-shrink-0 text-violet-600">check_circle</span><span class="text-sm">AI Study Assistant (unlimited)</span></li>
+                  <li class="flex items-start gap-3"><span class="material-symbols-outlined flex-shrink-0 text-violet-600">check_circle</span><span class="text-sm">Socratic Tutor &amp; Anxiety Coach</span></li>
+                  <li class="flex items-start gap-3"><span class="material-symbols-outlined flex-shrink-0 text-violet-600">check_circle</span><span class="text-sm">Exam Predictor &amp; Mind Map Generator</span></li>
+                  <li class="flex items-start gap-3"><span class="material-symbols-outlined flex-shrink-0 text-violet-600">check_circle</span><span class="text-sm">Podcast-style audio summaries</span></li>
+                </ul>
+                <a href="/onboard.html" class="block w-full rounded-xl border-2 border-primary px-6 py-4 text-center font-bold text-primary transition-all hover:bg-violet-50">Get Started</a>
+              </div>
+            </div>
+            <!-- Alpha (Featured) -->
+            <div class="rounded-3xl bg-gradient-to-br from-violet-600 via-violet-600 to-violet-700 p-8 shadow-2xl shadow-violet-900/40">
+              <div class="space-y-6">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h3 class="text-2xl font-bold text-white">Alpha</h3>
+                    <p class="mt-2 text-sm text-violet-100">Most popular</p>
+                  </div>
+                  <span class="rounded-full bg-white/20 px-4 py-1 text-xs font-bold uppercase tracking-[0.2em] text-white backdrop-blur-sm">Popular</span>
+                </div>
+                <div class="space-y-2">
+                  <div class="text-6xl font-bold text-white">$300</div>
+                  <p class="text-sm text-violet-100">Monthly subscription</p>
+                </div>
+                <ul class="space-y-3 border-t border-white/20 pt-6">
+                  <li class="flex items-start gap-3"><span class="material-symbols-outlined flex-shrink-0 text-white">check_circle</span><span class="text-sm text-white">4 live tutoring sessions/month</span></li>
+                  <li class="flex items-start gap-3"><span class="material-symbols-outlined flex-shrink-0 text-white">check_circle</span><span class="text-sm text-white">Personalized study plan</span></li>
+                  <li class="flex items-start gap-3"><span class="material-symbols-outlined flex-shrink-0 text-white">check_circle</span><span class="text-sm text-white">Email support (24-48hr)</span></li>
+                  <li class="flex items-start gap-3"><span class="material-symbols-outlined flex-shrink-0 text-white">check_circle</span><span class="text-sm text-white">Full study materials access</span></li>
+                  <li class="flex items-start gap-3"><span class="material-symbols-outlined flex-shrink-0 text-white">check_circle</span><span class="text-sm text-white">Progress tracking</span></li>
+                </ul>
+                <a href="/onboard.html" class="block w-full rounded-xl bg-white px-6 py-4 text-center font-bold text-violet-700 transition-all hover:bg-violet-50">Start Now</a>
+              </div>
+            </div>
+            <!-- Omega -->
+            <div class="rounded-3xl bg-white p-8 shadow-lg shadow-violet-900/10">
+              <div class="space-y-6">
+                <div>
+                  <h3 class="text-2xl font-bold">Omega</h3>
+                  <p class="mt-2 text-sm text-on-surface-variant">Premium expert coaching</p>
+                </div>
+                <div class="space-y-2">
+                  <div class="text-5xl font-bold text-primary">$450</div>
+                  <p class="text-sm text-on-surface-variant">Monthly subscription</p>
+                </div>
+                <ul class="space-y-3 border-t border-outline/20 pt-6">
+                  <li class="flex items-start gap-3"><span class="material-symbols-outlined flex-shrink-0 text-violet-600">check_circle</span><span class="text-sm">8 live tutoring sessions/month</span></li>
+                  <li class="flex items-start gap-3"><span class="material-symbols-outlined flex-shrink-0 text-violet-600">check_circle</span><span class="text-sm">One-on-one expert coaching</span></li>
+                  <li class="flex items-start gap-3"><span class="material-symbols-outlined flex-shrink-0 text-violet-600">check_circle</span><span class="text-sm">Priority support (same-day)</span></li>
+                  <li class="flex items-start gap-3"><span class="material-symbols-outlined flex-shrink-0 text-violet-600">check_circle</span><span class="text-sm">Customized curriculum</span></li>
+                  <li class="flex items-start gap-3"><span class="material-symbols-outlined flex-shrink-0 text-violet-600">check_circle</span><span class="text-sm">Career mentorship</span></li>
+                  <li class="flex items-start gap-3"><span class="material-symbols-outlined flex-shrink-0 text-violet-600">check_circle</span><span class="text-sm">Lifetime material access</span></li>
+                </ul>
+                <a href="/onboard.html" class="block w-full rounded-xl bg-primary px-6 py-4 text-center font-bold text-white transition-all hover:bg-primary-dim">Start Now</a>
+              </div>
+            </div>
+          </div>
+          <p class="mx-auto mt-10 max-w-2xl text-center text-sm text-on-surface-variant">Need a one-off essay review or exam strategy session? <a class="font-semibold text-primary hover:underline" href="/onboard.html">Tell us what you need</a> — flexible options available.</p>
+        </div>
+      </section>
+
       <section class="px-6 pb-24 lg:px-8">
         <div class="mx-auto max-w-5xl overflow-hidden rounded-[2.5rem] bg-primary p-12 text-center text-white shadow-2xl shadow-primary/30 md:p-20">
           <h2 class="text-4xl font-extrabold md:text-5xl">Ready to start your journey?</h2>
@@ -426,7 +505,7 @@
           <ul class="mt-6 space-y-4 text-sm text-slate-500">
             <li><a class="hover:text-violet-700" href="/">Home</a></li>
             <li><a class="hover:text-violet-700" href="/about.html">About Us</a></li>
-            <li><a class="hover:text-violet-700" href="/courses.html">All Courses</a></li>
+            <li><a class="hover:text-violet-700" href="/#pricing">Pricing & Packages</a></li>
             <li><a class="hover:text-violet-700" href="/app">Portal</a></li>
           </ul>
         </div>

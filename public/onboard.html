@@ -493,7 +493,7 @@
       if (selectedGoal === 'exam')      showStep('step-exam-timing');
       else if (selectedGoal === 'essay') showStep('step-essay-detail');
       else if (selectedGoal === 'materials') window.location.href = '/store.html';
-      else window.location.href = '/pricing.html'; // other / class management
+      else window.location.href = '/#pricing'; // other / class management
     });
 
     // ── Back buttons ───────────────────────────────────────────────────────────
@@ -557,7 +557,7 @@
 
     // ── Step: Others → pricing ─────────────────────────────────────────────────
     document.getElementById('send-others').addEventListener('click', () => {
-      window.location.href = '/pricing.html';
+      window.location.href = '/#pricing';
     });
 
     // ── Payment gateway state ──────────────────────────────────────────────────

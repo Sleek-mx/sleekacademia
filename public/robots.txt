@@ -13,7 +13,4 @@ Disallow: /app
 # Duplicate blog index redirect page
 Disallow: /blogs.html
 
-# AI tools private tier
-Disallow: /ai-tools-pro.html
-
 Sitemap: https://sleekacademia.com/sitemap.xml
