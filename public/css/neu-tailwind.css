@@ -1,0 +1,173 @@
+/* ============================================================
+   Sleek Academia — Neumorphism bridge for Tailwind pages
+   Loaded AFTER css/tailwind.min.css and css/neumorphism.css so these win.
+   Remaps the existing Tailwind utility classes used across the marketing
+   pages onto the neu soft-UI system WITHOUT touching any page markup, copy,
+   SEO, or analytics. Only affects pages that link this file.
+   Tokens (:root) come from neumorphism.css.
+   ============================================================ */
+
+/* ---------- page surface + base type ---------- */
+body {
+  background: var(--surface) !important;
+  color: var(--txt);
+  font-family: "Inter", system-ui, sans-serif;
+}
+body h1, body h2, body h3, body h4, .brand-font, .font-display {
+  font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+}
+
+/* every "elevated" or off-white surface collapses to the ONE surface color */
+.bg-surface, .bg-surface-container-low, .bg-surface-container-lowest,
+.bg-surface-container-high, .bg-slate-50, .bg-slate-100, .bg-slate-200,
+.bg-violet-50, .bg-violet-100, .bg-white\/80, .bg-white\/90, .bg-white\/95 {
+  background-color: var(--surface) !important;
+  background-image: none !important;
+}
+
+/* gradient color-stops: light tints collapse to the surface (kills the tint),
+   purple stops stay on-brand so CTA/badge gradients survive */
+.from-violet-50, .from-violet-100, .from-slate-50, .from-white, .from-slate-100,
+.via-white, .via-violet-50, .via-slate-50,
+.to-violet-50, .to-violet-100, .to-white, .to-slate-50, .to-slate-100 {
+  --tw-gradient-from: var(--surface) !important;
+  --tw-gradient-via: var(--surface) !important;
+  --tw-gradient-to: var(--surface) !important;
+  --tw-gradient-stops: var(--surface), var(--surface) !important;
+}
+.from-primary, .from-violet-500, .from-violet-600, .from-violet-700 {
+  --tw-gradient-from: var(--brand) !important;
+  --tw-gradient-stops: var(--brand), var(--tw-gradient-to, var(--brand2)) !important;
+}
+.to-primary-container, .to-primary, .to-violet-400, .to-violet-500, .to-violet-700 {
+  --tw-gradient-to: var(--brand2) !important;
+}
+/* per-page inline gradient hero overlays (rose/teal/etc.) -> ONE purple accent */
+.absolute.inset-0[style*="gradient"], [class*="inset-0"][style*="linear-gradient"] {
+  background-image: linear-gradient(135deg, var(--brand), var(--brand2)) !important;
+  opacity: 1 !important;
+}
+
+/* ---------- white cards -> raised neu ---------- */
+.bg-white {
+  background-color: var(--surface) !important;
+  box-shadow: 8px 8px 18px var(--dark), -8px -8px 18px var(--light);
+}
+/* white chips/buttons sitting ON a purple surface stay white & flat */
+.bg-primary .bg-white, .bg-primary-dim .bg-white,
+.bg-violet-500 .bg-white, .bg-violet-600 .bg-white, .bg-violet-700 .bg-white,
+[class*="from-violet-6"] .bg-white, [class*="from-violet-7"] .bg-white {
+  background-color: #fff !important;
+  box-shadow: none;
+}
+
+/* ---------- shadows -> neu dual shadow ---------- */
+.shadow-sm, .shadow, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl {
+  box-shadow: 8px 8px 18px var(--dark), -8px -8px 18px var(--light) !important;
+}
+/* keep glow/elevation on purple CTAs (handled below) */
+
+/* ---------- keep CTAs loud (purple gradient) ---------- */
+.bg-primary, .bg-violet-500, .bg-violet-600, .bg-violet-700 {
+  background-color: transparent !important;
+  background-image: linear-gradient(135deg, var(--brand), var(--brand2)) !important;
+  color: #fff !important;
+  box-shadow: 8px 8px 20px rgba(112,42,225,.35), -8px -8px 18px var(--light),
+              inset 0 1px 0 rgba(255,255,255,.35) !important;
+}
+.bg-primary-dim, .hover\:bg-primary-dim:hover, .hover\:bg-violet-700:hover {
+  background-image: linear-gradient(135deg, var(--brand2), var(--brand)) !important;
+  box-shadow: 12px 12px 26px rgba(112,42,225,.45), -8px -8px 18px var(--light) !important;
+}
+/* purple sections (heroes/CTA bands) shouldn't carry the button glow — soften when large */
+section.bg-primary, header.bg-primary, .bg-primary.p-12, .bg-primary.p-20,
+[class*="rounded-"].bg-primary.p-8 {
+  box-shadow: 12px 12px 30px rgba(112,42,225,.28), -10px -10px 26px var(--light) !important;
+}
+
+/* ---------- text colors ---------- */
+.text-on-surface, .text-ink, .text-slate-900, .text-slate-800, .text-slate-700 {
+  color: var(--txt) !important;
+}
+.text-on-surface-variant, .text-slate-600, .text-slate-500, .text-slate-400 {
+  color: var(--muted) !important;
+}
+.text-primary { color: var(--brand) !important; }
+/* text on purple stays light */
+.bg-primary .text-white, .bg-primary-dim .text-white,
+[class*="bg-violet-6"] .text-white, [class*="bg-violet-7"] .text-white { color: #fff !important; }
+
+/* ---------- nav: translucent surface pill ---------- */
+nav {
+  background-color: color-mix(in srgb, var(--surface) 86%, transparent) !important;
+  background-image: none !important;
+  box-shadow: 8px 8px 24px var(--dark), -8px -8px 24px var(--light) !important;
+}
+.bg-white\/75, .bg-white\/70, .bg-white\/60 {
+  background-color: color-mix(in srgb, var(--surface) 86%, transparent) !important;
+}
+
+/* ---------- inputs / selects / textareas -> wells ---------- */
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]),
+textarea, select {
+  background-color: var(--surface) !important;
+  background-image: none !important;
+  box-shadow: inset 5px 5px 10px var(--dark), inset -5px -5px 10px var(--light) !important;
+  border: none !important;
+  color: var(--txt) !important;
+}
+input::placeholder, textarea::placeholder { color: #9a92b8 !important; }
+input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  box-shadow: inset 5px 5px 10px var(--dark), inset -5px -5px 10px var(--light),
+              0 0 0 2px rgba(112,42,225,.28) !important;
+}
+
+/* ---------- borders soften ---------- */
+.border, .border-2, .border-slate-200, .border-slate-100, .border-outline\/20,
+.border-violet-100, .border-white\/20 { border-color: transparent !important; }
+.border-primary { border-color: var(--brand) !important; }
+/* outline (border-2 border-primary) buttons -> raised neu, purple label */
+.border-2.border-primary, a.border-primary.border-2 {
+  border-color: transparent !important;
+  color: var(--brand) !important;
+  box-shadow: 6px 6px 14px var(--dark), -6px -6px 14px var(--light) !important;
+}
+
+/* ---------- dividers ---------- */
+hr, .divide-y > * + * { border-color: color-mix(in srgb, var(--dark) 70%, transparent) !important; }
+
+/* ---------- material symbol accent icons ---------- */
+.text-amber-500, .text-secondary { color: var(--brand) !important; }
+
+/* ---------- custom font/text tokens ---------- */
+.text-ink { color: var(--txt) !important; }
+.text-muted { color: var(--muted) !important; }
+.font-headline, .font-body { font-family: "Plus Jakarta Sans", "Inter", sans-serif; }
+
+/* ---------- dark panels (auth brand rail, 404, dark bands) -> light neu ---------- */
+.bg-slate-950, .bg-slate-900, .bg-slate-800 {
+  background-color: var(--surface) !important;
+  background-image: none !important;
+  color: var(--txt) !important;
+}
+.bg-slate-950 .text-white, .bg-slate-950 .text-slate-100, .bg-slate-950 .text-slate-200,
+.bg-slate-950 .text-slate-300, .bg-slate-900 .text-white, .bg-slate-900 .text-slate-200,
+.bg-slate-900 .text-slate-300 { color: var(--txt) !important; }
+.bg-slate-950 .text-violet-200, .bg-slate-950 .text-violet-300,
+.bg-slate-900 .text-violet-200 { color: var(--brand) !important; }
+.bg-slate-950 .text-slate-400, .bg-slate-900 .text-slate-400 { color: var(--muted) !important; }
+/* frosted mini-cards inside a former dark panel -> raised neu */
+.bg-slate-950 .bg-white\/5, .bg-slate-950 .bg-white\/10, .bg-slate-950 .bg-white\/20,
+.bg-slate-900 .bg-white\/5, .bg-slate-900 .bg-white\/10 {
+  background-color: var(--surface) !important;
+  box-shadow: 5px 5px 12px var(--dark), -5px -5px 12px var(--light);
+}
+.bg-slate-950 .border-white\/10, .bg-slate-950 .border-white\/20 { border-color: transparent !important; }
+
+/* ---------- 404 dark page body -> light neu ---------- */
+body.bg-slate-950 { background: var(--surface) !important; color: var(--txt) !important; }
+body.bg-slate-950 .text-white { color: var(--txt) !important; }
+body.bg-slate-950 .text-slate-400 { color: var(--muted) !important; }
+
+/* ---------- reduced motion already covered by neumorphism.css ---------- */
