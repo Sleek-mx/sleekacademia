@@ -71,13 +71,13 @@
 }
 /* Loud primary CTA — the soft style must never swallow it */
 .btn.primary {
-  color: #fff; background: linear-gradient(135deg, var(--brand), var(--brand2));
+  color: #fff !important; background: linear-gradient(135deg, var(--brand), var(--brand2));
   border: 2px solid #fff;
   box-shadow: 8px 8px 20px rgba(112,42,225,.35), -8px -8px 18px var(--light),
               inset 0 1px 0 rgba(255,255,255,.35), 0 0 0 1px rgba(112,42,225,.2);
 }
 .btn.primary:hover {
-  color: #fff;
+  color: #fff !important;
   border-color: #fff;
   box-shadow: 12px 12px 28px rgba(112,42,225,.45), -8px -8px 18px var(--light),
               inset 0 1px 0 rgba(255,255,255,.45), 0 0 0 1px rgba(112,42,225,.2);
