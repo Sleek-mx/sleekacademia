@@ -10,8 +10,13 @@ const BASE = `http://127.0.0.1:${PORT}`;
 let server;
 
 before(async () => {
+  const env = { ...process.env, PORT: String(PORT) };
+  delete env.CLERK_PUBLISHABLE_KEY;
+  delete env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  delete env.CLERK_SECRET_KEY;
+
   server = spawn(process.execPath, ["server.js"], {
-    env: { ...process.env, PORT: String(PORT) },
+    env,
     stdio: "ignore",
   });
   // Wait for the port to accept connections.
@@ -34,6 +39,7 @@ const REDIRECTS = {
   "/ai-tools.html": "/",
   "/ai-tools-pro.html": "/",
   "/services.html": "/",
+  "/blogs.html": "/blog.html",
 };
 
 for (const [from, to] of Object.entries(REDIRECTS)) {

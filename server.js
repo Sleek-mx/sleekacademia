@@ -147,7 +147,8 @@ const legacySeoRedirects = new Map([
   ["/ai-tools.html", "/"],
   ["/ai-tools-pro.html", "/"],
   ["/courses.html", "/"],
-  ["/pricing.html", "/#pricing"]
+  ["/pricing.html", "/#pricing"],
+  ["/blogs.html", "/blog.html"]
 ]);
 
 for (const [source, destination] of legacySeoRedirects) {
@@ -668,7 +669,7 @@ async function requireAdmin(req, res, next) {
 
 function requireSession(req, res, next) {
   if (!clerkIsConfigured) {
-    return res.status(503).json({ error: "Authentication service is not configured." });
+    return res.status(401).json({ error: "Authentication is required." });
   }
   const auth = getAuth(req);
   if (!auth.isAuthenticated || !auth.userId) return res.status(401).json({ error: "Authentication is required." });
