@@ -8,6 +8,9 @@
 node_modules/
 **/node_modules/
 
+# Local isolated development worktrees
+.worktrees/
+
 # SEO agent local artifacts
 seo-agent/report-data.json
 seo-agent/reports/
