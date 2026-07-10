@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import http from "node:http";
 
-async function withFixture({ includeCanonical = true }, assertion) {
+async function withFixture({ includeCanonical = true, includeSocialProfiles = true }, assertion) {
   const server = http.createServer((req, res) => {
     const baseUrl = `http://127.0.0.1:${server.address().port}`;
     const redirects = {
@@ -37,7 +37,9 @@ async function withFixture({ includeCanonical = true }, assertion) {
           ${includeCanonical ? `<link rel="canonical" href="${baseUrl}/" />` : ""}
           <script type="application/ld+json">{"@type":"Organization"}</script>
           <script>gtag('config', 'G-CHXSBK3M81'); fbq('init', '2344858129372736'); ttq.load('D84IJPBC77UDS4G4KMO0');</script>
-        </head><body><h1>Sleek Academia</h1></body></html>`);
+        </head><body><h1>Sleek Academia</h1>
+          ${includeSocialProfiles ? '<a href="https://instagram.com/sleek_academia">Instagram</a><a href="https://tiktok.com/@sleek_e_learn">TikTok</a><a href="https://www.youtube.com/channel/UCID9SDULAMHqyKjB65Bo01A">YouTube</a>' : ""}
+        </body></html>`);
     }
     res.writeHead(404);
     res.end("Not found");
@@ -66,3 +68,9 @@ test("live SEO checker identifies a missing homepage canonical", async () => {
   });
 });
 
+test("live SEO checker identifies missing verified social profiles", async () => {
+  const { checkSite } = await import("../scripts/check-live-seo.mjs");
+  await withFixture({ includeSocialProfiles: false }, async (baseUrl) => {
+    await assert.rejects(checkSite(baseUrl), /verified Instagram profile/);
+  });
+});

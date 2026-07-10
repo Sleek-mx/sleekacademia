@@ -7,6 +7,11 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const publicDir = path.join(repoRoot, "public");
 const canonicalOrigin = "https://sleekacademia.com";
+const socialProfiles = [
+  "https://instagram.com/sleek_academia",
+  "https://tiktok.com/@sleek_e_learn",
+  "https://www.youtube.com/channel/UCID9SDULAMHqyKjB65Bo01A",
+];
 
 const redirectOnly = new Set(["blogs.html"]);
 const utilityPages = new Set([
@@ -116,3 +121,23 @@ test("sitemap contains each canonical indexable page exactly once", () => {
   }
 });
 
+test("every indexable page visibly links to the verified social profiles", () => {
+  for (const page of indexablePages) {
+    for (const profile of socialProfiles) {
+      assert.match(
+        page.html,
+        new RegExp(`href=["']${profile.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}["']`, "i"),
+        `${page.relative}: missing visible link to ${profile}`,
+      );
+    }
+  }
+});
+
+test("homepage Organization schema identifies the verified social profiles", () => {
+  const homepage = allPages.find((page) => page.relative === "index.html");
+  const schemas = [...homepage.html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)]
+    .map((match) => JSON.parse(match[1]));
+  const organization = schemas.find((schema) => schema["@type"] === "Organization");
+  assert.ok(organization, "homepage Organization schema is missing");
+  assert.deepEqual(organization.sameAs, socialProfiles);
+});

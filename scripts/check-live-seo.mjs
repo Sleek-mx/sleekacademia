@@ -38,6 +38,13 @@ export async function checkSite(inputBaseUrl = "https://sleekacademia.com") {
   assert.match(homepage.body, /G-CHXSBK3M81/, "homepage GA4 marker is missing");
   assert.match(homepage.body, /2344858129372736/, "homepage Meta Pixel marker is missing");
   assert.match(homepage.body, /D84IJPBC77UDS4G4KMO0/, "homepage TikTok Pixel marker is missing");
+  assert.match(homepage.body, /https:\/\/instagram\.com\/sleek_academia/, "homepage verified Instagram profile is missing");
+  assert.match(homepage.body, /https:\/\/tiktok\.com\/@sleek_e_learn/, "homepage verified TikTok profile is missing");
+  assert.match(
+    homepage.body,
+    /https:\/\/www\.youtube\.com\/channel\/UCID9SDULAMHqyKjB65Bo01A/,
+    "homepage verified YouTube profile is missing",
+  );
 
   const redirects = new Map([
     ["/index.html", "/"],
@@ -103,4 +110,3 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     process.exitCode = 1;
   }
 }
-
