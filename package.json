@@ -7,7 +7,8 @@
     "start": "node server.js",
     "dev": "node --watch server.js",
     "test": "node --test test/*.test.js",
-    "test:seo": "node --test test/seo-*.test.js"
+    "test:seo": "node --test test/seo-*.test.js",
+    "check:live-seo": "node scripts/check-live-seo.mjs"
   },
   "dependencies": {
     "@clerk/express": "^1.7.29",
