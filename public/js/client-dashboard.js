@@ -142,12 +142,9 @@
   }
 
   async function loadOrder(orderId, open = true) {
-    const payload = await api(`/api/platform/orders/${encodeURIComponent(orderId)}`);
-    state.details.set(orderId, payload);
-    state.currentOrderId = orderId;
-    renderOrderDetail(payload);
-    if (open && !byId("client-order-dialog").open) byId("client-order-dialog").showModal();
-    return payload;
+    const suffix = open ? "" : "&view=summary";
+    window.location.assign(`/client-order.html?id=${encodeURIComponent(orderId)}${suffix}`);
+    return null;
   }
 
   async function loadAllDetails() {
@@ -582,7 +579,6 @@
         event.target.closest("[data-drawer-toggle]").setAttribute("aria-expanded", String(shell.dataset.drawerOpen === "true"));
       }
       if (event.target.closest("[data-drawer-close]")) byId("client-shell").dataset.drawerOpen = "false";
-      if (event.target.closest("[data-close-client-order]")) byId("client-order-dialog").close();
       const download = event.target.closest("[data-attachment-id]");
       if (download) void downloadAttachment(download.dataset.attachmentId, download.dataset.fileName, download).catch((error) => showToast(error.message, true));
       const stripe = event.target.closest("[data-stripe-payment]");
@@ -592,9 +588,6 @@
       const demo = event.target.closest("[data-demo-payment]");
       if (demo) void confirmDemoPayment(demo).catch((error) => showToast(error.message, true));
     });
-    byId("client-message-form").addEventListener("submit", (event) => void sendMessage(event).catch((error) => showToast(error.message, true)));
-    byId("client-material-form").addEventListener("submit", (event) => void uploadMaterial(event).catch((error) => showToast(error.message, true)));
-    byId("client-revision-form").addEventListener("submit", (event) => void requestRevision(event).catch((error) => showToast(error.message, true)));
     byId("client-profile-form").addEventListener("submit", (event) => void saveProfile(event).catch((error) => showToast(error.message, true)));
     byId("client-logout").addEventListener("click", () => void logout());
     byId("client-retry").addEventListener("click", () => window.location.reload());
@@ -609,7 +602,7 @@
       showLoading(false);
       await showView("overview");
       const requested = new URLSearchParams(window.location.search).get("order");
-      if (requested && state.orders.some((order) => order.id === requested)) await loadOrder(requested);
+      if (requested && state.orders.some((order) => order.id === requested)) window.location.replace(`/client-order.html?id=${encodeURIComponent(requested)}`);
     } catch (error) { showError(error); }
   }
 

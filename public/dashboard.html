@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <meta name="theme-color" content="#e7e4f1">
+  <meta name="theme-color" content="#e0e5ec">
   <title>Client Dashboard | Sleek Academia</title>
   <meta name="description" content="Manage Sleek Academia orders, messages, payments, files, delivery, and revisions.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/dashboard-glass.css">
+  <link rel="stylesheet" href="/css/dashboard-neumorphic.css">
   <script src="/js/dashboard-theme.js"></script>
 </head>
 <body class="dashboard-body">
@@ -75,21 +75,6 @@
       </main>
     </div>
   </div>
-
-  <dialog class="dash-dialog" id="client-order-dialog" aria-labelledby="client-order-dialog-title">
-    <div class="dash-panel-heading"><div><h2 id="client-order-dialog-title">Order details</h2><p id="client-order-dialog-meta"></p></div><button class="dash-icon-button" type="button" data-close-client-order aria-label="Close order details">Close</button></div>
-    <div class="dash-dialog-body dash-stack">
-      <div class="dash-kpi-grid" id="client-order-summary"></div>
-      <section class="glass-panel glass-panel-inner dash-stack"><h3>Instructions</h3><div id="client-order-instructions"></div></section>
-      <section class="glass-panel glass-panel-inner dash-stack"><h3>Timeline</h3><div id="client-order-timeline"></div></section>
-      <section class="glass-panel glass-panel-inner dash-stack"><h3>Messages</h3><div id="client-order-messages"></div><form class="dash-stack" id="client-message-form"><div class="dash-field"><label for="client-message-body">Message about this order</label><textarea class="dash-textarea" id="client-message-body" maxlength="4000" required></textarea></div><button class="dash-button primary" type="submit">Send message</button></form></section>
-      <section class="glass-panel glass-panel-inner dash-stack"><h3>Materials</h3><div id="client-order-materials"></div><form class="dash-stack" id="client-material-form"><div class="dash-field"><label for="client-material-file">Upload another material</label><input class="dash-input" id="client-material-file" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.rtf,.jpg,.jpeg,.png,.webp" required></div><button class="dash-button" type="submit">Upload material</button></form></section>
-      <section class="glass-panel glass-panel-inner dash-stack"><h3>Payments and receipts</h3><div id="client-order-payments"></div><div id="client-payment-actions" tabindex="-1"></div></section>
-      <section class="glass-panel glass-panel-inner dash-stack"><h3>Deliveries</h3><div id="client-order-deliveries"></div><p id="client-delivery-lock-copy">Locked - pay balance to download</p></section>
-      <section class="glass-panel glass-panel-inner dash-stack"><h3>Revision history</h3><div id="client-order-revisions"></div><form class="dash-stack" id="client-revision-form"><div class="dash-field"><label for="client-revision-instructions">Included revision instructions</label><textarea class="dash-textarea" id="client-revision-instructions" maxlength="4000" required></textarea></div><button class="dash-button secondary" id="client-revision-submit" type="submit">Request included revision</button><p id="client-revision-policy">The seven-day window starts after the first paid download.</p></form></section>
-      <section class="glass-panel glass-panel-inner dash-stack"><h3>Policy help</h3><p>Final files stay locked until fully paid. The included revision is available once and must be requested within seven days after the first paid download.</p></section>
-    </div>
-  </dialog>
 
   <script src="/js/client-dashboard.js" defer></script>
 </body>

@@ -18,11 +18,13 @@ Open `http://localhost:3000/`.
 
 - Public site: `http://localhost:3000/`
 - Four-step request wizard: `http://localhost:3000/onboard.html`
-- Separate client/admin login: `http://localhost:3000/login.html`
+- Unified role-neutral login: `http://localhost:3000/login.html`
 - Clerk client workspace preview: `http://localhost:3000/dashboard.html`
 - MCX administrator workspace preview: `http://localhost:3000/admin.html`
+- Dedicated client order example: `http://localhost:3000/client-order.html?id=demo-order-delivered`
+- Dedicated admin order example: `http://localhost:3000/admin-order.html?id=demo-order-available`
 
-Both dashboards have light and night modes. At localhost, the login page exposes explicit links to the seeded client and MCX previews; production never receives those shortcuts.
+Both dashboards use same-surface light/night neumorphism. In loopback demo mode, enter any email and password for the seeded client workspace, or enter `MCX` with any non-empty password for the seeded administrator workspace. Production uses the isolated Clerk client and hardened MCX credential boundaries and never accepts demo credentials.
 
 ## What to review
 
@@ -30,19 +32,19 @@ Both dashboards have light and night modes. At localhost, the login page exposes
 
 1. Confirm the public pages retain the Sleek Academia neumorphic theme, official mark, exact palette, and constrained footer lockup.
 2. Resize the homepage and confirm there is no horizontal overflow or oversized footer artwork.
-3. Open the login page and switch between **Client** and **Admin**. The client path is reserved for Clerk; the administrator path uses the separate MCX credential boundary.
+3. Open the login page and confirm there is one normal credential form with no visible role switch. An email routes to the client workspace; the exact `MCX` identifier routes to the separate administrator boundary.
 
 ### MCX administrator workspace
 
 1. Open `/admin.html` and review **Overview**, **Orders**, **Clients**, **Messages**, **Payments**, **Earnings**, **Files**, and **Settings**.
 2. In **Orders**, inspect the seeded Available, Needs Clarification, In Progress, Delivered, Revision Requested, and Completed examples.
-3. Open an order to review instructions, materials, immutable pricing, payments, messages, delivery versions, revision history, and allowed lifecycle actions.
+3. Open an order and confirm it navigates to its own protected page, where instructions, materials, immutable pricing, payments, messages, delivery versions, revision history, and allowed lifecycle actions are not cramped into a popup.
 4. Confirm the earnings view counts confirmed Stripe/PayPal transactions only. There is no manual, offline, or M-Pesa paid override.
 
 ### Client workspace and payment gate
 
 1. Open `/dashboard.html`, then review **My Orders**, **Messages**, **Files**, **Payments**, **Profile**, and **Help**.
-2. Filter **My Orders** to **Delivered** and open **Quality improvement briefing**. The final filename and delivery metadata are visible, but the download is disabled while the $37.50 balance remains.
+2. Filter **My Orders** to **Delivered** and open **Quality improvement briefing**. It opens its own order page; the final filename and delivery metadata are visible, but the download is disabled while the $37.50 balance remains.
 3. Filter to **Completed** and open **Completed research summary**. It is fully paid and exposes **Download**.
 4. The one included revision remains unavailable until the first paid download. That download atomically starts its seven-day request window; a second included revision becomes additional work.
 

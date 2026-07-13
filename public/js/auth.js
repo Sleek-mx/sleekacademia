@@ -4,71 +4,94 @@ async function initAuthPage() {
   const status = document.getElementById("auth-status");
   const signInTarget = document.getElementById("clerk-sign-in");
   const signUpTarget = document.getElementById("clerk-sign-up");
-  const adminForm = document.getElementById("admin-login-form");
+  const unifiedForm = document.getElementById("unified-login-form");
   let config;
 
   try {
     config = await fetch("/api/config", { credentials: "same-origin" }).then((response) => response.json());
-    if (signInTarget) configureLoginModes({ status, signInTarget, adminForm, config });
+    if (signInTarget && unifiedForm) await configureUnifiedLogin({ status, signInTarget, unifiedForm, config });
     if (signUpTarget) await mountClerk({ status, target: signUpTarget, mode: "sign-up", config });
   } catch (error) {
     showStatus(status, error.message || "Unable to load authentication.", true);
   }
 }
 
-function configureLoginModes({ status, signInTarget, adminForm, config }) {
-  const tabs = Array.from(document.querySelectorAll("[data-auth-mode]"));
-  const panels = Array.from(document.querySelectorAll("[data-auth-panel]"));
-  let clerkMounted = false;
+function isAdminIdentifier(identifier) {
+  return String(identifier || "").trim().toUpperCase() === "MCX";
+}
 
-  async function selectMode(mode) {
-    tabs.forEach((tab) => {
-      const active = tab.dataset.authMode === mode;
-      tab.setAttribute("aria-selected", String(active));
-      tab.classList.toggle("primary", active);
-    });
-    panels.forEach((panel) => { panel.hidden = panel.dataset.authPanel !== mode; });
-    if (mode === "client") {
-      if (config.demoMode) {
-        showStatus(status, "Local demo mode is active. Open the client dashboard to review the seeded workspace.");
-        status.insertAdjacentHTML("beforeend", ' <a class="ws-button primary small" href="/dashboard.html">Open client demo</a>');
-      } else if (!clerkMounted) {
-        clerkMounted = true;
-        await mountClerk({ status, target: signInTarget, mode: "sign-in", config });
-      }
-    } else {
-      showStatus(status, config.demoMode ? "Localhost admin review is available without production credentials." : "Enter the dedicated MCX administrator credentials.");
-      const demoLink = document.getElementById("admin-demo-link");
-      if (demoLink) demoLink.hidden = !config.demoMode;
-      adminForm?.elements.password?.focus();
-    }
+async function configureUnifiedLogin({ status, signInTarget, unifiedForm, config }) {
+  let clerkMounted = false;
+  let clerkReady = false;
+
+  async function prepareClerk() {
+    if (clerkReady || config.demoMode) return;
+    if (!config.publishableKey || !config.clerkJsUrl) throw new Error("Secure sign-in is not configured yet.");
+    await loadScript(config.clerkJsUrl, config.publishableKey);
+    await window.Clerk.load({ signInUrl: config.signInUrl, signUpUrl: config.signUpUrl, afterSignInUrl: "/dashboard.html", afterSignUpUrl: "/dashboard.html" });
+    clerkReady = true;
+    if (window.Clerk.isSignedIn) window.location.replace("/dashboard.html");
   }
 
-  tabs.forEach((tab) => tab.addEventListener("click", () => { void selectMode(tab.dataset.authMode); }));
-  adminForm?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const submit = adminForm.querySelector('button[type="submit"]');
-    submit.disabled = true;
-    showStatus(status, "Verifying administrator access...");
+  document.getElementById("clerk-options-toggle")?.addEventListener("click", async () => {
     try {
-      const response = await fetch("/api/admin-auth/login", {
-        method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: adminForm.elements.username.value, password: adminForm.elements.password.value }),
-      });
-      const payload = await response.json().catch(() => ({}));
-      adminForm.elements.password.value = "";
-      if (!response.ok) throw new Error(ADMIN_FAILURE);
-      sessionStorage.setItem("sleekAcademia.adminCsrf", payload.csrfToken || "");
-      window.location.assign("/admin.html");
-    } catch {
-      adminForm.elements.password.value = "";
-      showStatus(status, ADMIN_FAILURE, true);
+      if (config.demoMode) {
+        window.location.assign("/dashboard.html");
+        return;
+      }
+      await prepareClerk();
+      signInTarget.hidden = false;
+      unifiedForm.hidden = true;
+      if (!clerkMounted) {
+        clerkMounted = true;
+        window.Clerk.mountSignIn(signInTarget, { appearance: clerkAppearance(), signUpUrl: "/sign-up.html", afterSignInUrl: "/dashboard.html" });
+      }
+      showStatus(status, "Choose a secure sign-in option.");
+    } catch (error) {
+      showStatus(status, error.message || ADMIN_FAILURE, true);
+    }
+  });
+
+  unifiedForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const submit = unifiedForm.querySelector('button[type="submit"]');
+    const identifier = unifiedForm.elements.identifier.value.trim();
+    const password = unifiedForm.elements.password.value;
+    submit.disabled = true;
+    showStatus(status, "Verifying your sign-in details...");
+    try {
+      if (config.demoMode && isAdminIdentifier(identifier)) {
+        window.location.assign("/admin.html");
+        return;
+      }
+      if (isAdminIdentifier(identifier)) {
+        const response = await fetch("/api/admin-auth/login", {
+          method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: identifier, password }),
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(ADMIN_FAILURE);
+        sessionStorage.setItem("sleekAcademia.adminCsrf", payload.csrfToken || "");
+        window.location.assign("/admin.html");
+        return;
+      }
+      if (config.demoMode) {
+        window.location.assign("/dashboard.html");
+        return;
+      }
+      await prepareClerk();
+      const signIn = await window.Clerk.client.signIn.create({ identifier, password });
+      if (signIn.status !== "complete" || !signIn.createdSessionId) throw new Error(ADMIN_FAILURE);
+      await window.Clerk.setActive({ session: signIn.createdSessionId });
+      window.location.assign("/dashboard.html");
+    } catch (error) {
+      showStatus(status, error.message === ADMIN_FAILURE ? ADMIN_FAILURE : "Sign-in details could not be verified.", true);
     } finally {
+      unifiedForm.elements.password.value = "";
       submit.disabled = false;
     }
   });
-  const initialMode = new URLSearchParams(window.location.search).get("mode") === "admin" ? "admin" : "client";
-  void selectMode(initialMode);
+  showStatus(status, config.demoMode ? "Local review mode is active. Enter any email to open the seeded workspace." : "Enter your email or username and password.");
 }
 
 async function mountClerk({ status, target, mode, config }) {
@@ -83,12 +106,16 @@ async function mountClerk({ status, target, mode, config }) {
     return;
   }
   showStatus(status, mode === "sign-up" ? "Create your client account using email or Google." : "Sign in to your client workspace using email or Google.");
-  const appearance = {
+  const appearance = clerkAppearance();
+  if (mode === "sign-up") window.Clerk.mountSignUp(target, { appearance, signInUrl: "/login.html", afterSignUpUrl: "/dashboard.html" });
+  else window.Clerk.mountSignIn(target, { appearance, signUpUrl: "/sign-up.html", afterSignInUrl: "/dashboard.html" });
+}
+
+function clerkAppearance() {
+  return {
     variables: { colorPrimary: "#702ae1", colorBackground: "#ffffff", colorText: "#202432", borderRadius: "1rem" },
     elements: { card: "shadow-none border border-slate-100 rounded-[1.5rem]", formButtonPrimary: "bg-[#702ae1] hover:bg-[#5d22c2] text-white rounded-2xl font-semibold", socialButtonsBlockButton: "rounded-2xl border border-slate-200 hover:bg-slate-50", footerActionLink: "text-[#702ae1] hover:text-[#5d22c2]" },
   };
-  if (mode === "sign-up") window.Clerk.mountSignUp(target, { appearance, signInUrl: "/login.html", afterSignUpUrl: "/dashboard.html" });
-  else window.Clerk.mountSignIn(target, { appearance, signUpUrl: "/sign-up.html", afterSignInUrl: "/dashboard.html" });
 }
 
 function showStatus(target, message, error = false) {

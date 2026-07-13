@@ -50,9 +50,11 @@ test("workspace exposes complete client navigation and resilient states", () => 
   for (const label of ["Overview", "My Orders", "Messages", "Files", "Payments", "Profile", "Help"]) {
     assert.match(html, new RegExp(`>${label}<`), `${label}: navigation missing`);
   }
-  for (const id of ["client-loading-state", "client-empty-state", "client-error-state", "client-order-grid", "client-order-dialog", "client-message-form", "client-material-form", "client-profile-form", "client-revision-form"]) {
+  for (const id of ["client-loading-state", "client-empty-state", "client-error-state", "client-order-grid", "client-profile-form"]) {
     assert.match(html, new RegExp(`id=["']${id}["']`), `${id}: state or surface missing`);
   }
+  const orderHtml = read("public/client-order.html");
+  for (const id of ["client-message-form", "client-material-form", "client-revision-form"]) assert.match(orderHtml, new RegExp(`id=["']${id}["']`), `${id}: order surface missing`);
   assert.match(html, /50% deposit/i);
   assert.match(html, /fully paid|locked until/i);
   assert.match(html, /AI-use report/i);

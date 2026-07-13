@@ -33,7 +33,7 @@ before(async () => {
 after(() => server?.kill());
 
 test("all review surfaces load from the real Express app", async () => {
-  for (const path of ["/", "/about.html", "/blog.html", "/store.html", "/onboard.html", "/login.html", "/sign-up.html", "/dashboard.html", "/admin.html"]) {
+  for (const path of ["/", "/about.html", "/blog.html", "/store.html", "/onboard.html", "/login.html", "/sign-up.html", "/dashboard.html", "/client-order.html", "/admin.html", "/admin-order.html"]) {
     const response = await fetch(`${base}${path}`);
     assert.equal(response.status, 200, path);
   }

@@ -26,13 +26,13 @@ test("MCX dashboard exposes the complete admin information architecture", () => 
   assert.match(html, /id="admin-error-state"/);
   assert.match(html, /id="admin-retry"/);
   assert.match(html, /id="admin-logout"/);
-  assert.match(html, /public\/css\/dashboard-glass\.css|\/css\/dashboard-glass\.css/);
+  assert.match(html, /\/css\/dashboard-neumorphic\.css/);
   assert.doesNotMatch(html, /workspace-v2\.css|View as client|role switch/i);
 });
 
 test("admin command center covers every order decision and evidence surface", () => {
-  const html = read("public/admin.html");
-  const script = read("public/js/admin-dashboard.js");
+  const html = read("public/admin-order.html");
+  const script = read("public/js/admin-order.js");
 
   for (const surface of ["Instructions", "Materials", "Pricing", "Payments", "Messages", "Files", "Timeline", "Delivery", "Revisions"]) {
     assert.match(html, new RegExp(surface, "i"), `${surface} surface is missing`);
@@ -40,15 +40,16 @@ test("admin command center covers every order decision and evidence surface", ()
   for (const action of ["request clarification", "accept order", "decline order", "change status", "upload deliverable", "complete order"]) {
     assert.match(html, new RegExp(action, "i"), `${action} control is missing`);
   }
-  for (const name of ["loadSession", "loadOverview", "loadOrders", "loadOrder", "renderKpis", "renderOrderTable", "renderOrderDetail", "renderTimeline", "submitClarification", "acceptOrder", "changeStatus", "uploadDeliverable", "loadClients", "loadMessages", "loadPayments", "loadEarnings", "loadFiles", "downloadCsv", "logout"]) {
+  for (const name of ["loadSession", "renderOrder", "submitClarification", "acceptOrder", "changeStatus", "uploadDeliverable", "logout"]) {
     assert.match(script, new RegExp(`function\\s+${name}\\b|const\\s+${name}\\s*=`), `${name} is missing`);
   }
   assert.match(script, /x-csrf-token/i);
   assert.match(script, /\/api\/admin-auth\/session/);
   assert.match(script, /\/api\/platform\/admin\/orders/);
-  assert.match(script, /FormData|FileReader/);
+  assert.match(script, /FileReader/);
   assert.match(html, /data-action="accept"/);
   assert.doesNotMatch(script, /manual paid|mark.{0,10}paid|paid override/i);
+  assert.doesNotMatch(read("public/admin.html"), /<dialog|admin-order-dialog/);
 });
 
 test("earnings filters and CSV export use server reports", () => {

@@ -26,6 +26,7 @@ test("security gate audits dependencies and scans only tracked source", () => {
 
   assert.match(script, /npm[\s\S]*audit[\s\S]*--omit=dev[\s\S]*--audit-level=moderate/);
   assert.match(script, /git[\s\S]*ls-files/);
+  assert.match(script, /existsSync\(path\.join\(root, file\)\)/);
   assert.match(script, /credential-pattern/);
   assert.match(script, /manual-payment-route/);
   assert.match(script, /unsafe-rsync-delete/);

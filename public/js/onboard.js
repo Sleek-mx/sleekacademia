@@ -12,6 +12,10 @@
   const serviceInput = form.elements.service;
   const initialFiles = document.getElementById("initial-files");
   const writingUnit = document.getElementById("writing-unit");
+  const subjectSelect = document.getElementById("subject");
+  const subjectOther = document.getElementById("subjectOther");
+  const helpType = document.getElementById("helpType");
+  const helpTypeOther = document.getElementById("helpTypeOther");
   const estimateValue = document.getElementById("order-estimate-value");
   let currentStep = 0;
   let authMounted = false;
@@ -67,22 +71,26 @@
       return false;
     }
     if (index === 1) {
-      const subject = form.elements.subject.value.trim();
+      const subject = resolvedSubject();
+      const help = resolvedHelpType();
       const description = form.elements.description.value.trim();
-      clearError("subject"); clearError("description");
+      clearError("subject"); clearError("subjectOther"); clearError("helpType"); clearError("helpTypeOther"); clearError("description");
       if (!subject) setError("subject", "Add the subject or course.");
-      if (!description) setError("description", "Tell us what you need help with.");
+      if (subjectSelect.value === "other" && !subjectOther.value.trim()) setError("subjectOther", "Enter your subject or course.");
+      if (!help) setError("helpType", "Choose what you need help with.");
+      if (helpType.value === "other" && !helpTypeOther.value.trim()) setError("helpTypeOther", "Describe the type of help you need.");
+      if (!description) setError("description", "Add the complete instructions and expected outcome.");
       if (selectedService() === "essay") {
         const units = writingUnit.value === "words" ? Number(formValue("wordCount")) : Number(formValue("pageCount"));
         if (!Number.isSafeInteger(units) || units < 1) setError("description", "Add a positive whole page or word count.");
-        return Boolean(subject && description && Number.isSafeInteger(units) && units > 0);
+        return Boolean(subject && help && description && Number.isSafeInteger(units) && units > 0);
       }
       if (selectedService() === "exam") {
         const hours = Number(formValue("examHours"));
         if (!Number.isSafeInteger(hours) || hours < 1) setError("description", "Add at least one whole assistance hour.");
-        return Boolean(subject && description && Number.isSafeInteger(hours) && hours > 0);
+        return Boolean(subject && help && description && Number.isSafeInteger(hours) && hours > 0);
       }
-      return Boolean(subject && description);
+      return Boolean(subject && help && description);
     }
     if (index === 2) {
       const name = form.elements.name.value.trim();
@@ -100,6 +108,16 @@
     return field && typeof field.value === "string" ? field.value.trim() : "";
   }
 
+  function resolvedSubject() {
+    return subjectSelect.value === "other" ? subjectOther.value.trim() : subjectSelect.value.trim();
+  }
+
+  function resolvedHelpType() {
+    if (!helpType.value) return "";
+    if (helpType.value === "other") return helpTypeOther.value.trim();
+    return helpType.options[helpType.selectedIndex]?.textContent.trim() || "";
+  }
+
   function buildPendingRequest() {
     const tutoringAlias = document.querySelector('[data-alias="assistanceType"]');
     const assistanceType = selectedService() === "tutoring" ? tutoringAlias.value.trim() : formValue("assistanceType");
@@ -109,9 +127,10 @@
     return {
       idempotencyKey,
       service: selectedService(),
-      subject: formValue("subject"),
+      subject: resolvedSubject(),
       title: formValue("title"),
-      description: formValue("description"),
+      description: `Help needed: ${resolvedHelpType()}\n\n${formValue("description")}`,
+      helpType: resolvedHelpType(),
       deadline: formValue("deadline"),
       citationStyle: selectedService() === "essay" ? formValue("citationStyle") : "",
       pageCount: selectedService() === "essay" && writingUnit.value === "pages" ? formValue("pageCount") : "",
@@ -159,7 +178,7 @@
       const totalCents = hours * 15000;
       return `${hours} ${hours === 1 ? "hour" : "hours"} × $150.00 = $${(totalCents / 100).toFixed(2)}`;
     }
-    if (new Set(["tutoring", "other"]).has(selectedService())) return "MCX will provide a custom quote after reviewing the complete scope and materials.";
+    if (new Set(["tutoring", "other"]).has(selectedService())) return "Our team of experts will provide a custom quote after reviewing the complete scope and materials.";
     return "Choose a service and units to preview the server-calculated rate.";
   }
 
@@ -274,6 +293,14 @@
 
   document.querySelectorAll("[data-service]").forEach(function (button) {
     button.addEventListener("click", function () { chooseService(button.dataset.service); });
+  });
+  subjectSelect.addEventListener("change", function () {
+    document.getElementById("subject-other-field").hidden = subjectSelect.value !== "other";
+    if (subjectSelect.value === "other") subjectOther.focus();
+  });
+  helpType.addEventListener("change", function () {
+    document.getElementById("help-type-other-field").hidden = helpType.value !== "other";
+    if (helpType.value === "other") helpTypeOther.focus();
   });
   writingUnit.addEventListener("change", function () {
     document.querySelectorAll("[data-writing-unit]").forEach(function (field) { field.hidden = field.dataset.writingUnit !== writingUnit.value; });

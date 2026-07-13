@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <meta name="theme-color" content="#e7e4f1">
+  <meta name="theme-color" content="#e0e5ec">
   <title>MCX Admin Dashboard | Sleek Academia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/dashboard-glass.css">
+  <link rel="stylesheet" href="/css/dashboard-neumorphic.css">
   <script src="/js/dashboard-theme.js"></script>
 </head>
 <body class="dashboard-body">
@@ -88,19 +88,6 @@
     </div>
   </div>
 
-  <dialog class="dash-dialog" id="admin-order-dialog" aria-labelledby="admin-order-dialog-title">
-    <div class="dash-panel-heading"><div><h2 id="admin-order-dialog-title">Order command center</h2><p id="admin-order-dialog-meta"></p></div><button class="dash-icon-button" type="button" data-close-order aria-label="Close order details">Close</button></div>
-    <div class="dash-dialog-body dash-stack">
-      <div class="dash-tabs" role="tablist" aria-label="Order details"><button class="dash-tab is-active" type="button">Instructions</button><button class="dash-tab" type="button">Materials</button><button class="dash-tab" type="button">Pricing</button><button class="dash-tab" type="button">Payments</button><button class="dash-tab" type="button">Messages</button><button class="dash-tab" type="button">Files</button><button class="dash-tab" type="button">Timeline</button><button class="dash-tab" type="button">Delivery</button><button class="dash-tab" type="button">Revisions</button></div>
-      <div id="admin-order-detail"></div>
-      <div class="dash-grid equal">
-        <form class="glass-panel glass-panel-inner dash-stack" id="admin-clarification-form"><h3>Request clarification</h3><div class="dash-field"><label for="admin-clarification-body">What is missing?</label><textarea class="dash-textarea" id="admin-clarification-body" maxlength="4000" required></textarea></div><button class="dash-button secondary" type="submit" data-action="clarification">Send clarification request</button></form>
-        <form class="glass-panel glass-panel-inner dash-stack" id="admin-accept-form"><h3>Accept order</h3><div class="dash-field"><label for="admin-accepted-deadline">Accepted deadline</label><input class="dash-input" id="admin-accepted-deadline" type="datetime-local"></div><div class="dash-field"><label for="admin-custom-quote">Custom quote in USD</label><input class="dash-input" id="admin-custom-quote" type="number" min="1" step="0.01"></div><div class="dash-field"><label for="admin-custom-reason">Custom quote reason</label><input class="dash-input" id="admin-custom-reason" maxlength="300"></div><button class="dash-button primary" type="submit" data-action="accept">Accept order</button></form>
-      </div>
-      <div class="glass-panel glass-panel-inner dash-stack"><h3>Change status</h3><div class="dash-toolbar"><div class="dash-field grow"><label for="admin-next-status">Next status</label><select class="dash-select" id="admin-next-status"><option>In Progress</option><option>Delivered</option><option>In Revision</option><option>Completed</option><option>Declined</option><option>Cancelled</option></select></div><button class="dash-button" type="button" id="admin-change-status" data-action="status">Change status</button><button class="dash-button danger" type="button" id="admin-decline-order" data-action="decline">Decline order</button><button class="dash-button primary" type="button" id="admin-complete-order" data-action="complete">Complete order</button></div></div>
-      <form class="glass-panel glass-panel-inner dash-stack" id="admin-deliverable-form"><h3>Upload deliverable</h3><div class="dash-grid equal"><div class="dash-field"><label for="admin-deliverable-category">Delivery type</label><select class="dash-select" id="admin-deliverable-category"><option value="draft">Draft</option><option value="final">Final</option><option value="ai-report">AI-use report</option></select></div><div class="dash-field"><label for="admin-deliverable-file">File</label><input class="dash-input" id="admin-deliverable-file" type="file" accept=".pdf,.doc,.docx,.txt,.rtf,.png,.jpg,.jpeg" required></div></div><button class="dash-button primary" type="submit" data-action="deliverable">Upload deliverable</button></form>
-    </div>
-  </dialog>
   <script src="/js/admin-dashboard.js" defer></script>
 </body>
 </html>

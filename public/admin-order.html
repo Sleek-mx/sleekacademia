@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#e0e5ec">
+  <title>Order Command Center | Sleek Academia</title>
+  <meta name="description" content="Review and manage a protected Sleek Academia order from the MCX command center.">
+  <link rel="canonical" href="https://sleekacademia.com/admin-order.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/dashboard-neumorphic.css">
+  <script src="/js/dashboard-theme.js"></script>
+</head>
+<body class="dashboard-body">
+  <a class="dash-skip-link" href="#admin-order-page">Skip to order command center</a>
+  <div class="dash-stage">
+    <header class="dash-header">
+      <a class="dash-brand" href="/admin.html" aria-label="Back to Sleek Academia administration"><img src="/images/brand/sleek-academia-logo.webp" alt="Sleek Academia"></a>
+      <div class="dash-header-actions"><button class="dash-icon-button" type="button" data-theme-toggle aria-pressed="false" aria-label="Use night dashboard theme">Theme</button><a class="dash-button" href="/admin.html">Admin dashboard</a><button class="dash-button" id="admin-order-logout" type="button">Log out</button></div>
+    </header>
+
+    <main class="dash-main dash-stack" id="admin-order-page" tabindex="-1">
+      <div id="admin-order-live-region" class="dash-toast-region" role="status" aria-live="polite" aria-atomic="true"></div>
+      <section id="admin-order-loading" class="glass-panel dash-state"><div class="dash-state-copy"><div class="dash-skeleton"></div><p>Loading the protected order command center...</p></div></section>
+      <section id="admin-order-error" class="glass-panel dash-state" hidden><div class="dash-state-copy"><h1>Order unavailable</h1><p id="admin-order-error-copy">The order could not be loaded.</p><a class="dash-button primary" href="/admin.html">Return to administration</a></div></section>
+      <div id="admin-order-content" class="dash-stack" hidden>
+        <section class="glass-panel dash-order-hero"><a class="dash-order-back" href="/admin.html">← Back to Orders</a><div id="admin-order-status"></div><h1 id="admin-order-title">Order command center</h1><p id="admin-order-meta"></p></section>
+        <div class="dash-kpi-grid" id="admin-order-summary"></div>
+        <div class="dash-grid equal">
+          <section class="glass-panel glass-panel-inner dash-stack"><h2>Instructions</h2><div id="admin-order-instructions"></div></section>
+          <section class="glass-panel glass-panel-inner dash-stack"><h2>Materials</h2><div id="admin-order-materials"></div></section>
+        </div>
+        <div class="dash-grid equal">
+          <section class="glass-panel glass-panel-inner dash-stack"><h2>Pricing</h2><div id="admin-order-pricing"></div></section>
+          <section class="glass-panel glass-panel-inner dash-stack"><h2>Payments</h2><div id="admin-order-payments"></div></section>
+        </div>
+        <div class="dash-grid equal">
+          <section class="glass-panel glass-panel-inner dash-stack"><h2>Messages</h2><div id="admin-order-messages"></div><p>Use “Request clarification” below when the client must provide missing information before acceptance.</p></section>
+          <section class="glass-panel glass-panel-inner dash-stack"><h2>Timeline</h2><div id="admin-order-timeline"></div></section>
+        </div>
+        <div class="dash-grid equal">
+          <form class="glass-panel glass-panel-inner dash-stack" id="admin-clarification-form"><h2>Request clarification</h2><div class="dash-field"><label for="admin-clarification-body">What is missing?</label><textarea class="dash-textarea" id="admin-clarification-body" maxlength="4000" required></textarea></div><button class="dash-button secondary" type="submit" data-action="clarification">Send clarification request</button></form>
+          <form class="glass-panel glass-panel-inner dash-stack" id="admin-accept-form"><h2>Accept order</h2><div class="dash-field"><label for="admin-accepted-deadline">Accepted deadline</label><input class="dash-input" id="admin-accepted-deadline" type="datetime-local"></div><div class="dash-field"><label for="admin-custom-quote">Custom quote in USD</label><input class="dash-input" id="admin-custom-quote" type="number" min="1" step="0.01"></div><div class="dash-field"><label for="admin-custom-reason">Custom quote reason</label><input class="dash-input" id="admin-custom-reason" maxlength="300"></div><button class="dash-button primary" type="submit" data-action="accept">Accept order</button></form>
+        </div>
+        <section class="glass-panel glass-panel-inner dash-stack"><h2>Order status</h2><div class="dash-toolbar"><div class="dash-field grow"><label for="admin-next-status">Next status</label><select class="dash-select" id="admin-next-status"><option>In Progress</option><option>Delivered</option><option>In Revision</option><option>Completed</option><option>Declined</option><option>Cancelled</option></select></div><button class="dash-button" type="button" id="admin-change-status" data-action="status">Change status</button><button class="dash-button danger" type="button" id="admin-decline-order" data-action="decline">Decline order</button><button class="dash-button primary" type="button" id="admin-complete-order" data-action="complete">Complete order</button></div></section>
+        <div class="dash-grid equal">
+          <form class="glass-panel glass-panel-inner dash-stack" id="admin-deliverable-form"><h2>Delivery and Files</h2><div class="dash-field"><label for="admin-deliverable-category">Delivery type</label><select class="dash-select" id="admin-deliverable-category"><option value="draft">Draft</option><option value="final">Final</option><option value="ai-report">AI-use report</option></select></div><div class="dash-field"><label for="admin-deliverable-file">File</label><input class="dash-input" id="admin-deliverable-file" type="file" accept=".pdf,.doc,.docx,.txt,.rtf,.png,.jpg,.jpeg" required></div><button class="dash-button primary" type="submit" data-action="deliverable">Upload deliverable</button><div id="admin-order-deliveries"></div></form>
+          <section class="glass-panel glass-panel-inner dash-stack"><h2>Revisions</h2><div id="admin-order-revisions"></div></section>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="/js/admin-order.js" defer></script>
+</body>
+</html>

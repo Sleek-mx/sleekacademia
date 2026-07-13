@@ -57,7 +57,8 @@ Current approved extension: replace dashboard liquid glass with branded light/ni
 - [x] Completed revised-platform Task 14: expanded the real-server smoke flow through paid download, one included revision, redelivery, second-revision denial, completion, client/admin isolation, and absence of manual-payment routes; denied non-loopback demo admin access; visually reviewed public/login/admin/client surfaces at desktop and mobile sizes in the in-app browser; verified both dashboard themes, all navigation sections, responsive drawers, locked and paid delivery states, and a clean browser console; fixed and regression-tested decorative homepage overflow; updated `docs/local-review.md`; passed 163/163 application tests, 6/6 SEO tests, the tracked-source security gate, dependency audit, and diff checks with zero vulnerabilities.
 - [x] Approved the Neumorphic Workspace and Blog Refresh design, covering structured request fields, unified login, dedicated order pages, light/night soft UI, visible Blog copy, and varied topic-specific artwork.
 - [x] Saved the approved refresh specification and implementation plan under `docs/superpowers/`.
-- [ ] Implement and live-test the Neumorphic Workspace and Blog Refresh.
+- [x] Implemented and live-tested the Neumorphic Workspace and Blog Refresh: structured subject/help dropdowns and exam-hour guidance, one role-neutral login, dedicated client/admin order pages, true same-surface light/night neumorphism with branded motifs, ten varied topic-specific Blog illustrations with visible summaries, and responsive dashboard navigation.
+- [x] Passed the refreshed localhost gate on 2026-07-13: 170/170 application tests, 6/6 SEO tests, the tracked-source security release gate across 64 files, zero production dependency vulnerabilities, desktop/mobile browser checks, light/night visual checks, client/MCX login routing, delivered-file payment locking, dedicated-order navigation, responsive drawers, and clean browser logs.
 
 ## Next
 
@@ -93,5 +94,5 @@ Current approved extension: replace dashboard liquid glass with branded light/ni
 - Dashboard design: true light/night neumorphism using the same-surface raised/inset rules, exact website/logo accents, and restrained logo-derived background motifs.
 - Approved refresh specification: `docs/superpowers/specs/2026-07-13-neumorphic-workspace-and-blog-refresh-design.md`.
 - Approved refresh plan: `docs/superpowers/plans/2026-07-13-neumorphic-workspace-and-blog-refresh.md`.
-- Current security release blockers: dependency audit, CSP/security headers, rate limits, CSRF, upload signature checks, and MCX hardened password/session implementation. MFA is deferred.
+- Security release status: dependency audit, CSP/security headers, rate limits, CSRF, upload signature checks, tenant isolation, private-file gates, provider verification, and hardened MCX password/session controls are implemented and passing. Production secret/provider configuration and MCX MFA remain launch-time work; MFA is explicitly deferred.
 - Approved revised implementation plan: `docs/superpowers/plans/2026-07-13-secure-admin-client-platform.md`.

@@ -14,7 +14,7 @@ test("order wizard explains and captures every approved server pricing unit", ()
   assert.match(html, /\$15(?:\.00)? per page/i);
   assert.match(html, /six-hour/i);
   assert.match(html, /\$16\.50/);
-  assert.match(html, /\$150(?:\.00)? per hour/i);
+  assert.match(html, /\$150(?:\.00)? per (?:whole )?hour/i);
   assert.match(html, /custom quote/i);
   assert.match(html, /informational estimate/i);
 });
@@ -30,17 +30,17 @@ test("browser estimate uses integer units and never sends a browser total", () =
   assert.match(script, /\/api\/platform\/orders\/handoff/);
 });
 
-test("login has isolated Client and Admin modes with no credential persistence", () => {
+test("login has one role-neutral form while preserving isolated authentication", () => {
   const html = read("public/login.html");
   const script = read("public/js/auth.js");
-  assert.match(html, /data-auth-mode="client"/);
-  assert.match(html, /data-auth-mode="admin"/);
+  assert.match(html, /id="unified-login-form"/);
   assert.match(html, /id="clerk-sign-in"/);
-  assert.match(html, /name="username"[^>]*value="MCX"/);
+  assert.match(html, /name="identifier"/);
   assert.match(html, /name="password"[^>]*type="password"/);
   assert.match(script, /\/api\/admin-auth\/login/);
-  assert.match(script, /URLSearchParams[\s\S]*mode[\s\S]*admin/);
+  assert.match(script, /function\s+isAdminIdentifier/);
+  assert.match(script, /signIn\.create/);
   assert.match(script, /Sign-in details could not be verified\./);
   assert.doesNotMatch(script, /localStorage.*password|sessionStorage.*password|URLSearchParams.*password/);
-  assert.doesNotMatch(html, /role switch|View as admin|View as client/i);
+  assert.doesNotMatch(html, /data-auth-mode|role="tablist"|>\s*Admin\s*<|>\s*Client\s*</i);
 });

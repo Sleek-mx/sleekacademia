@@ -23,7 +23,7 @@ test("client dashboard exposes the complete client workspace without admin contr
   assert.match(html, /id="client-error-state"/);
   assert.match(html, /id="client-retry"/);
   assert.match(html, /id="client-logout"/);
-  assert.match(html, /\/css\/dashboard-glass\.css/);
+  assert.match(html, /\/css\/dashboard-neumorphic\.css/);
   assert.match(html, /\/js\/client-dashboard\.js/);
   assert.doesNotMatch(html, /admin controls|View as admin|x-demo-role|role switch/i);
 });
@@ -46,12 +46,13 @@ test("client controller uses server-owned payment and revision state", () => {
   assert.doesNotMatch(script, /x-demo-role|admin\/orders|manual paid|mark.{0,10}paid/i);
 });
 
-test("client order detail preserves instructions, timeline, files, payments, and revision policy", () => {
-  const html = read("public/dashboard.html");
+test("dedicated client order page preserves instructions, timeline, files, payments, and revision policy", () => {
+  const html = read("public/client-order.html");
   for (const label of ["Instructions", "Timeline", "Messages", "Materials", "Payments", "Receipts", "Deliveries", "Revision history", "Policy help"]) {
     assert.match(html, new RegExp(label, "i"), `${label} detail surface is missing`);
   }
   assert.match(html, /seven days/i);
   assert.match(html, /first paid download/i);
   assert.match(html, /id="client-revision-form"/);
+  assert.doesNotMatch(read("public/dashboard.html"), /<dialog|client-order-dialog/);
 });

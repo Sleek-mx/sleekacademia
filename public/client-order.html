@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#e0e5ec">
+  <title>Order | Sleek Academia</title>
+  <meta name="description" content="Review a protected Sleek Academia order, messages, payments, deliveries, and revisions.">
+  <link rel="canonical" href="https://sleekacademia.com/client-order.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/dashboard-neumorphic.css">
+  <script src="/js/dashboard-theme.js"></script>
+</head>
+<body class="dashboard-body">
+  <a class="dash-skip-link" href="#client-order-page">Skip to order content</a>
+  <div class="dash-stage">
+    <header class="dash-header">
+      <a class="dash-brand" href="/dashboard.html" aria-label="Back to Sleek Academia dashboard"><img src="/images/brand/sleek-academia-logo.webp" alt="Sleek Academia"></a>
+      <div class="dash-header-actions"><button class="dash-icon-button" type="button" data-theme-toggle aria-pressed="false" aria-label="Use night dashboard theme">Theme</button><a class="dash-button" href="/dashboard.html">Dashboard</a><a class="dash-button primary" href="/onboard.html">Start New Order</a></div>
+    </header>
+
+    <main class="dash-main dash-stack" id="client-order-page" tabindex="-1">
+      <div id="client-order-live-region" class="dash-toast-region" role="status" aria-live="polite" aria-atomic="true"></div>
+      <section id="client-order-loading" class="glass-panel dash-state"><div class="dash-state-copy"><div class="dash-skeleton"></div><p>Loading this protected order...</p></div></section>
+      <section id="client-order-error" class="glass-panel dash-state" hidden><div class="dash-state-copy"><h1>Order unavailable</h1><p id="client-order-error-copy">The order could not be loaded.</p><a class="dash-button primary" href="/dashboard.html">Return to dashboard</a></div></section>
+      <div id="client-order-content" class="dash-stack" hidden>
+        <section class="glass-panel dash-order-hero"><a class="dash-order-back" href="/dashboard.html">← Back to My Orders</a><div id="client-order-status"></div><h1 id="client-order-title">Order</h1><p id="client-order-meta"></p></section>
+        <div class="dash-kpi-grid" id="client-order-summary"></div>
+        <div class="dash-grid equal">
+          <section class="glass-panel glass-panel-inner dash-stack"><h2>Instructions</h2><div id="client-order-instructions"></div></section>
+          <section class="glass-panel glass-panel-inner dash-stack"><h2>Timeline</h2><div id="client-order-timeline"></div></section>
+        </div>
+        <div class="dash-grid equal">
+          <section class="glass-panel glass-panel-inner dash-stack"><h2>Messages</h2><div id="client-order-messages"></div><form class="dash-stack" id="client-message-form"><div class="dash-field"><label for="client-message-body">Message about this order</label><textarea class="dash-textarea" id="client-message-body" maxlength="4000" required></textarea></div><button class="dash-button primary" type="submit">Send message</button></form></section>
+          <section class="glass-panel glass-panel-inner dash-stack"><h2>Materials</h2><div id="client-order-materials"></div><form class="dash-stack" id="client-material-form"><div class="dash-field"><label for="client-material-file">Upload another material</label><input class="dash-input" id="client-material-file" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.rtf,.jpg,.jpeg,.png,.webp" required></div><button class="dash-button" type="submit">Upload material</button></form></section>
+        </div>
+        <section class="glass-panel glass-panel-inner dash-stack"><h2>Payments and receipts</h2><div id="client-order-payments"></div><div id="client-payment-actions" class="dash-stack" tabindex="-1"></div></section>
+        <section class="glass-panel glass-panel-inner dash-stack"><h2>Deliveries</h2><div id="client-order-deliveries"></div><p id="client-delivery-lock-copy"><strong>Locked - pay balance to download.</strong> Delivery remains visible while the balance is due.</p></section>
+        <div class="dash-grid equal">
+          <section class="glass-panel glass-panel-inner dash-stack"><h2>Revision history</h2><div id="client-order-revisions"></div><form class="dash-stack" id="client-revision-form"><div class="dash-field"><label for="client-revision-instructions">Included revision instructions</label><textarea class="dash-textarea" id="client-revision-instructions" maxlength="4000" required></textarea></div><button class="dash-button secondary" id="client-revision-submit" type="submit">Request included revision</button><p id="client-revision-policy">The seven-day window starts after the first paid download.</p></form></section>
+          <section class="glass-panel glass-panel-inner dash-stack"><h2>Policy help</h2><p>Final files remain locked until the order is fully paid. Your one included revision becomes available after the first paid download and must be requested within seven days.</p><p>Additional or late revisions can be reviewed and quoted as new work.</p></section>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="/js/client-order.js" defer></script>
+</body>
+</html>

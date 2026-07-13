@@ -104,7 +104,7 @@
     }
     const response = await fetch(path, { method, headers, body, credentials: "same-origin" });
     if ((response.status === 401 || response.status === 403) && !state.demoMode) {
-      window.location.replace("/login.html?mode=admin");
+      window.location.replace("/login.html");
       throw new Error("The MCX session has expired.");
     }
     if (!response.ok) {
@@ -162,12 +162,8 @@
   }
 
   async function loadOrder(orderId) {
-    const payload = await api(`/api/platform/admin/orders/${encodeURIComponent(orderId)}`);
-    state.currentOrder = payload;
-    renderOrderDetail(payload);
-    const dialog = byId("admin-order-dialog");
-    if (!dialog.open) dialog.showModal();
-    return payload;
+    window.location.assign(`/admin-order.html?id=${encodeURIComponent(orderId)}`);
+    return null;
   }
 
   function renderKpis(overview) {
@@ -475,7 +471,7 @@
   async function logout() {
     if (!state.demoMode) await api("/api/admin-auth/logout", { method: "POST" });
     sessionStorage.removeItem("sleekAcademia.adminCsrf");
-    window.location.replace("/login.html?mode=admin");
+    window.location.replace("/login.html");
   }
 
   async function showView(viewName) {
@@ -523,14 +519,7 @@
         event.target.closest("[data-drawer-toggle]").setAttribute("aria-expanded", String(shell.dataset.drawerOpen === "true"));
       }
       if (event.target.closest("[data-drawer-close]")) byId("admin-shell").dataset.drawerOpen = "false";
-      if (event.target.closest("[data-close-order]")) byId("admin-order-dialog").close();
     });
-    byId("admin-clarification-form").addEventListener("submit", (event) => void submitClarification(event).catch((error) => showToast(error.message, true)));
-    byId("admin-accept-form").addEventListener("submit", (event) => void acceptOrder(event).catch((error) => showToast(error.message, true)));
-    byId("admin-deliverable-form").addEventListener("submit", (event) => void uploadDeliverable(event).catch((error) => showToast(error.message, true)));
-    byId("admin-change-status").addEventListener("click", (event) => void changeStatus(byId("admin-next-status").value, event.currentTarget).catch((error) => showToast(error.message, true)));
-    byId("admin-decline-order").addEventListener("click", (event) => void changeStatus("Declined", event.currentTarget).catch((error) => showToast(error.message, true)));
-    byId("admin-complete-order").addEventListener("click", (event) => void changeStatus("Completed", event.currentTarget).catch((error) => showToast(error.message, true)));
     byId("admin-order-search").addEventListener("input", debounce(() => void loadOrders().catch(showError), 250));
     for (const id of ["admin-order-status", "admin-order-queue", "admin-order-sort"]) byId(id).addEventListener("change", () => void loadOrders().catch(showError));
     byId("admin-earnings-period").addEventListener("change", () => void loadEarnings().catch(showError));

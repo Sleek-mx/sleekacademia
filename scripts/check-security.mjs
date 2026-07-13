@@ -24,6 +24,7 @@ function trackedSourceFiles() {
   return result.stdout
     .split("\0")
     .filter(Boolean)
+    .filter((file) => fs.existsSync(path.join(root, file)))
     .filter((file) => (
       file === "server.js" ||
       file.startsWith("src/") ||
