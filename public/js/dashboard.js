@@ -183,11 +183,113 @@
   function renderPayments() {
     const list = document.getElementById("payment-list"); list.replaceChildren();
     const payments = state.details.payments || [];
-    if (!payments.length) return appendEmpty(list, state.details.request.quoteCents ? "No confirmed payments yet." : "A quote has not been added yet.");
-    payments.forEach(function (payment) {
-      const row = document.createElement("div"); row.className = "payment-row";
-      const copy = document.createElement("div"); const title = document.createElement("strong"); const meta = document.createElement("span");
-      title.textContent = `${capitalize(payment.milestone)} payment · ${money(payment.amountCents)}`; meta.textContent = `${capitalize(payment.status)} · ${formatDate(payment.confirmedAt || payment.createdAt)}`; copy.append(title, meta); row.append(copy); list.appendChild(row);
+    if (!payments.length) appendEmpty(list, state.details.request.quoteCents ? "No confirmed payments yet." : "A quote has not been added yet.");
+    else payments.forEach(function (payment) {
+        const row = document.createElement("div"); row.className = "payment-row";
+        const copy = document.createElement("div"); const title = document.createElement("strong"); const meta = document.createElement("span");
+        title.textContent = `${capitalize(payment.milestone)} payment · ${money(payment.amountCents)}`; meta.textContent = `${capitalize(payment.status)} · ${formatDate(payment.confirmedAt || payment.createdAt)}`; copy.append(title, meta); row.append(copy); list.appendChild(row);
+      });
+    renderPaymentActions();
+  }
+
+  function paymentDue() {
+    const request = state.details.request;
+    const quote = Number(request.quoteCents) || 0;
+    const paid = Number(request.paidCents) || 0;
+    if (!quote || paid >= quote) return null;
+    const deposit = Math.ceil(quote / 2);
+    if (paid < deposit && request.status !== "Deposit Due") return null;
+    if (paid >= deposit && request.status !== "Balance Due") return null;
+    return paid < deposit
+      ? { milestone: "deposit", amountCents: deposit - paid }
+      : { milestone: "balance", amountCents: quote - paid };
+  }
+
+  function renderPaymentActions() {
+    const target = document.getElementById("payment-actions");
+    target.replaceChildren();
+    const due = paymentDue();
+    if (!due) {
+      if (state.details.request.quoteCents) appendEmpty(target, "This request is fully paid. Protected delivery is unlocked.");
+      return;
+    }
+    const heading = document.createElement("strong");
+    heading.textContent = `${capitalize(due.milestone)} due: ${money(due.amountCents)}`;
+    target.appendChild(heading);
+
+    if (state.config.demoMode && isLoopback()) {
+      const button = document.createElement("button");
+      button.type = "button"; button.className = "ws-button primary small"; button.textContent = `Simulate ${due.milestone} confirmation (localhost)`;
+      const output = document.createElement("p"); output.className = "form-hint";
+      button.addEventListener("click", async function () {
+        button.disabled = true; output.textContent = "Applying simulated provider confirmation...";
+        try {
+          await json(await api(`/requests/${encodeURIComponent(state.selectedId)}/payments/demo-confirm`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" }));
+          await loadRequests();
+        } catch (error) { output.textContent = error.message; button.disabled = false; }
+      });
+      target.append(button, output);
+      return;
+    }
+
+    const providerRow = document.createElement("div"); providerRow.className = "wizard-actions";
+    if (state.config.stripePublishableKey) {
+      const stripeButton = document.createElement("button"); stripeButton.type = "button"; stripeButton.className = "ws-button primary small"; stripeButton.textContent = "Pay securely by card";
+      stripeButton.addEventListener("click", function () { void mountStripePayment(target, stripeButton); });
+      providerRow.appendChild(stripeButton);
+    }
+    if (state.config.paypalClientId) {
+      const paypalTarget = document.createElement("div"); paypalTarget.id = "paypal-payment-button"; providerRow.appendChild(paypalTarget); void mountPayPalPayment(paypalTarget);
+    }
+    if (!providerRow.children.length) appendEmpty(target, "A verified payment provider is not configured yet. Your request and files remain available.");
+    else target.appendChild(providerRow);
+  }
+
+  async function mountStripePayment(target, trigger) {
+    trigger.disabled = true;
+    try {
+      const intent = await json(await api(`/requests/${encodeURIComponent(state.selectedId)}/payments/stripe-intent`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" }));
+      await loadExternalScript("https://js.stripe.com/v3/", "stripe-js");
+      const stripe = window.Stripe(state.config.stripePublishableKey);
+      const elements = stripe.elements({ clientSecret: intent.clientSecret });
+      const form = document.createElement("form"); form.className = "inline-form";
+      const mount = document.createElement("div"); mount.id = "stripe-payment-element";
+      const submit = document.createElement("button"); submit.type = "submit"; submit.className = "ws-button primary small"; submit.textContent = `Confirm ${money(intent.amountCents)}`;
+      const output = document.createElement("p"); output.className = "form-hint";
+      form.append(mount, submit, output); target.appendChild(form);
+      elements.create("payment").mount(mount);
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault(); submit.disabled = true; output.textContent = "Confirming with Stripe...";
+        const result = await stripe.confirmPayment({ elements, confirmParams: { return_url: `${location.origin}/dashboard.html?request=${encodeURIComponent(state.selectedId)}` }, redirect: "if_required" });
+        if (result.error) { output.textContent = result.error.message || "Stripe could not confirm payment."; submit.disabled = false; }
+        else { output.textContent = "Provider confirmed. Waiting for the verified webhook..."; setTimeout(function () { void loadRequests(); }, 1800); }
+      });
+    } catch (error) { trigger.disabled = false; appendEmpty(target, error.message); }
+  }
+
+  async function mountPayPalPayment(target) {
+    try {
+      const src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(state.config.paypalClientId)}&currency=USD`;
+      await loadExternalScript(src, "paypal-js");
+      window.paypal.Buttons({
+        style: { layout: "horizontal", height: 36, tagline: false },
+        createOrder: async function () {
+          const order = await json(await api(`/requests/${encodeURIComponent(state.selectedId)}/payments/paypal-order`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" }));
+          return order.orderId;
+        },
+        onApprove: async function (data) {
+          await json(await api(`/requests/${encodeURIComponent(state.selectedId)}/payments/paypal-capture`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ orderId: data.orderID }) }));
+          await loadRequests();
+        },
+        onError: function (error) { appendEmpty(target, error.message || "PayPal could not complete the payment."); },
+      }).render(target);
+    } catch (error) { appendEmpty(target, error.message); }
+  }
+
+  function loadExternalScript(src, id) {
+    return new Promise(function (resolve, reject) {
+      if (document.getElementById(id)) return resolve();
+      const script = document.createElement("script"); script.id = id; script.src = src; script.async = true; script.onload = resolve; script.onerror = function () { reject(new Error("Payment provider could not load.")); }; document.head.appendChild(script);
     });
   }
 

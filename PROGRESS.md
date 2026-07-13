@@ -29,10 +29,11 @@ Plan:
 - [x] Completed full-build Task 4: rebuilt About, Blog, and Store on the official brand system; added accessible reduced-motion-safe reveal/navigation behavior; added complete Blog search and field filters; preserved Gumroad live synchronization, analytics, schema, social profiles, canonicals, and all article URLs; removed public Pricing/package detours across prep and article pages. Added 6 focused tests; full suite is 61 passing and SEO suite is 6 passing.
 - [x] Completed full-build Task 5: generated, visually inspected, optimized, and installed ten distinct 1200 by 751 WebP editorial illustrations across the Blog listing and every existing article; updated article social images and added a manifest contract that prevents missing or placeholder artwork. Full suite is 62 passing.
 - [x] Completed full-build Task 6: removed legacy public checkout from onboarding; built the four-step service-specific brief and contact wizard; added local pending-request persistence and idempotent Clerk/demo handoff; rebuilt sign-up/login; and replaced the legacy role/course dashboard with complete client/admin request, message, file, payment-record, profile, help, quote, status, and delivery surfaces. Added 5 UI contract tests; full suite is 67 passing and SEO suite is 6 passing.
+- [x] Completed full-build Task 7: retired browser-amount payment endpoints; added server-calculated deposit/balance amounts, Stripe intent and verified webhook handling, pre-validated PayPal order/capture, provider transaction idempotency, loopback-only simulation, automatic deposit/completion progression, dashboard provider states, and full-payment delivery unlocks. Added 7 payment/security tests; full suite is 74 passing.
 
 ## Next
 
-- [ ] Implement Task 7 of the full-build plan: server-owned staged payments, loopback simulation, verified provider confirmation, and protected delivery states.
+- [ ] Complete Task 8: run automated security/regression checks, exercise every core browser path in desktop/mobile localhost demo mode, save review instructions/screenshots, and leave the verified app running for Max.
 - [ ] Complete Task 8: run the entire site locally and show Max the working public site, request flow, signup handoff, dashboard, payment states, and delivery gates before any GitHub push or Namecheap deployment.
 
 ## Facts a fresh session needs

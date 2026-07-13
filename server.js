@@ -17,10 +17,18 @@ import {
 import { seedDemoPlatform } from "./src/platform/demo-seed.js";
 import { createPlatformRouter } from "./src/platform/http.js";
 import { createPlatformIdentityResolver } from "./src/platform/identity.js";
+import { createPaymentProvider } from "./src/platform/payments.js";
 import { createPlatformStore, isLoopbackHostname } from "./src/platform/store.js";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_placeholder", {
-  apiVersion: "2024-06-20",
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" })
+  : null;
+const paymentProvider = createPaymentProvider({
+  stripeClient: stripe,
+  stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || "",
+  paypalClientId: process.env.PAYPAL_CLIENT_ID || "",
+  paypalSecret: process.env.PAYPAL_SECRET || "",
+  paypalBaseUrl: process.env.PAYPAL_BASE_URL || "https://api-m.sandbox.paypal.com",
 });
 
 const __filename = fileURLToPath(import.meta.url);
@@ -133,7 +141,12 @@ app.get("/deploy.php", (_req, res) => {
   res.status(404).send("Not found");
 });
 
-app.use(express.json({ limit: "12mb" }));
+app.use(express.json({
+  limit: "12mb",
+  verify: (req, _res, buffer) => {
+    if (req.originalUrl === "/api/platform/payments/stripe-webhook") req.rawBody = Buffer.from(buffer);
+  },
+}));
 
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://sleekacademia.com,http://localhost:3000').split(',');
 app.use((req, res, next) => {
@@ -199,6 +212,7 @@ const resolvePlatformIdentity = createPlatformIdentityResolver({
 app.use("/api/platform", createPlatformRouter({
   store: platformStore,
   resolveIdentity: resolvePlatformIdentity,
+  paymentProvider,
 }));
 
 app.get("/app", (req, res) => {
@@ -386,98 +400,6 @@ app.patch("/api/me/profile", requireSession, async (req, res) => {
     res.json({ success: true, user: formatUser(updatedUser, currentRole) });
   } catch (error) {
     res.status(500).json({ error: "Unable to update onboarding metadata.", details: error instanceof Error ? error.message : "Unknown error" });
-  }
-});
-
-// ── PayPal helpers ─────────────────────────────────────────────────────────────
-const PAYPAL_BASE = () => process.env.PAYPAL_BASE_URL || "https://api-m.sandbox.paypal.com";
-
-async function getPayPalToken() {
-  const clientId = process.env.PAYPAL_CLIENT_ID || "";
-  const secret = process.env.PAYPAL_SECRET || "";
-  if (!clientId || clientId.startsWith("REPLACE")) throw new Error("PayPal credentials not configured.");
-  const creds = Buffer.from(`${clientId}:${secret}`).toString("base64");
-  const res = await fetch(`${PAYPAL_BASE()}/v1/oauth2/token`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded", Authorization: `Basic ${creds}` },
-    body: "grant_type=client_credentials",
-  });
-  const data = await res.json();
-  if (!data.access_token) throw new Error("Failed to obtain PayPal token.");
-  return data.access_token;
-}
-
-app.post("/api/paypal/create-order", async (req, res) => {
-  try {
-    const { amount, description = "Sleek Academia Service" } = req.body;
-    const cents = Math.round(Number(amount));
-    if (!cents || cents < 50) return res.status(400).json({ error: "Invalid amount." });
-    const token = await getPayPalToken();
-    const order = await fetch(`${PAYPAL_BASE()}/v2/checkout/orders`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ intent: "CAPTURE", purchase_units: [{ amount: { currency_code: "USD", value: (cents / 100).toFixed(2) }, description }] }),
-    }).then(r => r.json());
-    return res.json({ id: order.id });
-  } catch (error) {
-    return res.status(500).json({ error: error instanceof Error ? error.message : "PayPal order failed." });
-  }
-});
-
-app.post("/api/paypal/capture-order/:orderId", async (req, res) => {
-  try {
-    const token = await getPayPalToken();
-    const capture = await fetch(`${PAYPAL_BASE()}/v2/checkout/orders/${req.params.orderId}/capture`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-    }).then(r => r.json());
-    return res.json(capture);
-  } catch (error) {
-    return res.status(500).json({ error: error instanceof Error ? error.message : "PayPal capture failed." });
-  }
-});
-
-app.post("/api/stripe/create-payment-intent", async (req, res) => {
-  try {
-    const { amount, currency = "usd", description = "Sleek Academia Service" } = req.body;
-    const cents = Math.round(Number(amount));
-    if (!cents || cents < 50) return res.status(400).json({ error: "Invalid amount. Minimum is $0.50." });
-    const paymentIntent = await stripe.paymentIntents.create({ amount: cents, currency, description, automatic_payment_methods: { enabled: true } });
-    return res.json({ clientSecret: paymentIntent.client_secret });
-  } catch (error) {
-    return res.status(500).json({ error: error instanceof Error ? error.message : "Payment failed." });
-  }
-});
-
-app.post("/api/stripe/create-checkout-session", async (req, res) => {
-  try {
-    const { priceAmountCents, productName } = req.body;
-    const cents = Math.round(Number(priceAmountCents));
-    if (!cents || cents < 50) return res.status(400).json({ error: "Invalid amount." });
-    if (!productName || typeof productName !== "string" || productName.length > 200) {
-      return res.status(400).json({ error: "Product name required." });
-    }
-    const baseUrl = (process.env.BASE_URL || `${req.protocol}://${req.get("host")}`).replace(/\/$/, "");
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: [{
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: `Sleek Academia — ${productName}`,
-            description: "Exam prep course access",
-          },
-          unit_amount: cents,
-        },
-        quantity: 1,
-      }],
-      mode: "payment",
-      success_url: `${baseUrl}/payment-success.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/store.html`,
-    });
-    return res.json({ url: session.url });
-  } catch (error) {
-    return res.status(500).json({ error: error instanceof Error ? error.message : "Checkout session failed." });
   }
 });
 

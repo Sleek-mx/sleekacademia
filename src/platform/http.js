@@ -5,6 +5,8 @@ import {
   canTransitionRequest,
   validateRequestInput,
 } from "./domain.js";
+import { getServerPaymentDue, recordVerifiedPayment } from "./payments.js";
+import { isLoopbackHostname } from "./store.js";
 
 const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = new Set([
@@ -65,8 +67,35 @@ async function requestDetails(store, request) {
   return { request, events, messages, attachments, payments };
 }
 
-export function createPlatformRouter({ store: fallbackStore, resolveIdentity } = {}) {
+export function createPlatformRouter({ store: fallbackStore, resolveIdentity, paymentProvider = null } = {}) {
   const router = express.Router();
+
+  router.post("/payments/stripe-webhook", asyncRoute(async (req, res) => {
+    const store = getStore(req, fallbackStore);
+    if (!store?.available) return res.status(503).json({ error: "Payment storage is unavailable." });
+    if (!paymentProvider?.stripeAvailable) return res.status(503).json({ error: "Stripe is not configured." });
+    try {
+      const rawBody = req.rawBody || Buffer.from(JSON.stringify(req.body || {}));
+      const event = paymentProvider.parseStripeWebhook(rawBody, req.get("stripe-signature") || "");
+      if (event.type !== "payment_intent.succeeded") return res.json({ received: true, ignored: true });
+      const intent = event.data.object;
+      const requestId = text(intent.metadata?.requestId, 200);
+      const userId = text(intent.metadata?.userId, 200);
+      const request = await store.getRequestForUser(requestId, userId, { role: "admin" });
+      if (!request) return res.status(404).json({ error: "Payment request not found." });
+      const result = await recordVerifiedPayment({
+        store,
+        request,
+        provider: "stripe",
+        providerTransactionId: intent.id,
+        milestone: text(intent.metadata?.milestone, 40),
+        amountCents: Number(intent.amount_received),
+      });
+      return res.json({ received: true, duplicate: result.duplicate });
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Stripe webhook verification failed." });
+    }
+  }));
 
   router.use(asyncRoute(async (req, res, next) => {
     const store = getStore(req, fallbackStore);
@@ -247,6 +276,66 @@ export function createPlatformRouter({ store: fallbackStore, resolveIdentity } =
     await req.platformStore.appendEvent({ requestId: request.id, actorId: req.platformIdentity.userId, type: "request.status_changed", data: { from: access.request.status, to: status } });
     await req.platformStore.createNotification({ userId: request.userId, requestId: request.id, type: "request.status_changed", title: `Request status: ${status}`, body: "Open your workspace for the latest details." });
     return res.json({ request });
+  }));
+
+  router.post("/requests/:requestId/payments/stripe-intent", asyncRoute(async (req, res) => {
+    if (!paymentProvider?.stripeAvailable) return res.status(503).json({ error: "Stripe is not configured." });
+    const access = await requestAccess(req.platformStore, req.params.requestId, req.platformIdentity);
+    if (access.error) return res.status(access.status).json({ error: access.error });
+    const due = getServerPaymentDue(access.request);
+    if (!due.milestone || !due.amountCents) return res.status(409).json({ error: "This request has no payment due." });
+    const intent = await paymentProvider.createStripeIntent({ request: access.request, due });
+    return res.status(201).json(intent);
+  }));
+
+  router.post("/requests/:requestId/payments/paypal-order", asyncRoute(async (req, res) => {
+    if (!paymentProvider?.paypalAvailable) return res.status(503).json({ error: "PayPal is not configured." });
+    const access = await requestAccess(req.platformStore, req.params.requestId, req.platformIdentity);
+    if (access.error) return res.status(access.status).json({ error: access.error });
+    const due = getServerPaymentDue(access.request);
+    if (!due.milestone || !due.amountCents) return res.status(409).json({ error: "This request has no payment due." });
+    const order = await paymentProvider.createPayPalOrder({ request: access.request, due });
+    return res.status(201).json(order);
+  }));
+
+  router.post("/requests/:requestId/payments/paypal-capture", asyncRoute(async (req, res) => {
+    if (!paymentProvider?.paypalAvailable) return res.status(503).json({ error: "PayPal is not configured." });
+    const access = await requestAccess(req.platformStore, req.params.requestId, req.platformIdentity);
+    if (access.error) return res.status(access.status).json({ error: access.error });
+    const orderId = text(req.body?.orderId, 200);
+    if (!orderId) return res.status(400).json({ error: "PayPal order ID is required." });
+    const due = getServerPaymentDue(access.request);
+    if (!due.milestone || !due.amountCents) return res.status(409).json({ error: "This request has no payment due." });
+    const capture = await paymentProvider.capturePayPalOrder(orderId, { requestId: access.request.id, due });
+    if (capture.requestId !== access.request.id) return res.status(409).json({ error: "PayPal order does not belong to this request." });
+    const result = await recordVerifiedPayment({
+      store: req.platformStore,
+      request: access.request,
+      provider: "paypal",
+      providerTransactionId: capture.providerTransactionId,
+      milestone: capture.milestone,
+      amountCents: capture.amountCents,
+    });
+    return res.json(result);
+  }));
+
+  router.post("/requests/:requestId/payments/demo-confirm", asyncRoute(async (req, res) => {
+    if (!req.platformIdentity.demo || !isLoopbackHostname(req.hostname)) {
+      return res.status(403).json({ error: "Payment simulation is available only in localhost demo mode." });
+    }
+    const access = await requestAccess(req.platformStore, req.params.requestId, req.platformIdentity);
+    if (access.error) return res.status(access.status).json({ error: access.error });
+    const due = getServerPaymentDue(access.request);
+    if (!due.milestone || !due.amountCents) return res.status(409).json({ error: "This request has no payment due." });
+    const result = await recordVerifiedPayment({
+      store: req.platformStore,
+      request: access.request,
+      provider: "demo",
+      providerTransactionId: `demo:${access.request.id}:${due.milestone}:${due.amountCents}`,
+      milestone: due.milestone,
+      amountCents: due.amountCents,
+    });
+    return res.json({ ...result, simulated: true });
   }));
 
   router.get("/notifications", asyncRoute(async (req, res) => {
