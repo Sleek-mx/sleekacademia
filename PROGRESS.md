@@ -20,12 +20,10 @@ Plan:
 - [x] Completed Phase 1 on `feature/phase-1-foundation-home`: official logo variants, favicon/touch icon, optimized full-body mascot, shared Vibrant Academic Studio CSS, and a fully rebuilt signup-first homepage.
 - [x] Removed public homepage pricing/packages and redirected the retired `/pricing.html` route to `/onboard.html`; Store checkout remains separate.
 - [x] Verified Phase 1 with 31 passing tests, clean diff checks, successful local HTTP checks, and desktop/mobile renders from the running Express app.
-- [x] Added the browser-native animated hero: 16:9 desktop stage, accessible typewriter headline, 12-second typing/thinking mascot cycle, chin-hand gesture, plant sway, ambient orb/dot motion, and reduced-motion fallback.
-- [x] Recorded and reviewed the real running animation at 1440 × 810 and verified the responsive 390 × 844 layout without horizontal overflow.
 
 ## Next
 
-- [ ] Review the actual animated Phase 1 homepage render with Max and apply any visual refinements.
+- [ ] Review the actual Phase 1 homepage render with Max and apply any visual refinements.
 - [ ] Execute Phase 2: redesign About and Blog, generate production blog artwork, and restyle Store without changing checkout behavior.
 
 ## Facts a fresh session needs
