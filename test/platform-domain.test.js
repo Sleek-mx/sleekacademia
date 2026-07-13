@@ -19,6 +19,9 @@ test("request input is allowlisted, trimmed, and length limited", () => {
     deadline: "2026-08-10",
     citationStyle: "APA 7",
     pageCount: "8",
+    wordCount: "2200",
+    examHours: "2",
+    urgency: "six-hour",
     email: " MAX@EXAMPLE.COM ",
     name: " Max ",
     urgentPhone: " +1 312 555 0174 ",
@@ -30,6 +33,9 @@ test("request input is allowlisted, trimmed, and length limited", () => {
   assert.equal(result.value.service, "essay");
   assert.equal(result.value.email, "max@example.com");
   assert.equal(result.value.description, "Compare the assigned sources and prepare a transparent draft.");
+  assert.equal(result.value.wordCount, "2200");
+  assert.equal(result.value.examHours, "2");
+  assert.equal(result.value.urgency, "six-hour");
   assert.equal("ignoredAdminField" in result.value, false);
 });
 

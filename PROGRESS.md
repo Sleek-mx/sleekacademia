@@ -43,6 +43,7 @@ Current approved extension: replace the combined demo workspace with separate MC
 - [x] Created and self-reviewed the 14-task test-driven implementation plan at `docs/superpowers/plans/2026-07-13-secure-admin-client-platform.md`.
 - [x] Completed revised-platform Task 1: removed the redundant 1595 by 993 footer logo, added a global `[hidden]` safeguard, preserved the constrained visible mark/name lockup, and added a focused regression test.
 - [x] Completed revised-platform Task 2: patched Clerk, Axios, Express, and vulnerable transitive packages; added Helmet and express-rate-limit; established a tracked-source security release gate; reached zero production audit vulnerabilities; and kept the full suite green at 81/81.
+- [x] Completed revised-platform Task 3: implemented immutable server-owned writing, urgent-writing, exam-hour, and custom pricing snapshots; added exact 50/50 milestone splits and safe-integer guards; extended order input fields; and kept the full suite green at 91/91.
 
 ## Next
 
