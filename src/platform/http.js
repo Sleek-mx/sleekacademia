@@ -7,21 +7,7 @@ import {
 } from "./domain.js";
 import { getServerPaymentDue, recordVerifiedPayment } from "./payments.js";
 import { isLoopbackHostname } from "./store.js";
-
-const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
-const ALLOWED_MIME_TYPES = new Set([
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  "application/vnd.ms-powerpoint",
-  "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-  "application/vnd.ms-excel",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "text/plain",
-]);
+import { validateUpload } from "./uploads.js";
 
 function asyncRoute(handler) {
   return (req, res, next) => Promise.resolve(handler(req, res, next)).catch(next);
@@ -44,19 +30,6 @@ async function requestAccess(store, requestId, identity) {
   return { request };
 }
 
-function decodeUpload(input) {
-  const fileName = text(input?.fileName, 180);
-  const mimeType = text(input?.mimeType, 160).toLowerCase();
-  const contentBase64 = typeof input?.contentBase64 === "string" ? input.contentBase64 : "";
-  if (!fileName) return { error: "File name is required." };
-  if (!ALLOWED_MIME_TYPES.has(mimeType)) return { error: "This file type is not supported." };
-  if (!contentBase64 || !/^[A-Za-z0-9+/]*={0,2}$/.test(contentBase64)) return { error: "File content is invalid." };
-  const bytes = Buffer.from(contentBase64, "base64");
-  if (!bytes.length) return { error: "The uploaded file is empty." };
-  if (bytes.length > MAX_UPLOAD_BYTES) return { error: "Files must be 8 MB or smaller." };
-  return { fileName, mimeType, bytes };
-}
-
 async function requestDetails(store, request) {
   const [events, messages, attachments, payments] = await Promise.all([
     store.listEvents(request.id),
@@ -67,7 +40,7 @@ async function requestDetails(store, request) {
   return { request, events, messages, attachments, payments };
 }
 
-export function createPlatformRouter({ store: fallbackStore, resolveIdentity, paymentProvider = null } = {}) {
+export function createPlatformRouter({ store: fallbackStore, resolveIdentity, paymentProvider = null, csrfService = null } = {}) {
   const router = express.Router();
 
   router.post("/payments/stripe-webhook", asyncRoute(async (req, res) => {
@@ -109,7 +82,8 @@ export function createPlatformRouter({ store: fallbackStore, resolveIdentity, pa
 
   router.get("/session", asyncRoute(async (req, res) => {
     const profile = await req.platformStore.getProfile(req.platformIdentity.userId);
-    return res.json({ identity: req.platformIdentity, profile });
+    const csrfToken = csrfService?.issueToken(req, res) || "";
+    return res.json({ identity: req.platformIdentity, profile, csrfToken });
   }));
 
   router.post("/requests/handoff", asyncRoute(async (req, res) => {
@@ -177,7 +151,7 @@ export function createPlatformRouter({ store: fallbackStore, resolveIdentity, pa
   router.post("/requests/:requestId/attachments", asyncRoute(async (req, res) => {
     const access = await requestAccess(req.platformStore, req.params.requestId, req.platformIdentity);
     if (access.error) return res.status(access.status).json({ error: access.error });
-    const upload = decodeUpload(req.body);
+    const upload = validateUpload(req.body);
     if (upload.error) return res.status(400).json({ error: upload.error });
     const object = await req.platformStore.putPrivateObject({ requestId: access.request.id, ...upload });
     const attachment = await req.platformStore.createAttachment({
@@ -201,7 +175,7 @@ export function createPlatformRouter({ store: fallbackStore, resolveIdentity, pa
     if (access.error) return res.status(access.status).json({ error: access.error });
     const category = new Set(["draft", "final", "ai-report"]).has(req.body?.category) ? req.body.category : "";
     if (!category) return res.status(400).json({ error: "Choose draft, final, or ai-report delivery." });
-    const upload = decodeUpload(req.body);
+    const upload = validateUpload(req.body);
     if (upload.error) return res.status(400).json({ error: upload.error });
     const object = await req.platformStore.putPrivateObject({ requestId: access.request.id, ...upload });
     const attachment = await req.platformStore.createAttachment({

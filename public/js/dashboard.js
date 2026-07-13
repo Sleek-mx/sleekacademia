@@ -12,6 +12,9 @@
     const input = options || {};
     const headers = new Headers(input.headers || {});
     if (state.config?.demoMode && isLoopback()) headers.set("x-demo-role", state.demoRole);
+    if (state.session?.csrfToken && new Set(["POST", "PUT", "PATCH", "DELETE"]).has(String(input.method || "GET").toUpperCase())) {
+      headers.set("x-csrf-token", state.session.csrfToken);
+    }
     const response = await fetch(`/api/platform${path}`, { ...input, credentials: "same-origin", headers });
     if (response.status === 401) {
       location.replace("/login.html");

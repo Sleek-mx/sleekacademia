@@ -17,6 +17,13 @@ import {
 import { createAdminSessionService } from "./src/platform/admin-auth.js";
 import { createAdminAuthRouter } from "./src/platform/admin-auth-router.js";
 import { seedDemoPlatform } from "./src/platform/demo-seed.js";
+import {
+  collectInlineScriptHashes,
+  createCsrfService,
+  createOriginGuard,
+  createRateLimiters,
+  createSecurityHeaders,
+} from "./src/platform/security.js";
 import { createPlatformRouter } from "./src/platform/http.js";
 import { createPlatformIdentityResolver } from "./src/platform/identity.js";
 import { createPaymentProvider } from "./src/platform/payments.js";
@@ -41,6 +48,7 @@ const execAsync = promisify(exec);
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
+const productionMode = process.env.NODE_ENV === "production";
 const clerkIsConfigured = Boolean(
   (process.env.CLERK_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) &&
   process.env.CLERK_SECRET_KEY
@@ -67,6 +75,14 @@ const adminSessionService = adminPasswordHash && adminSessionSecret
       sessionSecret: adminSessionSecret,
     })
   : null;
+const publishableKey = process.env.CLERK_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "";
+const clerkFrontendApi = process.env.CLERK_FRONTEND_API_URL || frontendApiFromPublishableKey(publishableKey);
+const scriptHashes = await collectInlineScriptHashes(publicDir);
+const rateLimiters = createRateLimiters();
+const csrfService = createCsrfService({
+  secret: process.env.CSRF_SECRET || adminSessionSecret || crypto.randomBytes(32).toString("base64url"),
+  secure: productionMode,
+});
 const staticOptions = {
   extensions: ["html"],
   setHeaders: (res, filePath) => {
@@ -76,7 +92,14 @@ const staticOptions = {
   }
 };
 
-app.post("/deploy.php", express.raw({ type: "application/json", limit: "2mb" }), async (req, res) => {
+app.disable("x-powered-by");
+app.use(createSecurityHeaders({
+  production: productionMode,
+  clerkFrontend: clerkFrontendApi ? `https://${clerkFrontendApi.replace(/^https?:\/\//, "")}` : "",
+  scriptHashes,
+}));
+
+app.post("/deploy.php", rateLimiters.webhooks, express.raw({ type: "application/json", limit: "2mb" }), async (req, res) => {
   const secret = process.env.GITHUB_WEBHOOK_SECRET;
   if (!secret) {
     return res.status(503).json({ error: "Deployment webhook is not configured" });
@@ -159,19 +182,17 @@ app.use(express.json({
     if (req.originalUrl === "/api/platform/payments/stripe-webhook") req.rawBody = Buffer.from(buffer);
   },
 }));
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || "https://sleekacademia.com")
+  .split(",").map((origin) => origin.trim()).filter(Boolean);
+if (localDemoMode) allowedOrigins.push(`http://localhost:${port}`, `http://127.0.0.1:${port}`);
+app.use(createOriginGuard({
+  allowedOrigins,
+  productionOrigin: "https://sleekacademia.com",
+  exemptPaths: ["/deploy.php", "/api/platform/payments/stripe-webhook"],
+}));
+app.use("/api/admin-auth/login", rateLimiters.adminLogin);
 app.use("/api/admin-auth", createAdminAuthRouter({ service: adminSessionService }));
-
-const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://sleekacademia.com,http://localhost:3000').split(',');
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (origin && ALLOWED_ORIGINS.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
-  }
-  if (req.method === 'OPTIONS') return res.sendStatus(204);
-  next();
-});
+app.get("/api/security/csrf", (req, res) => res.json({ csrfToken: csrfService.issueToken(req, res) }));
 
 app.get("/", (_req, res) => {
   res.sendFile(path.join(publicDir, "index.html"));
@@ -194,14 +215,7 @@ for (const [source, destination] of legacySeoRedirects) {
 }
 
 app.get("/api/health", (_req, res) => {
-  res.json({
-    ok: true,
-    service: "sleek-academia",
-    deployWebhook: true,
-    clerkConfigured: clerkIsConfigured,
-    platformStore: platformStore.mode,
-    time: new Date().toISOString()
-  });
+  res.json({ ok: true, service: "sleek-academia" });
 });
 
 app.use("/assets", express.static(assetsDir));
@@ -225,10 +239,22 @@ const resolvePlatformIdentity = createPlatformIdentityResolver({
   ensureRole: ensureUserRole,
 });
 
+app.use("/api/platform", csrfService.protect({
+  exemptPaths: ["/payments/stripe-webhook"],
+  adminSessionService,
+}));
+app.use("/api/platform", (req, res, next) => {
+  if (req.path === "/payments/stripe-webhook") return rateLimiters.webhooks(req, res, next);
+  if (/\/messages(?:\/|$)/.test(req.path)) return rateLimiters.messages(req, res, next);
+  if (/\/(?:attachments|deliverables)(?:\/|$)/.test(req.path)) return rateLimiters.uploads(req, res, next);
+  if (/\/payments(?:\/|$)/.test(req.path)) return rateLimiters.payments(req, res, next);
+  return rateLimiters.platform(req, res, next);
+});
 app.use("/api/platform", createPlatformRouter({
   store: platformStore,
   resolveIdentity: resolvePlatformIdentity,
   paymentProvider,
+  csrfService,
 }));
 
 app.get("/app", (req, res) => {
@@ -250,9 +276,6 @@ app.get("/logout", (_req, res) => {
 });
 
 app.get("/api/config", (req, res) => {
-  const publishableKey =
-    process.env.CLERK_PUBLISHABLE_KEY ||
-    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "";
   const frontendApiUrl =
     process.env.CLERK_FRONTEND_API_URL || frontendApiFromPublishableKey(publishableKey);
   const clerkJsUrl = buildClerkJsUrl(frontendApiUrl);
@@ -263,7 +286,6 @@ app.get("/api/config", (req, res) => {
     stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || "",
     paypalClientId: process.env.PAYPAL_CLIENT_ID || "",
     demoMode: localDemoMode && isLoopbackHostname(req.hostname),
-    platformStore: platformStore.mode,
   });
 });
 

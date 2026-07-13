@@ -38,8 +38,7 @@ test("all review surfaces load from the real Express app", async () => {
     assert.equal(response.status, 200, path);
   }
   const health = await (await fetch(`${base}/api/health`)).json();
-  assert.equal(health.ok, true);
-  assert.equal(health.platformStore, "memory");
+  assert.deepEqual(health, { ok: true, service: "sleek-academia" });
 });
 
 function availablePort() {
