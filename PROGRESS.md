@@ -11,6 +11,8 @@ Plan:
 5. Payments and Delivery.
 6. QA and Namecheap Launch.
 
+Current approved extension: replace the combined demo workspace with separate MCX admin and Clerk client dashboards, restore the public neumorphic theme, use liquid-glass light/night dashboard themes, add server-calculated pricing and the full order/revision lifecycle, fix the footer regression, and harden security before another localhost review.
+
 ## Done
 
 - [x] Verified `origin` is `https://github.com/Sleek-mx/sleekacademia.git` and restored the canonical local checkout.
@@ -32,10 +34,17 @@ Plan:
 - [x] Completed full-build Task 7: retired browser-amount payment endpoints; added server-calculated deposit/balance amounts, Stripe intent and verified webhook handling, pre-validated PayPal order/capture, provider transaction idempotency, loopback-only simulation, automatic deposit/completion progression, dashboard provider states, and full-payment delivery unlocks. Added 7 payment/security tests; full suite is 74 passing.
 - [x] Completed full-build Task 8: added a localhost end-to-end smoke test; exercised the public pages, request handoff, client/admin workspace, quote, deposit, status progression, balance, completed delivery, mobile layout, and navigation in the in-app browser; humanized activity labels found during visual review; saved `docs/local-review.md` and desktop/mobile screenshots; and left the app running at `http://localhost:4173/`.
 - [x] Passed the final localhost gate on 2026-07-13: 76/76 application tests, 6/6 SEO tests, JavaScript syntax checks, `git diff --check`, credential-pattern scan, retired-pricing scan, unsafe legacy-payment-route scan, and clean browser consoles.
+- [x] Audited Max's footer screenshot and reproduced the regression: the global `img { display: block }` rule overrides a redundant hidden 1595 by 993 footer logo, producing a 1,354-pixel footer.
+- [x] Re-audited the live `https://sleekacademia.com` visual system and confirmed the exact neumorphic source colors, fonts, raised/pressed shadows, and current official-logo treatment.
+- [x] Approved the role-separated platform design: MCX password login and dedicated admin dashboard, Clerk client dashboard, server-calculated writing and exam pricing, 50/50 payment gates, delivered-but-locked files, one seven-day revision, complete queues/clients/messages/payments/earnings/files, and no offline or M-Pesa payment recording.
+- [x] Completed a security audit: preserved strong tenant isolation/private storage/provider verification, found 3 high and 3 moderate dependency advisories plus missing rate limits, CSRF, and security headers, and made those findings release blockers. MCX MFA is explicitly deferred.
+- [x] Wrote and self-reviewed the approved design at `docs/superpowers/specs/2026-07-13-sleek-academia-admin-client-platform-design.md`.
 
 ## Next
 
-- [ ] After Max reviews and explicitly approves the localhost result, run the deployment-verification playbook, re-verify the GitHub remote and destructive sync source/destination, push the branch, and verify the public Namecheap URL end to end.
+- [ ] Max reviews the written admin/client platform specification and approves or requests changes.
+- [ ] After written-spec approval, create the detailed implementation plan before changing application code.
+- [ ] Implement and verify the entire revised platform locally; do not push or deploy until Max approves that local result.
 
 ## Facts a fresh session needs
 
@@ -59,3 +68,8 @@ Plan:
 - Supabase schema: `supabase/migrations/20260713_platform.sql`; private bucket: `sleek-academia-private`.
 - Protected platform API base: `/api/platform`; production identity is Clerk, local review identity exists only for loopback hosts with `LOCAL_DEMO_MODE=1`.
 - Never put credentials in Git or chat; use `/Users/ephantusmacharia/Secret Stash/08 - Credentials & Keys` when secrets are required.
+- Canonical revised design: `docs/superpowers/specs/2026-07-13-sleek-academia-admin-client-platform-design.md`.
+- Writing rate: $15 per 275-word page; six-hour urgent rate: $16.50 per page; exam assistance: $150 per whole hour.
+- Provider-confirmed Stripe/PayPal only; no manual paid override, offline payment, or M-Pesa recording.
+- Dashboard design: liquid glass with light/night modes using only existing website/logo colors; public pages retain live neumorphism.
+- Current security release blockers: dependency audit, CSP/security headers, rate limits, CSRF, upload signature checks, and MCX hardened password/session implementation. MFA is deferred.
