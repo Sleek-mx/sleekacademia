@@ -8,15 +8,18 @@
     "dev": "node --watch server.js",
     "test": "node --test test/*.test.js",
     "test:seo": "node --test test/seo-*.test.js",
-    "check:live-seo": "node scripts/check-live-seo.mjs"
+    "check:live-seo": "node scripts/check-live-seo.mjs",
+    "check:security": "node scripts/check-security.mjs"
   },
   "dependencies": {
-    "@clerk/express": "^1.7.29",
-    "axios": "^1.16.0",
+    "@clerk/express": "^1.7.82",
+    "axios": "^1.18.1",
     "body-parser": "^2.2.2",
     "dotenv": "^16.4.7",
     "ejs": "^5.0.2",
-    "express": "^4.22.1",
+    "express": "^4.22.2",
+    "express-rate-limit": "^8.5.2",
+    "helmet": "^8.3.0",
     "node-fetch": "^3.3.2",
     "nodemailer": "^9.0.1",
     "stripe": "^22.1.1"
