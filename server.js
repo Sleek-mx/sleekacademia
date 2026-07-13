@@ -14,6 +14,10 @@ import {
   getAuth,
   requireAuth,
 } from "@clerk/express";
+import { seedDemoPlatform } from "./src/platform/demo-seed.js";
+import { createPlatformRouter } from "./src/platform/http.js";
+import { createPlatformIdentityResolver } from "./src/platform/identity.js";
+import { createPlatformStore, isLoopbackHostname } from "./src/platform/store.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_placeholder", {
   apiVersion: "2024-06-20",
@@ -31,6 +35,14 @@ const clerkIsConfigured = Boolean(
   (process.env.CLERK_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) &&
   process.env.CLERK_SECRET_KEY
 );
+const localDemoMode = process.env.LOCAL_DEMO_MODE === "1";
+const platformStore = createPlatformStore({
+  supabaseUrl: process.env.SUPABASE_URL || "",
+  supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
+  supabaseBucket: process.env.SUPABASE_STORAGE_BUCKET || "sleek-academia-private",
+  localDemoMode,
+  hostname: localDemoMode ? "localhost" : "",
+});
 const staticOptions = {
   extensions: ["html"],
   setHeaders: (res, filePath) => {
@@ -121,7 +133,7 @@ app.get("/deploy.php", (_req, res) => {
   res.status(404).send("Not found");
 });
 
-app.use(express.json());
+app.use(express.json({ limit: "12mb" }));
 
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://sleekacademia.com,http://localhost:3000').split(',');
 app.use((req, res, next) => {
@@ -161,6 +173,7 @@ app.get("/api/health", (_req, res) => {
     service: "sleek-academia",
     deployWebhook: true,
     clerkConfigured: clerkIsConfigured,
+    platformStore: platformStore.mode,
     time: new Date().toISOString()
   });
 });
@@ -174,6 +187,19 @@ app.use((req, res, next) => {
 if (clerkIsConfigured) {
   app.use(clerkMiddleware());
 }
+
+const resolvePlatformIdentity = createPlatformIdentityResolver({
+  localDemoMode,
+  clerkConfigured: clerkIsConfigured,
+  getAuth,
+  clerkClient,
+  ensureRole: ensureUserRole,
+});
+
+app.use("/api/platform", createPlatformRouter({
+  store: platformStore,
+  resolveIdentity: resolvePlatformIdentity,
+}));
 
 app.get("/app", (req, res) => {
   if (!clerkIsConfigured) return res.redirect("/onboard.html");
@@ -193,7 +219,7 @@ app.get("/logout", (_req, res) => {
   res.redirect("/onboard.html");
 });
 
-app.get("/api/config", (_req, res) => {
+app.get("/api/config", (req, res) => {
   const publishableKey =
     process.env.CLERK_PUBLISHABLE_KEY ||
     process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "";
@@ -206,10 +232,12 @@ app.get("/api/config", (_req, res) => {
     afterSignInUrl: "/dashboard.html", afterSignUpUrl: "/dashboard.html",
     stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || "",
     paypalClientId: process.env.PAYPAL_CLIENT_ID || "",
+    demoMode: localDemoMode && isLoopbackHostname(req.hostname),
+    platformStore: platformStore.mode,
   });
 });
 
-app.get("/dashboard.html", requireClerkConfigured, requireAuth(), (_req, res) => {
+app.get("/dashboard.html", requireDashboardAccess, (_req, res) => {
   res.sendFile(path.join(publicDir, "dashboard.html"));
 });
 
@@ -614,6 +642,8 @@ app.use((req, res) => {
   res.status(404).sendFile(path.join(publicDir, "404.html"));
 });
 
+await seedDemoPlatform(platformStore);
+
 app.listen(port, () => {
   console.log(`Sleek Academia is running at http://localhost:${port}`);
 });
@@ -681,6 +711,12 @@ function requireClerkConfigured(_req, res, next) {
     return res.redirect("/login.html");
   }
   return next();
+}
+
+function requireDashboardAccess(req, res, next) {
+  if (localDemoMode && isLoopbackHostname(req.hostname)) return next();
+  if (!clerkIsConfigured) return requireClerkConfigured(req, res, next);
+  return requireAuth()(req, res, next);
 }
 
 function formatUser(user, role) {

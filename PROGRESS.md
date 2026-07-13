@@ -25,11 +25,12 @@ Plan:
 - [x] Audited the current Express/Clerk/payment/onboarding/dashboard code and saved the complete Phases 2-6 execution plan at `docs/superpowers/plans/2026-07-13-complete-platform-localhost.md`.
 - [x] Completed full-build Task 1 in `src/platform/domain.js`: allowlisted request validation, approved status transitions, integer-cent milestone math, 50 percent deposit gate, full-payment completion gate, and protected final/AI-report downloads. Added 8 focused tests; full suite is 39 passing.
 - [x] Completed full-build Task 2: tenant-isolated/idempotent in-memory store, loopback-safe adapter selection, production Supabase PostgREST/private Storage adapter, demo workspace seed, and the complete SQL migration at `supabase/migrations/20260713_platform.sql`. Added 6 focused tests; full suite is 45 passing.
+- [x] Completed full-build Task 3: Clerk/loopback identity resolver plus protected profile, request handoff/list/detail, message, upload, deliverable, quote, status, notification, and gated-download APIs mounted at `/api/platform`. Local integration proves the seeded demo workspace is loopback-only. Added 10 focused/integration tests; full suite is 55 passing.
 
 ## Next
 
-- [ ] Implement Task 3 of the full-build plan: Clerk/loopback identities and protected request, message, file, profile, quote, and status APIs.
-- [ ] Continue Tasks 4–7: public redesign/artwork, request funnel, workspace, payments, and delivery.
+- [ ] Implement Task 4 of the full-build plan: shared restrained motion plus complete About, Blog, Store, article/prep navigation, and public Pricing/package cleanup.
+- [ ] Continue Tasks 5–7: article artwork, request funnel/workspace, payments, and delivery.
 - [ ] Complete Task 8: run the entire site locally and show Max the working public site, request flow, signup handoff, dashboard, payment states, and delivery gates before any GitHub push or Namecheap deployment.
 
 ## Facts a fresh session needs
@@ -52,4 +53,5 @@ Plan:
 - Baseline on resume: `npm test` = 31 passing, 0 failing on 2026-07-13.
 - Local review will use a loopback-only `LOCAL_DEMO_MODE=1`; production still requires Clerk and Supabase and must never expose demo identity remotely.
 - Supabase schema: `supabase/migrations/20260713_platform.sql`; private bucket: `sleek-academia-private`.
+- Protected platform API base: `/api/platform`; production identity is Clerk, local review identity exists only for loopback hosts with `LOCAL_DEMO_MODE=1`.
 - Never put credentials in Git or chat; use `/Users/ephantusmacharia/Secret Stash/08 - Credentials & Keys` when secrets are required.
