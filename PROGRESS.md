@@ -11,7 +11,7 @@ Plan:
 5. Payments and Delivery.
 6. QA and Namecheap Launch.
 
-Current approved extension: replace the combined demo workspace with separate MCX admin and Clerk client dashboards, restore the public neumorphic theme, use liquid-glass light/night dashboard themes, add server-calculated pricing and the full order/revision lifecycle, fix the footer regression, and harden security before another localhost review.
+Current approved extension: replace dashboard liquid glass with branded light/night neumorphism, use one role-neutral login surface, add structured request dropdowns, move order details from dialogs to dedicated pages, and refresh Blog cards and artwork before another complete localhost review.
 
 ## Done
 
@@ -55,6 +55,9 @@ Current approved extension: replace the combined demo workspace with separate MC
 - [x] Completed revised-platform Task 12: built the dedicated MCX admin dashboard with complete lifecycle and derived queues, search/sort, order command center, clarification/acceptance/decline/status/delivery/revision/completion controls, client/message/payment/earnings/file reporting, 7/30/90/all earnings, CSV export, secure logout, responsive drawer, and resilient loading/empty/error states; kept all 159 tests green and both security audits at zero vulnerabilities.
 - [x] Completed revised-platform Task 13: replaced the combined legacy workspace with a dedicated Clerk client dashboard covering overview, order queues/cards/details, messages, materials, provider payments/receipts, locked delivery metadata, 423 handling, server-owned revision eligibility, one included seven-day revision, profile/help, light/night theme, responsive drawer, and resilient states; removed the client/admin role switch and retired controller; kept all 162 tests green.
 - [x] Completed revised-platform Task 14: expanded the real-server smoke flow through paid download, one included revision, redelivery, second-revision denial, completion, client/admin isolation, and absence of manual-payment routes; denied non-loopback demo admin access; visually reviewed public/login/admin/client surfaces at desktop and mobile sizes in the in-app browser; verified both dashboard themes, all navigation sections, responsive drawers, locked and paid delivery states, and a clean browser console; fixed and regression-tested decorative homepage overflow; updated `docs/local-review.md`; passed 163/163 application tests, 6/6 SEO tests, the tracked-source security gate, dependency audit, and diff checks with zero vulnerabilities.
+- [x] Approved the Neumorphic Workspace and Blog Refresh design, covering structured request fields, unified login, dedicated order pages, light/night soft UI, visible Blog copy, and varied topic-specific artwork.
+- [x] Saved the approved refresh specification and implementation plan under `docs/superpowers/`.
+- [ ] Implement and live-test the Neumorphic Workspace and Blog Refresh.
 
 ## Next
 
@@ -87,6 +90,8 @@ Current approved extension: replace the combined demo workspace with separate MC
 - Canonical revised design: `docs/superpowers/specs/2026-07-13-sleek-academia-admin-client-platform-design.md`.
 - Writing rate: $15 per 275-word page; six-hour urgent rate: $16.50 per page; exam assistance: $150 per whole hour.
 - Provider-confirmed Stripe/PayPal only; no manual paid override, offline payment, or M-Pesa recording.
-- Dashboard design: liquid glass with light/night modes using only existing website/logo colors; public pages retain live neumorphism.
+- Dashboard design: true light/night neumorphism using the same-surface raised/inset rules, exact website/logo accents, and restrained logo-derived background motifs.
+- Approved refresh specification: `docs/superpowers/specs/2026-07-13-neumorphic-workspace-and-blog-refresh-design.md`.
+- Approved refresh plan: `docs/superpowers/plans/2026-07-13-neumorphic-workspace-and-blog-refresh.md`.
 - Current security release blockers: dependency audit, CSP/security headers, rate limits, CSRF, upload signature checks, and MCX hardened password/session implementation. MFA is deferred.
 - Approved revised implementation plan: `docs/superpowers/plans/2026-07-13-secure-admin-client-platform.md`.
