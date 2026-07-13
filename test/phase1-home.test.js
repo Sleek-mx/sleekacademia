@@ -16,7 +16,9 @@ test("homepage uses the approved Sleek Academia brand foundation", async () => {
   const home = await readHome();
 
   assert.match(home, /\/css\/brand-v2\.css/);
-  assert.match(home, /\/images\/brand\/sleek-academia-logo\.webp/);
+  assert.match(home, /\/images\/brand\/sleek-academia-mark\.webp/);
+  assert.match(home, /class="brand-lockup__name">Sleek Academia</);
+  assert.match(home, /class="brand-lockup__tagline">Pass\. Guaranteed\.</);
   assert.match(home, /\/images\/brand\/sleek-frog-hero\.webp/);
   assert.match(home, /\/images\/brand\/favicon-32\.png/);
   assert.match(home, /\/images\/brand\/apple-touch-icon\.png/);

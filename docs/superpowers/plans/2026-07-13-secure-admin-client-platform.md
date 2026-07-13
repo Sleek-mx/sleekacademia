@@ -39,7 +39,7 @@ Create `test/footer-regression.test.js` with assertions that:
 ```js
 assert.doesNotMatch(home, /width="1595" height="993"[^>]*hidden/);
 assert.match(css, /\[hidden\]\s*\{[^}]*display:\s*none\s*!important/s);
-assert.equal((home.match(/sleek-academia-logo\.webp/g) || []).length, 1);
+assert.equal((home.match(/sleek-academia-logo\.webp/g) || []).length, 0);
 ```
 
 Also assert that the constrained visible footer lockup remains present and the public page still loads `brand-v2.css`.

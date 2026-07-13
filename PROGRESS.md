@@ -41,6 +41,7 @@ Current approved extension: replace the combined demo workspace with separate MC
 - [x] Wrote and self-reviewed the approved design at `docs/superpowers/specs/2026-07-13-sleek-academia-admin-client-platform-design.md`.
 - [x] Max approved the written admin/client platform specification.
 - [x] Created and self-reviewed the 14-task test-driven implementation plan at `docs/superpowers/plans/2026-07-13-secure-admin-client-platform.md`.
+- [x] Completed revised-platform Task 1: removed the redundant 1595 by 993 footer logo, added a global `[hidden]` safeguard, preserved the constrained visible mark/name lockup, and added a focused regression test.
 
 ## Next
 
