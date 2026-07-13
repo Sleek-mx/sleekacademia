@@ -10,6 +10,13 @@ async function initAuthPage() {
     });
     const config = await response.json();
 
+    if (config.demoMode) {
+      if (status) {
+        status.innerHTML = 'Local demo mode is active. <a class="ws-button primary small" href="/dashboard.html">Open demo workspace</a>';
+      }
+      return;
+    }
+
     if (!config.publishableKey || !config.clerkJsUrl) {
       throw new Error(
         "Missing Clerk configuration. Set CLERK_PUBLISHABLE_KEY and CLERK_FRONTEND_API_URL in your .env file.",

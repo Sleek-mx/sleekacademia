@@ -1,124 +1,15 @@
-<!DOCTYPE html>
-<html class="light" lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="noindex,follow" />
-    <title>Sign Up | Start Your NCLEX, Bar Exam, CFA or CompTIA Prep | Sleek Academia</title>
-    <meta name="description" content="Create your free Sleek Academia account and start preparing for NCLEX, the UBE bar exam, CFA Level I, or CompTIA certifications today." />
-    <link rel="canonical" href="https://sleekacademia.com/sign-up.html" />
-    <link rel="stylesheet" href="/css/tailwind.min.css" />
-    <link rel="stylesheet" href="/css/neumorphism.css" />
-    <link rel="stylesheet" href="/css/neu-tailwind.css" />
-    <link
-      rel="preconnect"
-      href="https://fonts.googleapis.com"
-    />
-    <link
-      rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-      <link rel="stylesheet" href="/css/animations.css" />
-    </head>
-  <body class="min-h-screen bg-surface font-body text-ink">
-    <main class="min-h-screen px-6 py-10 lg:px-10">
-      <div class="mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl gap-8 overflow-hidden rounded-[2rem] bg-white shadow-[0_30px_80px_-30px_rgba(37,23,74,0.25)] lg:grid-cols-[0.95fr_1.05fr]">
-        <section class="flex items-center bg-white px-6 py-10 sm:px-10 lg:px-14">
-          <div class="mx-auto w-full max-w-md space-y-6">
-            <div class="space-y-2">
-              <p class="text-xs font-bold uppercase tracking-[0.3em] text-slate-500">
-                <a class="hover:text-violet-700" href="/">Back to Site</a>
-                <span class="mx-2">•</span>
-                <a class="hover:text-violet-700" href="/">Courses</a>
-                <span class="mx-2">•</span>
-                <a class="hover:text-violet-700" href="/about.html">About</a>
-              </p>
-              <p class="text-xs font-bold uppercase tracking-[0.3em] text-violet-600">Join Sleek Academia</p>
-              <h1 class="font-headline text-3xl font-extrabold">Create your account</h1>
-              <p class="text-sm leading-6 text-muted">
-                Sign up with email or Google. New users default to the Student role unless their email is listed in the admin or tutor allowlists.
-              </p>
-            </div>
-
-            <div id="auth-status" class="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-500">
-              Loading authentication...
-            </div>
-
-            <div id="clerk-sign-up" class="min-h-[560px]"></div>
-
-            <p class="text-sm text-muted">
-              Already have an account?
-              <a class="font-semibold text-violet-700 hover:text-violet-600" href="/login.html">
-                Sign in here
-              </a>
-            </p>
-            <p class="text-sm text-muted">
-              Still exploring?
-              <a class="font-semibold text-violet-700 hover:text-violet-600" href="/">
-                Visit the main site
-              </a>
-            </p>
-          </div>
-        </section>
-
-        <section class="relative overflow-hidden bg-slate-950 px-8 py-10 text-white sm:px-12 lg:px-14">
-          <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(178,140,255,0.28),_transparent_30%),radial-gradient(circle_at_bottom_left,_rgba(255,197,168,0.25),_transparent_25%)]"></div>
-          <div class="relative flex h-full flex-col justify-between gap-10">
-            <div class="space-y-6">
-              <div class="inline-flex items-center gap-3 rounded-full bg-white/10 px-4 py-2 backdrop-blur">
-                <div class="grid h-10 w-10 place-items-center rounded-2xl bg-violet-500 font-black">SA</div>
-                <div>
-                  <p class="font-headline text-lg font-extrabold leading-none">Sleek Academia</p>
-                  <p class="text-xs uppercase tracking-[0.28em] text-violet-200">Learning Portal</p>
-                </div>
-              </div>
-              <div class="space-y-4">
-                <p class="text-xs font-bold uppercase tracking-[0.35em] text-violet-200">
-                  Secure Enrollment
-                </p>
-                <h2 class="max-w-xl font-headline text-4xl font-extrabold leading-tight sm:text-5xl">
-                  One account system with role-based access control.
-                </h2>
-                <p class="max-w-lg text-base leading-7 text-slate-300">
-                  Users are authorized as Admin, Tutor, or Student and granted the appropriate dashboard access through server-side session validation.
-                </p>
-              </div>
-            </div>
-
-            <div class="grid gap-4">
-              <div class="rounded-[1.75rem] bg-white/5 p-6 backdrop-blur">
-                <div class="flex items-center justify-between gap-3">
-                  <div>
-                    <p class="text-xs font-bold uppercase tracking-[0.28em] text-violet-200">Infrastructure</p>
-                    <h3 class="mt-2 font-headline text-2xl font-extrabold">Backend Ready</h3>
-                  </div>
-                  <div class="rounded-2xl bg-violet-400/15 px-4 py-2 text-sm font-semibold text-violet-100">
-                    Secure Authentication
-                  </div>
-                </div>
-                <div class="mt-6 grid gap-3 sm:grid-cols-2">
-                  <div class="rounded-2xl bg-white/5 p-4">
-                    <p class="text-sm font-semibold">Protected route</p>
-                    <p class="mt-1 text-sm text-slate-300">`/dashboard.html` requires an active session.</p>
-                  </div>
-                  <div class="rounded-2xl bg-white/5 p-4">
-                    <p class="text-sm font-semibold">Role bootstrap</p>
-                    <p class="mt-1 text-sm text-slate-300">Email allowlists assign Admin and Tutor users automatically.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
-
-    <script src="/js/auth.js" defer></script>
-    <script src="/js/animations.js" defer></script>
-  </body>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow">
+  <title>Create Account | Sleek Academia</title><meta name="description" content="Create your secure Sleek Academia workspace account."><link rel="canonical" href="https://sleekacademia.com/sign-up.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/css/workspace-v2.css">
+</head>
+<body class="ws-body">
+  <main class="auth-layout">
+    <section class="auth-panel"><div class="auth-card"><a class="ws-logo" href="/"><img src="/images/brand/sleek-academia-logo.webp" alt="Sleek Academia"></a><span class="ws-kicker">Create your workspace</span><h1>Keep the whole request together.</h1><p>Your account connects each request to its messages, files, payment milestones, and protected delivery.</p><div class="auth-status" id="auth-status">Loading secure sign up...</div><div id="clerk-sign-up" class="clerk-frame"></div><div class="auth-links">Already have an account? <a href="/login.html">Sign in</a><br>Still deciding? <a href="/">Return to the site</a></div></div></section>
+    <section class="auth-visual"><div class="auth-visual-content"><span class="ws-kicker" style="color:#d9ff9a">One request record</span><h2>Context in. Clear progress out.</h2><p>Your private workspace gives the brief, conversation, status, files, and delivery one dependable home.</p><div class="auth-steps"><div class="auth-step"><strong>Share</strong><span>Send the real brief and requirements.</span></div><div class="auth-step"><strong>Track</strong><span>See status and next milestones.</span></div><div class="auth-step"><strong>Receive</strong><span>Download protected final work.</span></div></div></div></section>
+  </main>
+  <script src="/js/auth.js" defer></script>
+</body>
 </html>

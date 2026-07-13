@@ -1,568 +1,66 @@
-<!DOCTYPE html>
-<html class="light" lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="noindex,follow" />
-    <title>Dashboard | Sleek Academia</title>
-    <meta name="description" content="Access your personalized study dashboard, track your NCLEX, bar exam, CFA, or CompTIA progress, and pick up right where you left off." />
-    <link rel="stylesheet" href="/css/tailwind.min.css" />
-    <link rel="stylesheet" href="/css/neumorphism.css" />
-    <link rel="stylesheet" href="/css/neu-tailwind.css" />
-    <link
-      rel="preconnect"
-      href="https://fonts.googleapis.com"
-    />
-    <link
-      rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght@300;400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      html {
-        background: #f5f7f9;
-      }
-      body {
-        opacity: 0;
-        transform: translateY(18px);
-        transition: opacity 220ms ease, transform 220ms ease;
-      }
-      html.page-ready body {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      html.page-exit body {
-        opacity: 0;
-        transform: translateY(12px);
-      }
-      body { font-family: "Inter", sans-serif; }
-      h1, h2, h3, h4, .brand-font { font-family: "Plus Jakarta Sans", sans-serif; }
-      .material-symbols-outlined {
-        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
-      }
-      .glass {
-        background: rgba(255, 255, 255, 0.72);
-        backdrop-filter: blur(18px);
-      }
-      .hidden-role {
-        display: none !important;
-      }
-      .role-view {
-        opacity: 0;
-        transform: translateY(18px);
-        transition: opacity 0.35s ease, transform 0.35s ease;
-      }
-      .role-view-active {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    </style>
-    <link rel="stylesheet" href="/css/animations.css" />
-  </head>
-  <body class="min-h-screen bg-surface text-ink">
-    <div class="fixed inset-x-0 top-0 z-50 border-b border-white/50 glass">
-      <div class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
-        <div class="flex items-center gap-4">
-          <a class="flex items-center gap-4" href="/">
-            <div class="grid h-12 w-12 place-items-center rounded-2xl bg-primary text-white shadow-float">
-              <span class="material-symbols-outlined">school</span>
-            </div>
-            <div>
-              <p class="brand-font text-xl font-extrabold text-violet-700">Sleek Academia</p>
-              <p class="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">Academic Atelier</p>
-            </div>
-          </a>
-        </div>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow">
+  <title>Client Workspace | Sleek Academia</title><meta name="description" content="Manage Sleek Academia requests, messages, files, payments, and delivery.">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/css/workspace-v2.css">
+</head>
+<body class="ws-body workspace-body">
+  <div class="workspace-layout">
+    <aside class="workspace-sidebar" id="workspace-sidebar">
+      <a class="ws-logo" href="/"><img src="/images/brand/sleek-academia-logo.webp" alt="Sleek Academia"></a>
+      <nav class="workspace-nav" aria-label="Workspace">
+        <button class="is-active" type="button" data-workspace-view="requests"><span class="workspace-nav-icon">RQ</span>Requests</button>
+        <button type="button" data-workspace-view="messages"><span class="workspace-nav-icon">MS</span>Messages</button>
+        <button type="button" data-workspace-view="files"><span class="workspace-nav-icon">FL</span>Files</button>
+        <button type="button" data-workspace-view="payments"><span class="workspace-nav-icon">PY</span>Payments</button>
+        <button type="button" data-workspace-view="profile"><span class="workspace-nav-icon">PF</span>Profile</button>
+        <button type="button" data-workspace-view="help"><span class="workspace-nav-icon">?</span>Help</button>
+      </nav>
+      <div class="workspace-user"><strong id="workspace-user-name">Loading...</strong><span id="workspace-user-email">Secure workspace</span><span id="workspace-user-role"></span></div>
+    </aside>
 
-        <div class="hidden min-w-[280px] flex-1 lg:flex">
-          <label class="flex w-full max-w-xl items-center gap-3 rounded-full bg-slate-100 px-4 py-3">
-            <span class="material-symbols-outlined text-slate-400">search</span>
-            <input
-              class="w-full border-none bg-transparent p-0 text-sm focus:ring-0"
-              placeholder="Search sessions, users, courses, or resources..."
-              type="text"
-            />
-          </label>
-        </div>
+    <main class="workspace-main">
+      <header class="workspace-header">
+        <div><h1 id="workspace-title">Requests</h1><p id="workspace-subtitle">Track every brief from submission to delivery.</p></div>
+        <div class="workspace-header-actions"><button class="ws-button small mobile-sidebar-toggle" id="sidebar-toggle" type="button">Menu</button><a class="ws-button small" href="/onboard.html">New request</a><button class="ws-button small" id="workspace-sign-out" type="button">Sign out</button></div>
+      </header>
 
-        <div class="flex items-center gap-3 sm:gap-4">
-          <div class="hidden items-center gap-2 lg:flex">
-            <a class="rounded-full px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100" href="/">Site Home</a>
-            <a class="rounded-full px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100" href="/">Courses</a>
-          </div>
-          <div class="hidden text-right sm:block">
-            <p id="user-name" class="text-sm font-bold text-ink">Loading user...</p>
-            <p id="user-role-pill" class="text-[11px] font-bold uppercase tracking-[0.28em] text-primary">
-              Loading
-            </p>
-          </div>
-          <div id="user-button" class="min-h-10 min-w-10"></div>
-          <button
-            id="top-sign-out"
-            class="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
-            type="button"
-          >
-            Sign Out
-          </button>
+      <div class="workspace-content">
+        <section class="workspace-banner"><div><h2>Everything attached to the right request.</h2><p>A 50% deposit begins custom work. Full payment unlocks final delivery and the AI-use report.</p></div><button class="demo-switch" id="demo-role-switch" type="button">View as admin</button></section>
+
+        <section class="workspace-state" id="workspace-loading"><h2>Opening your workspace...</h2><p>Loading requests, messages, and protected files.</p></section>
+        <section class="workspace-state" id="workspace-error" hidden><h2>We could not load the workspace.</h2><p id="workspace-error-message">Try again in a moment.</p><button class="ws-button primary" id="workspace-retry" type="button">Try again</button></section>
+        <section class="workspace-state" id="workspace-empty" hidden><h2>No requests yet.</h2><p>Start with the brief and we will keep the next steps organized here.</p><a class="ws-button primary" href="/onboard.html">Start a request</a></section>
+
+        <div id="workspace-ready" hidden>
+          <section class="workspace-view is-active" data-view-panel="requests">
+            <div class="workspace-grid">
+              <section class="request-list-panel"><div class="panel-heading"><h2>All requests</h2><span id="request-count"></span></div><div class="request-list" id="request-list"></div></section>
+              <section class="request-detail-panel"><div class="request-detail" id="request-detail"><p>Select a request to see its details.</p></div></section>
+            </div>
+          </section>
+
+          <section class="workspace-view" data-view-panel="messages"><div class="profile-card"><span class="ws-kicker">Conversation</span><h2>Messages across the selected request</h2><p>Select a request in Requests, then use its Messages tab to keep the conversation tied to the right work.</p><div id="all-messages"></div></div></section>
+          <section class="workspace-view" data-view-panel="files"><div class="profile-card"><span class="ws-kicker">Private storage</span><h2>Files and deliverables</h2><p>Client uploads, drafts, final work, and transparency reports stay request-scoped.</p><div id="all-files"></div></div></section>
+          <section class="workspace-view" data-view-panel="payments"><div class="profile-card"><span class="ws-kicker">Milestones</span><h2>Payment record</h2><p>Quotes and confirmed payments are calculated on the server. The first half begins work; the remaining balance unlocks final delivery.</p><div id="all-payments"></div></div></section>
+          <section class="workspace-view" data-view-panel="profile"><div class="profile-card"><span class="ws-kicker">Your details</span><h2>Profile</h2><p>Keep the school and urgent contact details used on active requests up to date.</p><form class="form-grid" id="profile-form"><div class="form-field"><label>Name</label><input id="profile-name" disabled></div><div class="form-field"><label>Email</label><input id="profile-email" disabled></div><div class="form-field"><label for="profile-phone">Urgent phone</label><input id="profile-phone" name="urgentPhone"></div><div class="form-field"><label for="profile-school">School or organization</label><input id="profile-school" name="school"></div><div class="form-field full"><button class="ws-button primary" type="submit">Save profile</button><span id="profile-status" class="form-hint"></span></div></form></div></section>
+          <section class="workspace-view" data-view-panel="help"><div class="help-card"><span class="ws-kicker">Need a hand?</span><h2>Help and request rules</h2><p>Use request messages for work-specific questions so the full context remains visible.</p><div class="help-grid"><div class="help-tile"><strong>Starting work</strong><span>A confirmed 50% deposit is required before a request enters In Progress.</span></div><div class="help-tile"><strong>Final delivery</strong><span>Full payment is required before final work and the AI-use report can be downloaded.</span></div><div class="help-tile"><strong>Files</strong><span>Upload PDF, Office, image, or text files up to 8 MB.</span></div><div class="help-tile"><strong>Urgent issue</strong><span>Send a request message and include the deadline in the first line.</span></div></div></div></section>
         </div>
       </div>
-    </div>
-
-    <main class="mx-auto max-w-7xl px-4 pb-16 pt-28 sm:px-6 lg:px-8">
-      <section class="relative overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-8 text-white shadow-float sm:px-8 lg:px-10">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(178,140,255,0.28),_transparent_24%),radial-gradient(circle_at_bottom_right,_rgba(255,197,168,0.22),_transparent_26%)]"></div>
-        <div class="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div class="space-y-4">
-            <p class="text-xs font-bold uppercase tracking-[0.35em] text-violet-200">Protected Dashboard</p>
-            <h1 class="max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">
-              Welcome back, <span id="hero-name" class="text-violet-300">Scholar</span>.
-            </h1>
-            <p id="hero-copy" class="max-w-2xl text-base leading-7 text-slate-300">
-              Loading your role-aware dashboard experience...
-            </p>
-          </div>
-          <div class="grid gap-4 sm:grid-cols-3">
-            <div class="rounded-[1.5rem] border border-white/10 bg-white/5 p-5 backdrop-blur">
-              <p class="text-xs font-bold uppercase tracking-[0.28em] text-violet-200">Role</p>
-              <p id="hero-role" class="mt-3 text-2xl font-extrabold capitalize">Student</p>
-            </div>
-            <div class="rounded-[1.5rem] border border-white/10 bg-white/5 p-5 backdrop-blur">
-              <p class="text-xs font-bold uppercase tracking-[0.28em] text-violet-200">Email</p>
-              <p id="hero-email" class="mt-3 break-all text-sm font-semibold text-slate-200">...</p>
-            </div>
-            <div class="rounded-[1.5rem] border border-white/10 bg-white/5 p-5 backdrop-blur">
-              <p class="text-xs font-bold uppercase tracking-[0.28em] text-violet-200">Session</p>
-              <p class="mt-3 text-sm font-semibold text-slate-200">Verified by Clerk</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="mt-8 grid gap-4 md:grid-cols-3">
-        <div class="rounded-[1.75rem] bg-surface-card p-6 shadow-float">
-          <p class="text-xs font-bold uppercase tracking-[0.28em] text-slate-500">Authentication</p>
-          <h2 class="mt-3 text-xl font-extrabold">Clerk Email + Google</h2>
-          <p class="mt-2 text-sm leading-6 text-muted">
-            Login wall supports email and Google, with the provider behavior controlled by Clerk dashboard settings.
-          </p>
-        </div>
-        <div class="rounded-[1.75rem] bg-surface-card p-6 shadow-float">
-          <p class="text-xs font-bold uppercase tracking-[0.28em] text-slate-500">Authorization</p>
-          <h2 class="mt-3 text-xl font-extrabold">Role Metadata</h2>
-          <p class="mt-2 text-sm leading-6 text-muted">
-            Users are mapped to Admin, Tutor, or Student from Clerk public metadata, with backend allowlist bootstrapping.
-          </p>
-        </div>
-        <div class="rounded-[1.75rem] bg-surface-card p-6 shadow-float">
-          <p class="text-xs font-bold uppercase tracking-[0.28em] text-slate-500">Routing</p>
-          <h2 class="mt-3 text-xl font-extrabold">Protected Dashboard</h2>
-          <p class="mt-2 text-sm leading-6 text-muted">
-            `/dashboard.html` is delivered only after server-side Clerk session verification.
-          </p>
-        </div>
-      </section>
-
-      <section data-role-view="student" class="role-view hidden-role mt-10 space-y-8">
-        <div class="grid gap-8 lg:grid-cols-[1.35fr_0.65fr]">
-          <div class="overflow-hidden rounded-[2rem] bg-surface-low p-8">
-            <div class="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
-              <div class="space-y-5">
-                <span class="inline-flex rounded-full bg-secondary-soft px-4 py-1 text-xs font-bold uppercase tracking-[0.25em] text-secondary">
-                  Luminous Scholar
-                </span>
-                <div class="space-y-3">
-                  <h2 class="text-4xl font-extrabold leading-tight">
-                    Student Dashboard
-                  </h2>
-                  <p class="max-w-xl text-base leading-7 text-muted">
-                    Resume lessons, watch your progress, and stay ahead of upcoming sessions with a learning-first command center.
-                  </p>
-                </div>
-                <div class="flex flex-wrap gap-4">
-                  <a class="rounded-2xl bg-primary px-6 py-3 font-bold text-white shadow-float" href="/">Resume Learning</a>
-                  <a class="rounded-2xl bg-white px-6 py-3 font-bold text-primary" href="/">View Goals</a>
-                </div>
-              </div>
-              <div class="rounded-[2rem] bg-gradient-to-br from-primary to-violet-400 p-8 text-white shadow-float">
-                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-violet-100">Next Session</p>
-                <h3 class="mt-3 text-2xl font-extrabold">Ethics in Healthcare</h3>
-                <div class="mt-6 grid grid-cols-3 gap-3 text-center">
-                  <div class="rounded-2xl bg-white/10 p-4">
-                    <p class="text-2xl font-black">02</p>
-                    <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-violet-100">Hours</p>
-                  </div>
-                  <div class="rounded-2xl bg-white/10 p-4">
-                    <p class="text-2xl font-black">42</p>
-                    <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-violet-100">Mins</p>
-                  </div>
-                  <div class="rounded-2xl bg-white/10 p-4">
-                    <p class="text-2xl font-black">15</p>
-                    <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-violet-100">Secs</p>
-                  </div>
-                </div>
-                <a class="mt-6 block w-full rounded-2xl bg-white px-5 py-3 text-center font-bold text-primary" href="/">Set Reminder</a>
-              </div>
-            </div>
-          </div>
-          <div class="space-y-6">
-            <div class="rounded-[1.75rem] bg-surface-card p-6 shadow-float">
-              <div class="flex items-center justify-between gap-3">
-                <h3 class="text-xl font-extrabold">Study Resources</h3>
-                <a class="text-sm font-bold text-primary" href="/">View all</a>
-              </div>
-              <div class="mt-5 grid grid-cols-2 gap-3">
-                <a class="rounded-2xl bg-slate-50 p-4 text-sm font-semibold" href="/">E-Library</a>
-                <a class="rounded-2xl bg-slate-50 p-4 text-sm font-semibold" href="/">Study Groups</a>
-                <a class="rounded-2xl bg-slate-50 p-4 text-sm font-semibold" href="/">Lectures</a>
-                <a class="rounded-2xl bg-slate-50 p-4 text-sm font-semibold" href="/">Old Exams</a>
-              </div>
-            </div>
-            <div class="rounded-[1.75rem] bg-surface-card p-6 shadow-float">
-              <h3 class="text-xl font-extrabold">Recent Achievements</h3>
-              <div class="mt-5 flex flex-wrap gap-4">
-                <span class="rounded-full bg-violet-50 px-4 py-2 text-sm font-bold text-violet-700">Fast Learner</span>
-                <span class="rounded-full bg-orange-50 px-4 py-2 text-sm font-bold text-orange-700">Perfect Week</span>
-                <span class="rounded-full bg-pink-50 px-4 py-2 text-sm font-bold text-pink-700">Top Quizzer</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          <div class="rounded-[1.75rem] bg-surface-card p-6 shadow-float">
-            <p class="text-xs font-bold uppercase tracking-[0.28em] text-slate-500">Course</p>
-            <h3 class="mt-3 text-xl font-extrabold">Advanced Nursing Practice</h3>
-            <p class="mt-2 text-sm text-muted">Module 4: Pediatrics Care</p>
-            <div class="mt-5 h-3 rounded-full bg-slate-100">
-              <div class="h-3 w-[72%] rounded-full bg-primary"></div>
-            </div>
-            <p class="mt-3 text-sm font-semibold text-primary">72% complete</p>
-          </div>
-          <div class="rounded-[1.75rem] bg-surface-card p-6 shadow-float">
-            <p class="text-xs font-bold uppercase tracking-[0.28em] text-slate-500">Course</p>
-            <h3 class="mt-3 text-xl font-extrabold">Global Finance & Markets</h3>
-            <p class="mt-2 text-sm text-muted">Module 2: Risk Assessment</p>
-            <div class="mt-5 h-3 rounded-full bg-slate-100">
-              <div class="h-3 w-[45%] rounded-full bg-primary"></div>
-            </div>
-            <p class="mt-3 text-sm font-semibold text-primary">45% complete</p>
-          </div>
-          <div class="rounded-[1.75rem] bg-gradient-to-br from-slate-950 to-slate-800 p-6 text-white shadow-float">
-            <p class="text-xs font-bold uppercase tracking-[0.28em] text-violet-200">Momentum</p>
-            <h3 class="mt-3 text-xl font-extrabold">12-day study streak</h3>
-            <p class="mt-2 text-sm leading-6 text-slate-300">
-              Keep your rhythm and build consistency before your next assessment window.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section data-role-view="tutor" class="role-view hidden-role mt-10 space-y-8">
-        <div class="grid gap-6 md:grid-cols-4">
-          <div class="rounded-[1.75rem] bg-surface-card p-6 shadow-float">
-            <p class="text-xs font-bold uppercase tracking-[0.28em] text-slate-500">Total Earnings</p>
-            <h2 class="mt-3 text-3xl font-extrabold">$14,280.50</h2>
-            <p class="mt-2 text-sm font-semibold text-emerald-600">+12% vs last year</p>
-          </div>
-          <div class="rounded-[1.75rem] bg-surface-card p-6 shadow-float">
-            <p class="text-xs font-bold uppercase tracking-[0.28em] text-slate-500">This Month</p>
-            <h2 class="mt-3 text-3xl font-extrabold">$2,450.00</h2>
-            <p class="mt-2 text-sm font-semibold text-primary">Next payout: May 1</p>
-          </div>
-          <div class="rounded-[1.75rem] bg-gradient-to-br from-violet-700 to-indigo-900 p-6 text-white shadow-float md:col-span-2">
-            <p class="text-sm font-semibold uppercase tracking-[0.25em] text-violet-200">Student Feedback</p>
-            <h2 class="mt-3 text-4xl font-extrabold">4.9/5</h2>
-            <p class="mt-2 max-w-xl text-sm leading-6 text-violet-100">
-              Excellent clarity and deep subject knowledge. Highly recommended by 124 recent reviews.
-            </p>
-          </div>
-        </div>
-
-        <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-          <div class="space-y-6">
-            <div class="flex items-center justify-between">
-              <h2 class="text-2xl font-extrabold">Tutor Dashboard</h2>
-              <a class="rounded-full bg-primary px-5 py-3 text-sm font-bold text-white shadow-float" href="/">
-                Start New Session
-              </a>
-            </div>
-            <div class="space-y-4">
-              <div class="rounded-[1.75rem] bg-surface-card p-5 shadow-float">
-                <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <h3 class="text-xl font-extrabold">Julianna Rivera</h3>
-                    <p class="text-sm text-muted">Advanced Macroeconomics</p>
-                    <p class="mt-2 text-sm font-semibold text-primary">Starting in 15 minutes</p>
-                  </div>
-                  <div class="flex gap-3">
-                    <a class="rounded-2xl bg-primary px-4 py-3 text-sm font-bold text-white" href="/">Join Session</a>
-                    <a class="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-700" href="/">Details</a>
-                  </div>
-                </div>
-              </div>
-              <div class="rounded-[1.75rem] bg-surface-card p-5 shadow-float">
-                <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <h3 class="text-xl font-extrabold">Marcus Chen</h3>
-                    <p class="text-sm text-muted">Quantum Theory II</p>
-                    <p class="mt-2 text-sm font-semibold text-slate-600">Tomorrow, 10:00</p>
-                  </div>
-                  <div class="flex gap-3">
-                    <a class="rounded-2xl bg-primary px-4 py-3 text-sm font-bold text-white" href="/">Open Notes</a>
-                    <a class="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-700" href="/">Actions</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="space-y-6">
-            <div class="rounded-[1.75rem] bg-surface-low p-6">
-              <h3 class="text-xl font-extrabold">Quick Actions</h3>
-              <div class="mt-5 space-y-4">
-                <div class="rounded-[1.5rem] border-2 border-dashed border-slate-200 bg-white p-5">
-                  <p class="font-bold">Upload Materials</p>
-                  <p class="mt-1 text-sm text-muted">Drop PDFs, slides, or recorded lessons.</p>
-                </div>
-                <div class="rounded-[1.5rem] bg-white p-5">
-                  <p class="font-bold">Set Availability</p>
-                  <p class="mt-1 text-sm text-muted">Manage working hours and tutor visibility.</p>
-                </div>
-                <div class="rounded-[1.5rem] bg-white p-5">
-                  <p class="font-bold">Create New Course</p>
-                  <p class="mt-1 text-sm text-muted">Build your curriculum and lesson structure.</p>
-                </div>
-              </div>
-            </div>
-            <div class="rounded-[1.75rem] bg-gradient-to-br from-secondary to-orange-500 p-6 text-white shadow-float">
-              <p class="text-xs font-bold uppercase tracking-[0.28em] text-orange-100">Live Support</p>
-              <h3 class="mt-3 text-2xl font-extrabold">Student Chat</h3>
-              <p class="mt-2 text-sm leading-6 text-orange-50">Three learners are waiting for a response in your message queue.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section data-role-view="admin" class="role-view hidden-role mt-10 space-y-8">
-        <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p class="text-xs font-bold uppercase tracking-[0.35em] text-violet-600">Administrative Intelligence</p>
-            <h2 class="mt-2 text-4xl font-extrabold">Admin Dashboard</h2>
-            <p class="mt-2 max-w-2xl text-base leading-7 text-muted">
-              Platform control center with role management, operational visibility, and protected admin APIs.
-            </p>
-          </div>
-          <div class="flex gap-3">
-            <button class="rounded-full bg-slate-100 px-5 py-3 text-sm font-bold text-slate-700">Export Report</button>
-            <button class="rounded-full bg-primary px-5 py-3 text-sm font-bold text-white shadow-float">Platform Settings</button>
-          </div>
-        </div>
-
-        <div class="grid gap-6 md:grid-cols-4">
-          <div class="rounded-[1.75rem] bg-surface-card p-6 shadow-float">
-            <p class="text-xs font-bold uppercase tracking-[0.28em] text-slate-500">Active Students</p>
-            <h3 id="admin-student-count" class="mt-3 text-3xl font-extrabold">-</h3>
-          </div>
-          <div class="rounded-[1.75rem] bg-surface-card p-6 shadow-float">
-            <p class="text-xs font-bold uppercase tracking-[0.28em] text-slate-500">Total Tutors</p>
-            <h3 id="admin-tutor-count" class="mt-3 text-3xl font-extrabold">-</h3>
-          </div>
-          <div class="rounded-[1.75rem] bg-surface-card p-6 shadow-float">
-            <p class="text-xs font-bold uppercase tracking-[0.28em] text-slate-500">Admins</p>
-            <h3 id="admin-admin-count" class="mt-3 text-3xl font-extrabold">-</h3>
-          </div>
-          <div class="rounded-[1.75rem] bg-gradient-to-br from-violet-700 to-indigo-900 p-6 text-white shadow-float">
-            <p class="text-xs font-bold uppercase tracking-[0.28em] text-violet-200">Revenue Pulse</p>
-            <h3 class="mt-3 text-3xl font-extrabold">$482,910</h3>
-            <p class="mt-2 text-sm text-violet-100">Illustrative platform KPI card from the admin concept.</p>
-          </div>
-        </div>
-
-        <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-          <div class="rounded-[2rem] bg-surface-card p-6 shadow-float">
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h3 class="text-2xl font-extrabold">User Management Overview</h3>
-                <p class="mt-1 text-sm text-muted">Update roles directly against Clerk public metadata.</p>
-              </div>
-              <button
-                id="refresh-admin-users"
-                class="rounded-full bg-slate-100 px-4 py-2 text-sm font-bold text-slate-700"
-                type="button"
-              >
-                Refresh
-              </button>
-            </div>
-
-            <div class="mt-6 overflow-x-auto">
-              <table class="min-w-full text-left">
-                <thead>
-                  <tr class="border-b border-slate-100 text-xs uppercase tracking-[0.25em] text-slate-500">
-                    <th class="pb-4 font-bold">User</th>
-                    <th class="pb-4 font-bold">Email</th>
-                    <th class="pb-4 font-bold">Role</th>
-                    <th class="pb-4 font-bold">Action</th>
-                  </tr>
-                </thead>
-                <tbody id="admin-users-table" class="divide-y divide-slate-100">
-                  <tr>
-                    <td class="py-4 text-sm text-slate-500" colspan="4">Loading users...</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="space-y-6">
-            <div class="rounded-[1.75rem] bg-surface-card p-6 shadow-float">
-              <div class="flex items-center gap-3">
-                <span class="inline-block h-3 w-3 rounded-full bg-emerald-500"></span>
-                <h3 class="text-xl font-extrabold">System Health</h3>
-              </div>
-              <div class="mt-6 space-y-5">
-                <div>
-                  <div class="mb-2 flex justify-between text-sm font-semibold">
-                    <span>API Server Load</span>
-                    <span class="text-emerald-600">Optimal</span>
-                  </div>
-                  <div class="h-2 rounded-full bg-slate-100">
-                    <div class="h-2 w-[24%] rounded-full bg-emerald-500"></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="mb-2 flex justify-between text-sm font-semibold">
-                    <span>Database Latency</span>
-                    <span class="text-emerald-600">12ms</span>
-                  </div>
-                  <div class="h-2 rounded-full bg-slate-100">
-                    <div class="h-2 w-[18%] rounded-full bg-emerald-500"></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="mb-2 flex justify-between text-sm font-semibold">
-                    <span>Asset Storage</span>
-                    <span class="text-orange-600">68% Capacity</span>
-                  </div>
-                  <div class="h-2 rounded-full bg-slate-100">
-                    <div class="h-2 w-[68%] rounded-full bg-orange-400"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="rounded-[1.75rem] bg-primary p-6 text-white shadow-float">
-              <p class="text-xs font-bold uppercase tracking-[0.28em] text-violet-100">Next Deployment</p>
-              <h3 class="mt-3 text-2xl font-extrabold">v4.2.0 "Stellar"</h3>
-              <p class="mt-2 text-sm leading-6 text-violet-50">
-                Scheduled for the next maintenance window with updated peer-review capabilities and admin reporting improvements.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="request-service" class="mt-10 scroll-mt-28">
-        <div class="rounded-[2rem] bg-surface-card p-6 shadow-float sm:p-8">
-          <div class="max-w-2xl">
-            <p class="text-xs font-bold uppercase tracking-[0.28em] text-violet-600">Need help?</p>
-            <h2 class="mt-2 text-3xl font-extrabold">Request a Service</h2>
-            <p class="mt-2 text-sm leading-6 text-muted">
-              Tell us what you need — tutoring, essay review, exam strategy, or anything else — and our team will email you back to get started.
-            </p>
-          </div>
-
-          <form id="service-request-form" class="mt-6 grid max-w-2xl gap-5">
-            <div>
-              <label class="mb-2 block text-sm font-bold text-ink" for="sr-service">Service / Vertical</label>
-              <select id="sr-service" name="service" required
-                class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-primary focus:ring-2 focus:ring-primary/20">
-                <option value="" disabled selected>Choose an area…</option>
-                <option>NCLEX-RN / Nursing</option>
-                <option>UBE / Bar Exam</option>
-                <option>CFA Level I</option>
-                <option>CompTIA Security+</option>
-                <option>Essay / Assignment Help</option>
-                <option>Other</option>
-              </select>
-            </div>
-            <div>
-              <label class="mb-2 block text-sm font-bold text-ink" for="sr-subject">Subject</label>
-              <input id="sr-subject" name="subject" type="text" required maxlength="160"
-                placeholder="e.g. Need a study plan for NCLEX in 6 weeks"
-                class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium placeholder-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20" />
-            </div>
-            <div>
-              <label class="mb-2 block text-sm font-bold text-ink" for="sr-details">Details</label>
-              <textarea id="sr-details" name="details" rows="5" required maxlength="4000"
-                placeholder="Share your goals, deadlines, and anything that helps us prepare…"
-                class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium placeholder-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20"></textarea>
-            </div>
-            <div class="flex flex-wrap items-center gap-4">
-              <button id="sr-submit" type="submit"
-                class="rounded-2xl bg-primary px-7 py-3 font-bold text-white shadow-float transition-all hover:bg-primary-dim disabled:cursor-not-allowed disabled:opacity-60">
-                Submit Request
-              </button>
-              <p id="sr-status" class="text-sm font-semibold" role="status" aria-live="polite"></p>
-            </div>
-          </form>
-        </div>
-      </section>
     </main>
+  </div>
 
-    <script>
-      (function () {
-        const form = document.getElementById("service-request-form");
-        if (!form) return;
-        const statusEl = document.getElementById("sr-status");
-        const submitBtn = document.getElementById("sr-submit");
-        form.addEventListener("submit", async function (event) {
-          event.preventDefault();
-          const payload = {
-            service: form.service.value.trim(),
-            subject: form.subject.value.trim(),
-            details: form.details.value.trim(),
-          };
-          if (!payload.service || !payload.subject || !payload.details) {
-            statusEl.textContent = "Please fill in every field.";
-            statusEl.style.color = "#dc2626";
-            return;
-          }
-          submitBtn.disabled = true;
-          const original = submitBtn.textContent;
-          submitBtn.textContent = "Sending…";
-          statusEl.textContent = "";
-          try {
-            const res = await fetch("/api/service-request", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              credentials: "same-origin",
-              body: JSON.stringify(payload),
-            });
-            const data = await res.json().catch(() => ({}));
-            if (res.ok && data.ok) {
-              form.reset();
-              statusEl.textContent = "✓ Request sent! We'll be in touch by email shortly.";
-              statusEl.style.color = "#059669";
-            } else {
-              statusEl.textContent = data.error || "Something went wrong. Please try again.";
-              statusEl.style.color = "#dc2626";
-            }
-          } catch (err) {
-            statusEl.textContent = "Network error. Please try again.";
-            statusEl.style.color = "#dc2626";
-          } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = original;
-          }
-        });
-      })();
-    </script>
-    <script src="/js/site-transitions.js" defer></script>
-    <script src="/js/dashboard.js" defer></script>
-    <script src="/js/animations.js" defer></script>
-  </body>
+  <template id="request-detail-template">
+    <div><div class="detail-meta"><span class="status-pill" data-bind="status"></span><span data-bind="service"></span><span data-bind="deadline"></span></div><h2 data-bind="title"></h2><p class="detail-copy" data-bind="description"></p><div class="summary-cards"><div class="summary-card"><span>Quote</span><strong data-bind="quote"></strong></div><div class="summary-card"><span>Paid</span><strong data-bind="paid"></strong></div><div class="summary-card"><span>Remaining</span><strong data-bind="remaining"></strong></div></div>
+      <div class="admin-controls" id="admin-controls"><span class="ws-kicker">Admin tools</span><div class="admin-grid"><input id="admin-quote" type="number" min="1" step="0.01" placeholder="Quote in USD"><select id="admin-status"><option value="">Choose next status</option><option>Reviewing</option><option>In Progress</option><option>Ready for Review</option><option>Balance Due</option><option>Completed</option><option>Cancelled</option></select><button class="ws-button primary small" id="admin-save" type="button">Apply</button></div><p class="form-hint" id="admin-status-message"></p></div>
+      <div class="detail-tabs"><button class="is-active" type="button" data-detail-tab="updates">Updates</button><button type="button" data-detail-tab="messages">Messages</button><button type="button" data-detail-tab="files">Files</button><button type="button" data-detail-tab="payments">Payments</button></div>
+      <section class="detail-section is-active" data-detail-panel="updates"><div class="event-list" id="event-list"></div></section>
+      <section class="detail-section" data-detail-panel="messages"><div class="message-list" id="message-list"></div><form class="inline-form" id="message-form"><textarea name="body" maxlength="4000" placeholder="Write a request-specific message" required></textarea><button class="ws-button primary small" type="submit">Send message</button><span class="form-hint" id="message-status"></span></form></section>
+      <section class="detail-section" data-detail-panel="files"><div class="file-list" id="file-list"></div><form class="inline-form" id="file-upload-form"><input name="file" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.webp" required><button class="ws-button small" type="submit">Upload file</button><span class="form-hint" id="file-status"></span></form><form class="inline-form" id="deliverable-form" hidden><select name="category"><option value="draft">Draft</option><option value="final">Final work</option><option value="ai-report">AI-use report</option></select><input name="file" type="file" required><button class="ws-button small" type="submit">Upload deliverable</button><span class="form-hint" id="deliverable-status"></span></form></section>
+      <section class="detail-section" data-detail-panel="payments"><div class="payment-list" id="payment-list"></div><p class="locked-note">Amounts and confirmation status come from the server. Payment controls appear only when a verified provider is configured.</p></section>
+    </div>
+  </template>
+  <script src="/js/dashboard.js" defer></script>
+</body>
 </html>
