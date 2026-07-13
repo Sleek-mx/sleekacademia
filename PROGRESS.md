@@ -21,12 +21,14 @@ Plan:
 - [x] Removed public homepage pricing/packages and redirected the retired `/pricing.html` route to `/onboard.html`; Store checkout remains separate.
 - [x] Verified Phase 1 with 31 passing tests, clean diff checks, successful local HTTP checks, and desktop/mobile renders from the running Express app.
 - [x] Rejected and fully reverted the browser-native hero character animation. The homepage is back to the approved static Phase 1 design through revert commits `718a924` and `4071e81`.
+- [x] Resumed the exact Phase 1 worktree, read the complete handoff/transcript/spec, verified `feature/phase-1-foundation-home`, verified `origin`, and reconfirmed all 31 baseline tests pass.
+- [x] Audited the current Express/Clerk/payment/onboarding/dashboard code and saved the complete Phases 2-6 execution plan at `docs/superpowers/plans/2026-07-13-complete-platform-localhost.md`.
 
 ## Next
 
-- [ ] Add restrained website motion inspired by strong 21st.dev interaction patterns: page and section reveals, hover states, navigation behavior, card transitions, and micro-interactions only. Do not animate the mascot, plants, headline typing, or colored hero scene.
-- [ ] Finish Phases 2–5 in a fresh task: About, Blog, Store restyle, request funnel, Clerk signup handoff, Supabase-backed dashboard, messaging, uploads, tracking, payments, and gated delivery.
-- [ ] Run the entire site locally and show Max the complete working public site, request flow, signup, dashboard, payment states, and delivery gates before any GitHub push or Namecheap deployment.
+- [ ] Implement Task 1 of the full-build plan: pure request lifecycle, staged-payment, and delivery authorization rules with test-first coverage.
+- [ ] Continue Tasks 2–7: storage adapters, protected API, public redesign/artwork, request funnel, workspace, payments, and delivery.
+- [ ] Complete Task 8: run the entire site locally and show Max the working public site, request flow, signup handoff, dashboard, payment states, and delivery gates before any GitHub push or Namecheap deployment.
 
 ## Facts a fresh session needs
 
@@ -44,4 +46,7 @@ Plan:
 - Store checkout remains immediate and separate.
 - The hero must remain static. The rejected typing/thinking mascot animation must not be recreated.
 - Use 21st.dev only as interaction inspiration; implement original, restrained website transitions and micro-interactions consistent with the Sleek Academia brand.
+- Full remaining implementation plan: `docs/superpowers/plans/2026-07-13-complete-platform-localhost.md`.
+- Baseline on resume: `npm test` = 31 passing, 0 failing on 2026-07-13.
+- Local review will use a loopback-only `LOCAL_DEMO_MODE=1`; production still requires Clerk and Supabase and must never expose demo identity remotely.
 - Never put credentials in Git or chat; use `/Users/ephantusmacharia/Secret Stash/08 - Credentials & Keys` when secrets are required.
