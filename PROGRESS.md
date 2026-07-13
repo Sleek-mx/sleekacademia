@@ -39,12 +39,13 @@ Current approved extension: replace the combined demo workspace with separate MC
 - [x] Approved the role-separated platform design: MCX password login and dedicated admin dashboard, Clerk client dashboard, server-calculated writing and exam pricing, 50/50 payment gates, delivered-but-locked files, one seven-day revision, complete queues/clients/messages/payments/earnings/files, and no offline or M-Pesa payment recording.
 - [x] Completed a security audit: preserved strong tenant isolation/private storage/provider verification, found 3 high and 3 moderate dependency advisories plus missing rate limits, CSRF, and security headers, and made those findings release blockers. MCX MFA is explicitly deferred.
 - [x] Wrote and self-reviewed the approved design at `docs/superpowers/specs/2026-07-13-sleek-academia-admin-client-platform-design.md`.
+- [x] Max approved the written admin/client platform specification.
+- [x] Created and self-reviewed the 14-task test-driven implementation plan at `docs/superpowers/plans/2026-07-13-secure-admin-client-platform.md`.
 
 ## Next
 
-- [ ] Max reviews the written admin/client platform specification and approves or requests changes.
-- [ ] After written-spec approval, create the detailed implementation plan before changing application code.
-- [ ] Implement and verify the entire revised platform locally; do not push or deploy until Max approves that local result.
+- [ ] Execute the approved plan inline with red-green-refactor tests and checkpoint commits.
+- [ ] Verify the entire revised platform locally and leave the server running; do not push or deploy until Max approves that local result.
 
 ## Facts a fresh session needs
 
@@ -73,3 +74,4 @@ Current approved extension: replace the combined demo workspace with separate MC
 - Provider-confirmed Stripe/PayPal only; no manual paid override, offline payment, or M-Pesa recording.
 - Dashboard design: liquid glass with light/night modes using only existing website/logo colors; public pages retain live neumorphism.
 - Current security release blockers: dependency audit, CSP/security headers, rate limits, CSRF, upload signature checks, and MCX hardened password/session implementation. MFA is deferred.
+- Approved revised implementation plan: `docs/superpowers/plans/2026-07-13-secure-admin-client-platform.md`.
