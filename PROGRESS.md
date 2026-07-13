@@ -20,11 +20,13 @@ Plan:
 - [x] Completed Phase 1 on `feature/phase-1-foundation-home`: official logo variants, favicon/touch icon, optimized full-body mascot, shared Vibrant Academic Studio CSS, and a fully rebuilt signup-first homepage.
 - [x] Removed public homepage pricing/packages and redirected the retired `/pricing.html` route to `/onboard.html`; Store checkout remains separate.
 - [x] Verified Phase 1 with 31 passing tests, clean diff checks, successful local HTTP checks, and desktop/mobile renders from the running Express app.
+- [x] Rejected and fully reverted the browser-native hero character animation. The homepage is back to the approved static Phase 1 design through revert commits `718a924` and `4071e81`.
 
 ## Next
 
-- [ ] Review the actual Phase 1 homepage render with Max and apply any visual refinements.
-- [ ] Execute Phase 2: redesign About and Blog, generate production blog artwork, and restyle Store without changing checkout behavior.
+- [ ] Add restrained website motion inspired by strong 21st.dev interaction patterns: page and section reveals, hover states, navigation behavior, card transitions, and micro-interactions only. Do not animate the mascot, plants, headline typing, or colored hero scene.
+- [ ] Finish Phases 2–5 in a fresh task: About, Blog, Store restyle, request funnel, Clerk signup handoff, Supabase-backed dashboard, messaging, uploads, tracking, payments, and gated delivery.
+- [ ] Run the entire site locally and show Max the complete working public site, request flow, signup, dashboard, payment states, and delivery gates before any GitHub push or Namecheap deployment.
 
 ## Facts a fresh session needs
 
@@ -40,4 +42,6 @@ Plan:
 - Public services never take payment; custom-service payment happens only in the dashboard.
 - Custom requests require 50 percent deposit before `In Progress` and full payment before final/AI-report downloads.
 - Store checkout remains immediate and separate.
+- The hero must remain static. The rejected typing/thinking mascot animation must not be recreated.
+- Use 21st.dev only as interaction inspiration; implement original, restrained website transitions and micro-interactions consistent with the Sleek Academia brand.
 - Never put credentials in Git or chat; use `/Users/ephantusmacharia/Secret Stash/08 - Credentials & Keys` when secrets are required.
