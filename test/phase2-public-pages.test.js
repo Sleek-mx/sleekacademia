@@ -88,3 +88,27 @@ test("Store preserves Gumroad commerce and live product synchronization", () => 
   assert.match(html, /\/api\/gumroad\/products/);
   assert.match(html, /macsin6\.gumroad\.com/);
 });
+
+test("every article uses its own optimized local editorial image", () => {
+  const manifest = {
+    "nursg-5315-exam-2-study-pack.html": "nursg-5315-study-pack.webp",
+    "nclex-study-schedule.html": "nclex-study-schedule.webp",
+    "nclex-first-attempt.html": "nclex-first-attempt.webp",
+    "burnout-to-breakthrough.html": "burnout-to-breakthrough.webp",
+    "ube-decoded.html": "ube-decoded.webp",
+    "nextgen-bar-exam-2026-changes.html": "nextgen-bar-exam.webp",
+    "comptia-security-plus-2026.html": "security-plus-2026.webp",
+    "sy0-701-pbq-practice-guide.html": "sy0-701-pbq.webp",
+    "cfa-level-1-study-plan.html": "cfa-level-1-plan.webp",
+    "certifications-new-degree.html": "certifications-new-degree.webp",
+  };
+  const listing = read("blog.html");
+
+  for (const [article, image] of Object.entries(manifest)) {
+    const publicPath = `/images/blog/${image}`;
+    const diskPath = path.join(publicDir, "images", "blog", image);
+    assert.equal(fs.existsSync(diskPath), true, `${image}: generated file missing`);
+    assert.match(listing, new RegExp(`<img[^>]+src=["']${publicPath.replaceAll("/", "\\/")}["'][^>]+width=["']1200["'][^>]+height=["']751["'][^>]+loading=["']lazy["'][^>]+alt=["'][^"']+["']`), `${image}: listing image contract`);
+    assert.match(read(`blog/${article}`), new RegExp(`<img[^>]+src=["']${publicPath.replaceAll("/", "\\/")}["'][^>]+width=["']1200["'][^>]+height=["']751["'][^>]+loading=["']lazy["'][^>]+alt=["'][^"']+["']`), `${article}: article image contract`);
+  }
+});
