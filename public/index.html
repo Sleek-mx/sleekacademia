@@ -102,10 +102,10 @@
     </header>
 
     <main id="main-content">
-      <section class="hero site-shell" aria-labelledby="hero-title">
+      <section class="hero site-shell" aria-labelledby="hero-title" data-hero-motion>
         <div class="hero__copy" data-reveal>
           <p class="eyebrow">Expert-led academic support</p>
-          <h1 id="hero-title">A place where your <span class="text-blue">professional</span> <span class="text-green">journey</span> begins.</h1>
+          <h1 id="hero-title" data-typewriter="A place where your professional journey begins." aria-label="A place where your professional journey begins."><span class="typewriter-visual" aria-hidden="true">A place where your <span class="text-blue">professional</span> <span class="text-green">journey</span> begins.</span></h1>
           <p class="hero__lead">Reputable tutoring for Nursing, Law, ICT, and Finance—with a clear path from your first request to focused, one-to-one support in your own secure workspace.</p>
           <div class="hero__actions">
             <a class="button button--primary button--large" href="/onboard.html">Get Started <span class="button__arrow" aria-hidden="true">→</span></a>
@@ -125,7 +125,14 @@
           <span class="hero-orb hero-orb--green"></span>
           <span class="spark spark--one"></span><span class="spark spark--two"></span>
           <span class="spark spark--three"></span><span class="spark spark--four"></span>
-          <img class="hero__mascot" src="/images/brand/sleek-frog-hero.webp" width="1672" height="941" alt="Full-body Sleek Academia frog mascot in a graduation cap and blue hoodie working on a laptop" fetchpriority="high" />
+          <div class="hero-plant hero-plant--left" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="hero-plant hero-plant--right" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="hero__mascot-wrap">
+            <img class="hero__mascot" src="/images/brand/sleek-frog-hero.webp" width="1672" height="941" alt="Full-body Sleek Academia frog mascot in a graduation cap and blue hoodie working on a laptop" fetchpriority="high" />
+            <div class="mascot-arm" data-mascot-arm aria-hidden="true"><span class="mascot-arm__sleeve"></span><span class="mascot-arm__hand"></span></div>
+            <div class="thinking-bubble" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="typing-pulse" aria-hidden="true"><span></span><span></span><span></span></div>
+          </div>
           <div class="hero-checklist" aria-hidden="true">
             <div class="hero-checklist__row"><span class="hero-checklist__check">✓</span><span class="hero-checklist__line"></span></div>
             <div class="hero-checklist__row"><span class="hero-checklist__check">✓</span><span class="hero-checklist__line hero-checklist__line--short"></span></div>
@@ -246,6 +253,7 @@
     </footer>
 
     <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2344858129372736&amp;ev=PageView&amp;noscript=1" alt="" /></noscript>
+    <script src="/js/hero-motion.js" defer></script>
     <script>
       (function () {
         var menuButton = document.querySelector(".menu-button");
