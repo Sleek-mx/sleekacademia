@@ -8,7 +8,7 @@ export function getServerPaymentDue(request) {
   const calculated = nextPaymentMilestone(request);
   const milestone = calculated === "deposit" && request?.status === "Deposit Due"
     ? "deposit"
-    : calculated === "balance" && request?.status === "Balance Due"
+    : calculated === "balance" && new Set(["Balance Due", "Delivered"]).has(request?.status)
       ? "balance"
       : null;
   const amountCents = milestone ? amountDueForMilestone(request, milestone) : 0;

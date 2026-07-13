@@ -72,33 +72,30 @@ test("request, quote, deposit, delivery lock, balance, and download work end to 
     },
   });
   assert.equal(handoff.status, 201);
-  requestId = (await handoff.json()).request.id;
+  requestId = (await handoff.json()).order.id;
 
-  const quote = await api(`/requests/${requestId}/quote`, { method: "PATCH", role: "admin", body: { quoteCents: 20000 } });
-  assert.equal((await quote.json()).request.status, "Deposit Due");
+  const quote = await api(`/admin/orders/${requestId}/accept`, { method: "POST", role: "admin", body: { acceptedDeadline: "2026-08-01T18:00:00.000Z" } });
+  assert.equal((await quote.json()).order.status, "Deposit Due");
 
   const deposit = await api(`/requests/${requestId}/payments/demo-confirm`, { method: "POST", body: { amountCents: 1 } });
   const depositPayload = await deposit.json();
-  assert.equal(depositPayload.payment.amountCents, 10000);
+  assert.equal(depositPayload.payment.amountCents, 3000);
   assert.equal(depositPayload.request.status, "In Progress");
 
-  for (const status of ["Ready for Review", "Balance Due"]) {
-    const transition = await api(`/requests/${requestId}/status`, { method: "PATCH", role: "admin", body: { status } });
-    assert.equal(transition.status, 200);
-  }
-
-  const delivery = await api(`/requests/${requestId}/deliverables`, {
+  const delivery = await api(`/admin/orders/${requestId}/deliverables`, {
     method: "POST",
     role: "admin",
     body: { category: "final", fileName: "smoke-final.txt", mimeType: "text/plain", contentBase64: Buffer.from("verified local delivery").toString("base64") },
   });
   attachmentId = (await delivery.json()).attachment.id;
+  const delivered = await api(`/admin/orders/${requestId}/status`, { method: "PATCH", role: "admin", body: { status: "Delivered" } });
+  assert.equal(delivered.status, 200);
   assert.equal((await api(`/attachments/${attachmentId}/download`)).status, 423);
 
   const balance = await api(`/requests/${requestId}/payments/demo-confirm`, { method: "POST", body: { amountCents: 1 } });
   const balancePayload = await balance.json();
-  assert.equal(balancePayload.payment.amountCents, 10000);
-  assert.equal(balancePayload.request.status, "Balance Due");
+  assert.equal(balancePayload.payment.amountCents, 3000);
+  assert.equal(balancePayload.request.status, "Delivered");
 
   const download = await api(`/attachments/${attachmentId}/download`);
   assert.equal(download.status, 200);

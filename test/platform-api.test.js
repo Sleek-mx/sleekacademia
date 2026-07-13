@@ -99,46 +99,46 @@ test("pending request handoff is durable and idempotent", async () => {
   assert.equal(rows.requests.length, 1);
 });
 
-test("cross-account request access returns 403 and admin access succeeds", async () => {
+test("cross-account order access returns 404 and admin detail succeeds", async () => {
   const request = await store.createRequest({
     ...validHandoff({ idempotencyKey: "other-request" }),
     userId: "other",
     status: "Submitted",
   });
 
-  assert.equal((await api(`/requests/${request.id}`)).status, 403);
-  assert.equal((await api(`/requests/${request.id}`, { user: "admin", role: "admin" })).status, 200);
+  assert.equal((await api(`/orders/${request.id}`)).status, 404);
+  assert.equal((await api(`/admin/orders/${request.id}`, { user: "admin", role: "admin" })).status, 200);
 });
 
-test("only admins can quote or transition requests", async () => {
+test("only admins can accept or transition orders", async () => {
   const request = await store.createRequest({
     ...validHandoff({ idempotencyKey: "quote-request" }),
     userId: "client",
-    status: "Submitted",
+    status: "Available",
   });
 
   assert.equal(
-    (await api(`/requests/${request.id}/quote`, { method: "PATCH", body: { quoteCents: 24000 } })).status,
+    (await api(`/admin/orders/${request.id}/accept`, { method: "POST", body: {} })).status,
     403,
   );
 
-  const quoted = await api(`/requests/${request.id}/quote`, {
+  const quoted = await api(`/admin/orders/${request.id}/accept`, {
     user: "admin",
     role: "admin",
-    method: "PATCH",
-    body: { quoteCents: 24000 },
+    method: "POST",
+    body: {},
   });
   assert.equal(quoted.status, 200);
-  assert.equal((await quoted.json()).request.status, "Deposit Due");
+  assert.equal((await quoted.json()).order.status, "Deposit Due");
 
-  const blocked = await api(`/requests/${request.id}/status`, {
+  const blocked = await api(`/admin/orders/${request.id}/status`, {
     user: "admin",
     role: "admin",
     method: "PATCH",
     body: { status: "In Progress" },
   });
   assert.equal(blocked.status, 409);
-  assert.match((await blocked.json()).error, /50 percent deposit/i);
+  assert.match((await blocked.json()).error, /deposit/i);
 });
 
 test("messages are validated and request scoped", async () => {

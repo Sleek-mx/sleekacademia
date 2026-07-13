@@ -84,7 +84,7 @@ test("provider order creation ignores browser amounts and enforces membership", 
   assert.equal((await stripe.json()).amountCents, 12000);
 
   const forbidden = await api(`/requests/${request.id}/payments/paypal-order`, { user: "other", body: { amountCents: 1 } });
-  assert.equal(forbidden.status, 403);
+  assert.equal(forbidden.status, 404);
 });
 
 test("unverified or amount-mismatched payments cannot mutate request totals", async () => {
@@ -123,7 +123,7 @@ test("loopback demo confirmation ignores browser amounts and enforces membership
   assert.equal(payload.request.status, "In Progress");
 
   const forbidden = await api(`/requests/${request.id}/payments/demo-confirm`, { user: "other" });
-  assert.equal(forbidden.status, 403);
+  assert.equal(forbidden.status, 404);
 });
 
 test("demo confirmation is rejected when identity is not an explicit local demo", async () => {
