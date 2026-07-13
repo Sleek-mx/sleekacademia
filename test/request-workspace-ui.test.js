@@ -47,27 +47,25 @@ test("authentication pages preserve Clerk mount targets and the official brand",
 
 test("workspace exposes complete client navigation and resilient states", () => {
   const html = read("public/dashboard.html");
-  for (const label of ["Requests", "Messages", "Files", "Payments", "Profile", "Help"]) {
+  for (const label of ["Overview", "My Orders", "Messages", "Files", "Payments", "Profile", "Help"]) {
     assert.match(html, new RegExp(`>${label}<`), `${label}: navigation missing`);
   }
-  for (const id of ["workspace-loading", "workspace-empty", "workspace-error", "request-list", "request-detail", "message-form", "file-upload-form", "profile-form", "admin-controls"]) {
+  for (const id of ["client-loading-state", "client-empty-state", "client-error-state", "client-order-grid", "client-order-dialog", "client-message-form", "client-material-form", "client-profile-form", "client-revision-form"]) {
     assert.match(html, new RegExp(`id=["']${id}["']`), `${id}: state or surface missing`);
   }
   assert.match(html, /50% deposit/i);
-  assert.match(html, /full payment/i);
+  assert.match(html, /fully paid|locked until/i);
   assert.match(html, /AI-use report/i);
+  assert.doesNotMatch(html, /admin-controls|View as admin|x-demo-role/i);
 });
 
-test("workspace script uses only protected platform APIs and implements client and admin actions", () => {
-  const script = read("public/js/dashboard.js");
-  for (const route of ["/session", "/requests", "/messages", "/attachments", "/profile", "/quote", "/status", "/download"]) {
+test("workspace script uses only protected client APIs and implements client actions", () => {
+  const script = read("public/js/client-dashboard.js");
+  for (const route of ["/session", "/orders", "/messages", "/attachments", "/profile", "/revisions", "/download"]) {
     assert.match(script, new RegExp(route.replaceAll("/", "\\/")), `${route}: API integration missing`);
   }
-  assert.match(script, /sleekAcademia\.pendingRequest\.v2/);
   assert.match(script, /contentBase64/);
-  assert.match(script, /x-demo-role/);
-  assert.match(script, /renderLoading/);
-  assert.match(script, /renderError/);
-  assert.match(script, /renderEmpty/);
-  assert.match(script, /replaceAll\("_", " "\)/, "activity event labels should humanize underscored event names");
+  assert.match(script, /showLoading/);
+  assert.match(script, /showError/);
+  assert.doesNotMatch(script, /x-demo-role|admin\/orders/i);
 });

@@ -64,6 +64,8 @@ test("clients see only their orders and cross-client detail is indistinguishable
 
 test("client order routes expose messages, attachments, profile, payments, and notifications without admin actions", async () => {
   const order = await store.createOrder({ ...handoff(), userId: "client", status: "Available" });
+  const detail = await (await api(`/orders/${order.id}`)).json();
+  assert.deepEqual(detail.revisionEligibility, { eligible: false, reason: "not-started", expiresAt: null });
   assert.equal((await api(`/orders/${order.id}/messages`, { method: "POST", body: { body: "All source files are attached." } })).status, 201);
   assert.equal((await api(`/orders/${order.id}/attachments`, { method: "POST", body: { fileName: "notes.txt", mimeType: "text/plain", contentBase64: Buffer.from("Source notes").toString("base64") } })).status, 201);
   assert.equal((await api("/profile", { method: "PATCH", body: { school: "UMGC", role: "admin" } })).status, 200);

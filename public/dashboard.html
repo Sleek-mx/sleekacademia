@@ -1,66 +1,96 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow">
-  <title>Client Workspace | Sleek Academia</title><meta name="description" content="Manage Sleek Academia requests, messages, files, payments, and delivery.">
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/css/workspace-v2.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#e7e4f1">
+  <title>Client Dashboard | Sleek Academia</title>
+  <meta name="description" content="Manage Sleek Academia orders, messages, payments, files, delivery, and revisions.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/dashboard-glass.css">
+  <script src="/js/dashboard-theme.js"></script>
 </head>
-<body class="ws-body workspace-body">
-  <div class="workspace-layout">
-    <aside class="workspace-sidebar" id="workspace-sidebar">
-      <a class="ws-logo" href="/"><img src="/images/brand/sleek-academia-logo.webp" alt="Sleek Academia"></a>
-      <nav class="workspace-nav" aria-label="Workspace">
-        <button class="is-active" type="button" data-workspace-view="requests"><span class="workspace-nav-icon">RQ</span>Requests</button>
-        <button type="button" data-workspace-view="messages"><span class="workspace-nav-icon">MS</span>Messages</button>
-        <button type="button" data-workspace-view="files"><span class="workspace-nav-icon">FL</span>Files</button>
-        <button type="button" data-workspace-view="payments"><span class="workspace-nav-icon">PY</span>Payments</button>
-        <button type="button" data-workspace-view="profile"><span class="workspace-nav-icon">PF</span>Profile</button>
-        <button type="button" data-workspace-view="help"><span class="workspace-nav-icon">?</span>Help</button>
-      </nav>
-      <div class="workspace-user"><strong id="workspace-user-name">Loading...</strong><span id="workspace-user-email">Secure workspace</span><span id="workspace-user-role"></span></div>
+<body class="dashboard-body">
+  <a class="dash-skip-link" href="#client-main">Skip to dashboard content</a>
+  <div class="dash-shell" id="client-shell" data-drawer-open="false">
+    <aside class="dash-rail" id="client-rail" aria-label="Client dashboard navigation">
+      <a class="dash-brand" href="/" aria-label="Sleek Academia home"><img src="/images/brand/sleek-academia-logo.webp" alt="Sleek Academia"></a>
+      <div>
+        <p class="dash-rail-label">Client workspace</p>
+        <nav class="dash-nav" aria-label="Client sections">
+          <button class="dash-nav-button is-active" type="button" data-client-view="overview" aria-current="page"><span class="dash-nav-icon" aria-hidden="true">OV</span><span>Overview</span></button>
+          <button class="dash-nav-button" type="button" data-client-view="orders"><span class="dash-nav-icon" aria-hidden="true">OR</span><span>My Orders</span><span class="dash-count" id="client-order-count">0</span></button>
+          <button class="dash-nav-button" type="button" data-client-view="messages"><span class="dash-nav-icon" aria-hidden="true">MS</span><span>Messages</span></button>
+          <button class="dash-nav-button" type="button" data-client-view="files"><span class="dash-nav-icon" aria-hidden="true">FL</span><span>Files</span></button>
+          <button class="dash-nav-button" type="button" data-client-view="payments"><span class="dash-nav-icon" aria-hidden="true">PY</span><span>Payments</span></button>
+          <button class="dash-nav-button" type="button" data-client-view="profile"><span class="dash-nav-icon" aria-hidden="true">PF</span><span>Profile</span></button>
+          <button class="dash-nav-button" type="button" data-client-view="help"><span class="dash-nav-icon" aria-hidden="true">HP</span><span>Help</span></button>
+        </nav>
+      </div>
+      <div class="dash-rail-footer">
+        <div class="dash-user"><strong id="client-user-name">Loading client...</strong><span id="client-user-email">Secure workspace</span></div>
+        <button class="dash-button" id="client-logout" type="button">Log out</button>
+      </div>
     </aside>
+    <button class="dash-rail-scrim" type="button" data-drawer-close aria-label="Close navigation"></button>
 
-    <main class="workspace-main">
-      <header class="workspace-header">
-        <div><h1 id="workspace-title">Requests</h1><p id="workspace-subtitle">Track every brief from submission to delivery.</p></div>
-        <div class="workspace-header-actions"><button class="ws-button small mobile-sidebar-toggle" id="sidebar-toggle" type="button">Menu</button><a class="ws-button small" href="/onboard.html">New request</a><button class="ws-button small" id="workspace-sign-out" type="button">Sign out</button></div>
+    <div class="dash-stage">
+      <header class="dash-header">
+        <div class="dash-header-actions">
+          <button class="dash-icon-button dash-menu-button" type="button" data-drawer-toggle aria-controls="client-rail" aria-expanded="false" aria-label="Open navigation">Menu</button>
+          <div class="dash-header-title"><h1 id="client-page-title">Overview</h1><p id="client-page-description">Your orders, payment milestones, messages, and deliveries.</p></div>
+        </div>
+        <div class="dash-header-actions"><button class="dash-icon-button" type="button" data-theme-toggle aria-pressed="false" aria-label="Use night dashboard theme">Theme</button><a class="dash-button primary" href="/onboard.html">Start New Order</a></div>
       </header>
 
-      <div class="workspace-content">
-        <section class="workspace-banner"><div><h2>Everything attached to the right request.</h2><p>A 50% deposit begins custom work. Full payment unlocks final delivery and the AI-use report.</p></div><button class="demo-switch" id="demo-role-switch" type="button">View as admin</button></section>
+      <main class="dash-main" id="client-main" tabindex="-1">
+        <div id="client-live-region" class="dash-toast-region" role="status" aria-live="polite" aria-atomic="true"></div>
+        <section id="client-loading-state" class="glass-panel dash-state"><div class="dash-state-copy"><div class="dash-skeleton"></div><p>Loading your secure dashboard...</p></div></section>
+        <section id="client-error-state" class="glass-panel dash-state" hidden><div class="dash-state-copy"><h2>Your dashboard could not load</h2><p id="client-error-copy">Try the request again.</p><button class="dash-button primary" id="client-retry" type="button">Retry</button></div></section>
+        <section id="client-empty-state" class="glass-panel dash-state" hidden><div class="dash-state-copy"><h2>No orders yet</h2><p>Start an order and your brief, quote, messages, payments, and delivery will stay together here.</p><a class="dash-button primary" href="/onboard.html">Start New Order</a></div></section>
 
-        <section class="workspace-state" id="workspace-loading"><h2>Opening your workspace...</h2><p>Loading requests, messages, and protected files.</p></section>
-        <section class="workspace-state" id="workspace-error" hidden><h2>We could not load the workspace.</h2><p id="workspace-error-message">Try again in a moment.</p><button class="ws-button primary" id="workspace-retry" type="button">Try again</button></section>
-        <section class="workspace-state" id="workspace-empty" hidden><h2>No requests yet.</h2><p>Start with the brief and we will keep the next steps organized here.</p><a class="ws-button primary" href="/onboard.html">Start a request</a></section>
+        <section class="dash-view" data-client-panel="overview" hidden>
+          <div class="dash-kpi-grid" id="client-kpis"></div>
+          <div class="dash-grid">
+            <article class="glass-panel"><div class="dash-panel-heading"><div><h2>Order queues</h2><p>Move directly to the work that needs your next action.</p></div></div><div class="glass-panel-inner"><div class="dash-tabs" id="client-overview-queues"></div></div></article>
+            <article class="glass-panel"><div class="dash-panel-heading"><div><h2>Latest updates</h2><p>Recent order activity and current delivery status.</p></div><button class="dash-button" type="button" data-open-client-view="orders">View orders</button></div><ul class="dash-list" id="client-recent-orders"></ul></article>
+          </div>
+        </section>
 
-        <div id="workspace-ready" hidden>
-          <section class="workspace-view is-active" data-view-panel="requests">
-            <div class="workspace-grid">
-              <section class="request-list-panel"><div class="panel-heading"><h2>All requests</h2><span id="request-count"></span></div><div class="request-list" id="request-list"></div></section>
-              <section class="request-detail-panel"><div class="request-detail" id="request-detail"><p>Select a request to see its details.</p></div></section>
-            </div>
-          </section>
+        <section class="dash-view" data-client-panel="orders" hidden>
+          <article class="glass-panel"><div class="dash-panel-heading"><div><h2>My Orders</h2><p>Quotes and payment eligibility come directly from the secure server.</p></div><a class="dash-button primary" href="/onboard.html">Start New Order</a></div>
+            <div class="dash-tabs" id="client-order-filters" role="tablist" aria-label="Filter orders"><button class="dash-tab is-active" type="button" data-order-filter="">All orders</button><button class="dash-tab" type="button" data-order-filter="Available">Available</button><button class="dash-tab" type="button" data-order-filter="Needs Clarification">Needs Clarification</button><button class="dash-tab" type="button" data-order-filter="Deposit Due">Deposit Due</button><button class="dash-tab" type="button" data-order-filter="In Progress">In Progress</button><button class="dash-tab" type="button" data-order-filter="Delivered">Delivered</button><button class="dash-tab" type="button" data-order-filter="In Revision">In Revision</button><button class="dash-tab" type="button" data-order-filter="Completed">Completed</button><button class="dash-tab" type="button" data-order-filter="Cancelled">Cancelled</button></div>
+            <div class="glass-panel-inner"><div class="dash-grid equal" id="client-order-grid"></div></div>
+          </article>
+        </section>
 
-          <section class="workspace-view" data-view-panel="messages"><div class="profile-card"><span class="ws-kicker">Conversation</span><h2>Messages across the selected request</h2><p>Select a request in Requests, then use its Messages tab to keep the conversation tied to the right work.</p><div id="all-messages"></div></div></section>
-          <section class="workspace-view" data-view-panel="files"><div class="profile-card"><span class="ws-kicker">Private storage</span><h2>Files and deliverables</h2><p>Client uploads, drafts, final work, and transparency reports stay request-scoped.</p><div id="all-files"></div></div></section>
-          <section class="workspace-view" data-view-panel="payments"><div class="profile-card"><span class="ws-kicker">Milestones</span><h2>Payment record</h2><p>Quotes and confirmed payments are calculated on the server. The first half begins work; the remaining balance unlocks final delivery.</p><div id="all-payments"></div></div></section>
-          <section class="workspace-view" data-view-panel="profile"><div class="profile-card"><span class="ws-kicker">Your details</span><h2>Profile</h2><p>Keep the school and urgent contact details used on active requests up to date.</p><form class="form-grid" id="profile-form"><div class="form-field"><label>Name</label><input id="profile-name" disabled></div><div class="form-field"><label>Email</label><input id="profile-email" disabled></div><div class="form-field"><label for="profile-phone">Urgent phone</label><input id="profile-phone" name="urgentPhone"></div><div class="form-field"><label for="profile-school">School or organization</label><input id="profile-school" name="school"></div><div class="form-field full"><button class="ws-button primary" type="submit">Save profile</button><span id="profile-status" class="form-hint"></span></div></form></div></section>
-          <section class="workspace-view" data-view-panel="help"><div class="help-card"><span class="ws-kicker">Need a hand?</span><h2>Help and request rules</h2><p>Use request messages for work-specific questions so the full context remains visible.</p><div class="help-grid"><div class="help-tile"><strong>Starting work</strong><span>A confirmed 50% deposit is required before a request enters In Progress.</span></div><div class="help-tile"><strong>Final delivery</strong><span>Full payment is required before final work and the AI-use report can be downloaded.</span></div><div class="help-tile"><strong>Files</strong><span>Upload PDF, Office, image, or text files up to 8 MB.</span></div><div class="help-tile"><strong>Urgent issue</strong><span>Send a request message and include the deadline in the first line.</span></div></div></div></section>
-        </div>
-      </div>
-    </main>
+        <section class="dash-view" data-client-panel="messages" hidden><article class="glass-panel"><div class="dash-panel-heading"><div><h2>Messages</h2><p>Every message stays tied to its order.</p></div></div><ul class="dash-list" id="client-all-messages"></ul></article></section>
+        <section class="dash-view" data-client-panel="files" hidden><article class="glass-panel"><div class="dash-panel-heading"><div><h2>Files</h2><p>Your materials, drafts, final deliveries, and AI-use reports.</p></div></div><ul class="dash-list" id="client-all-files"></ul></article></section>
+        <section class="dash-view" data-client-panel="payments" hidden><article class="glass-panel"><div class="dash-panel-heading"><div><h2>Payments and receipts</h2><p>Only provider-confirmed Stripe and PayPal payments count as paid.</p></div></div><div class="dash-table-wrap"><table class="dash-table"><thead><tr><th>Receipt</th><th>Order</th><th>Provider</th><th>Milestone</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody id="client-payment-rows"></tbody></table></div></article></section>
+        <section class="dash-view" data-client-panel="profile" hidden><article class="glass-panel"><div class="dash-panel-heading"><div><h2>Profile</h2><p>Update the school and urgent phone attached to new orders.</p></div></div><form class="glass-panel-inner dash-stack" id="client-profile-form"><div class="dash-grid equal"><div class="dash-field"><label for="client-profile-name">Name</label><input class="dash-input" id="client-profile-name" disabled></div><div class="dash-field"><label for="client-profile-email">Email</label><input class="dash-input" id="client-profile-email" disabled></div><div class="dash-field"><label for="client-profile-phone">Urgent phone</label><input class="dash-input" id="client-profile-phone" maxlength="80"></div><div class="dash-field"><label for="client-profile-school">School or organization</label><input class="dash-input" id="client-profile-school" maxlength="180"></div></div><button class="dash-button primary" type="submit">Save profile</button></form></article></section>
+        <section class="dash-view" data-client-panel="help" hidden><div class="dash-grid equal"><article class="glass-panel glass-panel-inner dash-stack"><h2>Payment policy</h2><p>A confirmed 50% deposit starts accepted work. A delivered final remains visible but locked until the remaining balance is provider-confirmed.</p><strong>Locked - pay balance to download</strong></article><article class="glass-panel glass-panel-inner dash-stack"><h2>Revision policy help</h2><p>One included revision is available for seven days starting with your first paid download. A second or late revision can be quoted as additional work.</p><p>For order-specific help, open that order and send a message.</p></article></div></section>
+      </main>
+    </div>
   </div>
 
-  <template id="request-detail-template">
-    <div><div class="detail-meta"><span class="status-pill" data-bind="status"></span><span data-bind="service"></span><span data-bind="deadline"></span></div><h2 data-bind="title"></h2><p class="detail-copy" data-bind="description"></p><div class="summary-cards"><div class="summary-card"><span>Quote</span><strong data-bind="quote"></strong></div><div class="summary-card"><span>Paid</span><strong data-bind="paid"></strong></div><div class="summary-card"><span>Remaining</span><strong data-bind="remaining"></strong></div></div>
-      <div class="admin-controls" id="admin-controls"><span class="ws-kicker">Admin tools</span><div class="admin-grid"><input id="admin-quote" type="number" min="1" step="0.01" placeholder="Quote in USD"><select id="admin-status"><option value="">Choose next status</option><option>Reviewing</option><option>In Progress</option><option>Ready for Review</option><option>Balance Due</option><option>Completed</option><option>Cancelled</option></select><button class="ws-button primary small" id="admin-save" type="button">Apply</button></div><p class="form-hint" id="admin-status-message"></p></div>
-      <div class="detail-tabs"><button class="is-active" type="button" data-detail-tab="updates">Updates</button><button type="button" data-detail-tab="messages">Messages</button><button type="button" data-detail-tab="files">Files</button><button type="button" data-detail-tab="payments">Payments</button></div>
-      <section class="detail-section is-active" data-detail-panel="updates"><div class="event-list" id="event-list"></div></section>
-      <section class="detail-section" data-detail-panel="messages"><div class="message-list" id="message-list"></div><form class="inline-form" id="message-form"><textarea name="body" maxlength="4000" placeholder="Write a request-specific message" required></textarea><button class="ws-button primary small" type="submit">Send message</button><span class="form-hint" id="message-status"></span></form></section>
-      <section class="detail-section" data-detail-panel="files"><div class="file-list" id="file-list"></div><form class="inline-form" id="file-upload-form"><input name="file" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.webp" required><button class="ws-button small" type="submit">Upload file</button><span class="form-hint" id="file-status"></span></form><form class="inline-form" id="deliverable-form" hidden><select name="category"><option value="draft">Draft</option><option value="final">Final work</option><option value="ai-report">AI-use report</option></select><input name="file" type="file" required><button class="ws-button small" type="submit">Upload deliverable</button><span class="form-hint" id="deliverable-status"></span></form></section>
-      <section class="detail-section" data-detail-panel="payments"><div class="payment-list" id="payment-list"></div><div id="payment-actions"></div><p class="locked-note">Amounts and confirmation status come from the server. Local simulation is clearly labeled; live confirmation is completed by the selected provider.</p></section>
+  <dialog class="dash-dialog" id="client-order-dialog" aria-labelledby="client-order-dialog-title">
+    <div class="dash-panel-heading"><div><h2 id="client-order-dialog-title">Order details</h2><p id="client-order-dialog-meta"></p></div><button class="dash-icon-button" type="button" data-close-client-order aria-label="Close order details">Close</button></div>
+    <div class="dash-dialog-body dash-stack">
+      <div class="dash-kpi-grid" id="client-order-summary"></div>
+      <section class="glass-panel glass-panel-inner dash-stack"><h3>Instructions</h3><div id="client-order-instructions"></div></section>
+      <section class="glass-panel glass-panel-inner dash-stack"><h3>Timeline</h3><div id="client-order-timeline"></div></section>
+      <section class="glass-panel glass-panel-inner dash-stack"><h3>Messages</h3><div id="client-order-messages"></div><form class="dash-stack" id="client-message-form"><div class="dash-field"><label for="client-message-body">Message about this order</label><textarea class="dash-textarea" id="client-message-body" maxlength="4000" required></textarea></div><button class="dash-button primary" type="submit">Send message</button></form></section>
+      <section class="glass-panel glass-panel-inner dash-stack"><h3>Materials</h3><div id="client-order-materials"></div><form class="dash-stack" id="client-material-form"><div class="dash-field"><label for="client-material-file">Upload another material</label><input class="dash-input" id="client-material-file" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.rtf,.jpg,.jpeg,.png,.webp" required></div><button class="dash-button" type="submit">Upload material</button></form></section>
+      <section class="glass-panel glass-panel-inner dash-stack"><h3>Payments and receipts</h3><div id="client-order-payments"></div><div id="client-payment-actions" tabindex="-1"></div></section>
+      <section class="glass-panel glass-panel-inner dash-stack"><h3>Deliveries</h3><div id="client-order-deliveries"></div><p id="client-delivery-lock-copy">Locked - pay balance to download</p></section>
+      <section class="glass-panel glass-panel-inner dash-stack"><h3>Revision history</h3><div id="client-order-revisions"></div><form class="dash-stack" id="client-revision-form"><div class="dash-field"><label for="client-revision-instructions">Included revision instructions</label><textarea class="dash-textarea" id="client-revision-instructions" maxlength="4000" required></textarea></div><button class="dash-button secondary" id="client-revision-submit" type="submit">Request included revision</button><p id="client-revision-policy">The seven-day window starts after the first paid download.</p></form></section>
+      <section class="glass-panel glass-panel-inner dash-stack"><h3>Policy help</h3><p>Final files stay locked until fully paid. The included revision is available once and must be requested within seven days after the first paid download.</p></section>
     </div>
-  </template>
-  <script src="/js/dashboard.js" defer></script>
+  </dialog>
+
+  <script src="/js/client-dashboard.js" defer></script>
 </body>
 </html>

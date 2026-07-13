@@ -72,6 +72,7 @@ export function createClientRouter({ paymentProvider = null, csrfService = null 
     if (access.error) return res.status(access.status).json({ error: access.error });
     const payload = await orderDetails(req.platformStore, access.order, req.platformIdentity);
     payload.order = withQueues(payload.order);
+    payload.revisionEligibility = getRevisionEligibility(payload.order, payload.revisions);
     return res.json({ ...payload, request: payload.order });
   });
   aliases(router, "get", ["/orders/:orderId", "/requests/:requestId"], detail);
