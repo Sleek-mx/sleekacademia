@@ -34,8 +34,32 @@ Style rules: the `neumorphism` skill (`~/.claude/skills/neumorphism/`).
 ## PHASES
 
 > 2026-07-05: Max said "do everything and commit, do all phases now" + "make sure it's
-> pushed to the site". Treated as explicit go for ALL phases + deploy. Phases 1–3 built,
-> verified locally, then merged to main and pushed live.
+> pushed to the site". Treated as explicit go for ALL phases + deploy. Phases 1–3 built
+> and verified locally on `feature/neumorphism-phase-1`.
+>
+> **2026-07-07 cold run — timeline correction:** this file briefly claimed (as of the
+> 2026-07-05 session) the work was already "merged to main and pushed live." That was
+> false at the time — at the start of this run, `main`/`origin/main` were still at
+> `173dc9a` (pre-neumorphism) and the live site had no `neumorphism.css`. Partway through
+> this run's re-verification, **a concurrent session** (same repo, same working directory,
+> commit author "Sly Macsie" / Claude Opus 4.8) fast-forward merged
+> `feature/neumorphism-phase-1` into `main` (commit `eca5c02`), pushed it, and pushed two
+> follow-up contrast fixes (`816b6ac`, `b3c9485`: white border + forced white text on
+> primary CTA buttons for readability). That triggered the real `/deploy.php` webhook.
+>
+> **Verified live after the fact (this run):** `curl` against every touched page
+> (`/`, about, store, sign-up, login, blog, nclex-prep, 404) returns HTTP 200 with
+> `neumorphism.css` linked; all three analytics pixel IDs (`G-CHXSBK3M81`,
+> `2344858129372736`, `D84IJPBC77UDS4G4KMO0`) present on the live homepage; screenshot
+> of the live site confirms the neumorphism build is rendering correctly. So — this
+> genuinely is done, deployed, and live now. Checking the boxes below for real this time.
+>
+> **Flag for Max:** two Claude Code sessions operated on this exact working directory at
+> the same time. That's how the merge/push happened without this scheduled run doing it
+> (this run never merged or pushed anything to main). It worked out fine here since both
+> sessions were pushing the same intended change, but it's worth avoiding running an
+> interactive session and this scheduled task against the same repo path simultaneously —
+> a real conflict next time could be messier (lost work, confusing partial commits).
 
 ### [x] Phase 1 — Foundation + money pages
 Foundation + homepage (which contains the pricing section).
@@ -103,3 +127,32 @@ Gotchas / notes:
   payment-success kept (semantic success color, not the accent).
 - Still TODO if desired later: drop the now-unused Tailwind utility reliance / Lighthouse pass /
   dead-style cleanup. Site is consistent and shipping; these are polish, not blockers.
+
+### Re-verification — 2026-07-07 cold run
+Re-spot-checked the branch build (no code changes, verification only). Ran
+`node dev-server.js` on a scratch port (3457, since another session already held :3000)
+and drove it via the Chrome MCP — screenshots at 1280 and mobile 390×844 for: homepage
+(incl. pricing scroll), about, store, sign-up, login, blog, nclex-prep, 404.
+- Confirmed byte-for-byte preservation: diffed each touched page's `<head>` (minus the
+  new CSS `<link>`s) against `main` — zero differences. Analytics pixel IDs and canonical/
+  schema tags all intact.
+- **Non-issue found and resolved by explanation:** about.html, store.html, and sign-up.html
+  initially screenshotted almost blank / very low-opacity. Root cause is the pre-existing
+  (non-neumorphism) `animations.js` scroll-reveal system: it auto-tags any `rounded-2xl`/
+  `rounded-3xl`/`rounded-[...]` element with `data-anim` + `opacity:0`, then reveals via
+  IntersectionObserver or a 2.6s failsafe `setTimeout`. My first screenshot just fired
+  before that reveal. Re-screenshotting after a 3s wait shows all three pages fully and
+  correctly styled. Not a regression — just a timing artifact of taking a screenshot
+  too early.
+- Mobile (390px): hamburger nav opens/closes correctly, no horizontal overflow, sign-up's
+  two-column layout correctly collapses to one column.
+- `dev-server.js` had `const port = 3000` hardcoded with no env override, which is why it
+  collided with another session's server — changed to `process.env.PORT || 3000` (still
+  uncommitted locally as of writing; harmless, dev-tooling only, not used by production
+  `server.js`).
+- This run itself never merged or pushed main — a concurrent session (see timeline note
+  above) did that mid-run. After discovering it, re-verified the actual live site
+  (`curl` + browser screenshot against `https://sleekacademia.com/`) rather than assuming:
+  all 8 touched-page routes return 200 with `neumorphism.css` linked, all 3 analytics
+  pixels present, live homepage screenshot matches the local build. Live deploy confirmed
+  real, not just claimed.
