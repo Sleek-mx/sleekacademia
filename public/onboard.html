@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,follow">
-  <title>Start a Request | Sleek Academia</title>
-  <meta name="description" content="Share your academic support request and continue securely in your Sleek Academia workspace.">
+  <title>Start an Order | Sleek Academia</title>
+  <meta name="description" content="Share your academic support order and continue securely in your Sleek Academia workspace.">
   <link rel="canonical" href="https://sleekacademia.com/onboard.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +16,7 @@
   <header class="ws-topbar">
     <div class="ws-shell ws-topbar-inner">
       <a class="ws-logo" href="/"><img src="/images/brand/sleek-academia-logo.webp" alt="Sleek Academia"></a>
-      <nav class="ws-topbar-links" aria-label="Request navigation"><a href="/about.html">About</a><a href="/blog.html">Blog</a><a href="/store.html">Store</a><a class="ws-button" href="/login.html">Login</a></nav>
+      <nav class="ws-topbar-links" aria-label="Order navigation"><a href="/about.html">About</a><a href="/blog.html">Blog</a><a href="/store.html">Store</a><a class="ws-button" href="/login.html">Login</a></nav>
     </div>
   </header>
 
@@ -24,16 +24,16 @@
     <aside class="wizard-aside">
       <span class="ws-kicker" style="color:#d9cbff">Start with context</span>
       <h1>Tell us what is on your desk.</h1>
-      <p>A good request gives us enough context to understand the work, clarify the scope, and respond with the right next step.</p>
+      <p>A good order gives us enough context to understand the work, clarify the scope, and respond with the right next step.</p>
       <div class="wizard-assurance">
-        <div><b>01</b><span><strong>No payment is taken here</strong>Your quote and any payment milestones appear later in your private workspace.</span></div>
-        <div><b>02</b><span><strong>Your files stay connected</strong>Briefs, messages, and deliverables belong to one request record.</span></div>
+        <div><b>01</b><span><strong>No payment is taken here</strong>Your confirmed quote and payment milestones appear later in your private workspace.</span></div>
+        <div><b>02</b><span><strong>Your files stay connected</strong>Briefs, messages, and deliverables belong to one order record.</span></div>
         <div><b>03</b><span><strong>You stay in control</strong>Review every detail before creating an account or submitting in localhost demo mode.</span></div>
       </div>
     </aside>
 
     <section class="wizard-panel">
-      <div class="wizard-progress" aria-label="Request progress"><span class="is-active"></span><span></span><span></span><span></span></div>
+      <div class="wizard-progress" aria-label="Order progress"><span class="is-active"></span><span></span><span></span><span></span></div>
       <form id="request-wizard" novalidate>
         <section class="wizard-step is-active" data-wizard-step="service">
           <span class="ws-kicker">Step 1 of 4</span>
@@ -61,19 +61,28 @@
 
             <div data-service-fields="essay">
               <div class="form-field"><label for="citationStyle">Citation style</label><select id="citationStyle" name="citationStyle"><option value="">Not specified</option><option>APA 7</option><option>MLA 9</option><option>Chicago</option><option>Harvard</option><option>Other</option></select></div>
-              <div class="form-field"><label for="pageCount">Length or page count</label><input id="pageCount" name="pageCount" maxlength="20" placeholder="For example, 6 pages"></div>
+              <div class="form-field"><label for="writing-unit">Estimate by</label><select id="writing-unit"><option value="pages">Pages</option><option value="words">Word count</option></select><span class="form-hint">Each page is 275 words. That is 275 words per page.</span></div>
+              <div class="form-field" data-writing-unit="pages"><label for="pageCount">Pages</label><input id="pageCount" name="pageCount" type="number" min="1" step="1" inputmode="numeric" placeholder="6"><span class="form-hint">Standard writing is $15 per page.</span></div>
+              <div class="form-field" data-writing-unit="words" hidden><label for="wordCount">Words</label><input id="wordCount" name="wordCount" type="number" min="1" step="1" inputmode="numeric" placeholder="1650"><span class="form-hint">We round up to the next 275-word page.</span></div>
+              <div class="form-field full"><label><input id="urgency" name="urgency" type="checkbox" value="six-hour"> Six-hour urgent writing</label><span class="form-hint">Urgent writing is $16.50 per page.</span></div>
             </div>
 
             <div data-service-fields="exam">
               <div class="form-field"><label for="examName">Exam name</label><input id="examName" name="examName" maxlength="160" placeholder="NCLEX-RN, UBE, CFA Level I, Security+"></div>
               <div class="form-field"><label for="examDate">Exam date</label><input id="examDate" name="examDate" type="date"></div>
+              <div class="form-field"><label for="examHours">Assistance hours</label><input id="examHours" name="examHours" type="number" min="1" step="1" inputmode="numeric" placeholder="2"><span class="form-hint">Exam assistance is $150 per hour, booked in whole hours.</span></div>
               <div class="form-field"><label for="attemptStatus">Attempt status</label><select id="attemptStatus" name="attemptStatus"><option value="">Choose one</option><option>First attempt</option><option>Retaking</option><option>Not scheduled</option></select></div>
               <div class="form-field"><label for="assistanceType">Support focus</label><select id="assistanceType" name="assistanceType"><option value="">Choose one</option><option>Build a study plan</option><option>Review weak areas</option><option>Practice questions and feedback</option><option>Accountability and tutoring</option></select></div>
             </div>
 
             <div data-service-fields="tutoring">
               <div class="form-field"><label for="tutoringAssistanceType">Tutoring focus</label><select id="tutoringAssistanceType" data-alias="assistanceType"><option value="">Choose one</option><option>Understand course concepts</option><option>Prepare for an assessment</option><option>Work through practice problems</option><option>Ongoing accountability</option></select></div>
+              <p class="form-hint">Tutoring receives a custom quote after MCX reviews the scope.</p>
             </div>
+
+            <div data-service-fields="other"><p class="form-hint">Custom support receives a custom quote after MCX reviews the complete instructions.</p></div>
+
+            <div class="form-field full" id="order-estimate" aria-live="polite"><strong>Informational estimate</strong><p id="order-estimate-value">Choose a service and units to preview the server-calculated rate.</p><span class="form-hint">This browser estimate is informational. The server calculates and stores the official quote.</span></div>
 
             <div class="form-field full upload-zone"><label for="initial-files">Helpful files <span class="form-hint">optional, uploaded after your request is created</span></label><input id="initial-files" type="file" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.webp"><span class="form-hint">Add a rubric, prompt, syllabus, notes, or screenshots. Maximum 8 MB per file.</span></div>
           </div>
@@ -82,7 +91,7 @@
         <section class="wizard-step" data-wizard-step="contact">
           <span class="ws-kicker">Step 3 of 4</span>
           <h2>How should we reach you?</h2>
-          <p>These details create your request profile and help us respond to urgent timing.</p>
+          <p>These details create your order profile and help us respond to urgent timing.</p>
           <div class="form-grid">
             <div class="form-field"><label for="name">Full name</label><input id="name" name="name" maxlength="160" autocomplete="name" required><span class="field-error" data-error-for="name"></span></div>
             <div class="form-field"><label for="email">Email</label><input id="email" name="email" type="email" maxlength="320" autocomplete="email" required><span class="field-error" data-error-for="email"></span></div>
@@ -94,7 +103,7 @@
         <section class="wizard-step" data-wizard-step="review">
           <span class="ws-kicker">Step 4 of 4</span>
           <h2>Review, then continue securely.</h2>
-          <p>Your request is saved locally first. After sign up, it is handed to the protected workspace exactly once.</p>
+          <p>Your order is saved locally first. After sign up, it is handed to the protected workspace exactly once.</p>
           <div class="review-list" id="request-review"></div>
           <div class="clerk-frame" id="clerk-onboard-sign-up"></div>
           <p class="wizard-status" id="wizard-status" role="status" aria-live="polite"></p>

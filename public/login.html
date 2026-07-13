@@ -2,13 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow">
-  <title>Login | Sleek Academia</title><meta name="description" content="Sign in to your secure Sleek Academia client workspace."><link rel="canonical" href="https://sleekacademia.com/login.html">
+  <title>Login | Sleek Academia</title><meta name="description" content="Sign in to the secure Sleek Academia client or admin workspace."><link rel="canonical" href="https://sleekacademia.com/login.html">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/css/workspace-v2.css">
 </head>
 <body class="ws-body">
   <main class="auth-layout">
-    <section class="auth-panel"><div class="auth-card"><a class="ws-logo" href="/"><img src="/images/brand/sleek-academia-logo.webp" alt="Sleek Academia"></a><span class="ws-kicker">Welcome back</span><h1>Return to the work in progress.</h1><p>Sign in to review requests, reply to messages, upload files, and access completed deliveries.</p><div class="auth-status" id="auth-status">Loading secure login...</div><div id="clerk-sign-in" class="clerk-frame"></div><div class="auth-links">New to Sleek Academia? <a href="/sign-up.html">Create an account</a><br>Want to browse first? <a href="/">Return to the site</a></div></div></section>
-    <section class="auth-visual"><div class="auth-visual-content"><span class="ws-kicker" style="color:#d9ff9a">Pick up exactly where you left off</span><h2>Your academic work, without the scattered tabs.</h2><p>Requests, feedback, files, payments, and delivery remain attached to the right project.</p><div class="auth-steps"><div class="auth-step"><strong>Private</strong><span>Protected account and file access.</span></div><div class="auth-step"><strong>Traceable</strong><span>A clear record of every milestone.</span></div><div class="auth-step"><strong>Practical</strong><span>Only the next action you need.</span></div></div></div></section>
+    <section class="auth-panel"><div class="auth-card">
+      <a class="ws-logo" href="/"><img src="/images/brand/sleek-academia-logo.webp" alt="Sleek Academia"></a>
+      <span class="ws-kicker">Welcome back</span><h1>Open your workspace.</h1><p>Clients and the MCX administrator use separate, protected sign-in paths.</p>
+      <div class="auth-mode-tabs" role="tablist" aria-label="Choose login type">
+        <button class="ws-button primary" type="button" role="tab" aria-selected="true" aria-controls="client-login-panel" data-auth-mode="client">Client</button>
+        <button class="ws-button" type="button" role="tab" aria-selected="false" aria-controls="admin-login-panel" data-auth-mode="admin">Admin</button>
+      </div>
+      <div class="auth-status" id="auth-status" role="status" aria-live="polite">Loading secure client login...</div>
+      <section id="client-login-panel" data-auth-panel="client"><div id="clerk-sign-in" class="clerk-frame"></div><div class="auth-links">New client? <a href="/sign-up.html">Create an account</a></div></section>
+      <section id="admin-login-panel" data-auth-panel="admin" hidden>
+        <form id="admin-login-form" autocomplete="on">
+          <div class="form-field"><label for="admin-username">Username</label><input id="admin-username" name="username" value="MCX" maxlength="100" autocomplete="username" required></div>
+          <div class="form-field"><label for="admin-password">Password</label><input id="admin-password" name="password" type="password" maxlength="1024" autocomplete="current-password" required></div>
+          <button class="ws-button primary" type="submit">Sign in as MCX</button>
+        </form>
+        <a id="admin-demo-link" class="ws-button" href="/admin.html" hidden>Open localhost admin demo</a>
+      </section>
+      <div class="auth-links">Want to browse first? <a href="/">Return to the site</a></div>
+    </div></section>
+    <section class="auth-visual"><div class="auth-visual-content"><span class="ws-kicker" style="color:#d9ff9a">One clear workspace</span><h2>Orders, messages, payments, and delivery in the right place.</h2><p>Client access remains separate from the MCX administration boundary.</p><div class="auth-steps"><div class="auth-step"><strong>Private</strong><span>Protected account and file access.</span></div><div class="auth-step"><strong>Traceable</strong><span>A clear record of every milestone.</span></div><div class="auth-step"><strong>Practical</strong><span>Only the next action you need.</span></div></div></div></section>
   </main>
   <script src="/js/auth.js" defer></script>
 </body>

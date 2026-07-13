@@ -28,7 +28,7 @@ test("request wizard persists an idempotent pending handoff and supports localho
   assert.match(script, /crypto\.randomUUID/);
   assert.match(script, /localStorage\.setItem/);
   assert.match(script, /idempotencyKey/);
-  assert.match(script, /\/api\/platform\/requests\/handoff/);
+  assert.match(script, /\/api\/platform\/orders\/handoff/);
   assert.match(script, /mountSignUp/);
   assert.match(script, /demoMode/);
   assert.doesNotMatch(script, /stripe|paypal/i);

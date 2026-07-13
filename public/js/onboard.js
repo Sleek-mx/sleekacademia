@@ -11,6 +11,8 @@
   const review = document.getElementById("request-review");
   const serviceInput = form.elements.service;
   const initialFiles = document.getElementById("initial-files");
+  const writingUnit = document.getElementById("writing-unit");
+  const estimateValue = document.getElementById("order-estimate-value");
   let currentStep = 0;
   let authMounted = false;
   let idempotencyKey = createIdempotencyKey();
@@ -32,6 +34,7 @@
       group.classList.toggle("is-visible", group.dataset.serviceFields === service);
     });
     clearError("service");
+    updateEstimate();
   }
 
   function showStep(index) {
@@ -69,6 +72,16 @@
       clearError("subject"); clearError("description");
       if (!subject) setError("subject", "Add the subject or course.");
       if (!description) setError("description", "Tell us what you need help with.");
+      if (selectedService() === "essay") {
+        const units = writingUnit.value === "words" ? Number(formValue("wordCount")) : Number(formValue("pageCount"));
+        if (!Number.isSafeInteger(units) || units < 1) setError("description", "Add a positive whole page or word count.");
+        return Boolean(subject && description && Number.isSafeInteger(units) && units > 0);
+      }
+      if (selectedService() === "exam") {
+        const hours = Number(formValue("examHours"));
+        if (!Number.isSafeInteger(hours) || hours < 1) setError("description", "Add at least one whole assistance hour.");
+        return Boolean(subject && description && Number.isSafeInteger(hours) && hours > 0);
+      }
       return Boolean(subject && description);
     }
     if (index === 2) {
@@ -101,9 +114,12 @@
       description: formValue("description"),
       deadline: formValue("deadline"),
       citationStyle: selectedService() === "essay" ? formValue("citationStyle") : "",
-      pageCount: selectedService() === "essay" ? formValue("pageCount") : "",
+      pageCount: selectedService() === "essay" && writingUnit.value === "pages" ? formValue("pageCount") : "",
+      wordCount: selectedService() === "essay" && writingUnit.value === "words" ? formValue("wordCount") : "",
+      urgency: selectedService() === "essay" && form.elements.urgency.checked ? "six-hour" : "standard",
       examName: selectedService() === "exam" ? formValue("examName") : "",
       examDate: selectedService() === "exam" ? formValue("examDate") : "",
+      examHours: selectedService() === "exam" ? formValue("examHours") : "",
       attemptStatus: selectedService() === "exam" ? formValue("attemptStatus") : "",
       assistanceType,
       name: formValue("name"),
@@ -129,12 +145,35 @@
     return { essay: "Essay or coursework", exam: "Exam preparation", tutoring: "Personal tutoring", other: "Custom support" }[service] || service;
   }
 
+  function estimateText() {
+    if (selectedService() === "essay") {
+      const words = Number(formValue("wordCount"));
+      const pages = writingUnit.value === "words" ? Math.ceil(words / 275) : Number(formValue("pageCount"));
+      if (!Number.isSafeInteger(pages) || pages < 1) return "Add a positive whole page or word count to preview the writing estimate.";
+      const rateCents = form.elements.urgency.checked ? 1650 : 1500;
+      return `${pages} ${pages === 1 ? "page" : "pages"} × $${(rateCents / 100).toFixed(2)} = $${((pages * rateCents) / 100).toFixed(2)}`;
+    }
+    if (selectedService() === "exam") {
+      const hours = Number(formValue("examHours"));
+      if (!Number.isSafeInteger(hours) || hours < 1) return "Add whole assistance hours to preview the exam-support estimate.";
+      const totalCents = hours * 15000;
+      return `${hours} ${hours === 1 ? "hour" : "hours"} × $150.00 = $${(totalCents / 100).toFixed(2)}`;
+    }
+    if (new Set(["tutoring", "other"]).has(selectedService())) return "MCX will provide a custom quote after reviewing the complete scope and materials.";
+    return "Choose a service and units to preview the server-calculated rate.";
+  }
+
+  function updateEstimate() {
+    if (estimateValue) estimateValue.textContent = estimateText();
+  }
+
   function renderReview(pending) {
     const details = [
       ["Support type", serviceLabel(pending.service)],
       ["Subject", pending.subject],
       ["Request", pending.title || pending.description],
       ["Deadline", pending.deadline || "Not specified"],
+      ["Informational estimate", estimateText()],
       ["Contact", `${pending.name} · ${pending.email}`],
       ["Files", pending.initialAttachments.length ? pending.initialAttachments.map(function (file) { return file.fileName; }).join(", ") : "None added"],
     ];
@@ -149,26 +188,26 @@
       const response = await fetch("/api/config", { credentials: "same-origin" });
       const config = await response.json();
       if (config.demoMode) {
-        status.textContent = "Local demo mode is active. Creating your request...";
-        const request = await handoffPendingRequest(pending);
-        await uploadCurrentFiles(request.id);
+        status.textContent = "Local demo mode is active. Creating your order...";
+        const order = await handoffPendingRequest(pending);
+        await uploadCurrentFiles(order.id);
         localStorage.removeItem(PENDING_KEY);
-        window.location.assign(`/dashboard.html?request=${encodeURIComponent(request.id)}`);
+        window.location.assign(`/client.html?order=${encodeURIComponent(order.id)}`);
         return;
       }
       if (!config.publishableKey || !config.clerkJsUrl) throw new Error("Secure sign up is not configured yet.");
       await loadClerkScript(config.clerkJsUrl, config.publishableKey);
-      await window.Clerk.load({ signInUrl: config.signInUrl, signUpUrl: "/onboard.html", afterSignInUrl: "/dashboard.html", afterSignUpUrl: "/dashboard.html" });
+      await window.Clerk.load({ signInUrl: config.signInUrl, signUpUrl: "/onboard.html", afterSignInUrl: "/client.html", afterSignUpUrl: "/client.html" });
       if (window.Clerk.isSignedIn) {
-        const request = await handoffPendingRequest(pending);
+        const order = await handoffPendingRequest(pending);
         localStorage.removeItem(PENDING_KEY);
-        window.location.assign(`/dashboard.html?request=${encodeURIComponent(request.id)}`);
+        window.location.assign(`/client.html?order=${encodeURIComponent(order.id)}`);
         return;
       }
       window.Clerk.mountSignUp(document.getElementById("clerk-onboard-sign-up"), {
         signInUrl: "/login.html",
-        afterSignUpUrl: "/dashboard.html",
-        afterSignInUrl: "/dashboard.html",
+        afterSignUpUrl: "/client.html",
+        afterSignInUrl: "/client.html",
         appearance: { variables: { colorPrimary: "#6f3ff5", borderRadius: "0.8rem" } },
       });
       status.textContent = "Create your secure account to send this request to the workspace.";
@@ -178,25 +217,33 @@
   }
 
   async function handoffPendingRequest(pending) {
-    const response = await fetch("/api/platform/requests/handoff", {
+    const csrfToken = await getCsrfToken();
+    const response = await fetch("/api/platform/orders/handoff", {
       method: "POST",
       credentials: "same-origin",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "X-CSRF-Token": csrfToken },
       body: JSON.stringify(pending),
     });
     const payload = await response.json().catch(function () { return {}; });
-    if (!response.ok) throw new Error(payload.error || "The request could not be created.");
-    return payload.request;
+    if (!response.ok) throw new Error(payload.error || "The order could not be created.");
+    return payload.order;
   }
 
-  async function uploadCurrentFiles(requestId) {
+  async function getCsrfToken() {
+    const response = await fetch("/api/security/csrf", { credentials: "same-origin" });
+    const payload = await response.json();
+    return payload.csrfToken || "";
+  }
+
+  async function uploadCurrentFiles(orderId) {
+    const csrfToken = await getCsrfToken();
     for (const file of Array.from(initialFiles.files || [])) {
       if (!file.size || file.size > 8 * 1024 * 1024) continue;
       const contentBase64 = await fileToBase64(file);
-      await fetch(`/api/platform/requests/${encodeURIComponent(requestId)}/attachments`, {
+      await fetch(`/api/platform/orders/${encodeURIComponent(orderId)}/attachments`, {
         method: "POST",
         credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "X-CSRF-Token": csrfToken },
         body: JSON.stringify({ fileName: file.name, mimeType: file.type, contentBase64 }),
       });
     }
@@ -228,9 +275,13 @@
   document.querySelectorAll("[data-service]").forEach(function (button) {
     button.addEventListener("click", function () { chooseService(button.dataset.service); });
   });
+  writingUnit.addEventListener("change", function () {
+    document.querySelectorAll("[data-writing-unit]").forEach(function (field) { field.hidden = field.dataset.writingUnit !== writingUnit.value; });
+    updateEstimate();
+  });
   nextButton.addEventListener("click", function () { if (validateStep(currentStep)) showStep(currentStep + 1); });
   backButton.addEventListener("click", function () { showStep(currentStep - 1); });
-  form.addEventListener("input", function () { if (currentStep === steps.length - 1) renderReview(persistPendingRequest()); });
+  form.addEventListener("input", function () { updateEstimate(); if (currentStep === steps.length - 1) renderReview(persistPendingRequest()); });
 
   const goal = new URLSearchParams(window.location.search).get("goal");
   if (["essay", "exam", "tutoring", "other"].includes(goal)) chooseService(goal);
