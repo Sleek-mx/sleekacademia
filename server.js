@@ -214,13 +214,24 @@ for (const [source, destination] of legacySeoRedirects) {
   app.get(source, (_req, res) => res.redirect(301, destination));
 }
 
+const dashboardRedirects = new Map([
+  ["/admin", "/admin.html"],
+  ["/dashboard", "/dashboard.html"],
+  ["/client", "/dashboard.html"],
+  ["/client.html", "/dashboard.html"],
+]);
+
+for (const [source, destination] of dashboardRedirects) {
+  app.get(source, (_req, res) => res.redirect(301, destination));
+}
+
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, service: "sleek-academia" });
 });
 
 app.use("/assets", express.static(assetsDir));
 app.use((req, res, next) => {
-  if (req.path === "/dashboard.html") return next();
+  if (req.path === "/dashboard.html" || req.path === "/admin.html") return next();
   return express.static(publicDir, staticOptions)(req, res, next);
 });
 
@@ -291,6 +302,10 @@ app.get("/api/config", (req, res) => {
 
 app.get("/dashboard.html", requireDashboardAccess, (_req, res) => {
   res.sendFile(path.join(publicDir, "dashboard.html"));
+});
+
+app.get("/admin.html", guardAdminDashboard, (_req, res) => {
+  res.sendFile(path.join(publicDir, "admin.html"));
 });
 
 app.get("/api/me", requireSession, async (req, res) => {
@@ -626,6 +641,18 @@ function requireDashboardAccess(req, res, next) {
   if (localDemoMode && isLoopbackHostname(req.hostname)) return next();
   if (!clerkIsConfigured) return requireClerkConfigured(req, res, next);
   return requireAuth()(req, res, next);
+}
+
+async function guardAdminDashboard(req, res, next) {
+  if (localDemoMode && isLoopbackHostname(req.hostname)) return next();
+  if (!adminSessionService) return res.redirect("/login.html?mode=admin");
+  try {
+    const resolved = await adminSessionService.resolveRequest(req);
+    if (resolved?.identity?.role === "admin") return next();
+  } catch {
+    // A failed session lookup is treated exactly like an anonymous request.
+  }
+  return res.redirect("/login.html?mode=admin");
 }
 
 function formatUser(user, role) {

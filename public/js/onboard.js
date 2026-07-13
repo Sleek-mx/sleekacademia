@@ -192,22 +192,22 @@
         const order = await handoffPendingRequest(pending);
         await uploadCurrentFiles(order.id);
         localStorage.removeItem(PENDING_KEY);
-        window.location.assign(`/client.html?order=${encodeURIComponent(order.id)}`);
+        window.location.assign(`/dashboard.html?order=${encodeURIComponent(order.id)}`);
         return;
       }
       if (!config.publishableKey || !config.clerkJsUrl) throw new Error("Secure sign up is not configured yet.");
       await loadClerkScript(config.clerkJsUrl, config.publishableKey);
-      await window.Clerk.load({ signInUrl: config.signInUrl, signUpUrl: "/onboard.html", afterSignInUrl: "/client.html", afterSignUpUrl: "/client.html" });
+      await window.Clerk.load({ signInUrl: config.signInUrl, signUpUrl: "/onboard.html", afterSignInUrl: "/dashboard.html", afterSignUpUrl: "/dashboard.html" });
       if (window.Clerk.isSignedIn) {
         const order = await handoffPendingRequest(pending);
         localStorage.removeItem(PENDING_KEY);
-        window.location.assign(`/client.html?order=${encodeURIComponent(order.id)}`);
+        window.location.assign(`/dashboard.html?order=${encodeURIComponent(order.id)}`);
         return;
       }
       window.Clerk.mountSignUp(document.getElementById("clerk-onboard-sign-up"), {
         signInUrl: "/login.html",
-        afterSignUpUrl: "/client.html",
-        afterSignInUrl: "/client.html",
+        afterSignUpUrl: "/dashboard.html",
+        afterSignInUrl: "/dashboard.html",
         appearance: { variables: { colorPrimary: "#6f3ff5", borderRadius: "0.8rem" } },
       });
       status.textContent = "Create your secure account to send this request to the workspace.";

@@ -39,6 +39,7 @@ test("login has isolated Client and Admin modes with no credential persistence",
   assert.match(html, /name="username"[^>]*value="MCX"/);
   assert.match(html, /name="password"[^>]*type="password"/);
   assert.match(script, /\/api\/admin-auth\/login/);
+  assert.match(script, /URLSearchParams[\s\S]*mode[\s\S]*admin/);
   assert.match(script, /Sign-in details could not be verified\./);
   assert.doesNotMatch(script, /localStorage.*password|sessionStorage.*password|URLSearchParams.*password/);
   assert.doesNotMatch(html, /role switch|View as admin|View as client/i);

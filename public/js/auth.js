@@ -31,7 +31,7 @@ function configureLoginModes({ status, signInTarget, adminForm, config }) {
     if (mode === "client") {
       if (config.demoMode) {
         showStatus(status, "Local demo mode is active. Open the client dashboard to review the seeded workspace.");
-        status.insertAdjacentHTML("beforeend", ' <a class="ws-button primary small" href="/client.html">Open client demo</a>');
+        status.insertAdjacentHTML("beforeend", ' <a class="ws-button primary small" href="/dashboard.html">Open client demo</a>');
       } else if (!clerkMounted) {
         clerkMounted = true;
         await mountClerk({ status, target: signInTarget, mode: "sign-in", config });
@@ -67,7 +67,8 @@ function configureLoginModes({ status, signInTarget, adminForm, config }) {
       submit.disabled = false;
     }
   });
-  void selectMode("client");
+  const initialMode = new URLSearchParams(window.location.search).get("mode") === "admin" ? "admin" : "client";
+  void selectMode(initialMode);
 }
 
 async function mountClerk({ status, target, mode, config }) {
@@ -75,10 +76,10 @@ async function mountClerk({ status, target, mode, config }) {
   await loadScript(config.clerkJsUrl, config.publishableKey);
   await window.Clerk.load({
     signInUrl: config.signInUrl, signUpUrl: config.signUpUrl,
-    afterSignInUrl: "/client.html", afterSignUpUrl: "/client.html",
+    afterSignInUrl: "/dashboard.html", afterSignUpUrl: "/dashboard.html",
   });
   if (window.Clerk.isSignedIn) {
-    window.location.replace("/client.html");
+    window.location.replace("/dashboard.html");
     return;
   }
   showStatus(status, mode === "sign-up" ? "Create your client account using email or Google." : "Sign in to your client workspace using email or Google.");
@@ -86,8 +87,8 @@ async function mountClerk({ status, target, mode, config }) {
     variables: { colorPrimary: "#702ae1", colorBackground: "#ffffff", colorText: "#202432", borderRadius: "1rem" },
     elements: { card: "shadow-none border border-slate-100 rounded-[1.5rem]", formButtonPrimary: "bg-[#702ae1] hover:bg-[#5d22c2] text-white rounded-2xl font-semibold", socialButtonsBlockButton: "rounded-2xl border border-slate-200 hover:bg-slate-50", footerActionLink: "text-[#702ae1] hover:text-[#5d22c2]" },
   };
-  if (mode === "sign-up") window.Clerk.mountSignUp(target, { appearance, signInUrl: "/login.html", afterSignUpUrl: "/client.html" });
-  else window.Clerk.mountSignIn(target, { appearance, signUpUrl: "/sign-up.html", afterSignInUrl: "/client.html" });
+  if (mode === "sign-up") window.Clerk.mountSignUp(target, { appearance, signInUrl: "/login.html", afterSignUpUrl: "/dashboard.html" });
+  else window.Clerk.mountSignIn(target, { appearance, signUpUrl: "/sign-up.html", afterSignInUrl: "/dashboard.html" });
 }
 
 function showStatus(target, message, error = false) {
