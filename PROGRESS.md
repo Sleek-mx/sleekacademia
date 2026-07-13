@@ -26,11 +26,12 @@ Plan:
 - [x] Completed full-build Task 1 in `src/platform/domain.js`: allowlisted request validation, approved status transitions, integer-cent milestone math, 50 percent deposit gate, full-payment completion gate, and protected final/AI-report downloads. Added 8 focused tests; full suite is 39 passing.
 - [x] Completed full-build Task 2: tenant-isolated/idempotent in-memory store, loopback-safe adapter selection, production Supabase PostgREST/private Storage adapter, demo workspace seed, and the complete SQL migration at `supabase/migrations/20260713_platform.sql`. Added 6 focused tests; full suite is 45 passing.
 - [x] Completed full-build Task 3: Clerk/loopback identity resolver plus protected profile, request handoff/list/detail, message, upload, deliverable, quote, status, notification, and gated-download APIs mounted at `/api/platform`. Local integration proves the seeded demo workspace is loopback-only. Added 10 focused/integration tests; full suite is 55 passing.
+- [x] Completed full-build Task 4: rebuilt About, Blog, and Store on the official brand system; added accessible reduced-motion-safe reveal/navigation behavior; added complete Blog search and field filters; preserved Gumroad live synchronization, analytics, schema, social profiles, canonicals, and all article URLs; removed public Pricing/package detours across prep and article pages. Added 6 focused tests; full suite is 61 passing and SEO suite is 6 passing.
 
 ## Next
 
-- [ ] Implement Task 4 of the full-build plan: shared restrained motion plus complete About, Blog, Store, article/prep navigation, and public Pricing/package cleanup.
-- [ ] Continue Tasks 5–7: article artwork, request funnel/workspace, payments, and delivery.
+- [ ] Implement Task 5 of the full-build plan: create and install the ten distinct brand-consistent article images referenced by the rebuilt Blog.
+- [ ] Continue Tasks 6–7: request funnel/workspace, payments, and delivery.
 - [ ] Complete Task 8: run the entire site locally and show Max the working public site, request flow, signup handoff, dashboard, payment states, and delivery gates before any GitHub push or Namecheap deployment.
 
 ## Facts a fresh session needs
