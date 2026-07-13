@@ -20,3 +20,7 @@ test("footer preserves the constrained visible brand lockup and public theme", (
   assert.match(home, /class="brand-lockup__mark"[^>]*sleek-academia-mark\.webp/);
   assert.match(home, /class="brand-lockup__name">Sleek Academia</);
 });
+
+test("public pages clip decorative artwork without widening the document", () => {
+  assert.match(css, /html\s*\{[^}]*overflow-x:\s*clip/s);
+});

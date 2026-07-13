@@ -54,11 +54,13 @@ Current approved extension: replace the combined demo workspace with separate MC
 - [x] Completed revised-platform Task 11: added the shared Sleek-palette liquid-glass dashboard system with light/night preference persistence, reduced-motion/transparency fallbacks, accessible focus states, responsive rail/table/dialog/state primitives, canonical dashboard aliases, and non-bypassable Clerk client and MCX admin HTML guards; kept all 155 tests green and the dependency audit at zero vulnerabilities.
 - [x] Completed revised-platform Task 12: built the dedicated MCX admin dashboard with complete lifecycle and derived queues, search/sort, order command center, clarification/acceptance/decline/status/delivery/revision/completion controls, client/message/payment/earnings/file reporting, 7/30/90/all earnings, CSV export, secure logout, responsive drawer, and resilient loading/empty/error states; kept all 159 tests green and both security audits at zero vulnerabilities.
 - [x] Completed revised-platform Task 13: replaced the combined legacy workspace with a dedicated Clerk client dashboard covering overview, order queues/cards/details, messages, materials, provider payments/receipts, locked delivery metadata, 423 handling, server-owned revision eligibility, one included seven-day revision, profile/help, light/night theme, responsive drawer, and resilient states; removed the client/admin role switch and retired controller; kept all 162 tests green.
+- [x] Completed revised-platform Task 14: expanded the real-server smoke flow through paid download, one included revision, redelivery, second-revision denial, completion, client/admin isolation, and absence of manual-payment routes; denied non-loopback demo admin access; visually reviewed public/login/admin/client surfaces at desktop and mobile sizes in the in-app browser; verified both dashboard themes, all navigation sections, responsive drawers, locked and paid delivery states, and a clean browser console; fixed and regression-tested decorative homepage overflow; updated `docs/local-review.md`; passed 163/163 application tests, 6/6 SEO tests, the tracked-source security gate, dependency audit, and diff checks with zero vulnerabilities.
 
 ## Next
 
-- [ ] Execute the approved plan inline with red-green-refactor tests and checkpoint commits.
-- [ ] Verify the entire revised platform locally and leave the server running; do not push or deploy until Max approves that local result.
+- [x] Execute the approved plan inline with red-green-refactor tests and checkpoint commits.
+- [x] Verify the entire revised platform locally and leave the server running; do not push or deploy until Max approves that local result.
+- [ ] After Max reviews localhost and explicitly approves launch, reverify the GitHub remote and destructive deployment source/destination, configure production credentials, push for the Namecheap auto-build, and verify the public URL before reporting live.
 
 ## Facts a fresh session needs
 

@@ -39,6 +39,13 @@ test("all review surfaces load from the real Express app", async () => {
   }
   const health = await (await fetch(`${base}/api/health`)).json();
   assert.deepEqual(health, { ok: true, service: "sleek-academia" });
+
+  const homepage = await fetch(`${base}/`);
+  const homepageHtml = await homepage.text();
+  assert.match(homepageHtml, /class="site-footer"/);
+  assert.doesNotMatch(homepageHtml, /sleek-academia-logo-source|1595|993/);
+  assert.match(homepage.headers.get("content-security-policy") || "", /default-src 'self'/);
+  assert.equal(homepage.headers.get("x-content-type-options"), "nosniff");
 });
 
 function availablePort() {
@@ -100,4 +107,34 @@ test("request, quote, deposit, delivery lock, balance, and download work end to 
   const download = await api(`/attachments/${attachmentId}/download`);
   assert.equal(download.status, 200);
   assert.equal(await download.text(), "verified local delivery");
+
+  const detailAfterDownload = await (await api(`/orders/${requestId}`)).json();
+  assert.equal(detailAfterDownload.revisionEligibility.eligible, true);
+
+  const revision = await api(`/orders/${requestId}/revisions`, { method: "POST", body: { instructions: "Please correct the final reference entry." } });
+  assert.equal(revision.status, 201);
+  assert.equal((await revision.json()).order.status, "Revision Requested");
+
+  const revisionStarted = await api(`/admin/orders/${requestId}/status`, { method: "PATCH", role: "admin", body: { status: "In Revision" } });
+  assert.equal(revisionStarted.status, 200);
+
+  const redelivery = await api(`/admin/orders/${requestId}/deliverables`, {
+    method: "POST",
+    role: "admin",
+    body: { category: "final", fileName: "smoke-final-v2.txt", mimeType: "text/plain", contentBase64: Buffer.from("verified revised delivery").toString("base64") },
+  });
+  assert.equal(redelivery.status, 201);
+  const redelivered = await api(`/admin/orders/${requestId}/status`, { method: "PATCH", role: "admin", body: { status: "Delivered" } });
+  assert.equal(redelivered.status, 200);
+
+  const secondRevision = await api(`/orders/${requestId}/revisions`, { method: "POST", body: { instructions: "A second included revision should not be accepted." } });
+  assert.equal(secondRevision.status, 409);
+  assert.equal((await secondRevision.json()).additionalWork, true);
+
+  const completed = await api(`/admin/orders/${requestId}/status`, { method: "PATCH", role: "admin", body: { status: "Completed" } });
+  assert.equal(completed.status, 200);
+  assert.equal((await completed.json()).order.status, "Completed");
+
+  assert.equal((await api("/admin/overview")).status, 403);
+  assert.equal((await api(`/admin/orders/${requestId}/payments/manual`, { method: "POST", role: "admin", body: {} })).status, 404);
 });

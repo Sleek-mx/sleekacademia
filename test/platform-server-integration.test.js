@@ -83,4 +83,6 @@ test("dashboard aliases are canonical and protected pages cannot bypass their gu
 test("demo identity is denied when the same process receives a non-loopback host", async () => {
   const response = await requestWithHost("/api/platform/session");
   assert.equal(response.status, 401);
+  const adminResponse = await requestWithHost("/api/platform/admin/overview");
+  assert.equal(adminResponse.status, 401);
 });

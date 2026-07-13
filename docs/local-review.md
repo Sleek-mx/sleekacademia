@@ -7,32 +7,53 @@ This checkpoint is intentionally local only. No GitHub push, Namecheap sync, or 
 From this worktree:
 
 ```bash
-LOCAL_DEMO_MODE=1 PORT=4173 npm start
+LOCAL_DEMO_MODE=1 PORT=3000 npm start
 ```
 
-Open `http://localhost:4173/`.
+Open `http://localhost:3000/`.
 
-`LOCAL_DEMO_MODE=1` works only on loopback hosts. It supplies a seeded client workspace, an admin/client role switch, and clearly labeled payment simulation buttons without exposing a demo identity on a remote host.
+`LOCAL_DEMO_MODE=1` works only on loopback hosts. It supplies deterministic, non-personal client and admin workspaces plus clearly labeled Stripe/PayPal confirmation simulations. A non-loopback `Host` header cannot use the demo identity or admin API.
 
 ## Review paths
 
-- Public pages: `/`, `/about.html`, `/blog.html`, and `/store.html`
-- Request wizard: `/onboard.html`
-- Authentication previews: `/sign-up.html` and `/login.html`
-- Workspace: `/dashboard.html`
+- Public site: `http://localhost:3000/`
+- Four-step request wizard: `http://localhost:3000/onboard.html`
+- Separate client/admin login: `http://localhost:3000/login.html`
+- Clerk client workspace preview: `http://localhost:3000/dashboard.html`
+- MCX administrator workspace preview: `http://localhost:3000/admin.html`
 
-## End-to-end demo
+Both dashboards have light and night modes. At localhost, the login page exposes explicit links to the seeded client and MCX previews; production never receives those shortcuts.
 
-1. Start a request from the homepage and complete the service, brief, and contact steps.
-2. The request is handed off once into the client workspace.
-3. Select **View as admin**, enter a quote, and apply it. The request becomes **Deposit Due**.
-4. Return to the client view, open **Payments**, and use the localhost deposit simulation. The request becomes **In Progress**.
-5. In admin view, move the request through **Ready for Review** to **Balance Due**.
-6. Return to client view and simulate the balance confirmation. The server marks the request **Completed**.
-7. Open the seeded completed request, **Quality improvement briefing**, then open **Files**. Final work and the AI-use report are available only after full payment.
+## What to review
 
-The application owns quote and milestone amounts on the server. Browser-supplied payment amounts are not trusted. Stripe and PayPal use provider-confirmed production flows when configured; only the loopback demo exposes simulation.
+### Public site and login
+
+1. Confirm the public pages retain the Sleek Academia neumorphic theme, official mark, exact palette, and constrained footer lockup.
+2. Resize the homepage and confirm there is no horizontal overflow or oversized footer artwork.
+3. Open the login page and switch between **Client** and **Admin**. The client path is reserved for Clerk; the administrator path uses the separate MCX credential boundary.
+
+### MCX administrator workspace
+
+1. Open `/admin.html` and review **Overview**, **Orders**, **Clients**, **Messages**, **Payments**, **Earnings**, **Files**, and **Settings**.
+2. In **Orders**, inspect the seeded Available, Needs Clarification, In Progress, Delivered, Revision Requested, and Completed examples.
+3. Open an order to review instructions, materials, immutable pricing, payments, messages, delivery versions, revision history, and allowed lifecycle actions.
+4. Confirm the earnings view counts confirmed Stripe/PayPal transactions only. There is no manual, offline, or M-Pesa paid override.
+
+### Client workspace and payment gate
+
+1. Open `/dashboard.html`, then review **My Orders**, **Messages**, **Files**, **Payments**, **Profile**, and **Help**.
+2. Filter **My Orders** to **Delivered** and open **Quality improvement briefing**. The final filename and delivery metadata are visible, but the download is disabled while the $37.50 balance remains.
+3. Filter to **Completed** and open **Completed research summary**. It is fully paid and exposes **Download**.
+4. The one included revision remains unavailable until the first paid download. That download atomically starts its seven-day request window; a second included revision becomes additional work.
+
+## Pricing and lifecycle contracts
+
+- Writing: $15.00 per 275-word page.
+- Six-hour urgent writing: $16.50 per page.
+- Exam assistance: $150.00 per whole hour.
+- Server-owned 50 percent deposit before work starts; full provider-confirmed payment before final download.
+- Delivered work can remain visible but locked. The lifecycle includes clarification, acceptance, deposit due, in progress, delivered, revision requested/in revision, redelivery, and completion.
 
 ## Production readiness boundary
 
-Before a Namecheap launch, configure and verify Clerk, Supabase (including the private `sleek-academia-private` bucket), Stripe and/or PayPal, production environment values, the GitHub remote, the webhook build, and the final public URL. The repository's deployment path includes `rsync --delete`, so its source and destination must be verified immediately before any push.
+Before a Namecheap launch, configure and verify Clerk, Supabase (including the private `sleek-academia-private` bucket), the MCX password hash, Stripe and/or PayPal, production environment values, the GitHub remote, the webhook build, and the final public URL. MCX MFA remains explicitly deferred. The repository's deployment path includes `rsync --delete`, so its complete source and exact destination must be reverified immediately before any push.
