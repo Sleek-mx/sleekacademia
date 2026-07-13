@@ -14,6 +14,8 @@ import {
   getAuth,
   requireAuth,
 } from "@clerk/express";
+import { createAdminSessionService } from "./src/platform/admin-auth.js";
+import { createAdminAuthRouter } from "./src/platform/admin-auth-router.js";
 import { seedDemoPlatform } from "./src/platform/demo-seed.js";
 import { createPlatformRouter } from "./src/platform/http.js";
 import { createPlatformIdentityResolver } from "./src/platform/identity.js";
@@ -51,6 +53,20 @@ const platformStore = createPlatformStore({
   localDemoMode,
   hostname: localDemoMode ? "localhost" : "",
 });
+const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH || "";
+const adminSessionSecret = process.env.ADMIN_SESSION_SECRET || "";
+const adminAuthRequested = process.env.ADMIN_AUTH_ENABLED === "1" || Boolean(adminPasswordHash || adminSessionSecret);
+if (adminAuthRequested && (!adminPasswordHash || !adminSessionSecret) && !localDemoMode) {
+  throw new Error("ADMIN_PASSWORD_HASH and ADMIN_SESSION_SECRET are both required when admin authentication is enabled.");
+}
+const adminSessionService = adminPasswordHash && adminSessionSecret
+  ? createAdminSessionService({
+      store: platformStore,
+      username: process.env.ADMIN_USERNAME || "MCX",
+      passwordHash: adminPasswordHash,
+      sessionSecret: adminSessionSecret,
+    })
+  : null;
 const staticOptions = {
   extensions: ["html"],
   setHeaders: (res, filePath) => {
@@ -59,10 +75,6 @@ const staticOptions = {
     }
   }
 };
-
-const validRoles = new Set(["admin", "tutor", "student"]);
-const adminEmails = splitEmails(process.env.ADMIN_EMAILS);
-const tutorEmails = splitEmails(process.env.TUTOR_EMAILS);
 
 app.post("/deploy.php", express.raw({ type: "application/json", limit: "2mb" }), async (req, res) => {
   const secret = process.env.GITHUB_WEBHOOK_SECRET;
@@ -147,6 +159,7 @@ app.use(express.json({
     if (req.originalUrl === "/api/platform/payments/stripe-webhook") req.rawBody = Buffer.from(buffer);
   },
 }));
+app.use("/api/admin-auth", createAdminAuthRouter({ service: adminSessionService }));
 
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://sleekacademia.com,http://localhost:3000').split(',');
 app.use((req, res, next) => {
@@ -203,6 +216,9 @@ if (clerkIsConfigured) {
 
 const resolvePlatformIdentity = createPlatformIdentityResolver({
   localDemoMode,
+  resolveAdminIdentity: adminSessionService
+    ? async (req) => (await adminSessionService.resolveRequest(req))?.identity || null
+    : async () => null,
   clerkConfigured: clerkIsConfigured,
   getAuth,
   clerkClient,
@@ -356,28 +372,6 @@ app.post("/api/service-request", requireSession, async (req, res) => {
   } catch (err) {
     console.error("Service request email error:", err.response?.data || (err && err.message) || err);
     return res.status(500).json({ error: "Failed to send your request. Please try again." });
-  }
-});
-
-app.get("/api/admin/users", requireSession, requireAdmin, async (_req, res) => {
-  try {
-    const { data, totalCount } = await clerkClient.users.getUserList({ orderBy: "-created_at", limit: 25 });
-    const users = await Promise.all(data.map(async (user) => { const role = await ensureUserRole(user); return formatUser(user, role); }));
-    const counts = users.reduce((acc, user) => { acc[user.role] += 1; return acc; }, { admin: 0, tutor: 0, student: 0 });
-    res.json({ totalCount, counts, users });
-  } catch (error) {
-    res.status(500).json({ error: "Unable to load platform users.", details: error instanceof Error ? error.message : "Unknown error" });
-  }
-});
-
-app.patch("/api/admin/users/:userId/role", requireSession, requireAdmin, async (req, res) => {
-  try {
-    const role = normalizeRole(req.body?.role);
-    if (!role) return res.status(400).json({ error: "Role must be one of admin, tutor, or student." });
-    const updatedUser = await clerkClient.users.updateUserMetadata(req.params.userId, { publicMetadata: { role } });
-    return res.json({ success: true, user: formatUser(updatedUser, role) });
-  } catch (error) {
-    return res.status(500).json({ error: "Unable to update the user's role.", details: error instanceof Error ? error.message : "Unknown error" });
   }
 });
 
@@ -570,18 +564,8 @@ app.listen(port, () => {
   console.log(`Sleek Academia is running at http://localhost:${port}`);
 });
 
-function splitEmails(value = "") {
-  return new Set(value.split(",").map((item) => item.trim().toLowerCase()).filter(Boolean));
-}
-
 function shellQuote(value) {
   return `'${String(value).replace(/'/g, "'\\''")}'`;
-}
-
-function normalizeRole(value) {
-  if (typeof value !== "string") return null;
-  const role = value.trim().toLowerCase();
-  return validRoles.has(role) ? role : null;
 }
 
 function primaryEmail(user) {
@@ -591,32 +575,13 @@ function primaryEmail(user) {
   return primary?.emailAddress?.toLowerCase() || "";
 }
 
-function inferRoleFromEmail(email) {
-  if (adminEmails.has(email)) return "admin";
-  if (tutorEmails.has(email)) return "tutor";
-  return "student";
-}
-
 async function ensureUserRole(user) {
-  const existingRole = normalizeRole(user?.publicMetadata?.role);
-  if (existingRole) return existingRole;
-  const role = inferRoleFromEmail(primaryEmail(user));
-  await clerkClient.users.updateUserMetadata(user.id, { publicMetadata: { role } });
-  return role;
-}
-
-async function requireAdmin(req, res, next) {
-  try {
-    const { userId } = getAuth(req);
-    const user = await clerkClient.users.getUser(userId);
-    const role = await ensureUserRole(user);
-    if (role !== "admin") return res.status(403).json({ error: "Admin access is required." });
-    req.currentUser = user;
-    req.currentRole = role;
-    return next();
-  } catch (error) {
-    return res.status(500).json({ error: "Unable to verify admin access.", details: error instanceof Error ? error.message : "Unknown error" });
+  if (user?.publicMetadata?.role !== "student") {
+    await clerkClient.users.updateUserMetadata(user.id, {
+      publicMetadata: { ...(user.publicMetadata || {}), role: "student" },
+    });
   }
+  return "student";
 }
 
 function requireSession(req, res, next) {

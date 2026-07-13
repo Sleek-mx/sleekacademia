@@ -6,12 +6,9 @@ function primaryEmail(user) {
   return primary?.emailAddress?.trim().toLowerCase() || "";
 }
 
-function normalizeRole(value) {
-  return new Set(["student", "tutor", "admin"]).has(value) ? value : "student";
-}
-
 export function createPlatformIdentityResolver({
   localDemoMode = false,
+  resolveAdminIdentity = async () => null,
   clerkConfigured = false,
   getAuth,
   clerkClient,
@@ -25,15 +22,18 @@ export function createPlatformIdentityResolver({
         : { userId: "demo-client", role, email: "max.demo@sleekacademia.local", fullName: "Max Demo", demo: true };
     }
 
+    const adminIdentity = await resolveAdminIdentity(req);
+    if (adminIdentity) return adminIdentity;
+
     if (!clerkConfigured || typeof getAuth !== "function" || !clerkClient) return null;
     const auth = getAuth(req);
     if (!auth?.isAuthenticated || !auth.userId) return null;
     const user = await clerkClient.users.getUser(auth.userId);
-    const role = normalizeRole(await ensureRole(user));
+    await ensureRole(user);
     const email = primaryEmail(user);
     return {
       userId: user.id,
-      role,
+      role: "student",
       email,
       fullName: [user.firstName, user.lastName].filter(Boolean).join(" ").trim() || email || "Sleek Academia User",
       demo: false,
