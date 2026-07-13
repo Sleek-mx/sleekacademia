@@ -4,7 +4,7 @@
   <!-- Core pages -->
   <url>
     <loc>https://sleekacademia.com/</loc>
-    <lastmod>2026-06-22</lastmod>
+    <lastmod>2026-07-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -36,13 +36,13 @@
   </url>
   <url>
     <loc>https://sleekacademia.com/cfa-level-1-prep.html</loc>
-    <lastmod>2026-06-22</lastmod>
+    <lastmod>2026-07-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
     <loc>https://sleekacademia.com/comptia-security-plus-prep.html</loc>
-    <lastmod>2026-06-22</lastmod>
+    <lastmod>2026-07-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.95</priority>
   </url>
@@ -50,7 +50,7 @@
   <!-- Blog index -->
   <url>
     <loc>https://sleekacademia.com/blog.html</loc>
-    <lastmod>2026-06-22</lastmod>
+    <lastmod>2026-07-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -98,7 +98,13 @@
   <!-- Cluster blog posts — CFA -->
   <url>
     <loc>https://sleekacademia.com/blog/cfa-level-1-study-plan.html</loc>
-    <lastmod>2026-06-22</lastmod>
+    <lastmod>2026-07-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sleekacademia.com/blog/cfa-level-1-ethics-guide.html</loc>
+    <lastmod>2026-07-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
