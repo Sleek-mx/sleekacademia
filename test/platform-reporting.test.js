@@ -47,6 +47,13 @@ test("earnings include only confirmed Stripe and PayPal payments in period", () 
   assert.equal("profitCents" in report, false);
 });
 
+test("earnings supports the dashboard 90-day period", () => {
+  const historical = { id: "p0", requestId: "o1", provider: "stripe", status: "confirmed", amountCents: 700, confirmedAt: "2026-03-01T00:00:00.000Z" };
+  const report = buildEarningsReport({ payments: [...payments, historical], orders }, { period: "90d", now: new Date("2026-07-13T12:00:00.000Z") });
+  assert.equal(report.revenueCents, 16500);
+  assert.equal(report.transactions, 2);
+});
+
 test("orders support search, derived filters, deadline ordering, and pagination", () => {
   const result = filterAndSortOrders(orders, { search: "nursing", sort: "deadline", page: "1", pageSize: "1" }, new Date("2026-07-13T12:00:00.000Z"));
   assert.equal(result.total, 1);

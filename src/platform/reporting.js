@@ -52,6 +52,7 @@ function periodStart(period, now) {
   if (period === "today") return new Date(at.getFullYear(), at.getMonth(), at.getDate());
   if (period === "7d") return new Date(at.getTime() - 7 * 86400000);
   if (period === "30d") return new Date(at.getTime() - 30 * 86400000);
+  if (period === "90d") return new Date(at.getTime() - 90 * 86400000);
   if (period === "month") return new Date(at.getFullYear(), at.getMonth(), 1);
   if (period === "year") return new Date(at.getFullYear(), 0, 1);
   return null;

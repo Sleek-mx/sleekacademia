@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#e7e4f1">
+  <title>MCX Admin Dashboard | Sleek Academia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/dashboard-glass.css">
+  <script src="/js/dashboard-theme.js"></script>
+</head>
+<body class="dashboard-body">
+  <a class="dash-skip-link" href="#admin-main">Skip to dashboard content</a>
+  <div class="dash-shell" id="admin-shell" data-drawer-open="false">
+    <aside class="dash-rail" id="admin-rail" aria-label="MCX admin navigation">
+      <a class="dash-brand" href="/" aria-label="Sleek Academia home"><img src="/images/brand/sleek-academia-logo.webp" alt="Sleek Academia"></a>
+      <div>
+        <p class="dash-rail-label">Administration</p>
+        <nav class="dash-nav" aria-label="Admin sections">
+          <button class="dash-nav-button is-active" type="button" data-view="overview" aria-current="page"><span class="dash-nav-icon" aria-hidden="true">OV</span><span>Overview</span></button>
+          <button class="dash-nav-button" type="button" data-view="orders"><span class="dash-nav-icon" aria-hidden="true">OR</span><span>Orders</span><span class="dash-count" id="nav-order-count">0</span></button>
+          <button class="dash-nav-button" type="button" data-view="clients"><span class="dash-nav-icon" aria-hidden="true">CL</span><span>Clients</span></button>
+          <button class="dash-nav-button" type="button" data-view="messages"><span class="dash-nav-icon" aria-hidden="true">MS</span><span>Messages</span><span class="dash-count" id="nav-message-count">0</span></button>
+          <button class="dash-nav-button" type="button" data-view="payments"><span class="dash-nav-icon" aria-hidden="true">PY</span><span>Payments</span></button>
+          <button class="dash-nav-button" type="button" data-view="earnings"><span class="dash-nav-icon" aria-hidden="true">ER</span><span>Earnings</span></button>
+          <button class="dash-nav-button" type="button" data-view="files"><span class="dash-nav-icon" aria-hidden="true">FL</span><span>Files</span></button>
+          <button class="dash-nav-button" type="button" data-view="settings"><span class="dash-nav-icon" aria-hidden="true">ST</span><span>Settings</span></button>
+        </nav>
+      </div>
+      <div class="dash-rail-footer">
+        <div class="dash-user"><strong id="admin-user-name">MCX Administrator</strong><span id="admin-user-email">Secure session</span></div>
+        <button class="dash-button" id="admin-logout" type="button">Log out</button>
+      </div>
+    </aside>
+    <button class="dash-rail-scrim" type="button" data-drawer-close aria-label="Close navigation"></button>
+
+    <div class="dash-stage">
+      <header class="dash-header">
+        <div class="dash-header-actions">
+          <button class="dash-icon-button dash-menu-button" type="button" data-drawer-toggle aria-controls="admin-rail" aria-expanded="false" aria-label="Open navigation">Menu</button>
+          <div class="dash-header-title"><h1 id="admin-page-title">Overview</h1><p id="admin-page-description">Orders, clients, revenue, and work requiring attention.</p></div>
+        </div>
+        <div class="dash-header-actions">
+          <button class="dash-icon-button" type="button" data-theme-toggle aria-pressed="false" aria-label="Use night dashboard theme">Theme</button>
+          <a class="dash-button primary" href="/onboard.html">New order</a>
+        </div>
+      </header>
+
+      <main class="dash-main" id="admin-main" tabindex="-1">
+        <div id="admin-live-region" class="dash-toast-region" role="status" aria-live="polite" aria-atomic="true"></div>
+
+        <section id="admin-loading-state" class="glass-panel dash-state" aria-label="Loading dashboard"><div class="dash-state-copy"><div class="dash-skeleton"></div><p>Loading the secure MCX workspace...</p></div></section>
+        <section id="admin-error-state" class="glass-panel dash-state" hidden><div class="dash-state-copy"><h2>Dashboard data could not load</h2><p id="admin-error-copy">Try the request again.</p><button class="dash-button primary" id="admin-retry" type="button">Retry</button></div></section>
+        <section id="admin-empty-state" class="glass-panel dash-state" hidden><div class="dash-state-copy"><h2>No records in this view</h2><p>New orders and activity will appear here when they arrive.</p></div></section>
+
+        <section class="dash-view" data-admin-view="overview" hidden>
+          <div class="dash-kpi-grid" id="admin-kpis" aria-label="Admin overview metrics"></div>
+          <div class="dash-grid">
+            <article class="glass-panel"><div class="dash-panel-heading"><div><h2>Work queues</h2><p>Primary lifecycle and payment queues that need MCX attention.</p></div></div><div class="glass-panel-inner"><div class="dash-tabs" id="overview-queues"></div></div></article>
+            <article class="glass-panel"><div class="dash-panel-heading"><div><h2>Recent activity</h2><p>The latest updated orders across all clients.</p></div><button class="dash-button" type="button" data-open-view="orders">View orders</button></div><ul class="dash-list" id="admin-recent-activity"></ul></article>
+          </div>
+        </section>
+
+        <section class="dash-view" data-admin-view="orders" hidden>
+          <article class="glass-panel">
+            <div class="dash-toolbar">
+              <div class="dash-field grow"><label for="admin-order-search">Search orders or clients</label><input class="dash-input" id="admin-order-search" type="search" placeholder="Order ID, client, subject, or service"></div>
+              <div class="dash-field"><label for="admin-order-status">Lifecycle status</label><select class="dash-select" id="admin-order-status"><option value="">All statuses</option><option>Available</option><option>Needs Clarification</option><option>Deposit Due</option><option>In Progress</option><option>Delivered</option><option>In Revision</option><option>Completed</option><option>Declined</option><option>Cancelled</option></select></div>
+              <div class="dash-field"><label for="admin-order-queue">Derived queue</label><select class="dash-select" id="admin-order-queue"><option value="">All queues</option><option>Balance Due</option><option>Delivered and Paid</option><option>Overdue</option><option>Unread</option></select></div>
+              <div class="dash-field"><label for="admin-order-sort">Sort orders</label><select class="dash-select" id="admin-order-sort"><option value="updated">Recently updated</option><option value="deadline">Deadline</option><option value="oldest">Oldest first</option></select></div>
+              <button class="dash-button" id="admin-export-csv" type="button">Export CSV</button>
+            </div>
+            <div class="dash-table-wrap"><table class="dash-table"><thead><tr><th>Order</th><th>Client</th><th>Status</th><th>Deadline</th><th>Quote</th><th>Paid</th><th>Attention</th></tr></thead><tbody id="admin-order-rows"></tbody></table></div>
+            <div class="glass-panel-inner" id="admin-order-pagination"></div>
+          </article>
+        </section>
+
+        <section class="dash-view" data-admin-view="clients" hidden><article class="glass-panel"><div class="dash-panel-heading"><div><h2>Clients</h2><p>Client order volume, active work, and confirmed payments.</p></div></div><div class="dash-table-wrap"><table class="dash-table"><thead><tr><th>Client</th><th>Orders</th><th>Active</th><th>Paid</th><th>Last order</th></tr></thead><tbody id="admin-client-rows"></tbody></table></div></article></section>
+        <section class="dash-view" data-admin-view="messages" hidden><article class="glass-panel"><div class="dash-panel-heading"><div><h2>Messages</h2><p>Client and MCX messages across every order, with unread activity first.</p></div></div><ul class="dash-list" id="admin-message-list"></ul></article></section>
+        <section class="dash-view" data-admin-view="payments" hidden><article class="glass-panel"><div class="dash-panel-heading"><div><h2>Payments</h2><p>Provider-confirmed Stripe and PayPal transactions. No manual paid controls.</p></div></div><div class="dash-table-wrap"><table class="dash-table"><thead><tr><th>Transaction</th><th>Order</th><th>Provider</th><th>Milestone</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody id="admin-payment-rows"></tbody></table></div></article></section>
+        <section class="dash-view" data-admin-view="earnings" hidden><article class="glass-panel"><div class="dash-panel-heading"><div><h2>Earnings</h2><p>Confirmed provider revenue and outstanding client balances.</p></div><div class="dash-field"><label for="admin-earnings-period">Period</label><select class="dash-select" id="admin-earnings-period"><option value="7d">7 days</option><option value="30d">30 days</option><option value="90d">90 days</option><option value="all">All time</option></select></div></div><div class="dash-kpi-grid glass-panel-inner" id="admin-earnings-kpis"></div><div class="dash-table-wrap"><table class="dash-table"><thead><tr><th>Transaction</th><th>Provider</th><th>Order</th><th>Amount</th><th>Date</th></tr></thead><tbody id="admin-earnings-rows"></tbody></table></div></article></section>
+        <section class="dash-view" data-admin-view="files" hidden><article class="glass-panel"><div class="dash-panel-heading"><div><h2>Files</h2><p>Private materials, drafts, final deliveries, and AI-use reports.</p></div></div><div class="dash-table-wrap"><table class="dash-table"><thead><tr><th>File</th><th>Order</th><th>Category</th><th>Size</th><th>Locked</th><th>Uploaded</th></tr></thead><tbody id="admin-file-rows"></tbody></table></div></article></section>
+        <section class="dash-view" data-admin-view="settings" hidden><div class="dash-grid equal"><article class="glass-panel"><div class="dash-panel-heading"><div><h2>Security</h2><p>MCX uses a separate password session, strict cookies, CSRF protection, expiry, and lockout controls.</p></div></div><div class="glass-panel-inner"><ul class="dash-list"><li class="dash-list-item"><div><strong>Administrator boundary</strong><p>Clerk client accounts cannot become MCX administrators.</p></div><span class="dash-status paid">Active</span></li><li class="dash-list-item"><div><strong>Payment authority</strong><p>Only verified Stripe and PayPal transactions count as paid.</p></div><span class="dash-status paid">Enforced</span></li></ul></div></article><article class="glass-panel"><div class="dash-panel-heading"><div><h2>Workspace policy</h2><p>Writing is $15 per 275-word page, urgent writing is $16.50 per page, and exam assistance is $150 per hour.</p></div></div><div class="glass-panel-inner"><p>Final delivery metadata stays visible, but downloads remain locked until the balance is paid. One included revision is available for seven days after the first paid download.</p></div></article></div></section>
+      </main>
+    </div>
+  </div>
+
+  <dialog class="dash-dialog" id="admin-order-dialog" aria-labelledby="admin-order-dialog-title">
+    <div class="dash-panel-heading"><div><h2 id="admin-order-dialog-title">Order command center</h2><p id="admin-order-dialog-meta"></p></div><button class="dash-icon-button" type="button" data-close-order aria-label="Close order details">Close</button></div>
+    <div class="dash-dialog-body dash-stack">
+      <div class="dash-tabs" role="tablist" aria-label="Order details"><button class="dash-tab is-active" type="button">Instructions</button><button class="dash-tab" type="button">Materials</button><button class="dash-tab" type="button">Pricing</button><button class="dash-tab" type="button">Payments</button><button class="dash-tab" type="button">Messages</button><button class="dash-tab" type="button">Files</button><button class="dash-tab" type="button">Timeline</button><button class="dash-tab" type="button">Delivery</button><button class="dash-tab" type="button">Revisions</button></div>
+      <div id="admin-order-detail"></div>
+      <div class="dash-grid equal">
+        <form class="glass-panel glass-panel-inner dash-stack" id="admin-clarification-form"><h3>Request clarification</h3><div class="dash-field"><label for="admin-clarification-body">What is missing?</label><textarea class="dash-textarea" id="admin-clarification-body" maxlength="4000" required></textarea></div><button class="dash-button secondary" type="submit" data-action="clarification">Send clarification request</button></form>
+        <form class="glass-panel glass-panel-inner dash-stack" id="admin-accept-form"><h3>Accept order</h3><div class="dash-field"><label for="admin-accepted-deadline">Accepted deadline</label><input class="dash-input" id="admin-accepted-deadline" type="datetime-local"></div><div class="dash-field"><label for="admin-custom-quote">Custom quote in USD</label><input class="dash-input" id="admin-custom-quote" type="number" min="1" step="0.01"></div><div class="dash-field"><label for="admin-custom-reason">Custom quote reason</label><input class="dash-input" id="admin-custom-reason" maxlength="300"></div><button class="dash-button primary" type="submit" data-action="accept">Accept order</button></form>
+      </div>
+      <div class="glass-panel glass-panel-inner dash-stack"><h3>Change status</h3><div class="dash-toolbar"><div class="dash-field grow"><label for="admin-next-status">Next status</label><select class="dash-select" id="admin-next-status"><option>In Progress</option><option>Delivered</option><option>In Revision</option><option>Completed</option><option>Declined</option><option>Cancelled</option></select></div><button class="dash-button" type="button" id="admin-change-status" data-action="status">Change status</button><button class="dash-button danger" type="button" id="admin-decline-order" data-action="decline">Decline order</button><button class="dash-button primary" type="button" id="admin-complete-order" data-action="complete">Complete order</button></div></div>
+      <form class="glass-panel glass-panel-inner dash-stack" id="admin-deliverable-form"><h3>Upload deliverable</h3><div class="dash-grid equal"><div class="dash-field"><label for="admin-deliverable-category">Delivery type</label><select class="dash-select" id="admin-deliverable-category"><option value="draft">Draft</option><option value="final">Final</option><option value="ai-report">AI-use report</option></select></div><div class="dash-field"><label for="admin-deliverable-file">File</label><input class="dash-input" id="admin-deliverable-file" type="file" accept=".pdf,.doc,.docx,.txt,.rtf,.png,.jpg,.jpeg" required></div></div><button class="dash-button primary" type="submit" data-action="deliverable">Upload deliverable</button></form>
+    </div>
+  </dialog>
+  <script src="/js/admin-dashboard.js" defer></script>
+</body>
+</html>

@@ -16,6 +16,7 @@ const socialProfiles = [
 const redirectOnly = new Set(["blogs.html"]);
 const utilityPages = new Set([
   "404.html",
+  "admin.html",
   "dashboard.html",
   "login.html",
   "onboard.html",
