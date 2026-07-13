@@ -408,7 +408,7 @@
   function formatBytes(bytes) { const value = Number(bytes) || 0; return value < 1024 * 1024 ? `${Math.max(1, Math.round(value / 1024))} KB` : `${(value / 1024 / 1024).toFixed(1)} MB`; }
   function labelService(value) { return { essay: "Essay or coursework", exam: "Exam preparation", tutoring: "Tutoring", other: "Custom support" }[value] || capitalize(value); }
   function labelCategory(value) { return { client: "Client upload", draft: "Draft", final: "Final work", "ai-report": "AI-use report" }[value] || capitalize(value); }
-  function eventLabel(value) { return String(value || "Update").replaceAll(".", " ").split(" ").map(capitalize).join(" "); }
+  function eventLabel(value) { return String(value || "Update").replaceAll(".", " ").replaceAll("_", " ").split(" ").map(capitalize).join(" "); }
   function capitalize(value) { const text = String(value || ""); return text ? text[0].toUpperCase() + text.slice(1) : ""; }
 
   async function loadClerk(config) {

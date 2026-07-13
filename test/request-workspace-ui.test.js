@@ -69,4 +69,5 @@ test("workspace script uses only protected platform APIs and implements client a
   assert.match(script, /renderLoading/);
   assert.match(script, /renderError/);
   assert.match(script, /renderEmpty/);
+  assert.match(script, /replaceAll\("_", " "\)/, "activity event labels should humanize underscored event names");
 });
