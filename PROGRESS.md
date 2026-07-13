@@ -17,10 +17,14 @@ Plan:
 - [x] Audited the live site, Express/Clerk architecture, existing dashboard, public payment code, Store, About, Blog, and deployment path.
 - [x] Locked the signup-first public flow, dashboard scope, Supabase-backed architecture, 50/50 payment gates, official logo, full-body mascot, and Vibrant Academic Studio direction.
 - [x] Wrote the approved platform design specification at `docs/superpowers/specs/2026-07-13-sleek-academia-platform-redesign-design.md`.
+- [x] Completed Phase 1 on `feature/phase-1-foundation-home`: official logo variants, favicon/touch icon, optimized full-body mascot, shared Vibrant Academic Studio CSS, and a fully rebuilt signup-first homepage.
+- [x] Removed public homepage pricing/packages and redirected the retired `/pricing.html` route to `/onboard.html`; Store checkout remains separate.
+- [x] Verified Phase 1 with 31 passing tests, clean diff checks, successful local HTTP checks, and desktop/mobile renders from the running Express app.
 
 ## Next
 
-- [ ] Execute Phase 1: add regression tests, install the brand foundation, generate the production mascot asset, rebuild `public/index.html`, and render desktop/mobile evidence.
+- [ ] Review the actual Phase 1 homepage render with Max and apply any visual refinements.
+- [ ] Execute Phase 2: redesign About and Blog, generate production blog artwork, and restyle Store without changing checkout behavior.
 
 ## Facts a fresh session needs
 

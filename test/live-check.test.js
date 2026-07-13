@@ -8,7 +8,7 @@ async function withFixture({ includeCanonical = true, includeSocialProfiles = tr
     const redirects = {
       "/index.html": "/",
       "/services.html": "/",
-      "/pricing.html": "/#pricing",
+      "/pricing.html": "/onboard.html",
       "/blogs.html": "/blog.html",
     };
 

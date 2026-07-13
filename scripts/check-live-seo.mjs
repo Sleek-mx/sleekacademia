@@ -49,7 +49,7 @@ export async function checkSite(inputBaseUrl = "https://sleekacademia.com") {
   const redirects = new Map([
     ["/index.html", "/"],
     ["/services.html", "/"],
-    ["/pricing.html", "/#pricing"],
+    ["/pricing.html", "/onboard.html"],
     ["/blogs.html", "/blog.html"],
   ]);
   for (const [source, destination] of redirects) {

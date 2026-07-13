@@ -34,7 +34,7 @@ before(async () => {
 after(() => server && server.kill());
 
 const REDIRECTS = {
-  "/pricing.html": "/#pricing",
+  "/pricing.html": "/onboard.html",
   "/courses.html": "/",
   "/ai-tools.html": "/",
   "/ai-tools-pro.html": "/",
@@ -58,10 +58,11 @@ for (const path of ["/", "/nclex-prep.html", "/ube-bar-exam-prep.html", "/cfa-le
   });
 }
 
-test("landing folds in the #pricing section", async () => {
+test("landing routes service visitors into the signup-first request flow", async () => {
   const html = await (await fetch(`${BASE}/`)).text();
-  assert.match(html, /id="pricing"/);
-  assert.match(html, /\$300/);
+  assert.doesNotMatch(html, /id="pricing"|href="\/?#pricing"/i);
+  assert.match(html, /href="\/onboard\.html(?:\?goal=[^"]+)?"/i);
+  assert.match(html, /Authorship matters at Sleek Academia/i);
 });
 
 test("service-request rejects anonymous submissions", async () => {

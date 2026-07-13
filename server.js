@@ -147,7 +147,7 @@ const legacySeoRedirects = new Map([
   ["/ai-tools.html", "/"],
   ["/ai-tools-pro.html", "/"],
   ["/courses.html", "/"],
-  ["/pricing.html", "/#pricing"],
+  ["/pricing.html", "/onboard.html"],
   ["/blogs.html", "/blog.html"]
 ]);
 
@@ -445,7 +445,7 @@ app.post("/api/stripe/create-checkout-session", async (req, res) => {
       }],
       mode: "payment",
       success_url: `${baseUrl}/payment-success.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/#pricing`,
+      cancel_url: `${baseUrl}/store.html`,
     });
     return res.json({ url: session.url });
   } catch (error) {

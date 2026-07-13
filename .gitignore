@@ -11,6 +11,7 @@ node_modules/
 # Local isolated development worktrees
 .worktrees/
 .superpowers/
+/tmp/
 
 # SEO agent local artifacts
 seo-agent/report-data.json
