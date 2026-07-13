@@ -99,7 +99,7 @@ test("request, quote, deposit, delivery lock, balance, and download work end to 
   const balance = await api(`/requests/${requestId}/payments/demo-confirm`, { method: "POST", body: { amountCents: 1 } });
   const balancePayload = await balance.json();
   assert.equal(balancePayload.payment.amountCents, 10000);
-  assert.equal(balancePayload.request.status, "Completed");
+  assert.equal(balancePayload.request.status, "Balance Due");
 
   const download = await api(`/attachments/${attachmentId}/download`);
   assert.equal(download.status, 200);

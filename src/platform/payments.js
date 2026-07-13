@@ -60,7 +60,6 @@ export async function recordVerifiedPayment({
   const paidCents = Math.min(current.quoteCents, (current.paidCents || 0) + due.amountCents);
   let status = current.status;
   if (due.milestone === "deposit" && current.status === "Deposit Due") status = "In Progress";
-  if (due.milestone === "balance" && paidCents >= current.quoteCents && current.status === "Balance Due") status = "Completed";
   const updated = await store.updateRequest(current.id, { paidCents, status });
   await store.appendEvent({
     requestId: current.id,

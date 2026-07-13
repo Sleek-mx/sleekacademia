@@ -107,12 +107,12 @@ test("verified deposit is idempotent and moves work into progress", async () => 
   assert.equal((await store.listPayments(request.id)).length, 1);
 });
 
-test("verified balance unlocks protected final delivery", async () => {
+test("verified balance unlocks protected final delivery without auto-completing the order", async () => {
   const deposit = await recordVerifiedPayment({ store, request, provider: "demo", providerTransactionId: "demo-deposit", milestone: "deposit", amountCents: 12000 });
   const balanceDue = await store.updateRequest(request.id, { status: "Balance Due" });
-  const completed = await recordVerifiedPayment({ store, request: balanceDue, provider: "demo", providerTransactionId: "demo-balance", milestone: "balance", amountCents: 12000 });
-  assert.equal(completed.request.paidCents, 24000);
-  assert.equal(completed.request.status, "Completed");
+  const paid = await recordVerifiedPayment({ store, request: balanceDue, provider: "demo", providerTransactionId: "demo-balance", milestone: "balance", amountCents: 12000 });
+  assert.equal(paid.request.paidCents, 24000);
+  assert.equal(paid.request.status, "Balance Due");
 });
 
 test("loopback demo confirmation ignores browser amounts and enforces membership", async () => {
