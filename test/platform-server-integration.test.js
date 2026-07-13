@@ -40,7 +40,7 @@ test("loopback demo mode exposes a seeded authenticated workspace", async () => 
   assert.equal((await session.json()).identity.userId, "demo-client");
 
   const requests = await (await fetch(`${BASE}/api/platform/requests`)).json();
-  assert.equal(requests.requests.length, 3);
+  assert.equal(requests.requests.length, 6);
 });
 
 test("demo identity is denied when the same process receives a non-loopback host", async () => {

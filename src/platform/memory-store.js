@@ -117,8 +117,9 @@ export class MemoryPlatformStore {
   async setFirstDownloadedAt(orderId, timestamp) {
     const order = this.requests.get(orderId);
     if (!order) return null;
-    if (order.firstDownloadedAt) return clone(order);
-    return this.updateRequest(orderId, { firstDownloadedAt: timestamp });
+    if (order.firstDownloadedAt) return { ...clone(order), firstDownloadRecorded: false };
+    const updated = await this.updateRequest(orderId, { firstDownloadedAt: timestamp });
+    return { ...updated, firstDownloadRecorded: true };
   }
 
   async createRevision(input) {
@@ -146,6 +147,17 @@ export class MemoryPlatformStore {
       .slice()
       .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
       .map(clone);
+  }
+
+  async updateRevision(revisionId, patch) {
+    for (const [orderId, rows] of this.revisions.entries()) {
+      const index = rows.findIndex((revision) => revision.id === revisionId);
+      if (index < 0) continue;
+      const updated = { ...rows[index], ...clone(patch), id: revisionId, orderId, updatedAt: this.now() };
+      rows[index] = updated;
+      return clone(updated);
+    }
+    return null;
   }
 
   async getReadState(orderId, userId) {

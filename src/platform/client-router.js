@@ -1,6 +1,6 @@
 import express from "express";
 
-import { canDownloadAttachment, getRevisionEligibility, validateRequestInput } from "./domain.js";
+import { canDownloadAttachment, deriveOrderQueues, getRevisionEligibility, validateRequestInput } from "./domain.js";
 import { asyncRoute, orderAccess, orderDetails, publicAttachment, text } from "./http-utils.js";
 import { getServerPaymentDue, recordVerifiedPayment } from "./payments.js";
 import { calculateOrderQuote } from "./pricing.js";
@@ -22,6 +22,10 @@ function calculateInitialPricing(value) {
     if (value.service === "tutoring" || value.service === "other") return null;
     throw error;
   }
+}
+
+function withQueues(order) {
+  return { ...order, queues: deriveOrderQueues(order, { now: new Date(), unreadCount: order.unreadCount || 0 }) };
 }
 
 export function createClientRouter({ paymentProvider = null, csrfService = null } = {}) {
@@ -58,7 +62,7 @@ export function createClientRouter({ paymentProvider = null, csrfService = null 
   aliases(router, "post", ["/orders/handoff", "/requests/handoff"], handoff);
 
   const list = asyncRoute(async (req, res) => {
-    const orders = await req.platformStore.listOrdersForUser(req.platformIdentity.userId, { role: "student" });
+    const orders = (await req.platformStore.listOrdersForUser(req.platformIdentity.userId, { role: "student" })).map(withQueues);
     return res.json({ orders, requests: orders });
   });
   aliases(router, "get", ["/orders", "/requests"], list);
@@ -67,6 +71,7 @@ export function createClientRouter({ paymentProvider = null, csrfService = null 
     const access = await clientOrderAccess(req);
     if (access.error) return res.status(access.status).json({ error: access.error });
     const payload = await orderDetails(req.platformStore, access.order, req.platformIdentity);
+    payload.order = withQueues(payload.order);
     return res.json({ ...payload, request: payload.order });
   });
   aliases(router, "get", ["/orders/:orderId", "/requests/:requestId"], detail);
@@ -106,7 +111,7 @@ export function createClientRouter({ paymentProvider = null, csrfService = null 
     if (access.error) return res.status(access.status).json({ error: access.error });
     const revisions = await req.platformStore.listRevisions(access.order.id);
     const eligibility = getRevisionEligibility(access.order, revisions);
-    if (!eligibility.eligible) return res.status(409).json({ error: "The included revision is not available.", eligibility });
+    if (!eligibility.eligible) return res.status(409).json({ error: "The included revision is not available. Additional work can be quoted separately.", eligibility, additionalWork: true });
     const instructions = text(req.body?.instructions, 4000);
     if (!instructions) return res.status(400).json({ error: "Revision instructions are required." });
     const revision = await req.platformStore.createRevision({ orderId: access.order.id, userId: access.order.userId, requestedBy: req.platformIdentity.userId, instructions, included: true });
@@ -121,7 +126,10 @@ export function createClientRouter({ paymentProvider = null, csrfService = null 
     if (access.error) return res.status(404).json({ error: "Attachment not found." });
     if (!canDownloadAttachment(access.order, attachmentRow)) return res.status(423).json({ error: "Confirmed full payment is required before this delivery can be downloaded." });
     if (new Set(["final", "ai-report"]).has(attachmentRow.category) && access.order.paidCents >= access.order.quoteCents) {
-      await req.platformStore.setFirstDownloadedAt(access.order.id, new Date().toISOString());
+      const firstDownload = await req.platformStore.setFirstDownloadedAt(access.order.id, new Date().toISOString());
+      if (firstDownload?.firstDownloadRecorded) {
+        await req.platformStore.appendEvent({ requestId: access.order.id, actorId: req.platformIdentity.userId, type: "delivery.first_downloaded", data: { attachmentId: attachmentRow.id, firstDownloadedAt: firstDownload.firstDownloadedAt } });
+      }
     }
     await req.platformStore.appendEvent({ requestId: access.order.id, actorId: req.platformIdentity.userId, type: "attachment.downloaded", data: { attachmentId: attachmentRow.id } });
     if (req.platformStore.mode === "memory") {

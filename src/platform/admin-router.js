@@ -70,6 +70,9 @@ export function createAdminRouter() {
     const [attachments, revisions] = await Promise.all([req.platformStore.listAttachments(order.id), req.platformStore.listRevisions(order.id)]);
     const transition = canTransitionOrder(order, status, { hasFinalDeliverable: attachments.some((file) => file.category === "final"), hasOpenRevision: revisions.some((revision) => !new Set(["completed", "cancelled"]).has(revision.status)) });
     if (!transition.ok) return res.status(409).json({ error: transition.error });
+    const openRevision = revisions.find((revision) => !new Set(["completed", "cancelled"]).has(revision.status));
+    if (status === "In Revision" && openRevision) await req.platformStore.updateRevision(openRevision.id, { status: "in_progress", startedAt: new Date().toISOString() });
+    if (status === "Delivered" && order.status === "In Revision" && openRevision) await req.platformStore.updateRevision(openRevision.id, { status: "completed", completedAt: new Date().toISOString() });
     const updated = await req.platformStore.updateOrder(order.id, { status });
     await req.platformStore.appendEvent({ requestId: order.id, actorId: req.platformIdentity.userId, type: "order.status_changed", data: { from: order.status, to: status } });
     await req.platformStore.createNotification({ userId: order.userId, requestId: order.id, type: "order.status_changed", title: `Order status: ${status}`, body: "Open your dashboard for details." });

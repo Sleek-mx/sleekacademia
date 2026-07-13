@@ -148,11 +148,11 @@ export class SupabasePlatformStore {
       body: { first_downloaded_at: timestamp },
       prefer: "return=representation",
     });
-    if (rows[0]) return fromDatabase(rows[0]);
+    if (rows[0]) return { ...fromDatabase(rows[0]), firstDownloadRecorded: true };
     const existing = await this.request("service_requests", {
       query: `id=eq.${encodeURIComponent(orderId)}&limit=1`,
     });
-    return fromDatabase(existing[0]);
+    return existing[0] ? { ...fromDatabase(existing[0]), firstDownloadRecorded: false } : null;
   }
 
   async createRevision(input) {
@@ -184,6 +184,16 @@ export class SupabasePlatformStore {
       query: `order_id=eq.${encodeURIComponent(orderId)}&order=created_at.asc`,
     });
     return rows.map(fromDatabase);
+  }
+
+  async updateRevision(revisionId, patch) {
+    const rows = await this.request("revisions", {
+      method: "PATCH",
+      query: `id=eq.${encodeURIComponent(revisionId)}`,
+      body: toDatabase(patch),
+      prefer: "return=representation",
+    });
+    return fromDatabase(rows[0]);
   }
 
   async getReadState(orderId, userId) {
