@@ -78,6 +78,11 @@ export class SupabasePlatformStore {
     return fromDatabase(rows[0]);
   }
 
+  async listProfiles() {
+    const rows = await this.request("profiles", { query: "order=created_at.asc" });
+    return rows.map(fromDatabase);
+  }
+
   async findRequestByIdempotencyKey(userId, idempotencyKey) {
     const rows = await this.request("service_requests", {
       query: `user_id=eq.${encodeURIComponent(userId)}&idempotency_key=eq.${encodeURIComponent(idempotencyKey)}&limit=1`,
@@ -120,6 +125,149 @@ export class SupabasePlatformStore {
     return fromDatabase(rows[0]);
   }
 
+  async createOrder(input) {
+    return this.createRequest(input);
+  }
+
+  async listOrdersForUser(userId, options = {}) {
+    return this.listRequestsForUser(userId, options);
+  }
+
+  async getOrderForUser(orderId, userId, options = {}) {
+    return this.getRequestForUser(orderId, userId, options);
+  }
+
+  async updateOrder(orderId, patch) {
+    return this.updateRequest(orderId, patch);
+  }
+
+  async setFirstDownloadedAt(orderId, timestamp) {
+    const rows = await this.request("service_requests", {
+      method: "PATCH",
+      query: `id=eq.${encodeURIComponent(orderId)}&first_downloaded_at=is.null`,
+      body: { first_downloaded_at: timestamp },
+      prefer: "return=representation",
+    });
+    if (rows[0]) return fromDatabase(rows[0]);
+    const existing = await this.request("service_requests", {
+      query: `id=eq.${encodeURIComponent(orderId)}&limit=1`,
+    });
+    return fromDatabase(existing[0]);
+  }
+
+  async createRevision(input) {
+    if (input.included !== false) {
+      const existing = await this.request("revisions", {
+        query: `order_id=eq.${encodeURIComponent(input.orderId)}&included=eq.true&limit=1`,
+      });
+      if (existing[0]) {
+        const error = new Error("An included revision already exists for this order.");
+        error.code = "INCLUDED_REVISION_EXISTS";
+        throw error;
+      }
+    }
+    const rows = await this.request("revisions", {
+      method: "POST",
+      body: toDatabase({
+        id: input.id || randomUUID(),
+        status: input.status || "requested",
+        included: input.included !== false,
+        ...input,
+      }),
+      prefer: "return=representation",
+    });
+    return fromDatabase(rows[0]);
+  }
+
+  async listRevisions(orderId) {
+    const rows = await this.request("revisions", {
+      query: `order_id=eq.${encodeURIComponent(orderId)}&order=created_at.asc`,
+    });
+    return rows.map(fromDatabase);
+  }
+
+  async getReadState(orderId, userId) {
+    const rows = await this.request("order_read_states", {
+      query: `order_id=eq.${encodeURIComponent(orderId)}&user_id=eq.${encodeURIComponent(userId)}&limit=1`,
+    });
+    return fromDatabase(rows[0]);
+  }
+
+  async markOrderRead(input) {
+    const rows = await this.request("order_read_states", {
+      method: "POST",
+      query: "on_conflict=order_id,user_id",
+      body: toDatabase(input),
+      prefer: "resolution=merge-duplicates,return=representation",
+    });
+    return fromDatabase(rows[0]);
+  }
+
+  async createAdminSession(input) {
+    if (input.token || input.sessionToken || !/^[a-f0-9]{64}$/i.test(String(input.tokenHash || ""))) {
+      throw new Error("Admin sessions require a valid token hash and cannot store raw tokens.");
+    }
+    const rows = await this.request("admin_sessions", {
+      method: "POST",
+      body: toDatabase({ id: input.id || randomUUID(), revokedAt: input.revokedAt || null, ...input }),
+      prefer: "return=representation",
+    });
+    return fromDatabase(rows[0]);
+  }
+
+  async getAdminSessionByTokenHash(tokenHash) {
+    const rows = await this.request("admin_sessions", {
+      query: `token_hash=eq.${encodeURIComponent(tokenHash)}&limit=1`,
+    });
+    return fromDatabase(rows[0]);
+  }
+
+  async touchAdminSession(sessionId, patch) {
+    const { tokenHash: _ignoredTokenHash, id: _ignoredId, ...safePatch } = patch;
+    const rows = await this.request("admin_sessions", {
+      method: "PATCH",
+      query: `id=eq.${encodeURIComponent(sessionId)}`,
+      body: toDatabase(safePatch),
+      prefer: "return=representation",
+    });
+    return fromDatabase(rows[0]);
+  }
+
+  async revokeAdminSession(sessionId, revokedAt = new Date().toISOString()) {
+    return this.touchAdminSession(sessionId, { revokedAt });
+  }
+
+  async appendSecurityEvent(input) {
+    const rows = await this.request("security_events", {
+      method: "POST",
+      body: toDatabase({ id: input.id || randomUUID(), ...input }),
+      prefer: "return=representation",
+    });
+    return fromDatabase(rows[0]);
+  }
+
+  async listSecurityEvents() {
+    const rows = await this.request("security_events", { query: "order=created_at.asc" });
+    return rows.map(fromDatabase);
+  }
+
+  async getSettings() {
+    const rows = await this.request("platform_settings", { query: "id=eq.default&limit=1" });
+    return rows[0]?.settings ? structuredClone(rows[0].settings) : {};
+  }
+
+  async updateSettings(patch, { updatedBy = "system" } = {}) {
+    const current = await this.getSettings();
+    const settings = { ...current, ...structuredClone(patch) };
+    const rows = await this.request("platform_settings", {
+      method: "POST",
+      query: "on_conflict=id",
+      body: { id: "default", settings, updated_by: updatedBy },
+      prefer: "resolution=merge-duplicates,return=representation",
+    });
+    return structuredClone(rows[0]?.settings || settings);
+  }
+
   async appendEvent(input) {
     const rows = await this.request("request_events", { method: "POST", body: toDatabase(input), prefer: "return=representation" });
     return fromDatabase(rows[0]);
@@ -140,6 +288,11 @@ export class SupabasePlatformStore {
     return rows.map(fromDatabase);
   }
 
+  async listAllMessages() {
+    const rows = await this.request("messages", { query: "order=created_at.asc" });
+    return rows.map(fromDatabase);
+  }
+
   async createAttachment(input) {
     const rows = await this.request("attachments", { method: "POST", body: toDatabase(input), prefer: "return=representation" });
     return fromDatabase(rows[0]);
@@ -153,6 +306,11 @@ export class SupabasePlatformStore {
   async getAttachment(attachmentId) {
     const rows = await this.request("attachments", { query: `id=eq.${encodeURIComponent(attachmentId)}&limit=1` });
     return fromDatabase(rows[0]);
+  }
+
+  async listAllAttachments() {
+    const rows = await this.request("attachments", { query: "order=created_at.asc" });
+    return rows.map(fromDatabase);
   }
 
   async putPrivateObject({ requestId, fileName, mimeType, bytes }) {
@@ -205,6 +363,11 @@ export class SupabasePlatformStore {
 
   async listPayments(requestId) {
     const rows = await this.request("payments", { query: `request_id=eq.${encodeURIComponent(requestId)}&order=created_at.asc` });
+    return rows.map(fromDatabase);
+  }
+
+  async listAllPayments() {
+    const rows = await this.request("payments", { query: "order=created_at.asc" });
     return rows.map(fromDatabase);
   }
 

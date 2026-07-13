@@ -45,6 +45,7 @@ Current approved extension: replace the combined demo workspace with separate MC
 - [x] Completed revised-platform Task 2: patched Clerk, Axios, Express, and vulnerable transitive packages; added Helmet and express-rate-limit; established a tracked-source security release gate; reached zero production audit vulnerabilities; and kept the full suite green at 81/81.
 - [x] Completed revised-platform Task 3: implemented immutable server-owned writing, urgent-writing, exam-hour, and custom pricing snapshots; added exact 50/50 milestone splits and safe-integer guards; extended order input fields; and kept the full suite green at 91/91.
 - [x] Completed revised-platform Task 4: added the approved order lifecycle and derived Balance Due/Delivered and Paid/Overdue/Unread queues, enforced quote/deposit/deliverable/payment/revision guards, added the seven-day included-revision eligibility window, stopped payment providers from auto-completing work, and kept the full suite green at 96/96.
+- [x] Completed revised-platform Task 5: extended both memory and Supabase adapters with Order aliases, revisions, read state, hashed admin sessions, append-only security events, reporting reads, atomic first-download timestamps, and protected settings; added a forward-only RLS migration; and kept the full suite green at 111/111.
 
 ## Next
 

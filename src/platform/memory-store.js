@@ -22,6 +22,11 @@ export class MemoryPlatformStore {
     this.payments = new Map();
     this.notifications = new Map();
     this.objects = new Map();
+    this.revisions = new Map();
+    this.readStates = new Map();
+    this.adminSessions = new Map();
+    this.securityEvents = [];
+    this.settings = {};
   }
 
   async upsertProfile(profile) {
@@ -39,6 +44,12 @@ export class MemoryPlatformStore {
 
   async getProfile(userId) {
     return clone(this.profiles.get(userId) || null);
+  }
+
+  async listProfiles() {
+    return [...this.profiles.values()]
+      .sort((a, b) => String(a.createdAt || "").localeCompare(String(b.createdAt || "")))
+      .map(clone);
   }
 
   async findRequestByIdempotencyKey(userId, idempotencyKey) {
@@ -87,6 +98,129 @@ export class MemoryPlatformStore {
     return clone(updated);
   }
 
+  async createOrder(input) {
+    return this.createRequest(input);
+  }
+
+  async listOrdersForUser(userId, options = {}) {
+    return this.listRequestsForUser(userId, options);
+  }
+
+  async getOrderForUser(orderId, userId, options = {}) {
+    return this.getRequestForUser(orderId, userId, options);
+  }
+
+  async updateOrder(orderId, patch) {
+    return this.updateRequest(orderId, patch);
+  }
+
+  async setFirstDownloadedAt(orderId, timestamp) {
+    const order = this.requests.get(orderId);
+    if (!order) return null;
+    if (order.firstDownloadedAt) return clone(order);
+    return this.updateRequest(orderId, { firstDownloadedAt: timestamp });
+  }
+
+  async createRevision(input) {
+    const rows = this.revisions.get(input.orderId) || [];
+    if (input.included !== false && rows.some((revision) => revision.included !== false)) {
+      const error = new Error("An included revision already exists for this order.");
+      error.code = "INCLUDED_REVISION_EXISTS";
+      throw error;
+    }
+    const revision = {
+      id: input.id || randomUUID(),
+      status: input.status || "requested",
+      included: input.included !== false,
+      ...clone(input),
+      createdAt: this.now(),
+      updatedAt: this.now(),
+    };
+    rows.push(revision);
+    this.revisions.set(input.orderId, rows);
+    return clone(revision);
+  }
+
+  async listRevisions(orderId) {
+    return (this.revisions.get(orderId) || [])
+      .slice()
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+      .map(clone);
+  }
+
+  async getReadState(orderId, userId) {
+    return clone(this.readStates.get(`${orderId}:${userId}`) || null);
+  }
+
+  async markOrderRead(input) {
+    const key = `${input.orderId}:${input.userId}`;
+    const previous = this.readStates.get(key) || {};
+    const state = {
+      ...previous,
+      ...clone(input),
+      createdAt: previous.createdAt || this.now(),
+      updatedAt: this.now(),
+    };
+    this.readStates.set(key, state);
+    return clone(state);
+  }
+
+  async createAdminSession(input) {
+    if (input.token || input.sessionToken || !/^[a-f0-9]{64}$/i.test(String(input.tokenHash || ""))) {
+      throw new Error("Admin sessions require a valid token hash and cannot store raw tokens.");
+    }
+    if ([...this.adminSessions.values()].some((session) => session.tokenHash === input.tokenHash)) {
+      throw new Error("An admin session with this token hash already exists.");
+    }
+    const session = {
+      id: input.id || randomUUID(),
+      ...clone(input),
+      revokedAt: input.revokedAt || null,
+      createdAt: input.createdAt || this.now(),
+    };
+    this.adminSessions.set(session.id, session);
+    return clone(session);
+  }
+
+  async getAdminSessionByTokenHash(tokenHash) {
+    const session = [...this.adminSessions.values()].find((row) => row.tokenHash === tokenHash);
+    return clone(session || null);
+  }
+
+  async touchAdminSession(sessionId, patch) {
+    const session = this.adminSessions.get(sessionId);
+    if (!session) return null;
+    const updated = { ...session, ...clone(patch), id: session.id, tokenHash: session.tokenHash };
+    this.adminSessions.set(session.id, updated);
+    return clone(updated);
+  }
+
+  async revokeAdminSession(sessionId, revokedAt = this.now()) {
+    return this.touchAdminSession(sessionId, { revokedAt });
+  }
+
+  async appendSecurityEvent(input) {
+    const event = { id: input.id || randomUUID(), ...clone(input), createdAt: this.now() };
+    this.securityEvents.push(event);
+    return clone(event);
+  }
+
+  async listSecurityEvents() {
+    return this.securityEvents
+      .slice()
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+      .map(clone);
+  }
+
+  async getSettings() {
+    return clone(this.settings);
+  }
+
+  async updateSettings(patch) {
+    this.settings = { ...this.settings, ...clone(patch) };
+    return clone(this.settings);
+  }
+
   async appendEvent(input) {
     const event = {
       id: input.id || randomUUID(),
@@ -125,6 +259,13 @@ export class MemoryPlatformStore {
       .map(clone);
   }
 
+  async listAllMessages() {
+    return [...this.messages.values()]
+      .flat()
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+      .map(clone);
+  }
+
   async createAttachment(input) {
     const attachment = {
       id: input.id || randomUUID(),
@@ -144,6 +285,12 @@ export class MemoryPlatformStore {
 
   async getAttachment(attachmentId) {
     return clone(this.attachments.get(attachmentId) || null);
+  }
+
+  async listAllAttachments() {
+    return [...this.attachments.values()]
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+      .map(clone);
   }
 
   async putPrivateObject({ requestId, fileName, mimeType, bytes }) {
@@ -188,6 +335,12 @@ export class MemoryPlatformStore {
   async listPayments(requestId) {
     return [...this.payments.values()]
       .filter((payment) => payment.requestId === requestId)
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+      .map(clone);
+  }
+
+  async listAllPayments() {
+    return [...this.payments.values()]
       .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
       .map(clone);
   }
