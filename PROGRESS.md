@@ -73,13 +73,15 @@ Current approved extension: tighten the public heroes, enlarge the Home copy and
 - [x] Replaced the deleted Sleek Academia Supabase project with `Sleek Academia Production` in the existing Sleek-mx organization, secured its credentials in macOS Keychain, applied both platform migrations, verified all 12 tables have RLS, created the private `sleek-academia-private` bucket, and connected the Namecheap runtime without exposing secrets.
 - [x] Activated the hardened MCX production login with scrypt credentials, durable Supabase-backed sessions, Secure/HttpOnly/SameSite cookies, and CSRF; live probes now return authentication boundaries instead of the former workspace-configuration 503, and authenticated MCX overview access returns 200.
 - [x] Started a real production backend smoke run with Clerk-issued identities and found two production-only defects before payment: missing structured-order/revision columns and an unset Passenger proxy trust boundary. Added RED contracts, a forward-only alignment migration, the single-proxy production setting, and returned the focused gate to 22/22 passing; applied and verified the new columns in Supabase.
+- [x] Deployed production backend alignment commit `c079139`, matched the live `server.js` hash, and exercised a real Clerk-authenticated production order through server pricing, private material upload, MCX clarification/acceptance, tenant isolation, live PayPal order creation without capture, Stripe test deposit/balance webhooks, locked-before-payment final delivery, paid private download, included revision, redelivery, completion, and earnings reporting.
+- [x] Found that provider-confirmed Supabase payments were missing `confirmed_at`; added creation-time timestamping, a forward-only historical backfill, regression contracts, applied the live backfill to two existing confirmed rows, and passed the full 177/177 test suite.
 
 ## Next
 
 - [x] Execute the approved plan inline with red-green-refactor tests and checkpoint commits.
 - [x] Verify the entire revised platform locally and leave the server running; do not push or deploy until Max approves that local result.
 - [x] After Max reviewed localhost and explicitly approved launch, reverified the GitHub remote and destructive deployment source/destination, pushed `main`, recovered the Namecheap Passenger app, and verified the public URL and assets.
-- [ ] Deploy the production backend alignment checkpoint, rerun the live authenticated order/payment/private-delivery/revision smoke to completion, and replace the current Clerk development instance with production keys before declaring client login production-ready. MCX MFA remains deferred by Max.
+- [ ] Deploy the payment timestamp checkpoint, rerun the live authenticated order/payment/private-delivery/revision smoke to completion, remove temporary Stripe test credentials from production, and replace the current Clerk development instance with production keys before declaring client login production-ready. MCX MFA remains deferred by Max.
 - [x] Browser-verify the responsive animated public heroes on desktop and mobile, enforce all-instance reduced-motion fallbacks through the RED/GREEN contract, and run the full local security/test gate without pushing or deploying.
 
 ## Facts a fresh session needs

@@ -172,7 +172,8 @@ for (const [name, createStore] of storeFactories()) {
     await store.upsertProfile({ userId: "client-a", role: "student", email: "a@example.com", fullName: "Client A" });
     const order = await store.createOrder({ userId: "client-a", idempotencyKey: "report-order", status: "Delivered" });
     await store.createMessage({ requestId: order.id, userId: "client-a", senderId: "client-a", senderRole: "student", body: "Hello" });
-    await store.createPayment({ requestId: order.id, userId: "client-a", provider: "stripe", providerTransactionId: "pi-report", milestone: "balance", amountCents: 100, currency: "usd", status: "confirmed" });
+    const payment = await store.createPayment({ requestId: order.id, userId: "client-a", provider: "stripe", providerTransactionId: "pi-report", milestone: "balance", amountCents: 100, currency: "usd", status: "confirmed" });
+    assert.match(payment.confirmedAt, /^\d{4}-\d{2}-\d{2}T/);
     await store.createAttachment({ requestId: order.id, userId: "client-a", uploadedBy: "mcx", fileName: "final.pdf", mimeType: "application/pdf", sizeBytes: 10, storagePath: "private/final.pdf", category: "final", deliveryLocked: true });
 
     assert.equal((await store.listProfiles()).length, 1);
@@ -215,4 +216,14 @@ test("production alignment migration covers every structured order and revision 
   }
   assert.match(sql, /status in \('requested', 'accepted', 'in_progress', 'redelivered', 'completed', 'cancelled', 'closed'\)/);
   assert.doesNotMatch(sql, /drop table|truncate|delete from/i);
+});
+
+test("confirmed payment timestamps are backfilled without changing payment status", () => {
+  const migrationPath = path.join(root, "supabase/migrations/20260714_payment_confirmation_timestamp.sql");
+  assert.equal(fs.existsSync(migrationPath), true, "payment timestamp migration is missing");
+  const sql = fs.readFileSync(migrationPath, "utf8");
+  assert.match(sql, /set confirmed_at = created_at/);
+  assert.match(sql, /status = 'confirmed'/);
+  assert.match(sql, /confirmed_at is null/);
+  assert.doesNotMatch(sql, /delete from|truncate|drop table/i);
 });

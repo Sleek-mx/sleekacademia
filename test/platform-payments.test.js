@@ -101,6 +101,7 @@ test("verified deposit is idempotent and moves work into progress", async () => 
   const first = await recordVerifiedPayment({ store, request, provider: "stripe", providerTransactionId: "pi_deposit", milestone: "deposit", amountCents: 12000 });
   assert.equal(first.request.paidCents, 12000);
   assert.equal(first.request.status, "In Progress");
+  assert.match(first.payment.confirmedAt, /^\d{4}-\d{2}-\d{2}T/);
 
   const duplicate = await recordVerifiedPayment({ store, request: first.request, provider: "stripe", providerTransactionId: "pi_deposit", milestone: "deposit", amountCents: 12000 });
   assert.equal(duplicate.duplicate, true);

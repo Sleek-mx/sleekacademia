@@ -356,7 +356,12 @@ export class SupabasePlatformStore {
 
   async createPayment(input) {
     try {
-      const rows = await this.request("payments", { method: "POST", body: toDatabase(input), prefer: "return=representation" });
+      const confirmedAt = input.confirmedAt || (input.status === "confirmed" ? new Date().toISOString() : null);
+      const rows = await this.request("payments", {
+        method: "POST",
+        body: toDatabase({ ...input, confirmedAt }),
+        prefer: "return=representation",
+      });
       return fromDatabase(rows[0]);
     } catch (error) {
       if (String(error.details || "").includes("payments_provider_transaction_unique")) error.code = "DUPLICATE_PAYMENT";
