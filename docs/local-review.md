@@ -85,3 +85,9 @@ Both dashboards use same-surface light/night neumorphism. In loopback demo mode,
 ## Production readiness boundary
 
 Before a Namecheap launch, configure and verify Clerk, Supabase (including the private `sleek-academia-private` bucket), the MCX password hash, Stripe and/or PayPal, production environment values, the GitHub remote, the webhook build, and the final public URL. MCX MFA remains explicitly deferred. The repository's deployment path includes `rsync --delete`, so its complete source and exact destination must be reverified immediately before any push.
+
+## Production launch checkpoint — 2026-07-14
+
+The approved public build is live at `https://sleekacademia.com` on repair commit `c31dec1`. The launch verification covered the GitHub/Namecheap source and destination, live/local server hash parity, Passenger process replacement, all primary public and workspace HTML routes, the animated woman video, favicon/touch icons, public and dashboard themes, framework-disclosure removal, CSP/HSTS/frame headers, the retired Pricing redirect, and the 27-URL live SEO checker.
+
+Clerk is configured on Namecheap. Supabase, the private storage bucket, Stripe/PayPal server credentials, and MCX production credentials are not configured. Consequently, the public site is live, but `/api/platform/client/*` and `/api/platform/admin/*` correctly refuse workspace operations until the data service is activated. Do not accept live orders or payments through the dashboards until that provider checkpoint is complete.

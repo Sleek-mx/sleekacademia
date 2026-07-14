@@ -69,12 +69,14 @@ Current approved extension: tighten the public heroes, enlarge the Home copy and
 - [x] Completed the responsive animated public-hero implementation checkpoint: added RED contracts with 3 expected failures, made all Home/About/Blog woman panels use the shared MP4, generalized reduced-motion handling, rebuilt desktop/mobile hero geometry, relaxed About/Blog tracking, and returned the focused gate to 15/15 passing.
 - [x] Live-tested the responsive animated heroes at 1440 by 1000 and 390 by 844: Home copy/video fill the hero, About/Blog tracking is relaxed, all four woman videos play in view, both About note cards remain in-frame, mobile uses one-column 4:3 media and full-width actions, navigation works, overflow is zero, and the browser console is clean.
 - [x] Passed the final responsive-hero gate on 2026-07-14: 174/174 application tests, 6/6 SEO tests, security scan across 69 tracked source files, zero production dependency vulnerabilities, clean JavaScript syntax/diff checks, and a healthy `http://127.0.0.1:3000/api/health` response.
+- [x] Launched the approved build to Namecheap on 2026-07-14: fast-forwarded `main`, verified the destructive sync source/destination, recovered a stale Passenger worker, added a regression test for Namecheap's CommonJS entrypoint loader, deployed repair commit `c31dec1`, matched the live/local `server.js` hash, passed 175/175 tests, and passed the 27-URL live SEO check at `https://sleekacademia.com`.
 
 ## Next
 
 - [x] Execute the approved plan inline with red-green-refactor tests and checkpoint commits.
 - [x] Verify the entire revised platform locally and leave the server running; do not push or deploy until Max approves that local result.
-- [ ] After Max reviews localhost and explicitly approves launch, reverify the GitHub remote and destructive deployment source/destination, configure production credentials, push for the Namecheap auto-build, and verify the public URL before reporting live.
+- [x] After Max reviewed localhost and explicitly approved launch, reverified the GitHub remote and destructive deployment source/destination, pushed `main`, recovered the Namecheap Passenger app, and verified the public URL and assets.
+- [ ] Configure the existing Sleek Academia Supabase project with a service-role key, apply `supabase/migrations/20260713_platform.sql`, create the private `sleek-academia-private` bucket, and add provider credentials before treating live client orders, files, or payments as production-ready. MCX credentials and MFA remain deferred by Max.
 - [x] Browser-verify the responsive animated public heroes on desktop and mobile, enforce all-instance reduced-motion fallbacks through the RED/GREEN contract, and run the full local security/test gate without pushing or deploying.
 
 ## Facts a fresh session needs
@@ -98,6 +100,7 @@ Current approved extension: tighten the public heroes, enlarge the Home copy and
 - Use 21st.dev only as interaction inspiration; implement original, restrained website transitions and micro-interactions consistent with the Sleek Academia brand.
 - Full remaining implementation plan: `docs/superpowers/plans/2026-07-13-complete-platform-localhost.md`.
 - Baseline on resume: `npm test` = 31 passing, 0 failing on 2026-07-13.
+- Production launch commit: `c31dec1`; live public/SEO surface verified on 2026-07-14. The Namecheap workspace APIs intentionally return 503 until Supabase is configured, so the current launch is the public site plus protected dashboard shells, not an activated order/payment backend.
 - Local review will use a loopback-only `LOCAL_DEMO_MODE=1`; production still requires Clerk and Supabase and must never expose demo identity remotely.
 - Supabase schema: `supabase/migrations/20260713_platform.sql`; private bucket: `sleek-academia-private`.
 - Protected platform API base: `/api/platform`; production identity is Clerk, local review identity exists only for loopback hosts with `LOCAL_DEMO_MODE=1`.
