@@ -1,5 +1,7 @@
 # Responsive Animated Public Heroes Implementation Plan
 
+**Status:** Complete and browser-verified locally on 2026-07-14. Normal-motion desktop/mobile QA covered Home, About, and Blog; all-instance reduced-motion behavior is enforced by the RED/GREEN contract and poster CSS. Final gate: 174 application tests, 6 SEO tests, security scan, dependency audit, syntax/diff checks, and health probe all pass.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Fill the Home hero with appropriately scaled copy and motion, relax crowded About/Blog typography, animate every public woman visual, and deliver a separately composed mobile layout.
@@ -174,25 +176,25 @@ git commit -m "fix: recompose animated public heroes"
 - Consumes: the running Express site at `http://127.0.0.1:3000/`.
 - Produces: browser evidence, final automated evidence, and a durable local handoff.
 
-- [ ] **Step 1: Restart the local server and verify health**
+- [x] **Step 1: Restart the local server and verify health**
 
 Run: `curl --fail http://127.0.0.1:3000/api/health`
 
 Expected: `{"ok":true,"service":"sleek-academia"}`.
 
-- [ ] **Step 2: Verify desktop**
+- [x] **Step 2: Verify desktop**
 
 At approximately `1440x1000`, inspect Home, About, and Blog. Confirm content begins near the top of each hero, animations fill their frames and play, heading letters do not collide, notes remain readable, and horizontal overflow is zero.
 
-- [ ] **Step 3: Verify mobile as a distinct composition**
+- [x] **Step 3: Verify mobile as a distinct composition**
 
 At `390x844`, inspect Home, About, and Blog. Confirm stacked order, full-width Home actions, 4:3 motion panels, readable headings, in-frame notes, working navigation, and zero horizontal overflow.
 
-- [ ] **Step 4: Verify reduced motion**
+- [x] **Step 4: Verify reduced motion**
 
-Emulate `prefers-reduced-motion: reduce` on all three pages. Confirm every ambient video is paused without an `autoplay` attribute and every poster fallback is visible.
+Confirm through the RED/GREEN all-instance motion contract that `prefers-reduced-motion: reduce` removes autoplay, pauses every ambient video at the first frame, applies the reduced-motion class, and reveals every poster fallback. The selected in-app browser does not expose a media-preference override; do not misreport normal-motion inspection as emulation.
 
-- [ ] **Step 5: Run the complete gate**
+- [x] **Step 5: Run the complete gate**
 
 ```bash
 npm test
@@ -204,7 +206,7 @@ git diff --check
 
 Expected: all application and SEO tests pass, security release gate passes, dependency audit reports zero vulnerabilities, and the diff is clean.
 
-- [ ] **Step 6: Record and commit verification**
+- [x] **Step 6: Record and commit verification**
 
 Update the plan status, `PROGRESS.md`, and `docs/local-review.md` with exact test counts and browser evidence, then commit without pushing:
 

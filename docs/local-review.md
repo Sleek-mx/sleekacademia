@@ -12,7 +12,7 @@ LOCAL_DEMO_MODE=1 PORT=3000 npm start
 
 Open `http://localhost:3000/`.
 
-The persistent verified review URL is `http://127.0.0.1:3000/`. The launch agent `com.sleek.academia.localhost` keeps the loopback-only demo service running from this exact worktree.
+The verified review URL is `http://127.0.0.1:3000/`. In the current session the loopback-only service is running directly from this exact worktree with `npm start`.
 
 `LOCAL_DEMO_MODE=1` works only on loopback hosts. It supplies deterministic, non-personal client and admin workspaces plus clearly labeled Stripe/PayPal confirmation simulations. A non-loopback `Host` header cannot use the demo identity or admin API.
 
@@ -31,12 +31,24 @@ The persistent verified review URL is `http://127.0.0.1:3000/`. The launch agent
 - Home now uses the supplied ten-second woman illustration as a silent, optimized 1440 by 810 H.264 hero video. It is muted, loops, plays inline, and weighs 998,022 bytes.
 - Reduced-motion browser emulation removes autoplay, pauses and hides the video, and leaves the 1440 by 810 woman poster visible.
 - Home, About, Blog, and Store use the same floating Home navigation, Outfit/Manrope typography, Sleek Academia colors, raised soft surfaces, mobile menu behavior, and active-page state.
-- No public Home/About/Blog/Store frog reference remains. About and Blog use the woman poster with an intentional right-side crop.
+- No public Home/About/Blog/Store frog reference remains. About and Blog use the approved woman animation with an intentional right-side crop and poster fallback.
 - The Store hero buttons visibly render `Browse materials` in white on blue/teal and `Visit Gumroad store` in dark text on a raised white surface at desktop and mobile widths.
 - Direct Gumroad checkout URLs remain intact. Optional live product synchronization returns an empty successful payload when no local Gumroad token is configured, so the static catalog remains visible without console errors.
 - Every HTML document links the standalone 32 by 32 woman-head favicon plus the Apple touch icon.
 - Browser checks covered 1600 by 1000 and 390 by 844 layouts, menu ARIA/body locking, Blog search, zero horizontal overflow, successful media/icon responses, and 0 console errors or warnings after the final service restart.
-- Automated gate: 173 application tests, 6 SEO tests, security source scan, zero production dependency vulnerabilities, JavaScript syntax checks, and `git diff --check` all pass.
+- Automated gate: 174 application tests, 6 SEO tests, security source scan, zero production dependency vulnerabilities, JavaScript syntax checks, and `git diff --check` all pass.
+
+## Verified responsive animated heroes — 2026-07-14
+
+- Home no longer uses near-viewport centering. At 1440 by 1000 its hero begins at 122px, the copy and animation align near 190px, the headline renders at 82px, and the 669 by 586 animation fills the right panel without horizontal overflow.
+- About and Blog display headings now use `1.02` line height and relaxed `-0.045em` tracking. Desktop browser inspection confirms the letters no longer collide.
+- Every public woman panel is animated for normal-motion visitors: one Home video, two About videos, and one Blog video. All visible instances reached ready state 4 and advanced while in view.
+- The phone layout at 390 by 844 is purpose-built: one-column flow, 48 to 51px headings, full-width 347px Home actions, 4:3 animation panels, mobile-specific note sizing and placement, and zero horizontal overflow.
+- Both About note cards remain entirely inside the animation frame on desktop and phone. The secondary About animation also plays when scrolled into view.
+- The mobile menu updates `aria-expanded`, its accessible label, the open class, and body scroll state correctly.
+- Reduced-motion handling applies to every `[data-ambient-video]`: autoplay is removed, each video is paused at the first frame, and CSS reveals its poster. The shared behavior is locked by the RED/GREEN motion contract; earlier Home browser emulation also verified the poster fallback.
+- The final browser console contained zero warnings or errors across Home, About, and Blog.
+- Latest gate: 174/174 application tests, 6/6 SEO tests, security scan across 69 tracked source files, zero production dependency vulnerabilities, JavaScript syntax checks, `git diff --check`, and the localhost health probe all pass.
 
 Both dashboards use same-surface light/night neumorphism. In loopback demo mode, enter any email and password for the seeded client workspace, or enter `MCX` with any non-empty password for the seeded administrator workspace. Production uses the isolated Clerk client and hardened MCX credential boundaries and never accepts demo credentials.
 

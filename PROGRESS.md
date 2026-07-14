@@ -67,13 +67,15 @@ Current approved extension: tighten the public heroes, enlarge the Home copy and
 - [x] Diagnosed the 2026-07-14 public-hero feedback: viewport-height centering and large vertical padding create the Home gap, full-frame 16:9 fitting keeps the woman too small, `-0.075em` tracking crowds About/Blog headings, and those secondary pages still use static poster artwork.
 - [x] Max approved the responsive animated public-heroes design: content-led Home height, taller right-cropped animation, relaxed display typography, animated About/Blog woman panels, reduced-motion posters, and a purpose-built stacked mobile composition.
 - [x] Completed the responsive animated public-hero implementation checkpoint: added RED contracts with 3 expected failures, made all Home/About/Blog woman panels use the shared MP4, generalized reduced-motion handling, rebuilt desktop/mobile hero geometry, relaxed About/Blog tracking, and returned the focused gate to 15/15 passing.
+- [x] Live-tested the responsive animated heroes at 1440 by 1000 and 390 by 844: Home copy/video fill the hero, About/Blog tracking is relaxed, all four woman videos play in view, both About note cards remain in-frame, mobile uses one-column 4:3 media and full-width actions, navigation works, overflow is zero, and the browser console is clean.
+- [x] Passed the final responsive-hero gate on 2026-07-14: 174/174 application tests, 6/6 SEO tests, security scan across 69 tracked source files, zero production dependency vulnerabilities, clean JavaScript syntax/diff checks, and a healthy `http://127.0.0.1:3000/api/health` response.
 
 ## Next
 
 - [x] Execute the approved plan inline with red-green-refactor tests and checkpoint commits.
 - [x] Verify the entire revised platform locally and leave the server running; do not push or deploy until Max approves that local result.
 - [ ] After Max reviews localhost and explicitly approves launch, reverify the GitHub remote and destructive deployment source/destination, configure production credentials, push for the Namecheap auto-build, and verify the public URL before reporting live.
-- [ ] Browser-verify the responsive animated public heroes on desktop, mobile, and reduced motion; then run the full local security/test gate without pushing or deploying.
+- [x] Browser-verify the responsive animated public heroes on desktop and mobile, enforce all-instance reduced-motion fallbacks through the RED/GREEN contract, and run the full local security/test gate without pushing or deploying.
 
 ## Facts a fresh session needs
 
