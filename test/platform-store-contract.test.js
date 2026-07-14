@@ -205,3 +205,14 @@ test("forward-only migration contains protected platform tables and no plaintext
   assert.match(sql, /prevent_security_event_mutation/);
   assert.doesNotMatch(sql, /password\s+text|session_token\s+text/i);
 });
+
+test("production alignment migration covers every structured order and revision field", () => {
+  const migrationPath = path.join(root, "supabase/migrations/20260714_production_backend_alignment.sql");
+  assert.equal(fs.existsSync(migrationPath), true, "production alignment migration is missing");
+  const sql = fs.readFileSync(migrationPath, "utf8");
+  for (const column of ["word_count", "exam_hours", "urgency", "started_at", "completed_at"]) {
+    assert.match(sql, new RegExp(`add column if not exists ${column}\\b`));
+  }
+  assert.match(sql, /status in \('requested', 'accepted', 'in_progress', 'redelivered', 'completed', 'cancelled', 'closed'\)/);
+  assert.doesNotMatch(sql, /drop table|truncate|delete from/i);
+});

@@ -123,6 +123,7 @@ test("server health and config responses contain only stable browser-safe fields
 
 test("server mounts signature exceptions and route-specific limits before the platform router", () => {
   const source = fs.readFileSync(path.join(root, "server.js"), "utf8");
+  assert.match(source, /app\.set\("trust proxy", productionMode \? 1 : false\)/);
   assert.match(source, /createSecurityHeaders/);
   assert.match(source, /createOriginGuard/);
   assert.match(source, /createCsrfService/);

@@ -18,7 +18,9 @@ create table if not exists public.revisions (
   requested_by text not null default '',
   instructions text not null check (char_length(instructions) between 1 and 4000),
   included boolean not null default true,
-  status text not null default 'requested' check (status in ('requested', 'accepted', 'in_progress', 'redelivered', 'closed')),
+  status text not null default 'requested' check (status in ('requested', 'accepted', 'in_progress', 'redelivered', 'completed', 'cancelled', 'closed')),
+  started_at timestamptz,
+  completed_at timestamptz,
   resolved_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

@@ -49,6 +49,7 @@ const execAsync = promisify(exec);
 const app = express();
 const port = Number(process.env.PORT || 3000);
 const productionMode = process.env.NODE_ENV === "production";
+app.set("trust proxy", productionMode ? 1 : false);
 const clerkIsConfigured = Boolean(
   (process.env.CLERK_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) &&
   process.env.CLERK_SECRET_KEY
