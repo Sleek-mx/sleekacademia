@@ -314,11 +314,11 @@ a {
 .hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(31rem, 1.08fr);
+  grid-template-columns: minmax(0, 0.96fr) minmax(34rem, 1.04fr);
   align-items: center;
-  gap: clamp(2rem, 4vw, 5.5rem);
-  min-height: calc(100dvh - 8.5rem);
-  padding: clamp(4.5rem, 8vw, 8rem) 1.5rem clamp(5rem, 8vw, 8.5rem);
+  gap: clamp(2.5rem, 4vw, 5rem);
+  min-height: auto;
+  padding: clamp(2.75rem, 4.5vw, 4.5rem) 1.5rem clamp(4rem, 6vw, 6rem);
 }
 
 .hero::before {
@@ -337,7 +337,7 @@ a {
   position: relative;
   z-index: 4;
   min-width: 0;
-  max-width: 44rem;
+  max-width: 47rem;
 }
 
 .eyebrow {
@@ -371,9 +371,10 @@ a {
 }
 
 .hero h1 {
-  max-width: 42rem;
-  font-size: clamp(3.8rem, 5.3vw, 6.5rem);
-  line-height: 0.93;
+  max-width: 46rem;
+  font-size: clamp(4.1rem, 5.7vw, 7rem);
+  line-height: 0.94;
+  letter-spacing: -0.052em;
 }
 
 .text-blue {
@@ -445,7 +446,7 @@ a {
 .hero__media {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 8 / 7;
   border: 1px solid rgba(229, 235, 242, 0.92);
   border-radius: clamp(1.5rem, 3vw, 2.6rem);
   background: var(--white);
@@ -459,12 +460,13 @@ a {
 .hero__video {
   width: 100%;
   height: 100%;
-  object-fit: contain;
 }
 
 .hero__poster {
   position: absolute;
   inset: 0;
+  object-fit: cover;
+  object-position: right center;
 }
 
 .hero__video {
@@ -472,6 +474,8 @@ a {
   z-index: 1;
   display: block;
   background: var(--white);
+  object-fit: cover;
+  object-position: right center;
 }
 
 .is-reduced-motion .hero__video {
@@ -1072,16 +1076,25 @@ a {
 @media (max-width: 58rem) {
   .hero {
     grid-template-columns: 1fr;
+    gap: 2.75rem;
+    min-height: auto;
+    padding-top: 2.25rem;
+    padding-bottom: 4.5rem;
     padding-inline: 0.35rem;
   }
 
   .hero__copy {
-    padding-top: 2rem;
+    max-width: 46rem;
+    padding-top: 0.75rem;
   }
 
   .hero__visual {
     width: min(100%, 50rem);
     margin-inline: auto;
+  }
+
+  .hero__media {
+    aspect-ratio: 4 / 3;
   }
 
   .section-heading,
@@ -1175,13 +1188,15 @@ a {
 
   .hero {
     min-height: auto;
-    padding-top: 4.2rem;
-    padding-bottom: 3rem;
+    gap: 2.25rem;
+    padding-top: 1.75rem;
+    padding-bottom: 3.75rem;
   }
 
   .hero h1 {
-    font-size: clamp(2.85rem, 12.5vw, 3.7rem);
-    line-height: 0.94;
+    font-size: clamp(3rem, 13vw, 4rem);
+    line-height: 0.96;
+    letter-spacing: -0.045em;
     overflow-wrap: anywhere;
   }
 
@@ -1191,6 +1206,8 @@ a {
 
   .hero__actions {
     display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
   }
 
   .button--large {

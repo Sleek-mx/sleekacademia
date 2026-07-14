@@ -29,7 +29,7 @@
 - Consumes: existing public HTML/CSS/JS files read by static contract tests.
 - Produces: failing contracts for `data-ambient-video`, relaxed display tracking, content-led Home height, desktop crop, and mobile 4:3 composition.
 
-- [ ] **Step 1: Write the failing Home contract**
+- [x] **Step 1: Write the failing Home contract**
 
 Add assertions that Home marks its video with `data-ambient-video`, that `.hero` explicitly uses `min-height: auto`, that the desktop frame is taller than 16:9, and that the mobile frame switches to `aspect-ratio: 4 / 3`.
 
@@ -40,7 +40,7 @@ assert.match(css, /\.hero__media\s*{[^}]*aspect-ratio:\s*8\s*\/\s*7/s);
 assert.match(css, /@media \(max-width: 58rem\)[\s\S]*\.hero__media\s*{[^}]*aspect-ratio:\s*4\s*\/\s*3/s);
 ```
 
-- [ ] **Step 2: Write the failing About/Blog animation and typography contract**
+- [x] **Step 2: Write the failing About/Blog animation and typography contract**
 
 Require two ambient videos on About, one on Blog, the shared MP4/poster attributes, relaxed display tracking/line height, and mobile-specific media geometry.
 
@@ -52,7 +52,7 @@ assert.match(css, /@media \(max-width: 900px\)[\s\S]*\.platform-art-card\s*{[^}]
 assert.match(script, /querySelectorAll\(\"\[data-ambient-video\]\"\)/);
 ```
 
-- [ ] **Step 3: Run the focused tests and verify RED**
+- [x] **Step 3: Run the focused tests and verify RED**
 
 Run: `node --test test/phase1-home.test.js test/phase2-public-pages.test.js`
 
@@ -72,7 +72,7 @@ Expected: FAIL because the current Home hero remains viewport-height based, Abou
 - Consumes: `/video/sleek-academia-woman-hero.mp4` and `/images/brand/sleek-academia-woman-hero-poster.webp`.
 - Produces: repeated `[data-ambient-video]` elements and centralized reduced-motion handling.
 
-- [ ] **Step 1: Mark the Home video as ambient motion**
+- [x] **Step 1: Mark the Home video as ambient motion**
 
 Use the existing Home video and add the shared data attribute:
 
@@ -80,7 +80,7 @@ Use the existing Home video and add the shared data attribute:
 <video class="hero__video" data-ambient-video autoplay muted loop playsinline preload="metadata" poster="/images/brand/sleek-academia-woman-hero-poster.webp" aria-label="Animated Sleek Academia woman studying beside books and plants">
 ```
 
-- [ ] **Step 2: Replace About and Blog woman images with resilient animated media**
+- [x] **Step 2: Replace About and Blog woman images with resilient animated media**
 
 For each woman panel, retain a poster image beneath the video and place note cards after the media:
 
@@ -93,7 +93,7 @@ For each woman panel, retain a poster image beneath the video and place note car
 
 Use the same pair inside a `.platform-story-media` wrapper for the secondary About visual.
 
-- [ ] **Step 3: Generalize the motion controller**
+- [x] **Step 3: Generalize the motion controller**
 
 Replace the single Home video lookup with the shared collection and pause every ambient video under reduced motion:
 
@@ -110,7 +110,7 @@ if (reduceMotion && ambientVideos.length) {
 }
 ```
 
-- [ ] **Step 4: Run focused tests**
+- [x] **Step 4: Run focused tests**
 
 Run: `node --test test/phase1-home.test.js test/phase2-public-pages.test.js`
 
@@ -128,33 +128,33 @@ Expected: animation-count and controller assertions pass; layout assertions rema
 - Consumes: `.hero`, `.hero__media`, `.platform-display`, `.platform-art-card`, `.platform-story-media`, `.platform-woman-poster`, and `.platform-woman-video` markup.
 - Produces: content-led desktop heroes and explicit stacked mobile compositions.
 
-- [ ] **Step 1: Make Home content-led and crop the desktop animation**
+- [x] **Step 1: Make Home content-led and crop the desktop animation**
 
 Set `.hero` to `min-height: auto`, reduce vertical padding, use a balanced grid, enlarge the heading, and make `.hero__media` an `8 / 7` frame. Set poster/video to `object-fit: cover` and `object-position: right center`.
 
-- [ ] **Step 2: Build the Home mobile composition**
+- [x] **Step 2: Build the Home mobile composition**
 
 At `58rem` and below, use one column, explicit gap and padding, 4:3 media, full-width actions, mobile-specific headline rhythm, and natural document flow without viewport-height math.
 
-- [ ] **Step 3: Relax About and Blog typography**
+- [x] **Step 3: Relax About and Blog typography**
 
 Set `.platform-display` to `line-height: 1.02`, `letter-spacing: -0.045em`, and balanced wrapping. Increase `.platform-lede` line height to `1.82` and keep its readable maximum width.
 
-- [ ] **Step 4: Style animated secondary-page media**
+- [x] **Step 4: Style animated secondary-page media**
 
 Give `.platform-woman-poster` and `.platform-woman-video` identical absolute, right-focused cover geometry. Keep the video above the poster normally and hide it when `.is-reduced-motion` is present. Make `.platform-story-media` fill the About visual panel.
 
-- [ ] **Step 5: Build the About/Blog mobile composition**
+- [x] **Step 5: Build the About/Blog mobile composition**
 
 At `900px` and below, stack the grid with copy first, reduce hero padding, set animation cards to 4:3, and keep notes inside. At `620px` and below, use mobile-specific display size/tracking, smaller notes, and safe inset positions that do not cover the face or writing hand.
 
-- [ ] **Step 6: Verify GREEN**
+- [x] **Step 6: Verify GREEN**
 
 Run: `node --test test/phase1-home.test.js test/phase2-public-pages.test.js`
 
 Expected: all focused tests PASS.
 
-- [ ] **Step 7: Commit the implementation checkpoint**
+- [x] **Step 7: Commit the implementation checkpoint**
 
 ```bash
 git add public/index.html public/about.html public/blog.html public/css/brand-v2.css public/css/platform-v2.css public/js/platform-motion.js test/phase1-home.test.js test/phase2-public-pages.test.js

@@ -11,11 +11,13 @@
   }
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const heroVideo = document.querySelector(".hero__video");
-  if (heroVideo && reduceMotion) {
-    heroVideo.removeAttribute("autoplay");
-    heroVideo.pause();
-    heroVideo.currentTime = 0;
+  const ambientVideos = Array.from(document.querySelectorAll("[data-ambient-video]"));
+  if (reduceMotion && ambientVideos.length) {
+    ambientVideos.forEach(function (video) {
+      video.removeAttribute("autoplay");
+      video.pause();
+      video.currentTime = 0;
+    });
     document.documentElement.classList.add("is-reduced-motion");
   }
 

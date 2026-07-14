@@ -65,11 +65,26 @@ test("primary public pages contain no retired frog artwork", () => {
   }
 });
 
-test("secondary-page woman artwork fills its frame without clipping the note cards", () => {
+test("public woman artwork is animated with responsive reduced-motion fallbacks", () => {
+  const about = read("about.html");
+  const blog = read("blog.html");
   const css = read("css/platform-v2.css");
-  assert.match(css, /\.platform-art-card img\s*{[^}]*object-fit:\s*cover[^}]*object-position:\s*right center/s);
+  const script = read("js/platform-motion.js");
+
+  assert.equal((about.match(/data-ambient-video/g) || []).length, 2);
+  assert.equal((blog.match(/data-ambient-video/g) || []).length, 1);
+  for (const html of [about, blog]) {
+    assert.match(html, /<video class="platform-woman-video" data-ambient-video(?=[^>]*\bautoplay\b)(?=[^>]*\bmuted\b)(?=[^>]*\bloop\b)(?=[^>]*\bplaysinline\b)[^>]*>/i);
+    assert.match(html, /<source src="\/video\/sleek-academia-woman-hero\.mp4" type="video\/mp4">/);
+    assert.match(html, /class="platform-woman-poster"[^>]*sleek-academia-woman-hero-poster\.webp/);
+  }
+  assert.match(css, /\.platform-display\s*{[^}]*line-height:\s*1\.02[^}]*letter-spacing:\s*-0\.045em/s);
+  assert.match(css, /\.platform-woman-video\s*{[^}]*object-fit:\s*cover[^}]*object-position:\s*right center/s);
   assert.match(css, /\.platform-note\.one\s*{[^}]*left:\s*3%/s);
   assert.match(css, /\.platform-note\.two\s*{[^}]*right:\s*3%/s);
+  assert.match(css, /\.is-reduced-motion \.platform-woman-video\s*{[^}]*visibility:\s*hidden/s);
+  assert.match(css, /@media \(max-width: 900px\)[\s\S]*\.platform-art-card\s*{[^}]*aspect-ratio:\s*4\s*\/\s*3/s);
+  assert.match(script, /querySelectorAll\("\[data-ambient-video\]"\)/);
 });
 
 test("every HTML surface uses the standalone woman-head browser icons", () => {
@@ -115,7 +130,7 @@ test("shared motion is restrained, progressive, and reduced-motion safe", () => 
   const css = read("css/platform-v2.css");
   assert.match(script, /IntersectionObserver/);
   assert.doesNotMatch(script, /addEventListener\(["']scroll/);
-  assert.match(script, /hero__video/);
+  assert.match(script, /ambientVideos/);
   assert.match(script, /removeAttribute\(["']autoplay["']\)/);
   assert.match(script, /\.pause\(\)/);
   assert.match(script, /is-reduced-motion/);

@@ -7,9 +7,14 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
 const homePath = path.join(rootDir, "public", "index.html");
+const brandCssPath = path.join(rootDir, "public", "css", "brand-v2.css");
 
 async function readHome() {
   return readFile(homePath, "utf8");
+}
+
+async function readBrandCss() {
+  return readFile(brandCssPath, "utf8");
 }
 
 test("homepage uses the approved Sleek Academia brand foundation", async () => {
@@ -38,6 +43,23 @@ test("homepage exposes the approved navigation and service entry points", async 
   assert.match(home, /href="\/onboard\.html\?goal=essay"/);
   assert.match(home, /href="\/onboard\.html\?goal=exam"/);
   assert.match(home, /Authorship matters at Sleek Academia/);
+});
+
+test("homepage hero uses content-led desktop and purpose-built mobile composition", async () => {
+  const [home, css] = await Promise.all([readHome(), readBrandCss()]);
+
+  assert.match(home, /<video class="hero__video" data-ambient-video/);
+  assert.match(css, /\.hero\s*{[^}]*min-height:\s*auto/s);
+  assert.match(css, /\.hero__media\s*{[^}]*aspect-ratio:\s*8\s*\/\s*7/s);
+  assert.match(css, /\.hero__video\s*{[^}]*object-fit:\s*cover[^}]*object-position:\s*right center/s);
+  assert.match(
+    css,
+    /@media \(max-width: 58rem\)[\s\S]*\.hero__media\s*{[^}]*aspect-ratio:\s*4\s*\/\s*3/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 42rem\)[\s\S]*\.hero__actions\s*{[^}]*grid-template-columns:\s*1fr/s,
+  );
 });
 
 test("homepage removes public pricing and tutoring packages", async () => {

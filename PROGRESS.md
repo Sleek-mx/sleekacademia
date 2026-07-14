@@ -66,13 +66,14 @@ Current approved extension: tighten the public heroes, enlarge the Home copy and
 - [x] Passed the final animated-public-theme localhost gate on 2026-07-14: 173/173 application tests, 6/6 SEO tests, security scan across 69 tracked source files, zero production dependency vulnerabilities, desktop/mobile/reduced-motion browser checks, direct media/icon responses, Blog search, responsive navigation, no horizontal overflow, and 0 final browser console errors or warnings.
 - [x] Diagnosed the 2026-07-14 public-hero feedback: viewport-height centering and large vertical padding create the Home gap, full-frame 16:9 fitting keeps the woman too small, `-0.075em` tracking crowds About/Blog headings, and those secondary pages still use static poster artwork.
 - [x] Max approved the responsive animated public-heroes design: content-led Home height, taller right-cropped animation, relaxed display typography, animated About/Blog woman panels, reduced-motion posters, and a purpose-built stacked mobile composition.
+- [x] Completed the responsive animated public-hero implementation checkpoint: added RED contracts with 3 expected failures, made all Home/About/Blog woman panels use the shared MP4, generalized reduced-motion handling, rebuilt desktop/mobile hero geometry, relaxed About/Blog tracking, and returned the focused gate to 15/15 passing.
 
 ## Next
 
 - [x] Execute the approved plan inline with red-green-refactor tests and checkpoint commits.
 - [x] Verify the entire revised platform locally and leave the server running; do not push or deploy until Max approves that local result.
 - [ ] After Max reviews localhost and explicitly approves launch, reverify the GitHub remote and destructive deployment source/destination, configure production credentials, push for the Namecheap auto-build, and verify the public URL before reporting live.
-- [ ] Implement and browser-verify the approved responsive animated public heroes locally; do not push or deploy.
+- [ ] Browser-verify the responsive animated public heroes on desktop, mobile, and reduced motion; then run the full local security/test gate without pushing or deploying.
 
 ## Facts a fresh session needs
 
