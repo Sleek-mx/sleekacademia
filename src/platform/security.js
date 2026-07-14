@@ -1,5 +1,5 @@
 import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
-import fs from "node:fs/promises";
+import fs from "node:fs";
 import path from "node:path";
 
 import rateLimit from "express-rate-limit";
@@ -199,20 +199,20 @@ export function createRateLimiters() {
   });
 }
 
-async function htmlFiles(directory) {
-  const entries = await fs.readdir(directory, { withFileTypes: true });
-  const nested = await Promise.all(entries.map(async (entry) => {
+function htmlFiles(directory) {
+  const entries = fs.readdirSync(directory, { withFileTypes: true });
+  const nested = entries.map((entry) => {
     const absolute = path.join(directory, entry.name);
     if (entry.isDirectory()) return htmlFiles(absolute);
     return entry.isFile() && entry.name.endsWith(".html") ? [absolute] : [];
-  }));
+  });
   return nested.flat();
 }
 
-export async function collectInlineScriptHashes(directory) {
+export function collectInlineScriptHashes(directory) {
   const hashes = new Set();
-  for (const file of await htmlFiles(directory)) {
-    const source = await fs.readFile(file, "utf8");
+  for (const file of htmlFiles(directory)) {
+    const source = fs.readFileSync(file, "utf8");
     const pattern = /<script\b(?![^>]*\bsrc\s*=)[^>]*>([\s\S]*?)<\/script>/gi;
     for (const match of source.matchAll(pattern)) {
       if (!match[1]) continue;

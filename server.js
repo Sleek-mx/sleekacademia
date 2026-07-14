@@ -77,7 +77,7 @@ const adminSessionService = adminPasswordHash && adminSessionSecret
   : null;
 const publishableKey = process.env.CLERK_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "";
 const clerkFrontendApi = process.env.CLERK_FRONTEND_API_URL || frontendApiFromPublishableKey(publishableKey);
-const scriptHashes = await collectInlineScriptHashes(publicDir);
+const scriptHashes = collectInlineScriptHashes(publicDir);
 const rateLimiters = createRateLimiters();
 const csrfService = createCsrfService({
   secret: process.env.CSRF_SECRET || adminSessionSecret || crypto.randomBytes(32).toString("base64url"),
@@ -595,11 +595,16 @@ app.use((req, res) => {
   res.status(404).sendFile(path.join(publicDir, "404.html"));
 });
 
-await seedDemoPlatform(platformStore);
-
-app.listen(port, () => {
-  console.log(`Sleek Academia is running at http://localhost:${port}`);
-});
+seedDemoPlatform(platformStore)
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Sleek Academia is running at http://localhost:${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Sleek Academia failed to start:", error);
+    process.exitCode = 1;
+  });
 
 function shellQuote(value) {
   return `'${String(value).replace(/'/g, "'\\''")}'`;
