@@ -25,15 +25,58 @@ function publicMarketingHtml() {
   ];
 }
 
+function allHtmlFiles(directory = publicDir, prefix = "") {
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const relative = path.join(prefix, entry.name);
+    if (entry.isDirectory()) return allHtmlFiles(path.join(directory, entry.name), relative);
+    return entry.name.endsWith(".html") ? [relative] : [];
+  });
+}
+
 test("About, Blog, and Store use the approved shared public system", () => {
-  for (const page of ["about.html", "blog.html", "store.html"]) {
+  const currentPages = {
+    "index.html": "/",
+    "about.html": "/about.html",
+    "blog.html": "/blog.html",
+    "store.html": "/store.html",
+  };
+
+  for (const [page, currentPath] of Object.entries(currentPages)) {
     const html = read(page);
-    assert.match(html, /\/images\/brand\/sleek-academia-logo\.webp/, `${page}: official logo missing`);
+    assert.match(html, /class="site-header site-shell"/, `${page}: floating site header missing`);
+    assert.match(html, /class="site-nav"/, `${page}: shared site navigation missing`);
+    assert.match(html, /class="brand-lockup"/, `${page}: shared brand lockup missing`);
+    assert.match(html, /\/images\/brand\/sleek-academia-mark\.webp/, `${page}: woman-head mark missing`);
+    assert.match(html, /class="nav-links" id="primary-links"/, `${page}: responsive links missing`);
+    assert.match(html, new RegExp(`href="${currentPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}" aria-current="page"`), `${page}: active navigation state missing`);
+    assert.match(html, /\/images\/brand\/favicon-32\.png/, `${page}: woman-head favicon missing`);
+    assert.match(html, /\/images\/brand\/apple-touch-icon\.png/, `${page}: touch icon missing`);
     assert.match(html, /\/css\/brand-v2\.css/, `${page}: brand CSS missing`);
-    assert.match(html, /\/css\/platform-v2\.css/, `${page}: shared page CSS missing`);
-    assert.match(html, /\/js\/platform-motion\.js/, `${page}: restrained motion missing`);
+    if (page !== "index.html") assert.match(html, /\/css\/platform-v2\.css/, `${page}: shared page CSS missing`);
     assert.match(html, /href="\/onboard\.html/, `${page}: Get Started path missing`);
     assert.match(html, /href="\/login\.html"/, `${page}: login path missing`);
+  }
+});
+
+test("primary public pages contain no retired frog artwork", () => {
+  for (const page of ["index.html", "about.html", "blog.html", "store.html"]) {
+    const html = read(page);
+    assert.doesNotMatch(html, /sleek-frog-hero|\bfrog\b/i, `${page}: retired frog artwork remains`);
+  }
+});
+
+test("secondary-page woman artwork fills its frame without clipping the note cards", () => {
+  const css = read("css/platform-v2.css");
+  assert.match(css, /\.platform-art-card img\s*{[^}]*object-fit:\s*cover[^}]*object-position:\s*right center/s);
+  assert.match(css, /\.platform-note\.one\s*{[^}]*left:\s*3%/s);
+  assert.match(css, /\.platform-note\.two\s*{[^}]*right:\s*3%/s);
+});
+
+test("every HTML surface uses the standalone woman-head browser icons", () => {
+  for (const page of allHtmlFiles()) {
+    const html = read(page);
+    assert.match(html, /<link rel="icon" type="image\/png" sizes="32x32" href="\/images\/brand\/favicon-32\.png"\s*\/?>/, `${page}: favicon missing`);
+    assert.match(html, /<link rel="apple-touch-icon" href="\/images\/brand\/apple-touch-icon\.png"\s*\/?>/, `${page}: touch icon missing`);
   }
 });
 
@@ -61,6 +104,10 @@ test("redesigned primary public pages preserve analytics, schema, social links, 
     for (const url of social) assert.match(html, new RegExp(url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
     assert.doesNotMatch(html, /[—–]/, `${page}: visible em/en dash remains`);
   }
+
+  for (const page of ["index.html", "about.html", "blog.html", "store.html"]) {
+    assert.match(read(page), /localhost\|127\\\.0\\\.0\\\.1/, `${page}: localhost analytics guard missing`);
+  }
 });
 
 test("shared motion is restrained, progressive, and reduced-motion safe", () => {
@@ -68,6 +115,10 @@ test("shared motion is restrained, progressive, and reduced-motion safe", () => 
   const css = read("css/platform-v2.css");
   assert.match(script, /IntersectionObserver/);
   assert.doesNotMatch(script, /addEventListener\(["']scroll/);
+  assert.match(script, /hero__video/);
+  assert.match(script, /removeAttribute\(["']autoplay["']\)/);
+  assert.match(script, /\.pause\(\)/);
+  assert.match(script, /is-reduced-motion/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
   assert.match(css, /\[data-reveal\]/);
 });
@@ -83,10 +134,16 @@ test("Blog retains every article URL and adds working search/filter controls", (
 
 test("Store preserves Gumroad commerce and live product synchronization", () => {
   const html = read("store.html");
-  assert.match(html, /https:\/\/gumroad\.com\/js\/gumroad\.js/);
+  assert.doesNotMatch(html, /https:\/\/gumroad\.com\/js\/gumroad\.js/);
   assert.match(html, /id="products-grid"/);
   assert.match(html, /\/api\/gumroad\/products/);
   assert.match(html, /macsin6\.gumroad\.com/);
+  assert.match(html, /class="platform-button store-button--primary"[^>]*>Browse materials</);
+  assert.match(html, /class="platform-button store-button--secondary"[^>]*>Visit Gumroad store</);
+
+  const css = read("css/platform-v2.css");
+  assert.match(css, /\.platform-page \.store-button--primary\s*{[^}]*color:\s*#fff/s);
+  assert.match(css, /\.platform-page \.store-button--secondary\s*{[^}]*color:\s*var\(--platform-ink\)/s);
 });
 
 test("every article uses its own optimized local editorial image", () => {

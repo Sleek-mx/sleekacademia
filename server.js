@@ -441,7 +441,7 @@ const GUMROAD_TTL = 5 * 60 * 1000;
 app.get('/api/gumroad/products', async (_req, res) => {
   try {
     const token = process.env.GUMROAD_ACCESS_TOKEN;
-    if (!token) return res.status(503).json({ error: 'Gumroad not configured.' });
+    if (!token) return res.json({ products: [], configured: false });
 
     if (_gumroadCache.products && Date.now() - _gumroadCache.fetchedAt < GUMROAD_TTL) {
       return res.json({ products: _gumroadCache.products, cached: true });

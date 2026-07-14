@@ -21,7 +21,7 @@ before(async () => {
   port = await availablePort();
   base = `http://127.0.0.1:${port}`;
   const env = { ...process.env, PORT: String(port), LOCAL_DEMO_MODE: "1" };
-  for (const name of ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "CLERK_PUBLISHABLE_KEY", "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY", "CLERK_SECRET_KEY", "STRIPE_SECRET_KEY", "PAYPAL_CLIENT_ID", "PAYPAL_SECRET"]) delete env[name];
+  for (const name of ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "CLERK_PUBLISHABLE_KEY", "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY", "CLERK_SECRET_KEY", "STRIPE_SECRET_KEY", "PAYPAL_CLIENT_ID", "PAYPAL_SECRET", "GUMROAD_ACCESS_TOKEN"]) delete env[name];
   server = spawn(process.execPath, ["server.js"], { env, stdio: "ignore" });
   for (let attempt = 0; attempt < 80; attempt += 1) {
     try { if ((await fetch(`${base}/api/health`)).ok) return; } catch {}
@@ -46,6 +46,10 @@ test("all review surfaces load from the real Express app", async () => {
   assert.doesNotMatch(homepageHtml, /sleek-academia-logo-source|1595|993/);
   assert.match(homepage.headers.get("content-security-policy") || "", /default-src 'self'/);
   assert.equal(homepage.headers.get("x-content-type-options"), "nosniff");
+
+  const gumroad = await fetch(`${base}/api/gumroad/products`);
+  assert.equal(gumroad.status, 200);
+  assert.deepEqual(await gumroad.json(), { products: [], configured: false });
 });
 
 function availablePort() {

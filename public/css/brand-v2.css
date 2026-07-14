@@ -439,139 +439,44 @@ a {
 
 .hero__visual {
   position: relative;
-  min-height: clamp(34rem, 52vw, 49rem);
+  min-width: 0;
 }
 
-.hero-orb {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
+.hero__media {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border: 1px solid rgba(229, 235, 242, 0.92);
+  border-radius: clamp(1.5rem, 3vw, 2.6rem);
+  background: var(--white);
+  box-shadow:
+    1.1rem 1.1rem 2.4rem rgba(166, 177, 192, 0.28),
+    -1.1rem -1.1rem 2.4rem rgba(255, 255, 255, 0.96);
+  isolation: isolate;
 }
 
-.hero-orb--blue {
-  top: 8%;
-  right: 17%;
-  width: 64%;
-  aspect-ratio: 1;
-  background: linear-gradient(145deg, #09a7f3 8%, #087eea 88%);
-}
-
-.hero-orb--sun {
-  right: -22%;
-  bottom: 8%;
-  width: 73%;
-  aspect-ratio: 1;
-  background: radial-gradient(circle at 34% 34%, #ffbd00, var(--orange) 58%, #ff5a1f 100%);
-}
-
-.hero-orb--pink {
-  top: 35%;
-  left: 5%;
-  width: 28%;
-  aspect-ratio: 1;
-  background: linear-gradient(145deg, #ff4b97, var(--pink));
-  opacity: 0.88;
-}
-
-.hero-orb--green {
-  right: 4%;
-  bottom: 1%;
-  width: 38%;
-  aspect-ratio: 1;
-  background: linear-gradient(145deg, #8bdf35, var(--green));
-  opacity: 0.72;
-}
-
-.hero__mascot {
-  position: absolute;
-  z-index: 3;
-  right: -3%;
-  bottom: -2%;
-  width: min(101%, 52rem);
-  height: auto;
-  filter: drop-shadow(0 1.7rem 1.4rem rgba(19, 44, 77, 0.17));
-}
-
-.hero-checklist {
-  position: absolute;
-  z-index: 4;
-  top: 28%;
-  right: -1%;
-  width: 10.2rem;
-  padding: 1.15rem;
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  border-radius: 1.5rem;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(0.8rem);
-}
-
-.hero-checklist__row {
-  display: grid;
-  grid-template-columns: 1.6rem 1fr;
-  align-items: center;
-  gap: 0.55rem;
-  margin: 0.55rem 0;
-}
-
-.hero-checklist__check {
-  display: grid;
-  width: 1.45rem;
-  height: 1.45rem;
-  place-items: center;
-  border-radius: 50%;
-  color: var(--white);
-  background: var(--green);
-  font-size: 0.75rem;
-  font-weight: 900;
-}
-
-.hero-checklist__line {
-  height: 0.38rem;
-  border-radius: 999px;
-  background: #c9d0d8;
-}
-
-.hero-checklist__line--short {
-  width: 68%;
-}
-
-.hero-books {
-  position: absolute;
-  z-index: 2;
-  right: -4%;
-  bottom: 3%;
-  width: 31%;
-  height: 8.5rem;
-}
-
-.hero-book {
-  position: absolute;
-  right: 0;
+.hero__poster,
+.hero__video {
   width: 100%;
-  height: 2.2rem;
-  border: 0.22rem solid rgba(16, 24, 39, 0.12);
-  border-radius: 0.55rem 1.1rem 1.1rem 0.55rem;
-  box-shadow: 0 0.55rem 1rem rgba(20, 43, 72, 0.12);
+  height: 100%;
+  object-fit: contain;
 }
 
-.hero-book:nth-child(1) { bottom: 0; background: #58c935; }
-.hero-book:nth-child(2) { right: 5%; bottom: 2.2rem; background: #ff6b16; }
-.hero-book:nth-child(3) { right: 2%; bottom: 4.4rem; background: var(--blue); }
-
-.spark {
+.hero__poster {
   position: absolute;
-  z-index: 5;
-  width: 1rem;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  box-shadow: inset -0.15rem -0.18rem 0 rgba(0, 0, 0, 0.08);
+  inset: 0;
 }
 
-.spark--one { top: 16%; left: 4%; background: var(--teal); }
-.spark--two { top: 30%; left: 8%; background: var(--pink); }
-.spark--three { top: 12%; right: 7%; background: var(--orange); }
-.spark--four { bottom: 24%; left: 0; background: var(--blue); }
+.hero__video {
+  position: relative;
+  z-index: 1;
+  display: block;
+  background: var(--white);
+}
+
+.is-reduced-motion .hero__video {
+  visibility: hidden;
+}
 
 .section {
   position: relative;
@@ -1156,7 +1061,7 @@ a {
   }
 
   .hero__visual {
-    min-height: 36rem;
+    align-self: center;
   }
 
   .service-feature h3 {
@@ -1175,11 +1080,8 @@ a {
   }
 
   .hero__visual {
-    min-height: 42rem;
-  }
-
-  .hero__mascot {
-    right: 0;
+    width: min(100%, 50rem);
+    margin-inline: auto;
   }
 
   .section-heading,
@@ -1296,49 +1198,11 @@ a {
   }
 
   .hero__visual {
-    min-height: 30rem;
+    margin-top: 1.25rem;
   }
 
-  .hero-orb--blue {
-    top: 9%;
-    right: 13%;
-    width: 69%;
-  }
-
-  .hero-orb--sun {
-    right: -31%;
-    width: 78%;
-  }
-
-  .hero__mascot {
-    bottom: 2%;
-    width: 112%;
-  }
-
-  .hero-checklist {
-    top: 27%;
-    right: -1%;
-    width: 7.1rem;
-    padding: 0.7rem;
-  }
-
-  .hero-checklist__row {
-    grid-template-columns: 1.15rem 1fr;
-    gap: 0.35rem;
-    margin: 0.35rem 0;
-  }
-
-  .hero-checklist__check {
-    width: 1rem;
-    height: 1rem;
-    font-size: 0.55rem;
-  }
-
-  .hero-books {
-    right: -3%;
-    width: 36%;
-    transform: scale(0.78);
-    transform-origin: right bottom;
+  .hero__media {
+    border-radius: 1.3rem;
   }
 
   .section {

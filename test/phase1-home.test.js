@@ -19,7 +19,12 @@ test("homepage uses the approved Sleek Academia brand foundation", async () => {
   assert.match(home, /\/images\/brand\/sleek-academia-mark\.webp/);
   assert.match(home, /class="brand-lockup__name">Sleek Academia</);
   assert.match(home, /class="brand-lockup__tagline">Pass\. Guaranteed\.</);
-  assert.match(home, /\/images\/brand\/sleek-frog-hero\.webp/);
+  assert.match(home, /\/video\/sleek-academia-woman-hero\.mp4/);
+  assert.match(home, /\/images\/brand\/sleek-academia-woman-hero-poster\.webp/);
+  assert.match(
+    home,
+    /<video\b(?=[^>]*\bautoplay\b)(?=[^>]*\bmuted\b)(?=[^>]*\bloop\b)(?=[^>]*\bplaysinline\b)[^>]*>/i,
+  );
   assert.match(home, /\/images\/brand\/favicon-32\.png/);
   assert.match(home, /\/images\/brand\/apple-touch-icon\.png/);
 });

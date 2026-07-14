@@ -1,17 +1,27 @@
 (function () {
-  const header = document.querySelector(".platform-header");
-  const toggle = document.querySelector(".platform-mobile-toggle");
-  if (header && toggle) {
+  const toggle = document.querySelector(".menu-button");
+  const menu = document.getElementById("primary-links");
+  if (toggle && menu) {
     toggle.addEventListener("click", function () {
-      const open = header.classList.toggle("is-open");
+      const open = menu.classList.toggle("is-open");
+      document.body.classList.toggle("menu-open", open);
       toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close navigation menu" : "Open navigation menu");
     });
+  }
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const heroVideo = document.querySelector(".hero__video");
+  if (heroVideo && reduceMotion) {
+    heroVideo.removeAttribute("autoplay");
+    heroVideo.pause();
+    heroVideo.currentTime = 0;
+    document.documentElement.classList.add("is-reduced-motion");
   }
 
   const revealItems = Array.from(document.querySelectorAll("[data-reveal]"));
   if (!revealItems.length) return;
 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reduceMotion || !("IntersectionObserver" in window)) {
     revealItems.forEach(function (item) { item.classList.add("is-visible"); });
     return;
