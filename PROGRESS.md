@@ -11,7 +11,7 @@ Plan:
 5. Payments and Delivery.
 6. QA and Namecheap Launch.
 
-Current approved extension: replace dashboard liquid glass with branded light/night neumorphism, use one role-neutral login surface, add structured request dropdowns, move order details from dialogs to dedicated pages, and refresh Blog cards and artwork before another complete localhost review.
+Current approved extension: replace the public frog artwork with the supplied animated woman hero, preserve the woman-head favicon, correct invisible Store hero button labels, and unify Home, About, Blog, and Store on the same floating light-neumorphic public theme before another complete localhost review.
 
 ## Done
 
@@ -59,6 +59,10 @@ Current approved extension: replace dashboard liquid glass with branded light/ni
 - [x] Saved the approved refresh specification and implementation plan under `docs/superpowers/`.
 - [x] Implemented and live-tested the Neumorphic Workspace and Blog Refresh: structured subject/help dropdowns and exam-hour guidance, one role-neutral login, dedicated client/admin order pages, true same-surface light/night neumorphism with branded motifs, ten varied topic-specific Blog illustrations with visible summaries, and responsive dashboard navigation.
 - [x] Passed the refreshed localhost gate on 2026-07-13: 170/170 application tests, 6/6 SEO tests, the tracked-source security release gate across 64 files, zero production dependency vulnerabilities, desktop/mobile browser checks, light/night visual checks, client/MCX login routing, delivered-file payment locking, dedicated-order navigation, responsive drawers, and clean browser logs.
+- [x] Inspected the supplied ten-second 1920 by 1080 woman-illustration MP4 and approved it for a silent looping homepage hero with a reduced-motion poster fallback.
+- [x] Reproduced the blank Store hero labels and traced the root cause to `.platform-page a { color: inherit; }` overriding `.platform-button` inside the white-text gradient hero.
+- [x] Verified the public-theme split: Home uses `site-header` and the floating raised `site-nav`, while About, Blog, and Store use a separate flat `platform-header` without the Home shadow/surface structure.
+- [ ] Implement and live-test the animated woman hero, site-wide frog removal, visible Store buttons, woman-head favicon, and unified public neumorphic theme.
 
 ## Next
 
@@ -80,7 +84,9 @@ Current approved extension: replace dashboard liquid glass with branded light/ni
 - Public services never take payment; custom-service payment happens only in the dashboard.
 - Custom requests require 50 percent deposit before `In Progress` and full payment before final/AI-report downloads.
 - Store checkout remains immediate and separate.
-- The hero must remain static. The rejected typing/thinking mascot animation must not be recreated.
+- The old frog typing/thinking animation remains rejected. The user explicitly approved the supplied ten-second woman-illustration MP4 as the new silent, looping homepage hero on 2026-07-14.
+- Home, About, Blog, and Store must share the Home page's floating light-neumorphic navigation and surface language; the separate flat `platform-header` presentation is being retired.
+- No public page should retain the frog. Home uses the supplied woman video; About and Blog use its poster/crop where an illustration is needed.
 - Use 21st.dev only as interaction inspiration; implement original, restrained website transitions and micro-interactions consistent with the Sleek Academia brand.
 - Full remaining implementation plan: `docs/superpowers/plans/2026-07-13-complete-platform-localhost.md`.
 - Baseline on resume: `npm test` = 31 passing, 0 failing on 2026-07-13.
