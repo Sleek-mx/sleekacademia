@@ -44,3 +44,12 @@ test("login has one role-neutral form while preserving isolated authentication",
   assert.doesNotMatch(script, /localStorage.*password|sessionStorage.*password|URLSearchParams.*password/);
   assert.doesNotMatch(html, /data-auth-mode|role="tablist"|>\s*Admin\s*<|>\s*Client\s*</i);
 });
+
+test("client login hands additional Clerk verification to the secure Clerk component", () => {
+  const script = read("public/js/auth.js");
+
+  assert.match(script, /function\s+showClerkSignIn\b/);
+  assert.match(script, /if\s*\(signIn\.status\s*!==\s*"complete"\s*\|\|\s*!signIn\.createdSessionId\)\s*\{[\s\S]*?showClerkSignIn\("Complete the additional security verification\."\);[\s\S]*?return;/);
+  assert.match(script, /window\.Clerk\.mountSignIn\(signInTarget/);
+  assert.doesNotMatch(script, /if\s*\(signIn\.status\s*!==\s*"complete"\s*\|\|\s*!signIn\.createdSessionId\)\s*throw\s+new\s+Error\(ADMIN_FAILURE\)/);
+});

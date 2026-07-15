@@ -33,6 +33,16 @@ async function configureUnifiedLogin({ status, signInTarget, unifiedForm, config
     if (window.Clerk.isSignedIn) window.location.replace("/dashboard.html");
   }
 
+  function showClerkSignIn(message) {
+    signInTarget.hidden = false;
+    unifiedForm.hidden = true;
+    if (!clerkMounted) {
+      clerkMounted = true;
+      window.Clerk.mountSignIn(signInTarget, { appearance: clerkAppearance(), signUpUrl: "/sign-up.html", afterSignInUrl: "/dashboard.html" });
+    }
+    showStatus(status, message);
+  }
+
   document.getElementById("clerk-options-toggle")?.addEventListener("click", async () => {
     try {
       if (config.demoMode) {
@@ -40,13 +50,7 @@ async function configureUnifiedLogin({ status, signInTarget, unifiedForm, config
         return;
       }
       await prepareClerk();
-      signInTarget.hidden = false;
-      unifiedForm.hidden = true;
-      if (!clerkMounted) {
-        clerkMounted = true;
-        window.Clerk.mountSignIn(signInTarget, { appearance: clerkAppearance(), signUpUrl: "/sign-up.html", afterSignInUrl: "/dashboard.html" });
-      }
-      showStatus(status, "Choose a secure sign-in option.");
+      showClerkSignIn("Choose a secure sign-in option.");
     } catch (error) {
       showStatus(status, error.message || ADMIN_FAILURE, true);
     }
@@ -81,7 +85,10 @@ async function configureUnifiedLogin({ status, signInTarget, unifiedForm, config
       }
       await prepareClerk();
       const signIn = await window.Clerk.client.signIn.create({ identifier, password });
-      if (signIn.status !== "complete" || !signIn.createdSessionId) throw new Error(ADMIN_FAILURE);
+      if (signIn.status !== "complete" || !signIn.createdSessionId) {
+        showClerkSignIn("Complete the additional security verification.");
+        return;
+      }
       await window.Clerk.setActive({ session: signIn.createdSessionId });
       window.location.assign("/dashboard.html");
     } catch (error) {
