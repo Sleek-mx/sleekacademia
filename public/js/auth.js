@@ -109,7 +109,7 @@ async function configureUnifiedLogin({ status, signInTarget, unifiedForm, client
         return;
       }
       if (signIn.status !== "complete" || !signIn.createdSessionId) {
-        showClerkSignIn("Complete the additional security verification.");
+        showClerkSignIn(`Complete the additional security verification (${signIn.status}).`);
         return;
       }
       await window.Clerk.setActive({ session: signIn.createdSessionId });
