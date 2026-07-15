@@ -89,7 +89,7 @@ Current approved extension: tighten the public heroes, enlarge the Home copy and
 - [x] Execute the approved plan inline with red-green-refactor tests and checkpoint commits.
 - [x] Verify the entire revised platform locally and leave the server running; do not push or deploy until Max approves that local result.
 - [x] After Max reviewed localhost and explicitly approved launch, reverified the GitHub remote and destructive deployment source/destination, pushed `main`, recovered the Namecheap Passenger app, and verified the public URL and assets.
-- [ ] Deploy the verified single-pass Clerk client-trust flow, then complete a real production browser password login, one-time new-device verification, dashboard check, and logout using `client.test@sleekacademia.com`. MCX MFA remains deferred by Max.
+- [x] Deployed and browser-verified the single-pass Clerk client-trust flow through the live password step: the verified password now sends the email code and transitions directly to one one-time-code field without repeating credentials. The remaining dashboard/logout proof requires Max to enter the code delivered to the verified owner mailbox. MCX MFA remains deferred by Max.
 - [ ] After Max signs into the open PayPal and Stripe Chrome tabs, verify the PayPal live app belongs to `macsiemoney@gmail.com`, activate Stripe live mode with a verified production webhook, and repeat the payment-gate smoke checks without making an uncontrolled live charge.
 - [x] Browser-verify the responsive animated public heroes on desktop and mobile, enforce all-instance reduced-motion fallbacks through the RED/GREEN contract, and run the full local security/test gate without pushing or deploying.
 

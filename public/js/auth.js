@@ -50,8 +50,7 @@ async function configureUnifiedLogin({ status, signInTarget, unifiedForm, client
   async function beginClientTrust(signIn) {
     emailCodeFactor = signIn.supportedSecondFactors?.find((factor) => factor.strategy === "email_code");
     if (!emailCodeFactor || !clientTrustForm) {
-      const strategies = signIn.supportedSecondFactors?.map((factor) => factor.strategy).join(",") || "none";
-      showClerkSignIn(`Complete the additional security verification (${signIn.status}; ${strategies}).`);
+      showClerkSignIn("Complete the additional security verification.");
       return;
     }
     pendingSignIn = await signIn.prepareSecondFactor({ strategy: "email_code", emailAddressId: emailCodeFactor.emailAddressId });
@@ -110,7 +109,7 @@ async function configureUnifiedLogin({ status, signInTarget, unifiedForm, client
         return;
       }
       if (signIn.status !== "complete" || !signIn.createdSessionId) {
-        showClerkSignIn(`Complete the additional security verification (${signIn.status}).`);
+        showClerkSignIn("Complete the additional security verification.");
         return;
       }
       await window.Clerk.setActive({ session: signIn.createdSessionId });
