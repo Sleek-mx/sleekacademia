@@ -13,6 +13,8 @@ Plan:
 
 Current approved extension: tighten the public heroes, enlarge the Home copy and animation, loosen About and Blog display typography, animate every public woman visual, and treat mobile as a purpose-built stacked composition before another complete localhost review.
 
+Current restoration: apply the canonical lavender neumorphism to Home, About, Blog, and Store through a public-only CSS layer, preserving all current content, animation, responsive behavior, SEO, scripts, and backend wiring while leaving dashboards and workspace pages unchanged.
+
 ## Done
 
 - [x] Verified `origin` is `https://github.com/Sleek-mx/sleekacademia.git` and restored the canonical local checkout.
