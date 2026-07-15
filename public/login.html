@@ -17,6 +17,11 @@
         <div class="form-field"><label for="login-password">Password</label><input id="login-password" name="password" type="password" maxlength="1024" autocomplete="current-password" required></div>
         <button class="ws-button primary" type="submit">Sign in</button>
       </form>
+      <form id="client-trust-form" autocomplete="one-time-code" hidden>
+        <div class="form-field"><label for="client-trust-code">Verification code</label><input id="client-trust-code" name="code" inputmode="numeric" pattern="[0-9]*" maxlength="12" autocomplete="one-time-code" required></div>
+        <button class="ws-button primary" type="submit">Verify and continue</button>
+        <button id="client-trust-resend" class="auth-text-button" type="button">Send a new code</button>
+      </form>
       <button id="clerk-options-toggle" class="auth-text-button" type="button">Use Google or another secure sign-in option</button>
       <div id="clerk-sign-in" class="clerk-frame" hidden></div>
       <div class="auth-links">New here? <a href="/sign-up.html">Create an account</a></div>

@@ -5,11 +5,12 @@ async function initAuthPage() {
   const signInTarget = document.getElementById("clerk-sign-in");
   const signUpTarget = document.getElementById("clerk-sign-up");
   const unifiedForm = document.getElementById("unified-login-form");
+  const clientTrustForm = document.getElementById("client-trust-form");
   let config;
 
   try {
     config = await fetch("/api/config", { credentials: "same-origin" }).then((response) => response.json());
-    if (signInTarget && unifiedForm) await configureUnifiedLogin({ status, signInTarget, unifiedForm, config });
+    if (signInTarget && unifiedForm) await configureUnifiedLogin({ status, signInTarget, unifiedForm, clientTrustForm, config });
     if (signUpTarget) await mountClerk({ status, target: signUpTarget, mode: "sign-up", config });
   } catch (error) {
     showStatus(status, error.message || "Unable to load authentication.", true);
@@ -20,9 +21,11 @@ function isAdminIdentifier(identifier) {
   return String(identifier || "").trim().toUpperCase() === "MCX";
 }
 
-async function configureUnifiedLogin({ status, signInTarget, unifiedForm, config }) {
+async function configureUnifiedLogin({ status, signInTarget, unifiedForm, clientTrustForm, config }) {
   let clerkMounted = false;
   let clerkReady = false;
+  let pendingSignIn = null;
+  let emailCodeFactor = null;
 
   async function prepareClerk() {
     if (clerkReady || config.demoMode) return;
@@ -36,11 +39,27 @@ async function configureUnifiedLogin({ status, signInTarget, unifiedForm, config
   function showClerkSignIn(message) {
     signInTarget.hidden = false;
     unifiedForm.hidden = true;
+    if (clientTrustForm) clientTrustForm.hidden = true;
     if (!clerkMounted) {
       clerkMounted = true;
       window.Clerk.mountSignIn(signInTarget, { appearance: clerkAppearance(), signUpUrl: "/sign-up.html", afterSignInUrl: "/dashboard.html" });
     }
     showStatus(status, message);
+  }
+
+  async function beginClientTrust(signIn) {
+    emailCodeFactor = signIn.supportedSecondFactors?.find((factor) => factor.strategy === "email_code");
+    if (!emailCodeFactor || !clientTrustForm) {
+      showClerkSignIn("Complete the additional security verification.");
+      return;
+    }
+    pendingSignIn = await signIn.prepareSecondFactor({ strategy: "email_code", emailAddressId: emailCodeFactor.emailAddressId });
+    unifiedForm.hidden = true;
+    signInTarget.hidden = true;
+    clientTrustForm.hidden = false;
+    clientTrustForm.elements.code.value = "";
+    clientTrustForm.elements.code.focus();
+    showStatus(status, "Check your email for the verification code, then enter it below.");
   }
 
   document.getElementById("clerk-options-toggle")?.addEventListener("click", async () => {
@@ -85,6 +104,10 @@ async function configureUnifiedLogin({ status, signInTarget, unifiedForm, config
       }
       await prepareClerk();
       const signIn = await window.Clerk.client.signIn.create({ identifier, password });
+      if (["needs_client_trust", "needs_second_factor"].includes(signIn.status)) {
+        await beginClientTrust(signIn);
+        return;
+      }
       if (signIn.status !== "complete" || !signIn.createdSessionId) {
         showClerkSignIn("Complete the additional security verification.");
         return;
@@ -96,6 +119,36 @@ async function configureUnifiedLogin({ status, signInTarget, unifiedForm, config
     } finally {
       unifiedForm.elements.password.value = "";
       submit.disabled = false;
+    }
+  });
+
+  clientTrustForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const submit = clientTrustForm.querySelector('button[type="submit"]');
+    const code = clientTrustForm.elements.code.value.trim();
+    submit.disabled = true;
+    showStatus(status, "Verifying the security code...");
+    try {
+      if (!pendingSignIn) throw new Error(ADMIN_FAILURE);
+      const signIn = await pendingSignIn.attemptSecondFactor({ strategy: "email_code", code });
+      if (signIn.status !== "complete" || !signIn.createdSessionId) throw new Error(ADMIN_FAILURE);
+      await window.Clerk.setActive({ session: signIn.createdSessionId });
+      window.location.assign("/dashboard.html");
+    } catch (error) {
+      showStatus(status, "That verification code could not be confirmed. Check it and try again.", true);
+      clientTrustForm.elements.code.select();
+    } finally {
+      submit.disabled = false;
+    }
+  });
+
+  document.getElementById("client-trust-resend")?.addEventListener("click", async () => {
+    try {
+      if (!pendingSignIn || !emailCodeFactor) throw new Error(ADMIN_FAILURE);
+      pendingSignIn = await pendingSignIn.prepareSecondFactor({ strategy: "email_code", emailAddressId: emailCodeFactor.emailAddressId });
+      showStatus(status, "A new verification code has been sent to your email.");
+    } catch (error) {
+      showStatus(status, "A new code could not be sent yet. Please wait and try again.", true);
     }
   });
   showStatus(status, config.demoMode ? "Local review mode is active. Enter any email to open the seeded workspace." : "Enter your email or username and password.");

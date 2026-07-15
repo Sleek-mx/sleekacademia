@@ -89,8 +89,8 @@ body.ws-body { margin: 0; min-height: 100vh; background: var(--ws-paper); color:
 .auth-card > p { color: var(--ws-muted); line-height: 1.65; }
 .auth-status { margin: 20px 0; padding: 13px 15px; border-radius: 12px; background: #f6f3fb; color: var(--ws-muted); font-size: .82rem; }
 .auth-status.is-error { background: #fff0f3; color: #9b243a; }
-.auth-card #unified-login-form { display: grid; gap: 16px; }
-.auth-card #unified-login-form .ws-button { width: 100%; margin-top: 4px; }
+.auth-card #unified-login-form,.auth-card #client-trust-form { display: grid; gap: 16px; }
+.auth-card #unified-login-form .ws-button,.auth-card #client-trust-form .ws-button { width: 100%; margin-top: 4px; }
 .auth-text-button { width: 100%; margin-top: 18px; padding: 8px; border: 0; background: transparent; color: var(--ws-violet-dark); font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
 .auth-text-button:hover { color: var(--ws-violet); }
 .auth-links { margin-top: 22px; color: var(--ws-muted); font-size: .88rem; line-height: 1.8; }

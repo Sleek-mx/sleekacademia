@@ -45,11 +45,15 @@ test("login has one role-neutral form while preserving isolated authentication",
   assert.doesNotMatch(html, /data-auth-mode|role="tablist"|>\s*Admin\s*<|>\s*Client\s*</i);
 });
 
-test("client login hands additional Clerk verification to the secure Clerk component", () => {
+test("client login completes Clerk client-trust verification without repeating credentials", () => {
   const script = read("public/js/auth.js");
+  const html = read("public/login.html");
 
-  assert.match(script, /function\s+showClerkSignIn\b/);
-  assert.match(script, /if\s*\(signIn\.status\s*!==\s*"complete"\s*\|\|\s*!signIn\.createdSessionId\)\s*\{[\s\S]*?showClerkSignIn\("Complete the additional security verification\."\);[\s\S]*?return;/);
-  assert.match(script, /window\.Clerk\.mountSignIn\(signInTarget/);
-  assert.doesNotMatch(script, /if\s*\(signIn\.status\s*!==\s*"complete"\s*\|\|\s*!signIn\.createdSessionId\)\s*throw\s+new\s+Error\(ADMIN_FAILURE\)/);
+  assert.match(html, /id="client-trust-form"[^>]*hidden/);
+  assert.match(html, /id="client-trust-code"[^>]*autocomplete="one-time-code"/);
+  assert.match(script, /\["needs_client_trust",\s*"needs_second_factor"\]\.includes\(signIn\.status\)/);
+  assert.match(script, /supportedSecondFactors\?\.find\([\s\S]*?factor\.strategy\s*===\s*"email_code"/);
+  assert.match(script, /prepareSecondFactor\(\{\s*strategy:\s*"email_code",\s*emailAddressId:\s*emailCodeFactor\.emailAddressId\s*\}\)/);
+  assert.match(script, /attemptSecondFactor\(\{\s*strategy:\s*"email_code",\s*code\s*\}\)/);
+  assert.match(script, /window\.Clerk\.setActive\(\{\s*session:\s*signIn\.createdSessionId\s*\}\)/);
 });
