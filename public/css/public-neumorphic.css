@@ -1,0 +1,440 @@
+/* Sleek Academia public soft UI layer.
+   Layout remains owned by brand-v2.css and platform-v2.css. */
+
+:root {
+  --public-neu-surface: #e7e4f1;
+  --public-neu-shadow: #c3bdd8;
+  --public-neu-highlight: #ffffff;
+  --public-neu-text: #372f52;
+  --public-neu-muted: #6b6488;
+  --public-neu-brand: #702ae1;
+  --public-neu-brand-light: #9d6bff;
+  --public-neu-line: rgba(107, 100, 136, 0.18);
+  --public-neu-raised: 10px 10px 24px #c3bdd8, -10px -10px 24px #ffffff;
+  --public-neu-raised-small: 6px 6px 14px #c3bdd8, -6px -6px 14px #ffffff;
+  --public-neu-raised-hover: 15px 15px 32px #c3bdd8, -14px -14px 30px #ffffff;
+  --public-neu-pressed: inset 6px 6px 12px #c3bdd8, inset -6px -6px 12px #ffffff;
+  --public-neu-cta: 8px 8px 20px rgba(112, 42, 225, 0.34), -8px -8px 18px #ffffff, inset 0 1px 0 rgba(255, 255, 255, 0.38);
+
+  --ink: var(--public-neu-text);
+  --body: var(--public-neu-muted);
+  --muted: var(--public-neu-muted);
+  --line: var(--public-neu-line);
+  --surface: var(--public-neu-surface);
+  --surface-blue: var(--public-neu-surface);
+  --blue: var(--public-neu-brand);
+  --teal: var(--public-neu-brand-light);
+  --navy: var(--public-neu-text);
+  --shadow-soft: var(--public-neu-raised);
+  --shadow-card: var(--public-neu-raised-small);
+
+  --platform-ink: var(--public-neu-text);
+  --platform-muted: var(--public-neu-muted);
+  --platform-paper: var(--public-neu-surface);
+  --platform-wash: var(--public-neu-surface);
+  --platform-violet: var(--public-neu-brand);
+  --platform-violet-dark: #5a1fc2;
+  --platform-cyan: var(--public-neu-brand-light);
+  --platform-line: var(--public-neu-line);
+  --platform-shadow: var(--public-neu-raised);
+  --platform-inset: var(--public-neu-pressed);
+}
+
+html,
+body,
+body.platform-page {
+  color: var(--public-neu-text);
+  background-color: var(--public-neu-surface);
+}
+
+body {
+  background:
+    radial-gradient(circle at 8% 8%, rgba(157, 107, 255, 0.12), transparent 24rem),
+    radial-gradient(circle at 92% 32%, rgba(112, 42, 225, 0.08), transparent 28rem),
+    var(--public-neu-surface);
+}
+
+body.platform-page::before {
+  background:
+    radial-gradient(circle at 10% 8%, rgba(157, 107, 255, 0.12), transparent 28rem),
+    radial-gradient(circle at 90% 30%, rgba(112, 42, 225, 0.08), transparent 26rem);
+}
+
+:focus-visible {
+  outline-color: var(--public-neu-brand);
+}
+
+.site-nav,
+.platform-header {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--public-neu-surface) 92%, transparent);
+  box-shadow: var(--public-neu-raised);
+}
+
+.nav-link,
+.nav-login {
+  color: var(--public-neu-muted);
+}
+
+.nav-link:hover,
+.nav-link[aria-current="page"],
+.nav-login:hover {
+  color: var(--public-neu-brand);
+}
+
+.nav-link[aria-current="page"] {
+  padding-inline: 1rem;
+  box-shadow: var(--public-neu-pressed);
+}
+
+.nav-link::after {
+  display: none;
+}
+
+.menu-button {
+  border: 0;
+  color: var(--public-neu-text);
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-raised-small);
+}
+
+.menu-button:active,
+.menu-button[aria-expanded="true"] {
+  box-shadow: var(--public-neu-pressed);
+}
+
+.button,
+.platform-button {
+  border-color: transparent;
+  color: var(--public-neu-text);
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-raised-small);
+}
+
+.button:hover,
+.platform-button:hover {
+  color: var(--public-neu-brand);
+  box-shadow: var(--public-neu-raised);
+}
+
+.button:active,
+.platform-button:active {
+  box-shadow: var(--public-neu-pressed);
+}
+
+.button--primary,
+.platform-page .platform-button.primary,
+.platform-page .store-button--primary {
+  border: 2px solid rgba(255, 255, 255, 0.88);
+  color: #ffffff !important;
+  background: linear-gradient(135deg, var(--public-neu-brand), var(--public-neu-brand-light));
+  box-shadow: var(--public-neu-cta);
+}
+
+.button--primary:hover,
+.platform-page .platform-button.primary:hover,
+.platform-page .store-button--primary:hover {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #6222cf, #8f5af0);
+  box-shadow: 12px 12px 28px rgba(112, 42, 225, 0.42), -8px -8px 18px #ffffff, inset 0 1px 0 rgba(255, 255, 255, 0.48);
+}
+
+.button--secondary,
+.platform-page .store-button--secondary {
+  border-color: transparent;
+  color: var(--public-neu-text);
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-raised-small);
+}
+
+.eyebrow,
+.section-kicker,
+.platform-kicker,
+.platform-index,
+.blog-card-tag,
+.platform-card-link,
+.service-row__arrow {
+  color: var(--public-neu-brand) !important;
+}
+
+.eyebrow::before,
+.platform-kicker::before {
+  background: linear-gradient(90deg, var(--public-neu-brand), var(--public-neu-brand-light));
+}
+
+.text-blue,
+.platform-display .accent {
+  color: var(--public-neu-brand);
+}
+
+.text-green {
+  color: var(--public-neu-brand-light);
+}
+
+.platform-display .accent::after {
+  background: rgba(157, 107, 255, 0.42);
+}
+
+.hero::before {
+  border-color: rgba(112, 42, 225, 0.13);
+}
+
+.hero__media,
+.platform-art-card,
+.platform-story-media {
+  border-color: transparent;
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-raised);
+}
+
+.hero__video,
+.platform-woman-video {
+  background: var(--public-neu-surface);
+}
+
+.platform-note {
+  border-color: transparent;
+  color: var(--public-neu-text);
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-raised-small);
+}
+
+.platform-note.two {
+  background: var(--public-neu-surface);
+}
+
+.section--soft,
+.platform-section.tint {
+  border-color: transparent;
+  background: transparent;
+}
+
+.section--blue {
+  color: var(--public-neu-text);
+  background: transparent;
+}
+
+.service-feature,
+.service-row,
+.assurance,
+.process-step,
+.testimonial,
+.platform-card,
+.platform-story-panel.visual,
+.platform-story-panel.copy,
+.blog-card,
+.product-card-v2,
+.platform-cta {
+  border-color: transparent;
+  color: var(--public-neu-text);
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-raised);
+}
+
+.service-feature {
+  background:
+    radial-gradient(circle at 82% 18%, rgba(157, 107, 255, 0.16), transparent 13rem),
+    var(--public-neu-surface);
+}
+
+.service-feature::after {
+  color: rgba(112, 42, 225, 0.07);
+}
+
+.service-feature__icon,
+.service-row__icon,
+.assurance__icon,
+.process-step__number,
+.product-icon,
+.testimonial__avatar,
+.trust-dot {
+  border-color: var(--public-neu-surface);
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--public-neu-brand), var(--public-neu-brand-light)) !important;
+  box-shadow: var(--public-neu-pressed);
+}
+
+.service-feature p,
+.service-row p,
+.assurance p,
+.process-step p,
+.proof-statement p,
+.testimonial blockquote,
+.testimonial__person span,
+.platform-card p,
+.platform-story-panel.copy p,
+.blog-card p,
+.platform-copy,
+.platform-lede {
+  color: var(--public-neu-muted);
+}
+
+.service-feature a,
+.assurance a {
+  color: var(--public-neu-brand);
+}
+
+.service-row:hover,
+.blog-card:hover,
+.platform-card:hover {
+  border-color: transparent;
+  box-shadow: var(--public-neu-raised-hover);
+}
+
+.program-strip {
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-pressed);
+}
+
+.program + .program,
+.program:nth-child(3),
+.program:nth-child(4) {
+  border-color: var(--public-neu-line);
+}
+
+.program__accent {
+  background: var(--public-neu-brand) !important;
+  box-shadow: 0 0 0.9rem rgba(112, 42, 225, 0.42);
+}
+
+.testimonial__stars {
+  color: var(--public-neu-brand);
+}
+
+.final-cta {
+  color: var(--public-neu-text);
+  background:
+    radial-gradient(circle at 85% 12%, rgba(157, 107, 255, 0.2), transparent 13rem),
+    var(--public-neu-surface);
+  box-shadow: var(--public-neu-raised);
+}
+
+.final-cta p {
+  color: var(--public-neu-muted);
+}
+
+.final-cta .button {
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--public-neu-brand), var(--public-neu-brand-light));
+  box-shadow: var(--public-neu-cta);
+}
+
+.platform-search,
+.platform-filter,
+.platform-filter[aria-pressed="true"] {
+  border-color: transparent;
+  color: var(--public-neu-text);
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-pressed);
+}
+
+.platform-search:focus {
+  border-color: transparent;
+  box-shadow: var(--public-neu-pressed), 0 0 0 3px rgba(112, 42, 225, 0.2);
+}
+
+.blog-card-image,
+.product-icon {
+  background: var(--public-neu-surface);
+}
+
+.blog-empty {
+  border-color: transparent;
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-pressed);
+}
+
+.store-feature {
+  color: var(--public-neu-text);
+  background:
+    radial-gradient(circle at 85% 15%, rgba(157, 107, 255, 0.18), transparent 14rem),
+    var(--public-neu-surface);
+  box-shadow: var(--public-neu-raised);
+}
+
+.store-feature p,
+.store-feature .platform-lede {
+  color: var(--public-neu-muted) !important;
+}
+
+.store-mark {
+  border-color: transparent;
+  color: var(--public-neu-brand);
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-pressed);
+}
+
+.platform-footer,
+.site-footer {
+  border-color: transparent;
+  color: var(--public-neu-text);
+  background: var(--public-neu-surface);
+  box-shadow: inset 0 10px 18px -14px var(--public-neu-shadow);
+}
+
+.platform-footer-logo {
+  background: transparent;
+}
+
+.platform-footer p,
+.platform-footer a,
+.platform-footer-bottom,
+.site-footer p,
+.site-footer a {
+  color: var(--public-neu-muted);
+}
+
+.platform-footer a:hover,
+.site-footer a:hover {
+  color: var(--public-neu-brand);
+}
+
+.platform-footer-bottom,
+.footer-base {
+  border-color: var(--public-neu-line);
+}
+
+@media (max-width: 76rem) {
+  .nav-links {
+    border-color: transparent;
+    background: color-mix(in srgb, var(--public-neu-surface) 96%, transparent);
+    box-shadow: var(--public-neu-raised);
+  }
+
+  .nav-link:hover,
+  .nav-link[aria-current="page"] {
+    background: var(--public-neu-surface);
+    box-shadow: var(--public-neu-pressed);
+  }
+}
+
+@media (max-width: 48rem) {
+  .site-nav,
+  .platform-header,
+  .hero__media,
+  .platform-art-card,
+  .platform-card,
+  .blog-card,
+  .product-card-v2,
+  .store-feature,
+  .platform-cta {
+    box-shadow: 7px 7px 17px var(--public-neu-shadow), -7px -7px 17px var(--public-neu-highlight);
+  }
+
+  .nav-link[aria-current="page"] {
+    padding-inline: 0.85rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-row:hover,
+  .blog-card:hover,
+  .platform-card:hover,
+  .button:hover,
+  .platform-button:hover {
+    transform: none;
+  }
+}
