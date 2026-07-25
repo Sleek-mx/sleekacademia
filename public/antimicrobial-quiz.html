@@ -8,7 +8,11 @@
 <meta name="robots" content="noindex, follow">
 <link rel="icon" type="image/png" sizes="32x32" href="/images/brand/favicon-32.png">
 <link rel="apple-touch-icon" href="/images/brand/apple-touch-icon.png">
-<link rel="stylesheet" href="/css/antimicrobial-quiz.css">
+<!-- Asset URLs carry a version because the server sends CSS/JS with
+     `public, max-age=14400`, so without it a returning visitor keeps the old
+     stylesheet for up to 4 hours after a deploy. The HTML itself is `no-cache`,
+     so bumping this number is what ships a redesign. BUMP ON EVERY CSS/JS EDIT. -->
+<link rel="stylesheet" href="/css/antimicrobial-quiz.css?v=2">
 </head>
 <body>
 
@@ -305,6 +309,6 @@
   </div>
 </div>
 
-<script src="/js/antimicrobial-quiz.js" defer></script>
+<script src="/js/antimicrobial-quiz.js?v=2" defer></script>
 </body>
 </html>

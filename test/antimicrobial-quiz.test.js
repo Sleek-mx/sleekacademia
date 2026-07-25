@@ -518,3 +518,23 @@ test("every stem is unique so no question is asked twice", () => {
   const stems = QUESTIONS.map((q) => q.stem.trim().toLowerCase());
   assert.equal(new Set(stems).size, stems.length);
 });
+
+// ── Cache busting ──────────────────────────────────────────────────────────
+
+test("page references its css and js with a version query", async () => {
+  // The server sends CSS/JS as `public, max-age=14400`, so an unversioned URL
+  // leaves returning visitors on a stale stylesheet for hours after a deploy.
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  const html = fs.readFileSync(
+    path.join(process.cwd(), "public", "antimicrobial-quiz.html"),
+    "utf8"
+  );
+
+  const css = html.match(/href="\/css\/antimicrobial-quiz\.css\?v=(\d+)"/);
+  const js = html.match(/src="\/js\/antimicrobial-quiz\.js\?v=(\d+)"/);
+
+  assert.ok(css, "stylesheet must carry a ?v= version");
+  assert.ok(js, "script must carry a ?v= version");
+  assert.equal(css[1], js[1], "css and js versions should be bumped together");
+});
