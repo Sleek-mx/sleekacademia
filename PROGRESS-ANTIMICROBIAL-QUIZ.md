@@ -33,10 +33,25 @@ Plan:
 - [x] Registered `antimicrobial-quiz.html` in `utilityPages` in
       `test/seo-static.test.js` — it is noindex and out of the sitemap by design.
 
-## Next
-- [ ] Merge to `main`, push (auto-deploys), verify the LIVE url.
-- [ ] **Max must add production env vars** (see below) — quiz works without them
-      but unlock tokens reset on restart and the access code stays disabled.
+- [x] Merged to `main` and pushed (`5af5711`). rsync deployed the static files:
+      `/antimicrobial-quiz`, its CSS and its JS are all live and 200.
+
+## Next — BLOCKED on a server restart Claude cannot perform
+- [ ] **Restart the Node app.** `/api/quiz/*` returns 404 because the Passenger
+      process is still running the pre-deploy `server.js`. The deploy chain in
+      `.cpanel.yml` / `deploy.php` runs
+      `rsync` → `npm install --omit=dev` → `touch tmp/restart.txt`
+      and `break`s on the first failure, each step capped at 120s. rsync clearly
+      succeeded, so `npm install` most likely exceeded its timeout and the
+      `touch` never ran. Fix: cPanel → **Setup Node.js App** → the
+      `sleekacademianewsite` entry → **Restart**. (Equivalent:
+      `touch ~/public_html/sleekacademianewsite/tmp/restart.txt`.)
+      Verify after: `curl https://sleekacademia.com/api/quiz/health` must return
+      JSON with `"bankProblems": 0`, not HTML.
+- [ ] While in there, add the production env vars listed below.
+- [ ] The rest of the site is unaffected — `/`, `/nclex-prep.html`, `/about.html`,
+      `/blog.html`, `/api/health` all still 200. Only the new page's API is down,
+      so the quiz page currently shows its "Something went wrong" state.
 
 ## Facts a fresh session needs
 - Repo: `~/Websites/Active Projects/sleek-academia-render` → `Sleek-mx/sleekacademia`, branch `main` deploys.
