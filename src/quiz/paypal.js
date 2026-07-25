@@ -64,11 +64,32 @@ async function accessToken() {
 }
 
 /**
- * Create a $10 order. Returns the order id the browser SDK needs.
+ * The order description shown in PayPal's checkout and on the buyer's receipt.
+ * Each quiz supplies its own so a buyer's statement names what they bought.
+ *
+ * @typedef {object} OrderSpec
+ * @property {string} referenceId
+ * @property {string} description
+ * @property {string} customId
+ * @property {string} [price] - decimal string, defaults to UNLOCK_PRICE_USD
+ */
+
+/** @type {OrderSpec} */
+export const DEFAULT_ORDER = {
+  referenceId: "antimicrobial-quiz-full",
+  description: "NURS 5334 Antimicrobial Mastery Challenge — questions 51 to 100",
+  customId: "antimicrobial-quiz",
+  price: UNLOCK_PRICE_USD,
+};
+
+/**
+ * Create the unlock order. Returns the order id the browser SDK needs.
+ * @param {OrderSpec} [spec]
  * @returns {Promise<{id: string, status: string}>}
  */
-export async function createOrder() {
+export async function createOrder(spec = DEFAULT_ORDER) {
   const token = await accessToken();
+  const price = spec.price || UNLOCK_PRICE_USD;
 
   const { data } = await axios.post(
     `${baseUrl()}/v2/checkout/orders`,
@@ -76,10 +97,10 @@ export async function createOrder() {
       intent: "CAPTURE",
       purchase_units: [
         {
-          reference_id: "antimicrobial-quiz-full",
-          description: "NURS 5334 Antimicrobial Mastery Challenge — questions 51 to 100",
-          custom_id: "antimicrobial-quiz",
-          amount: { currency_code: "USD", value: UNLOCK_PRICE_USD },
+          reference_id: spec.referenceId,
+          description: spec.description,
+          custom_id: spec.customId,
+          amount: { currency_code: "USD", value: price },
           payee: { email_address: payeeEmail() },
         },
       ],
@@ -106,7 +127,7 @@ export async function createOrder() {
  *
  * @returns {Promise<{ok: boolean, reason?: string, orderId: string, captureId?: string, amount?: string, payer?: string}>}
  */
-export async function captureOrder(orderId) {
+export async function captureOrder(orderId, expectedPrice = UNLOCK_PRICE_USD) {
   if (!orderId || typeof orderId !== "string") {
     return { ok: false, reason: "missing-order-id", orderId: "" };
   }
@@ -128,29 +149,29 @@ export async function captureOrder(orderId) {
     // Already captured in a previous attempt (e.g. a double-clicked button):
     // fall through to a read so we can still confirm and honour it.
     if (issue === "ORDER_ALREADY_CAPTURED") {
-      return verifyCapturedOrder(orderId, token);
+      return verifyCapturedOrder(orderId, token, expectedPrice);
     }
     console.error("[quiz] PayPal capture failed:", issue || error.message);
     return { ok: false, reason: issue || "capture-failed", orderId };
   }
 
-  return interpretOrder(data, orderId);
+  return interpretOrder(data, orderId, expectedPrice);
 }
 
-async function verifyCapturedOrder(orderId, token) {
+async function verifyCapturedOrder(orderId, token, expectedPrice) {
   try {
     const { data } = await axios.get(
       `${baseUrl()}/v2/checkout/orders/${encodeURIComponent(orderId)}`,
       { headers: { Authorization: `Bearer ${token}` }, timeout: 25_000 }
     );
-    return interpretOrder(data, orderId);
+    return interpretOrder(data, orderId, expectedPrice);
   } catch (error) {
     console.error("[quiz] PayPal order lookup failed:", error.message);
     return { ok: false, reason: "lookup-failed", orderId };
   }
 }
 
-function interpretOrder(data, orderId) {
+function interpretOrder(data, orderId, expectedPrice = UNLOCK_PRICE_USD) {
   const unit = data?.purchase_units?.[0];
   const capture = unit?.payments?.captures?.[0];
 
@@ -161,7 +182,7 @@ function interpretOrder(data, orderId) {
 
   const amount = capture.amount?.value;
   const currency = capture.amount?.currency_code;
-  if (currency !== "USD" || Number(amount) < Number(UNLOCK_PRICE_USD)) {
+  if (currency !== "USD" || Number(amount) < Number(expectedPrice)) {
     return { ok: false, reason: "amount-mismatch", orderId, amount };
   }
 

@@ -29,6 +29,7 @@ import { createPlatformIdentityResolver } from "./src/platform/identity.js";
 import { createPaymentProvider } from "./src/platform/payments.js";
 import { createPlatformStore, isLoopbackHostname } from "./src/platform/store.js";
 import { createQuizRouter } from "./src/quiz/router.js";
+import { antimicrobialQuiz, renalCardiacQuiz } from "./src/quiz/quizzes.js";
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" })
@@ -231,9 +232,14 @@ app.get("/api/health", (_req, res) => {
   res.json({ ok: true, service: "sleek-academia" });
 });
 
-// NURS 5334 Antimicrobial Mastery Challenge. Mounted before the static handler
-// so the API is never shadowed by a file. Answer key and grading stay server-side.
-app.use("/api/quiz", rateLimiters.platform, createQuizRouter());
+// Adaptive quizzes. Mounted before the static handler so the API is never
+// shadowed by a file. Answer key and grading stay server-side, and each quiz has
+// its own entitlement scope so unlocking one does not unlock the other.
+//
+// `/api/quiz` is the antimicrobial quiz's original path and must not change —
+// returning learners' browsers call it, and unlocks have been sold against it.
+app.use("/api/quiz", rateLimiters.platform, createQuizRouter(antimicrobialQuiz));
+app.use("/api/patho-quiz", rateLimiters.platform, createQuizRouter(renalCardiacQuiz));
 
 app.use("/assets", express.static(assetsDir));
 app.use((req, res, next) => {

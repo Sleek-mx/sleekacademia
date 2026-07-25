@@ -105,16 +105,24 @@ export function shuffleDeterministic(items, seedInput) {
 }
 
 // ── Entitlement tokens ─────────────────────────────────────────────────────
+//
+// Scope is what keeps the two quizzes separate: a token bought for one quiz must
+// not unlock the other. The antimicrobial scope string is FROZEN at
+// "antimicrobial-quiz:full" because unlocks carrying it have already been sold —
+// changing it would lock a paying student out.
+
+export const DEFAULT_SCOPE = "antimicrobial-quiz:full";
 
 /**
  * @param {object} claims - { sub, source, orderId }
  * @param {number} ttlDays
+ * @param {string} scope - quiz-specific entitlement scope
  * @returns {string} signed token: payload.signature
  */
-export function issueEntitlement(claims, ttlDays = 365) {
+export function issueEntitlement(claims, ttlDays = 365, scope = DEFAULT_SCOPE) {
   const payload = {
     ...claims,
-    scope: "antimicrobial-quiz:full",
+    scope,
     iat: Date.now(),
     exp: Date.now() + ttlDays * 24 * 60 * 60 * 1000,
   };
@@ -124,9 +132,12 @@ export function issueEntitlement(claims, ttlDays = 365) {
 }
 
 /**
+ * @param {string} token
+ * @param {string} scope - the scope the caller requires; a token for another
+ *   quiz verifies its signature but is rejected as "wrong-scope".
  * @returns {{valid: boolean, reason?: string, claims?: object}}
  */
-export function verifyEntitlement(token) {
+export function verifyEntitlement(token, scope = DEFAULT_SCOPE) {
   if (!token || typeof token !== "string") return { valid: false, reason: "missing" };
   const parts = token.split(".");
   if (parts.length !== 2) return { valid: false, reason: "malformed" };
@@ -143,26 +154,41 @@ export function verifyEntitlement(token) {
     return { valid: false, reason: "bad-payload" };
   }
 
-  if (claims.scope !== "antimicrobial-quiz:full") return { valid: false, reason: "wrong-scope" };
+  if (claims.scope !== scope) return { valid: false, reason: "wrong-scope" };
   if (!claims.exp || Date.now() > claims.exp) return { valid: false, reason: "expired" };
 
   return { valid: true, claims };
 }
 
 /** Extract a bearer-style entitlement from the request, if present. */
-export function entitlementFromRequest(req) {
+export function entitlementFromRequest(req, scope = DEFAULT_SCOPE) {
   const header = req.get?.("x-quiz-entitlement");
   const token = header || req.body?.entitlement;
-  return verifyEntitlement(token);
+  return verifyEntitlement(token, scope);
 }
 
 /**
  * Access-code escape hatch so the tutor can unlock a student without payment.
- * Disabled unless QUIZ_ACCESS_CODE is set to at least 8 characters.
+ * Disabled unless a code of at least 8 characters is configured.
+ *
+ * A quiz may name its own env var; the shared QUIZ_ACCESS_CODE is always also
+ * accepted so one code in the vault unlocks everything Max needs to comp.
+ *
+ * @param {string} code
+ * @param {string} [envName] - quiz-specific env var checked before the shared one
  */
-export function checkAccessCode(code) {
-  const expected = process.env.QUIZ_ACCESS_CODE;
-  if (!expected || expected.length < 8) return false;
-  if (typeof code !== "string" || code.length !== expected.length) return false;
-  return safeEqual(code, expected);
+export function checkAccessCode(code, envName) {
+  if (typeof code !== "string" || !code) return false;
+
+  const candidates = [];
+  if (envName && envName !== "QUIZ_ACCESS_CODE") candidates.push(process.env[envName]);
+  candidates.push(process.env.QUIZ_ACCESS_CODE);
+
+  return candidates.some(
+    (expected) =>
+      typeof expected === "string" &&
+      expected.length >= 8 &&
+      code.length === expected.length &&
+      safeEqual(code, expected)
+  );
 }

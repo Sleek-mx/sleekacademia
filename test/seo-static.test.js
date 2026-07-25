@@ -26,6 +26,9 @@ const utilityPages = new Set([
   "login.html",
   "onboard.html",
   "payment-success.html",
+  // Gated, student-specific assessment: deliberately noindex and out of the
+  // sitemap so a paywalled quiz does not compete with the marketing pages.
+  "renal-cardiac-quiz.html",
   "sign-up.html",
 ]);
 

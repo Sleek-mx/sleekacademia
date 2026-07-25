@@ -1,4 +1,18 @@
-/* NURS 5334 Antimicrobial Mastery Challenge — client engine.
+/* Sleek Academia adaptive quiz — shared client engine.
+ *
+ * Drives every quiz page. The page supplies its identity in `window.QUIZ_CONFIG`
+ * before this script loads:
+ *
+ *   window.QUIZ_CONFIG = {
+ *     apiBase: "/api/patho-quiz",                        // route the router is mounted on
+ *     storeKey: "sleek.renalcardiac.attempt.v1",         // localStorage key for progress
+ *     entitlementKey: "sleek.renalcardiac.entitlement.v1" // localStorage key for the unlock
+ *   };
+ *
+ * The keys must be distinct per quiz: sharing them would let one quiz's progress
+ * or unlock leak into another. The defaults below are the antimicrobial quiz's
+ * original values, so that page keeps working even if its config were missing —
+ * the safe failure direction for a page with paying learners.
  *
  * The browser deliberately knows very little. It never holds the answer key:
  * questions arrive without it, grading happens on the server, and option ids are
@@ -12,9 +26,10 @@
 (function () {
   "use strict";
 
-  var STORE_KEY = "sleek.antimicrobial.attempt.v1";
-  var ENTITLEMENT_KEY = "sleek.antimicrobial.entitlement.v1";
-  var API = "/api/quiz";
+  var CFG = window.QUIZ_CONFIG || {};
+  var STORE_KEY = CFG.storeKey || "sleek.antimicrobial.attempt.v1";
+  var ENTITLEMENT_KEY = CFG.entitlementKey || "sleek.antimicrobial.entitlement.v1";
+  var API = CFG.apiBase || "/api/quiz";
 
   // ── DOM ────────────────────────────────────────────────────────────────
   var $ = function (id) { return document.getElementById(id); };
@@ -147,9 +162,12 @@
       if (health && health.bank) text($("start-points"), health.bank.totalPoints);
     }).catch(function () { /* non-essential */ });
 
-    var topics = [
-      "Mechanisms of action", "Stewardship", "Culture &amp; susceptibility", "Pregnancy safety",
-      "Penicillins &amp; cephalosporins", "Vancomycin", "Aminoglycosides", "Tetracyclines",
+    // Curated per quiz in QUIZ_CONFIG rather than derived from the bank: the bank
+    // has far more topics than belong in a start-screen cloud. Plain strings set
+    // via textContent, so an ampersand needs no entity and no markup can slip in.
+    var topics = CFG.topics || [
+      "Mechanisms of action", "Stewardship", "Culture & susceptibility", "Pregnancy safety",
+      "Penicillins & cephalosporins", "Vancomycin", "Aminoglycosides", "Tetracyclines",
       "Fluoroquinolones", "Macrolides", "Sulfonamides", "Metronidazole", "Clindamycin",
       "Linezolid", "Rifampin", "Antifungals", "Antivirals", "Tuberculosis", "Drug interactions",
       "Organ toxicity", "Severe cutaneous reactions", "Prioritisation"
@@ -159,7 +177,7 @@
     topics.forEach(function (t) {
       var chip = document.createElement("span");
       chip.className = "topic-chip";
-      chip.innerHTML = t;
+      chip.textContent = t;
       cloud.appendChild(chip);
     });
 
@@ -642,10 +660,12 @@
 
     var answered = state.history.length;
     var correct = state.history.filter(function (h) { return h.correct; }).length;
+    // Deliberately says "material", not "classes": this engine serves a
+    // pathophysiology quiz as well as a pharmacology one.
     text($("paywall-summary"),
       "You have answered " + answered + " question(s) with " + correct + " correct. " +
       "The remaining " + (config.totalQuestions - config.freeQuestions) +
-      " questions cover the classes most likely to appear on your exam.");
+      " questions cover the material most likely to appear on your exam.");
 
     $("paywall-error").hidden = true;
 
@@ -768,8 +788,14 @@
             detail: t.correct + "/" + t.answered, mastered: t.mastered
           };
         }));
-        renderBars($("results-classes"), r.medicationClasses.map(function (c) {
-          return { label: c.medicationClass, accuracy: c.accuracy, detail: c.correct + "/" + c.answered };
+        // `categories` is the canonical field; `medicationClasses` is the older
+        // name the antimicrobial quiz shipped with and is still sent alongside it.
+        renderBars($("results-classes"), (r.categories || r.medicationClasses).map(function (c) {
+          return {
+            label: c.category || c.medicationClass,
+            accuracy: c.accuracy,
+            detail: c.correct + "/" + c.answered
+          };
         }));
         renderBars($("results-difficulty"), r.difficultyPerformance.map(function (d) {
           return { label: "Level " + d.difficulty, accuracy: d.accuracy, detail: d.correct + "/" + d.answered };
@@ -900,10 +926,14 @@
     list.innerHTML = "";
 
     var items = r.recommendations.slice();
-    if (r.weakMedicationClasses.length) {
+    // The label comes from /config, so a pharmacology quiz says "medication
+    // classes" and a pathophysiology quiz says "body systems".
+    var weak = r.weakCategories || r.weakMedicationClasses || [];
+    if (weak.length) {
+      var label = (config.categoryLabelPlural || "medication classes").toLowerCase();
       items.push({
-        area: "Weak medication classes",
-        advice: "Revisit " + r.weakMedicationClasses.join(", ") + "."
+        area: "Weak " + label,
+        advice: "Revisit " + weak.join(", ") + "."
       });
     }
     if (r.expertChallengeUnlocked) {
@@ -944,7 +974,7 @@
       strong.textContent = "Q" + q.number + " · " + q.topic;
       var meta = document.createElement("span");
       meta.className = "missed-meta";
-      meta.textContent = q.medicationClass + " · Level " + q.difficulty +
+      meta.textContent = (q.category || q.medicationClass) + " · Level " + q.difficulty +
         (q.type === "sata" ? " · select all that apply" : "");
       summary.appendChild(strong);
       summary.appendChild(meta);

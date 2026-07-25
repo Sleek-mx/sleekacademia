@@ -1,22 +1,18 @@
-// Express router for the NURS 5334 Antimicrobial Mastery Challenge.
+// Express router for a Sleek Academia adaptive quiz. One instance per quiz —
+// see quizzes.js for the definitions.
 //
-// Two invariants the whole design rests on:
+// Three invariants the whole design rests on:
 //
 //   1. The answer key never leaves this process before submission. Questions are
 //      sanitised, option ids are HMAC-derived per attempt, and grading happens
 //      here — not in the browser.
-//   2. Questions 51–100 are neither served nor graded without a verified
+//   2. Paid questions are neither served nor graded without a verified
 //      entitlement. Paying is proven by a server-side PayPal capture, never by
 //      a client claim.
+//   3. Entitlements are scoped per quiz, so unlocking one quiz does not unlock
+//      another.
 
 import express from "express";
-import {
-  QUESTIONS,
-  FREE_QUESTION_COUNT,
-  getQuestion,
-  bankStats,
-  validateBank,
-} from "./question-bank.js";
 import {
   opaqueOptionId,
   resolveOptionIds,
@@ -25,100 +21,128 @@ import {
   entitlementFromRequest,
   checkAccessCode,
 } from "./signing.js";
-import { selectNext, deriveState, gradeSubmission, buildResults } from "./adaptive.js";
+import { gradeSubmission } from "./engine.js";
 import * as nemotron from "./nemotron.js";
 import * as paypal from "./paypal.js";
+import { antimicrobialQuiz } from "./quizzes.js";
 
 const MAX_HISTORY = 400;
 const MAX_ANSWER_CHARS = 1500;
 
 /**
- * Strip a question down to what the browser may see. Notably absent:
- * `correct`, `rationale`, `distractorRationales`, `clinicalTakeaway`.
- * Option order is shuffled and ids are opaque, so the payload carries no
- * signal about the answer.
+ * @param {object} quiz - a definition from quizzes.js
  */
-function sanitizeQuestion(question, salt) {
-  const options = shuffleDeterministic(question.options, `${salt}:${question.id}`).map((o) => ({
-    id: opaqueOptionId(salt, question.id, o.id),
-    text: o.text,
-  }));
-
-  return {
-    id: question.id,
-    number: question.number,
-    topic: question.topic,
-    medicationClass: question.medicationClass,
-    difficulty: question.difficulty,
-    type: question.type,
-    stem: question.stem,
-    options,
-    selectionCount: question.type === "sata" ? question.correct.length : 1,
-    points: question.points,
-    isFree: question.isFree,
-  };
-}
-
-/** Normalise and bound the client-supplied history. */
-function readHistory(body) {
-  const raw = Array.isArray(body?.history) ? body.history : [];
-  const seen = new Set();
-  const history = [];
-
-  for (const entry of raw.slice(0, MAX_HISTORY)) {
-    const questionId = typeof entry?.questionId === "string" ? entry.questionId : null;
-    if (!questionId || !getQuestion(questionId) || seen.has(questionId)) continue;
-    seen.add(questionId);
-    history.push({
-      questionId,
-      correct: entry.correct === true,
-      isRemediation: entry.isRemediation === true,
-      partialUnderstanding:
-        typeof entry.partialUnderstanding === "number" ? entry.partialUnderstanding : 0,
-    });
-  }
-  return history;
-}
-
-function readSalt(body) {
-  const salt = body?.salt;
-  if (typeof salt !== "string" || !/^[A-Za-z0-9_-]{8,64}$/.test(salt)) return null;
-  return salt;
-}
-
-function isEntitled(req) {
-  return entitlementFromRequest(req).valid;
-}
-
-export function createQuizRouter() {
+export function createQuizRouter(quiz = antimicrobialQuiz) {
   const router = express.Router();
+  const { bank, engine, scope, tutorDomain, order } = quiz;
+  const { QUESTIONS, FREE_QUESTION_COUNT, getQuestion } = bank;
 
-  const bankProblems = validateBank();
+  const bankProblems = bank.validateBank();
   if (bankProblems.length) {
     // Loud but non-fatal: the rest of the site should not fail to boot because
     // one question is malformed.
-    console.error(`[quiz] question bank has ${bankProblems.length} problem(s):`);
+    console.error(`[quiz:${quiz.id}] question bank has ${bankProblems.length} problem(s):`);
     bankProblems.forEach((p) => console.error(`  - ${p}`));
+  }
+
+  /**
+   * Strip a question down to what the browser may see. Notably absent:
+   * `correct`, `rationale`, `distractorRationales`, `clinicalTakeaway`.
+   * Option order is shuffled and ids are opaque, so the payload carries no
+   * signal about the answer.
+   */
+  function sanitizeQuestion(question, salt) {
+    const options = shuffleDeterministic(question.options, `${salt}:${question.id}`).map((o) => ({
+      id: opaqueOptionId(salt, question.id, o.id),
+      text: o.text,
+    }));
+
+    return {
+      id: question.id,
+      number: question.number,
+      topic: question.topic,
+      category: question.category,
+      medicationClass: question.category,
+      difficulty: question.difficulty,
+      type: question.type,
+      stem: question.stem,
+      options,
+      selectionCount: question.type === "sata" ? question.correct.length : 1,
+      points: question.points,
+      isFree: question.isFree,
+    };
+  }
+
+  /** Normalise and bound the client-supplied history. */
+  function readHistory(body) {
+    const raw = Array.isArray(body?.history) ? body.history : [];
+    const seen = new Set();
+    const history = [];
+
+    for (const entry of raw.slice(0, MAX_HISTORY)) {
+      const questionId = typeof entry?.questionId === "string" ? entry.questionId : null;
+      if (!questionId || !getQuestion(questionId) || seen.has(questionId)) continue;
+      seen.add(questionId);
+      history.push({
+        questionId,
+        correct: entry.correct === true,
+        isRemediation: entry.isRemediation === true,
+        partialUnderstanding:
+          typeof entry.partialUnderstanding === "number" ? entry.partialUnderstanding : 0,
+      });
+    }
+    return history;
+  }
+
+  function readSalt(body) {
+    const salt = body?.salt;
+    if (typeof salt !== "string" || !/^[A-Za-z0-9_-]{8,64}$/.test(salt)) return null;
+    return salt;
+  }
+
+  function isEntitled(req) {
+    return entitlementFromRequest(req, scope).valid;
+  }
+
+  /**
+   * Guard for any route that must not serve a paid question to a learner who has
+   * not unlocked. Returns the question, or null once it has answered the request.
+   */
+  function requireQuestion(req, res) {
+    const question = getQuestion(req.body?.questionId);
+    if (!question) {
+      res.status(404).json({ error: "Unknown question." });
+      return null;
+    }
+    if (!question.isFree && !isEntitled(req)) {
+      res.status(402).json({ error: "This question requires the full-access unlock.", paywalled: true });
+      return null;
+    }
+    return question;
   }
 
   // ── Config for the client ────────────────────────────────────────────────
   router.get("/config", (req, res) => {
-    const entitled = isEntitled(req);
     res.json({
-      title: "NURS 5334 Antimicrobial Mastery Challenge",
-      student: "Bryton B.",
-      course: "NURS 5334",
+      quizId: quiz.id,
+      title: quiz.title,
+      student: quiz.meta.student,
+      course: quiz.meta.course,
+      categoryLabel: quiz.categoryLabel,
+      categoryLabelPlural: quiz.categoryLabelPlural,
       totalQuestions: QUESTIONS.length,
       freeQuestions: FREE_QUESTION_COUNT,
-      unlockPriceUsd: paypal.UNLOCK_PRICE_USD,
-      entitled,
+      unlockPriceUsd: order.price || paypal.UNLOCK_PRICE_USD,
+      entitled: isEntitled(req),
       paypal: {
         configured: paypal.isConfigured(),
         clientId: paypal.clientId(),
         live: paypal.isLive(),
       },
       tutor: { configured: nemotron.isConfigured(), model: nemotron.NEMOTRON_MODEL },
-      bank: bankProblems.length ? { healthy: false, problems: bankProblems.length } : { healthy: true },
+      bank: bankProblems.length
+        ? { healthy: false, problems: bankProblems.length }
+        : { healthy: true },
     });
   });
 
@@ -130,7 +154,7 @@ export function createQuizRouter() {
     const history = readHistory(req.body);
     const entitled = isEntitled(req);
 
-    const { question, reason, isRemediation } = selectNext({ history, entitled, salt });
+    const { question, reason, isRemediation } = engine.selectNext({ history, entitled, salt });
 
     if (!question) {
       const seenAll = history.length >= QUESTIONS.length;
@@ -147,7 +171,7 @@ export function createQuizRouter() {
       question: sanitizeQuestion(question, salt),
       isRemediation,
       reason,
-      state: deriveState(history),
+      state: engine.deriveState(history),
       answered: history.length,
       available: QUESTIONS.filter((q) => entitled || q.isFree).length,
     });
@@ -158,12 +182,8 @@ export function createQuizRouter() {
     const salt = readSalt(req.body);
     if (!salt) return res.status(400).json({ error: "A valid attempt salt is required." });
 
-    const question = getQuestion(req.body?.questionId);
-    if (!question) return res.status(404).json({ error: "Unknown question." });
-
-    if (!question.isFree && !isEntitled(req)) {
-      return res.status(402).json({ error: "This question requires the full-access unlock.", paywalled: true });
-    }
+    const question = requireQuestion(req, res);
+    if (!question) return undefined;
 
     const submitted = Array.isArray(req.body?.selected) ? req.body.selected.slice(0, 10) : [];
     if (submitted.length === 0) {
@@ -190,7 +210,7 @@ export function createQuizRouter() {
         (question.correct.includes(o.id) ? "Correct — see the rationale below." : null),
     }));
 
-    res.json({
+    return res.json({
       questionId: question.id,
       ...grade,
       options: optionFeedback,
@@ -206,42 +226,33 @@ export function createQuizRouter() {
   // ── Nemotron remediation loop ────────────────────────────────────────────
 
   router.post("/tutor/notes", async (req, res) => {
-    const question = getQuestion(req.body?.questionId);
-    if (!question) return res.status(404).json({ error: "Unknown question." });
-    if (!question.isFree && !isEntitled(req)) {
-      return res.status(402).json({ error: "Full access required.", paywalled: true });
-    }
+    const question = requireQuestion(req, res);
+    if (!question) return undefined;
 
     const chosen = typeof req.body?.chosenText === "string" ? req.body.chosenText.slice(0, 400) : "";
     try {
-      res.json(await nemotron.generateNotes(question, chosen));
+      return res.json(await nemotron.generateNotes(question, chosen, tutorDomain));
     } catch (error) {
-      console.error("[quiz] notes error:", error.message);
-      res.json(nemotron.fallbackNotes(question));
+      console.error(`[quiz:${quiz.id}] notes error:`, error.message);
+      return res.json(nemotron.fallbackNotes(question));
     }
   });
 
   router.post("/tutor/probes", async (req, res) => {
-    const question = getQuestion(req.body?.questionId);
-    if (!question) return res.status(404).json({ error: "Unknown question." });
-    if (!question.isFree && !isEntitled(req)) {
-      return res.status(402).json({ error: "Full access required.", paywalled: true });
-    }
+    const question = requireQuestion(req, res);
+    if (!question) return undefined;
 
     try {
-      res.json(await nemotron.generateProbes(question));
+      return res.json(await nemotron.generateProbes(question, tutorDomain));
     } catch (error) {
-      console.error("[quiz] probes error:", error.message);
-      res.json(nemotron.fallbackProbes(question));
+      console.error(`[quiz:${quiz.id}] probes error:`, error.message);
+      return res.json(nemotron.fallbackProbes(question));
     }
   });
 
   router.post("/tutor/evaluate", async (req, res) => {
-    const question = getQuestion(req.body?.questionId);
-    if (!question) return res.status(404).json({ error: "Unknown question." });
-    if (!question.isFree && !isEntitled(req)) {
-      return res.status(402).json({ error: "Full access required.", paywalled: true });
-    }
+    const question = requireQuestion(req, res);
+    if (!question) return undefined;
 
     const probes = (Array.isArray(req.body?.probes) ? req.body.probes : [])
       .slice(0, 2)
@@ -253,15 +264,15 @@ export function createQuizRouter() {
     // Never fail this call with a 4xx. The learner is mid-remediation and a hard
     // error would strand them; the bank-derived fallback is always usable.
     if (probes.length < 2) {
-      console.warn(`[quiz] evaluate called with ${probes.length} probe(s); using fallback`);
+      console.warn(`[quiz:${quiz.id}] evaluate called with ${probes.length} probe(s); using fallback`);
       return res.json(nemotron.fallbackEvaluation(question, answers));
     }
 
     try {
-      res.json(await nemotron.evaluateAnswers(question, probes, answers));
+      return res.json(await nemotron.evaluateAnswers(question, probes, answers, tutorDomain));
     } catch (error) {
-      console.error("[quiz] evaluate error:", error.message);
-      res.json(nemotron.fallbackEvaluation(question, answers));
+      console.error(`[quiz:${quiz.id}] evaluate error:`, error.message);
+      return res.json(nemotron.fallbackEvaluation(question, answers));
     }
   });
 
@@ -269,7 +280,7 @@ export function createQuizRouter() {
   router.post("/results", (req, res) => {
     const history = readHistory(req.body);
     if (history.length === 0) return res.status(400).json({ error: "No answers to score." });
-    res.json(buildResults(history, isEntitled(req)));
+    return res.json(engine.buildResults(history, isEntitled(req)));
   });
 
   // ── Paywall: PayPal ──────────────────────────────────────────────────────
@@ -279,11 +290,11 @@ export function createQuizRouter() {
       return res.status(503).json({ error: "Payment is not configured on this server." });
     }
     try {
-      const order = await paypal.createOrder();
-      res.json({ orderId: order.id, status: order.status });
+      const created = await paypal.createOrder(order);
+      return res.json({ orderId: created.id, status: created.status });
     } catch (error) {
-      console.error("[quiz] create order failed:", error.response?.data || error.message);
-      res.status(502).json({ error: "Could not start checkout. Please try again." });
+      console.error(`[quiz:${quiz.id}] create order failed:`, error.response?.data || error.message);
+      return res.status(502).json({ error: "Could not start checkout. Please try again." });
     }
   });
 
@@ -293,36 +304,46 @@ export function createQuizRouter() {
     }
 
     try {
-      const result = await paypal.captureOrder(req.body?.orderId);
+      const result = await paypal.captureOrder(req.body?.orderId, order.price);
       if (!result.ok) {
         return res.status(402).json({ error: "Payment was not completed.", reason: result.reason });
       }
 
-      const entitlement = issueEntitlement({
-        sub: result.payer || "paypal-payer",
-        source: "paypal",
-        orderId: result.orderId,
-        captureId: result.captureId,
-      });
+      const entitlement = issueEntitlement(
+        {
+          sub: result.payer || "paypal-payer",
+          source: "paypal",
+          quiz: quiz.id,
+          orderId: result.orderId,
+          captureId: result.captureId,
+        },
+        365,
+        scope
+      );
 
       console.log(
-        `[quiz] unlock granted via PayPal order ${result.orderId} (capture ${result.captureId}, ${result.amount} USD)`
+        `[quiz:${quiz.id}] unlock granted via PayPal order ${result.orderId} ` +
+          `(capture ${result.captureId}, ${result.amount} USD)`
       );
-      res.json({ entitlement, amount: result.amount, orderId: result.orderId });
+      return res.json({ entitlement, amount: result.amount, orderId: result.orderId });
     } catch (error) {
-      console.error("[quiz] capture failed:", error.response?.data || error.message);
-      res.status(502).json({ error: "Could not confirm payment. Please contact support." });
+      console.error(`[quiz:${quiz.id}] capture failed:`, error.response?.data || error.message);
+      return res.status(502).json({ error: "Could not confirm payment. Please contact support." });
     }
   });
 
   // ── Paywall: tutor access code ───────────────────────────────────────────
   router.post("/unlock/code", (req, res) => {
     const code = typeof req.body?.code === "string" ? req.body.code : "";
-    if (!checkAccessCode(code)) {
+    if (!checkAccessCode(code, quiz.accessCodeEnv)) {
       return res.status(403).json({ error: "That access code is not valid." });
     }
-    res.json({
-      entitlement: issueEntitlement({ sub: "access-code", source: "access-code" }, 180),
+    return res.json({
+      entitlement: issueEntitlement(
+        { sub: "access-code", source: "access-code", quiz: quiz.id },
+        180,
+        scope
+      ),
       source: "access-code",
     });
   });
@@ -331,7 +352,8 @@ export function createQuizRouter() {
   router.get("/health", (_req, res) => {
     res.json({
       ok: bankProblems.length === 0,
-      bank: bankStats(),
+      quizId: quiz.id,
+      bank: bank.bankStats(),
       bankProblems: bankProblems.length,
       tutorConfigured: nemotron.isConfigured(),
       paypalConfigured: paypal.isConfigured(),
