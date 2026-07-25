@@ -339,7 +339,6 @@ main { max-width: var(--container); margin: 0 auto; padding: 1rem .9rem 2.5rem; 
   border-radius: var(--r-sm); box-shadow: var(--press);
   padding: .8rem .9rem; font-size: .91rem; margin: 0;
 }
-.tutor-credit { margin-top: 1.1rem; color: var(--muted); font-size: .74rem; }
 
 /* ── Paywall ────────────────────────────────────────────────────────── */
 .unlock-list { margin: 1.1rem 0; padding-left: 1.15rem; }
