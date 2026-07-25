@@ -28,6 +28,7 @@ import { createPlatformRouter } from "./src/platform/http.js";
 import { createPlatformIdentityResolver } from "./src/platform/identity.js";
 import { createPaymentProvider } from "./src/platform/payments.js";
 import { createPlatformStore, isLoopbackHostname } from "./src/platform/store.js";
+import { createQuizRouter } from "./src/quiz/router.js";
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" })
@@ -229,6 +230,10 @@ for (const [source, destination] of dashboardRedirects) {
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, service: "sleek-academia" });
 });
+
+// NURS 5334 Antimicrobial Mastery Challenge. Mounted before the static handler
+// so the API is never shadowed by a file. Answer key and grading stay server-side.
+app.use("/api/quiz", rateLimiters.platform, createQuizRouter());
 
 app.use("/assets", express.static(assetsDir));
 app.use((req, res, next) => {

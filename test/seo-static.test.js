@@ -18,6 +18,9 @@ const utilityPages = new Set([
   "404.html",
   "admin-order.html",
   "admin.html",
+  // Gated, student-specific assessment: deliberately noindex and out of the
+  // sitemap so a paywalled quiz does not compete with the marketing pages.
+  "antimicrobial-quiz.html",
   "client-order.html",
   "dashboard.html",
   "login.html",
