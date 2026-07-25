@@ -77,15 +77,25 @@
   }
 
   // ── Networking ─────────────────────────────────────────────────────────
-  function api(path, body) {
+  function api(path, body, timeoutMs) {
     var headers = { "Content-Type": "application/json" };
     if (entitlement) headers["X-Quiz-Entitlement"] = entitlement;
+
+    // Abort rather than hang: a stalled tutor call must hand over to the local
+    // fallback quickly instead of leaving the learner staring at a spinner.
+    var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var timer = null;
+    if (controller && timeoutMs) {
+      timer = setTimeout(function () { controller.abort(); }, timeoutMs);
+    }
 
     return fetch(API + path, {
       method: "POST",
       headers: headers,
-      body: JSON.stringify(body || {})
+      body: JSON.stringify(body || {}),
+      signal: controller ? controller.signal : undefined
     }).then(function (res) {
+      if (timer) clearTimeout(timer);
       return res.json().catch(function () { return {}; }).then(function (data) {
         if (!res.ok) {
           var err = new Error(data.error || "Request failed (" + res.status + ")");
@@ -95,6 +105,9 @@
         }
         return data;
       });
+    }).catch(function (err) {
+      if (timer) clearTimeout(timer);
+      throw err;
     });
   }
 
@@ -347,7 +360,15 @@
     $("feedback").scrollIntoView({ behavior: "smooth", block: "start" });
 
     state.phase = "feedback";
-    state.lastResult = { isCorrect: result.isCorrect, questionId: question.id };
+    // Keep the bank's own teaching text. If the AI tutor is unreachable later in
+    // the remediation flow we render this instead of an apology.
+    state.lastResult = {
+      isCorrect: result.isCorrect,
+      questionId: question.id,
+      remediationConcept: result.remediationConcept,
+      clinicalTakeaway: result.clinicalTakeaway,
+      keyClue: result.keyClue
+    };
     state.lastChosenText = result.options
       .filter(function (o) { return o.wasSelected; })
       .map(function (o) { return o.text; })
@@ -417,7 +438,7 @@
     panel.focus();
     panel.scrollIntoView({ behavior: "smooth", block: "start" });
 
-    api("/tutor/notes", { questionId: questionId, chosenText: state.lastChosenText || "" })
+    api("/tutor/notes", { questionId: questionId, chosenText: state.lastChosenText || "" }, 30000)
       .then(function (notes) {
         text($("notes-heading"), notes.heading || "Reviewing the concept");
 
@@ -439,8 +460,23 @@
         $("btn-to-probes").disabled = false;
       })
       .catch(function () {
-        $("notes-body").innerHTML =
-          '<p>Notes are unavailable right now. Review the rationale above, then continue.</p>';
+        // Fall back to the bank's own teaching text rather than an apology.
+        var last = state.lastResult || {};
+        var bullets = [last.remediationConcept, last.clinicalTakeaway].filter(Boolean);
+        $("notes-body").innerHTML = "";
+        var list = document.createElement("ul");
+        list.className = "notes-list";
+        bullets.forEach(function (b) {
+          var li = document.createElement("li");
+          li.textContent = b;
+          list.appendChild(li);
+        });
+        $("notes-body").appendChild(list);
+        if (last.keyClue) {
+          text($("notes-pitfall"), last.keyClue);
+          $("notes-pitfall").hidden = false;
+        }
+        creditTutor("fallback");
         $("btn-to-probes").disabled = false;
       });
   }
@@ -467,14 +503,19 @@
       '<p class="loading-text">Writing two questions for you<span class="ellipsis"></span></p>';
     form.scrollIntoView({ behavior: "smooth", block: "start" });
 
-    api("/tutor/probes", { questionId: questionId })
-      .then(function (data) { buildProbeFields(data.questions || []); })
-      .catch(function () {
-        buildProbeFields([
-          "In your own words, explain the principle this question was testing.",
-          "How would you recognise and respond to this issue in a patient, and who would you notify?"
-        ]);
-      });
+    api("/tutor/probes", { questionId: questionId }, 30000)
+      .then(function (data) {
+        var qs = (data.questions || []).filter(function (q) { return String(q || "").trim(); });
+        buildProbeFields(qs.length >= 2 ? qs : defaultProbes());
+      })
+      .catch(function () { buildProbeFields(defaultProbes()); });
+  }
+
+  function defaultProbes() {
+    return [
+      "In your own words, explain the principle this question was testing.",
+      "How would you recognise and respond to this issue in a patient, and who would you notify?"
+    ];
   }
 
   function buildProbeFields(questions) {
@@ -537,13 +578,32 @@
       questionId: state.lastResult.questionId,
       probes: state.probes || [],
       answers: answers
-    })
+    }, 30000)
       .then(function (evaluation) { renderEvaluation(evaluation); })
       .catch(function () {
-        $("evaluation-body").innerHTML =
-          '<p>Feedback is unavailable right now. Your answers were recorded — review the rationale above before continuing.</p>';
-        $("btn-resume-quiz").disabled = false;
+        // The tutor is unreachable. Grade locally against effort and show the
+        // bank's own reasoning, so the learner still gets a real close-out.
+        renderEvaluation(localEvaluation(answers));
       });
+  }
+
+  /* Client-side stand-in for the AI evaluation, built from the teaching text the
+   * grading response already delivered. Same shape as the server payload. */
+  function localEvaluation(answers) {
+    var substantive = (answers || []).filter(function (a) {
+      return String(a || "").trim().length >= 15;
+    }).length;
+    var last = state.lastResult || {};
+
+    return {
+      understood: substantive >= 2,
+      verdict: substantive >= 2
+        ? "Your answers were recorded. Compare your reasoning against the summary below."
+        : "Your answers were brief. Work through the reasoning below before continuing.",
+      feedback: [],
+      corrected: [last.remediationConcept, last.clinicalTakeaway].filter(Boolean).join(" "),
+      source: "fallback"
+    };
   }
 
   function renderEvaluation(evaluation) {

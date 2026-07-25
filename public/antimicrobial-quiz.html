@@ -17,7 +17,13 @@
 <header class="masthead">
   <div class="masthead-inner">
     <a class="brand" href="/">
-      <img src="/images/logo.png" alt="Sleek Academia" width="40" height="40">
+      <!-- Square mark, not /images/logo.png: that file is a 400x99 horizontal
+           lockup and squashed badly in a compact square header on mobile. -->
+      <picture>
+        <source srcset="/images/brand/sleek-academia-mark.webp" type="image/webp">
+        <img class="brand-mark" src="/images/brand/sleek-academia-mark.png"
+             alt="Sleek Academia" width="591" height="591" decoding="async">
+      </picture>
       <span class="brand-text">
         <strong>Sleek Academia</strong>
         <small>Graduate Nursing Pharmacology</small>

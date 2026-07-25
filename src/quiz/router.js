@@ -250,7 +250,12 @@ export function createQuizRouter() {
       .slice(0, 2)
       .map((a) => String(a ?? "").slice(0, MAX_ANSWER_CHARS));
 
-    if (probes.length < 2) return res.status(400).json({ error: "Two probe questions are required." });
+    // Never fail this call with a 4xx. The learner is mid-remediation and a hard
+    // error would strand them; the bank-derived fallback is always usable.
+    if (probes.length < 2) {
+      console.warn(`[quiz] evaluate called with ${probes.length} probe(s); using fallback`);
+      return res.json(nemotron.fallbackEvaluation(question, answers));
+    }
 
     try {
       res.json(await nemotron.evaluateAnswers(question, probes, answers));

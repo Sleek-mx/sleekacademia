@@ -13,7 +13,11 @@ import axios from "axios";
 
 export const NEMOTRON_MODEL = "nvidia/nemotron-3-super-120b-a12b";
 const NIM_ENDPOINT = "https://integrate.api.nvidia.com/v1/chat/completions";
-const REQUEST_TIMEOUT_MS = 60_000;
+
+// Kept well under the edge proxy's ~100s ceiling. A request that exceeds this is
+// abandoned in favour of the bank-derived fallback, which is instant.
+const REQUEST_TIMEOUT_MS = 25_000;
+const RETRY_TIMEOUT_MS = 15_000;
 
 const SYSTEM_PROMPT = [
   "You are a graduate-level nursing pharmacology tutor for Sleek Academia, coaching a",
@@ -64,10 +68,7 @@ function parseJsonObject(text) {
   }
 }
 
-async function callNemotron(userPrompt, { maxTokens = 1600, temperature = 0.3 } = {}) {
-  const apiKey = process.env.NVIDIA_API_KEY;
-  if (!apiKey) throw Object.assign(new Error("NVIDIA_API_KEY is not configured"), { code: "NO_KEY" });
-
+async function postOnce(apiKey, userPrompt, maxTokens, temperature, timeout) {
   const { data } = await axios.post(
     NIM_ENDPOINT,
     {
@@ -79,14 +80,42 @@ async function callNemotron(userPrompt, { maxTokens = 1600, temperature = 0.3 } 
       max_tokens: maxTokens,
       temperature,
       top_p: 0.9,
+      // Nemotron 3 Super is a reasoning model. Left on, it spent ~3200 chars of
+      // reasoning before answering and latency swung from 3s to 13s+, which is
+      // what pushed slow calls past the edge proxy timeout and surfaced as
+      // "Feedback is unavailable right now". These tasks are short and
+      // structured, so the reasoning pass buys nothing.
+      chat_template_kwargs: { thinking: false },
     },
     {
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      timeout: REQUEST_TIMEOUT_MS,
+      timeout,
     }
   );
-
   return extractContent(data);
+}
+
+/**
+ * One retry on a transient failure (timeout, 5xx, empty body). A second failure
+ * returns empty so the caller uses its bank-derived fallback rather than
+ * blocking the learner.
+ */
+async function callNemotron(userPrompt, { maxTokens = 900, temperature = 0.3 } = {}) {
+  const apiKey = process.env.NVIDIA_API_KEY;
+  if (!apiKey) throw Object.assign(new Error("NVIDIA_API_KEY is not configured"), { code: "NO_KEY" });
+
+  try {
+    const first = await postOnce(apiKey, userPrompt, maxTokens, temperature, REQUEST_TIMEOUT_MS);
+    if (first) return first;
+    console.warn("[quiz] Nemotron returned empty content; retrying once");
+  } catch (error) {
+    const status = error.response?.status;
+    const retryable = !status || status >= 500 || error.code === "ECONNABORTED";
+    if (!retryable) throw error;
+    console.warn(`[quiz] Nemotron transient failure (${status || error.code}); retrying once`);
+  }
+
+  return postOnce(apiKey, userPrompt, maxTokens, temperature, RETRY_TIMEOUT_MS);
 }
 
 function questionContext(question) {
@@ -125,7 +154,7 @@ export async function generateNotes(question, learnerAnswerText) {
     .join("\n");
 
   try {
-    const parsed = parseJsonObject(await callNemotron(prompt, { maxTokens: 1200 }));
+    const parsed = parseJsonObject(await callNemotron(prompt, { maxTokens: 800 }));
     if (parsed && Array.isArray(parsed.notes) && parsed.notes.length) {
       return {
         heading: String(parsed.heading || question.topic).slice(0, 90),
@@ -173,7 +202,7 @@ export async function generateProbes(question) {
   ].join("\n");
 
   try {
-    const parsed = parseJsonObject(await callNemotron(prompt, { maxTokens: 900 }));
+    const parsed = parseJsonObject(await callNemotron(prompt, { maxTokens: 500 }));
     if (parsed && Array.isArray(parsed.questions) && parsed.questions.length >= 2) {
       return {
         questions: parsed.questions.slice(0, 2).map((q) => String(q).slice(0, 400)),
@@ -222,7 +251,7 @@ export async function evaluateAnswers(question, probes, answers) {
   ].join("\n");
 
   try {
-    const parsed = parseJsonObject(await callNemotron(prompt, { maxTokens: 1400, temperature: 0.2 }));
+    const parsed = parseJsonObject(await callNemotron(prompt, { maxTokens: 900, temperature: 0.2 }));
     if (parsed && typeof parsed.understood === "boolean") {
       return {
         understood: parsed.understood,
