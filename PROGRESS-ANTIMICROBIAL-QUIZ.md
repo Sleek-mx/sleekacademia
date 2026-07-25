@@ -56,6 +56,23 @@ Plan:
 - `/.env` → 403. Rest of the site unaffected: `/`, `/nclex-prep.html`,
   `/about.html`, `/blog.html`, `/store.html`, `/api/health` all 200.
 
+## Round 2 (same day) — neumorphism, mobile, stranded-remediation fix
+- [x] Rebuilt the stylesheet as Sleek Academia **neumorphism** on the tokens in
+      `public/css/neumorphism.css`: one `#e7e4f1` surface, `#c3bdd8`/`#ffffff`
+      dual shadows, `#702ae1→#9d6bff` as the only accent. Element background
+      equals page background; raised = resting, inset = pressed/selected/input.
+- [x] Mobile-first: base styles target a phone, shadow depth scales up at 42rem.
+      Verified no horizontal overflow at 375px and full-width tap targets.
+- [x] Fixed the logo: `/images/logo.png` is a 400x99 lockup that was declared
+      40x40 and squashed. Now uses the square `brand/sleek-academia-mark`.
+- [x] Fixed "Feedback is unavailable right now". Root cause was latency, not
+      logic — see the commit for numbers. `thinking:false` cut the loop from
+      ~31s to ~6.6s, plus a server retry, a 200-with-fallback instead of 400,
+      and a client-side fallback to the bank's own remediation text.
+- [x] Cache-busted the asset URLs (`?v=2`). CSS/JS ship as
+      `public, max-age=14400`, so the redesign was invisible to any browser
+      holding the old file. **Bump `?v=` on every CSS/JS edit** — enforced by a test.
+
 ## Next
 - [ ] Nothing blocking. Optional: add level 1–2 items if the ladder should span
       the full 1–5 described in the brief (engine already degrades gracefully).
