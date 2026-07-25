@@ -36,22 +36,29 @@ Plan:
 - [x] Merged to `main` and pushed (`5af5711`). rsync deployed the static files:
       `/antimicrobial-quiz`, its CSS and its JS are all live and 200.
 
-## Next — BLOCKED on a server restart Claude cannot perform
-- [ ] **Restart the Node app.** `/api/quiz/*` returns 404 because the Passenger
-      process is still running the pre-deploy `server.js`. The deploy chain in
-      `.cpanel.yml` / `deploy.php` runs
-      `rsync` → `npm install --omit=dev` → `touch tmp/restart.txt`
-      and `break`s on the first failure, each step capped at 120s. rsync clearly
-      succeeded, so `npm install` most likely exceeded its timeout and the
-      `touch` never ran. Fix: cPanel → **Setup Node.js App** → the
-      `sleekacademianewsite` entry → **Restart**. (Equivalent:
-      `touch ~/public_html/sleekacademianewsite/tmp/restart.txt`.)
-      Verify after: `curl https://sleekacademia.com/api/quiz/health` must return
-      JSON with `"bankProblems": 0`, not HTML.
-- [ ] While in there, add the production env vars listed below.
-- [ ] The rest of the site is unaffected — `/`, `/nclex-prep.html`, `/about.html`,
-      `/blog.html`, `/api/health` all still 200. Only the new page's API is down,
-      so the quiz page currently shows its "Something went wrong" state.
+- [x] Added the production env vars to `sleekacademianewsite/.env`
+      (`NVIDIA_API_KEY`, `QUIZ_SIGNING_SECRET`, `QUIZ_ACCESS_CODE`,
+      `QUIZ_PAYEE_EMAIL`). `.env` backed up first to `.env.bak-prequiz-*`.
+      `PAYPAL_*` were already present and already pointed at the live host.
+- [x] **Root-caused the failed restart:** the runtime is LiteSpeed (`lsnode`),
+      not Phusion Passenger, so `touch tmp/restart.txt` is a no-op. The old
+      process had `etime` 1h13m — it never reloaded, which is why new static
+      files were live while new routes 404'd. Fixed by killing the lsnode pid
+      and issuing a request so LiteSpeed respawns.
+- [x] **LIVE AND VERIFIED** at `https://sleekacademia.com/antimicrobial-quiz`.
+
+## Verified on production
+- `/api/quiz/health` → `bankProblems: 0`, tutor configured, paypalLive true, payee correct.
+- `/api/quiz/next` leaks no answer-key field; option ids are opaque digests.
+- `q051` without entitlement → 402. Forged entitlement → 402. Tutor endpoints on
+  a paid question → 402 (no free AI farming on paywalled items).
+- Nemotron 3 Super returns accurate `source: "ai"` remediation notes live.
+- `/.env` → 403. Rest of the site unaffected: `/`, `/nclex-prep.html`,
+  `/about.html`, `/blog.html`, `/store.html`, `/api/health` all 200.
+
+## Next
+- [ ] Nothing blocking. Optional: add level 1–2 items if the ladder should span
+      the full 1–5 described in the brief (engine already degrades gracefully).
 
 ## Facts a fresh session needs
 - Repo: `~/Websites/Active Projects/sleek-academia-render` → `Sleek-mx/sleekacademia`, branch `main` deploys.
