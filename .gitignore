@@ -20,3 +20,6 @@ seo-agent/reports/
 # Logs / OS
 *.log
 .DS_Store
+.codebase-memory/
+.playwright-mcp/
+.work/

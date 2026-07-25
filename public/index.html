@@ -24,6 +24,13 @@
     <meta name="twitter:image" content="https://sleekacademia.com/images/og-default.png" />
 
     <script>document.documentElement.classList.remove("no-js");</script>
+    <style>
+      .service-feature__price { margin: 0.5rem 0 0; font-size: 0.95rem; color: var(--blue); }
+      .service-feature__price strong { font-weight: 800; }
+      .trust-badges { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 2rem; }
+      .trust-badge { background: color-mix(in srgb, var(--surface) 92%, transparent); box-shadow: var(--shadow-card); border-radius: 1rem; padding: 1rem 1.25rem; font-size: 0.9rem; color: var(--muted); }
+      .trust-badge strong { display: block; color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; font-weight: 800; margin-bottom: 0.15rem; }
+    </style>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -92,6 +99,8 @@
         </a>
         <div class="nav-links" id="primary-links">
           <a class="nav-link" href="/" aria-current="page">Home</a>
+          <a class="nav-link" href="/assignment-help.html">Assignment Help</a>
+          <a class="nav-link" href="/online-course-support.html">Course Support</a>
           <a class="nav-link" href="/about.html">About Us</a>
           <a class="nav-link" href="/blog.html">Blog</a>
           <a class="nav-link" href="/store.html">Store</a>
@@ -140,11 +149,17 @@
           <div class="service-layout">
             <article class="service-feature" data-reveal>
               <div class="service-feature__icon" aria-hidden="true">✎</div>
-              <h3>Essay &amp; report support</h3>
-              <p>Share your subject, length, format, deadline, and files. We review the brief before your conversation begins.</p>
-              <a href="/onboard.html?goal=essay">Tell us about your work →</a>
+              <h3>Assignment Help</h3>
+              <p>Original, ready-to-submit completed work for essays, reports, case studies, and research papers across nursing, law, accounting, and IT.</p>
+              <p class="service-feature__price"><strong>From $15/page</strong> &middot; 24–72 hour turnaround</p>
+              <a href="/assignment-help.html">Get a free quote →</a>
             </article>
             <div class="service-list">
+              <article class="service-row" data-reveal>
+                <div class="service-row__icon" aria-hidden="true">◈</div>
+                <div><h3>Online Course Support</h3><p>We take your online class, discussion posts, quizzes, and weekly assignments from start to finish.</p></div>
+                <a class="service-row__arrow" href="/online-course-support.html" aria-label="Explore online course support">→</a>
+              </article>
               <article class="service-row" data-reveal>
                 <div class="service-row__icon" aria-hidden="true">✓</div>
                 <div><h3>Exam preparation</h3><p>Build a focused plan for NCLEX, UBE, CFA Level I, or CompTIA Security+.</p></div>
@@ -155,21 +170,13 @@
                 <div><h3>One-to-one tutoring</h3><p>Get direct, structured help with a difficult course, topic, or professional module.</p></div>
                 <a class="service-row__arrow" href="/onboard.html?goal=tutoring" aria-label="Start a tutoring request">→</a>
               </article>
-              <article class="service-row" data-reveal>
-                <div class="service-row__icon" aria-hidden="true">?</div>
-                <div><h3>Something else</h3><p>Describe the academic support you need and let our team guide the next step.</p></div>
-                <a class="service-row__arrow" href="/onboard.html?goal=other" aria-label="Start a custom support request">→</a>
-              </article>
             </div>
           </div>
-          <aside class="assurance" data-reveal aria-label="Authorship assurance">
-            <div class="assurance__icon" aria-hidden="true">✓</div>
-            <div>
-              <h3>Authorship matters at Sleek Academia</h3>
-              <p>Every completed essay or report includes an AI-use report for transparency. Our team reviews instructions, sources, citations, and the completed work carefully before delivery.</p>
-            </div>
-            <a href="/onboard.html?goal=essay">Start a request →</a>
-          </aside>
+          <div class="trust-badges" data-reveal aria-label="Service guarantees">
+            <span class="trust-badge"><strong>100% Original</strong> Every draft from scratch</span>
+            <span class="trust-badge"><strong>Confidential</strong> Your details stay private</span>
+            <span class="trust-badge"><strong>On-Time</strong> Delivered to your deadline</span>
+          </div>
         </div>
       </section>
 
@@ -225,7 +232,7 @@
           </a>
           <p>Focused academic support for ambitious learners in Nursing, Law, ICT, and Finance.</p>
         </div>
-        <div class="footer-column"><h2>Explore</h2><ul><li><a href="/about.html">About Us</a></li><li><a href="/blog.html">Blog</a></li><li><a href="/store.html">Store</a></li><li><a href="/onboard.html">Get Started</a></li></ul></div>
+        <div class="footer-column"><h2>Explore</h2><ul><li><a href="/about.html">About Us</a></li><li><a href="/blog.html">Blog</a></li><li><a href="/store.html">Store</a></li><li><a href="/assignment-help.html">Assignment Help</a></li><li><a href="/online-course-support.html">Course Support</a></li><li><a href="/onboard.html">Get Started</a></li></ul></div>
         <div class="footer-column"><h2>Programs</h2><ul><li><a href="/nclex-prep.html">NCLEX-RN</a></li><li><a href="/ube-bar-exam-prep.html">UBE Bar Exam</a></li><li><a href="/cfa-level-1-prep.html">CFA Level I</a></li><li><a href="/comptia-security-plus-prep.html">CompTIA Security+</a></li></ul></div>
         <div class="footer-column"><h2>Workspace</h2><ul><li><a href="/login.html">Log in</a></li><li><a href="/sign-up.html">Create account</a></li><li><a href="/dashboard.html">Dashboard</a></li><li><a href="/onboard.html">Start a request</a></li></ul></div>
       </div>

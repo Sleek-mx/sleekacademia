@@ -40,9 +40,9 @@ test("homepage exposes the approved navigation and service entry points", async 
   assert.match(home, /href="\/about\.html"/);
   assert.match(home, /href="\/blog\.html"/);
   assert.match(home, /href="\/store\.html"/);
-  assert.match(home, /href="\/onboard\.html\?goal=essay"/);
+  assert.match(home, /href="\/assignment-help\.html"/);
+  assert.match(home, /href="\/online-course-support\.html"/);
   assert.match(home, /href="\/onboard\.html\?goal=exam"/);
-  assert.match(home, /Authorship matters at Sleek Academia/);
 });
 
 test("homepage hero uses content-led desktop and purpose-built mobile composition", async () => {

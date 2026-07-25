@@ -109,7 +109,7 @@ test("blog cards expose useful text and explicit links independently of artwork"
   const html = read("public/blog.html");
   const cards = html.match(/<article class="blog-card[\s\S]*?<\/article>/g) || [];
 
-  assert.equal(cards.length, 10);
+  assert.ok(cards.length >= 10, `expected at least 10 blog cards, found ${cards.length}`);
   for (const card of cards) {
     assert.match(card, /blog-card-body/);
     assert.match(card, /<h[23][^>]*>[\s\S]*?<\/h[23]>/);

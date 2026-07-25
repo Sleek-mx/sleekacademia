@@ -1,123 +1,280 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/brand/favicon-32.png">
-  <link rel="apple-touch-icon" href="/images/brand/apple-touch-icon.png">
-  <meta name="robots" content="noindex,follow">
-  <title>Start an Order | Sleek Academia</title>
-  <meta name="description" content="Share your academic support order and continue securely in your Sleek Academia workspace.">
-  <link rel="canonical" href="https://sleekacademia.com/onboard.html">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/workspace-v2.css">
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/brand/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/images/brand/apple-touch-icon.png" />
+    <meta name="robots" content="noindex,follow" />
+    <title>Start an Order | Sleek Academia</title>
+    <meta name="description" content="Share your academic support order and continue securely in your Sleek Academia workspace." />
+    <link rel="canonical" href="https://sleekacademia.com/onboard.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/brand-v2.css" />
+    <link rel="stylesheet" href="/css/platform-v2.css" />
+    <link rel="stylesheet" href="/css/public-neumorphic.css?v=20260715" />
+    <link rel="stylesheet" href="/css/workspace-v2.css" />
+    <script>document.documentElement.classList.remove("no-js");</script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CHXSBK3M81"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "G-CHXSBK3M81");
+    </script>
+    <script>
+      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+      n.push=n;n.loaded=!0;n.version="2.0";n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+      (window,document,"script","https://connect.facebook.net/en_US/fbevents.js");
+      fbq("init", "2344858129372736");
+      fbq("track", "PageView");
+    </script>
+
+    <style>
+      /* Onboard wizard — scoped to match the public neumorphic design system. */
+      .onboard-wizard .wizard-layout { gap: clamp(1.5rem, 5vw, 4rem); align-items: start; }
+      .onboard-wizard .wizard-aside { position: sticky; top: 6rem; max-width: 26rem; }
+      .onboard-wizard .wizard-aside h1 { font-family: "Plus Jakarta Sans", sans-serif; font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 800; color: var(--public-neu-text); margin: 0.75rem 0 0.5rem; line-height: 1.12; }
+      .onboard-wizard .wizard-aside p { color: var(--public-neu-muted); line-height: 1.7; margin: 0 0 1.5rem; }
+      .onboard-wizard .wizard-aside .eyebrow { color: var(--public-neu-brand); }
+      .onboard-wizard .wizard-assurance { display: grid; gap: 1rem; margin-top: 1rem; }
+      .onboard-wizard .wizard-assurance > div { background: var(--public-neu-surface); box-shadow: var(--public-neu-raised-small); border-radius: 1rem; padding: 1.1rem 1.25rem; display: flex; gap: 0.85rem; align-items: flex-start; }
+      .onboard-wizard .wizard-assurance b { font-family: "Plus Jakarta Sans", sans-serif; font-weight: 800; color: var(--public-neu-brand); flex-shrink: 0; }
+      .onboard-wizard .wizard-assurance span { color: var(--public-neu-text); line-height: 1.6; font-size: 0.95rem; }
+      .onboard-wizard .wizard-assurance span strong { display: block; color: var(--public-neu-text); font-weight: 700; margin-bottom: 0.15rem; }
+
+      .onboard-wizard .wizard-panel { background: var(--public-neu-surface); box-shadow: var(--public-neu-raised); border-radius: 1.5rem; padding: clamp(1.5rem, 4vw, 2.5rem); }
+      .onboard-wizard .wizard-progress { display: flex; gap: 0.5rem; margin: 0 0 1.75rem; }
+      .onboard-wizard .wizard-progress span { flex: 1; height: 6px; border-radius: 99px; background: color-mix(in srgb, var(--public-neu-shadow) 55%, transparent); transition: background 240ms ease; }
+      .onboard-wizard .wizard-progress span.is-active { background: var(--public-neu-brand); box-shadow: 0 0 0 3px rgba(112,42,225,0.18); }
+
+      .onboard-wizard .wizard-step { display: none; }
+      .onboard-wizard .wizard-step.is-active { display: block; animation: onboard-step-in 360ms ease; }
+      @keyframes onboard-step-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+      .onboard-wizard .wizard-step h2 { font-family: "Plus Jakarta Sans", sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--public-neu-text); margin: 0.5rem 0 0.35rem; line-height: 1.2; }
+      .onboard-wizard .wizard-step p { color: var(--public-neu-muted); line-height: 1.7; margin: 0 0 1.25rem; }
+      .onboard-wizard .section-kicker { color: var(--public-neu-brand); }
+
+      .onboard-wizard .service-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+      .onboard-wizard .service-choice { background: var(--public-neu-surface); box-shadow: var(--public-neu-raised-small); border: 0; border-radius: 1rem; padding: 1.25rem 1.1rem; text-align: left; cursor: pointer; display: flex; gap: 0.85rem; align-items: flex-start; font: inherit; transition: box-shadow 200ms ease, transform 200ms ease; }
+      .onboard-wizard .service-choice:hover { transform: translateY(-3px); box-shadow: var(--public-neu-raised-hover); }
+      .onboard-wizard .service-choice[aria-pressed="true"] { box-shadow: var(--public-neu-pressed); background: color-mix(in srgb, var(--public-neu-surface) 88%, var(--public-neu-brand) 12%); }
+      .onboard-wizard .service-choice .service-icon { width: 2.5rem; height: 2.5rem; border-radius: 0.75rem; display: grid; place-items: center; font-family: "Plus Jakarta Sans", sans-serif; font-weight: 800; font-size: 0.85rem; background: color-mix(in srgb, var(--public-neu-brand) 14%, var(--public-neu-surface)); color: var(--public-neu-brand); flex-shrink: 0; }
+      .onboard-wizard .service-choice strong { display: block; font-family: "Plus Jakarta Sans", sans-serif; font-weight: 700; color: var(--public-neu-text); font-size: 1rem; margin-bottom: 0.15rem; }
+      .onboard-wizard .service-choice span { display: block; color: var(--public-neu-muted); font-size: 0.875rem; line-height: 1.55; }
+
+      .onboard-wizard .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.1rem; }
+      .onboard-wizard .form-field { display: flex; flex-direction: column; gap: 0.4rem; }
+      .onboard-wizard .form-field.full { grid-column: 1 / -1; }
+      .onboard-wizard .form-field label { font-weight: 600; color: var(--public-neu-text); font-size: 0.875rem; }
+      .onboard-wizard .form-hint { color: var(--public-neu-muted); font-size: 0.8rem; font-weight: 400; }
+      .onboard-wizard .form-field input,
+      .onboard-wizard .form-field select,
+      .onboard-wizard .form-field textarea { background: var(--public-neu-surface); border: 0; border-radius: 0.8rem; padding: 0.75rem 0.95rem; color: var(--public-neu-text); font: inherit; font-size: 0.95rem; box-shadow: var(--public-neu-pressed); transition: box-shadow 180ms ease; width: 100%; box-sizing: border-box; }
+      .onboard-wizard .form-field input:focus,
+      .onboard-wizard .form-field select:focus,
+      .onboard-wizard .form-field textarea:focus { outline: none; box-shadow: var(--public-neu-raised-small), inset 0 0 0 2px var(--public-neu-brand); }
+      .onboard-wizard .form-field textarea { min-height: 8rem; resize: vertical; }
+      .onboard-wizard .form-field input[type="file"] { box-shadow: none; padding: 0.5rem 0; }
+      .onboard-wizard .form-field input[type="checkbox"] { width: auto; box-shadow: var(--public-neu-pressed); }
+
+      .onboard-wizard .upload-zone { border: 1.5px dashed var(--public-neu-line); border-radius: 1rem; padding: 1.1rem 1.25rem !important; background: rgba(255,255,255,0.4); }
+      .onboard-wizard .field-error { color: #c0392b; font-size: 0.8rem; min-height: 1em; font-weight: 600; }
+
+      .onboard-wizard #order-estimate { background: color-mix(in srgb, var(--public-neu-brand) 8%, var(--public-neu-surface)); box-shadow: var(--public-neu-raised-small); border-radius: 1rem; padding: 1.1rem 1.25rem; margin-top: 0.5rem; }
+      .onboard-wizard #order-estimate strong { color: var(--public-neu-brand); font-family: "Plus Jakarta Sans", sans-serif; display: block; }
+      .onboard-wizard #order-estimate p { margin: 0.3rem 0; color: var(--public-neu-text); font-weight: 700; }
+      .onboard-wizard #order-estimate .form-hint { margin-top: 0.25rem; }
+
+      .onboard-wizard .review-list { display: grid; gap: 0.65rem; margin-bottom: 1.25rem; }
+      .onboard-wizard .review-row { display: flex; justify-content: space-between; gap: 1rem; padding: 0.65rem 1rem; background: var(--public-neu-surface); box-shadow: var(--public-neu-raised-small); border-radius: 0.7rem; flex-wrap: wrap; }
+      .onboard-wizard .review-row span { color: var(--public-neu-muted); font-size: 0.85rem; }
+      .onboard-wizard .review-row strong { color: var(--public-neu-text); font-size: 0.9rem; text-align: right; }
+      .onboard-wizard .clerk-frame { margin-top: 1rem; }
+      .onboard-wizard .wizard-status { color: var(--public-neu-muted); font-size: 0.9rem; margin-top: 0.75rem; }
+
+      .onboard-wizard .wizard-actions { display: flex; gap: 0.75rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--public-neu-line); }
+      .onboard-wizard .ws-button { background: var(--public-neu-surface); box-shadow: var(--public-neu-raised-small); border: 0; border-radius: 0.8rem; padding: 0.8rem 1.4rem; font: inherit; font-weight: 600; color: var(--public-neu-text); cursor: pointer; transition: box-shadow 200ms ease, transform 200ms ease; }
+      .onboard-wizard .ws-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--public-neu-raised-hover); }
+      .onboard-wizard .ws-button:disabled { opacity: 0.45; cursor: not-allowed; }
+      .onboard-wizard .ws-button.primary { background: var(--public-neu-brand); color: #fff; box-shadow: var(--public-neu-cta); }
+      .onboard-wizard .ws-button.primary:hover { background: var(--platform-violet-dark); }
+
+      [data-service-fields] { display: none; }
+      [data-service-fields].is-visible { display: contents; }
+
+      @media (max-width: 920px) {
+        .onboard-wizard .wizard-layout { grid-template-columns: 1fr; }
+        .onboard-wizard .wizard-aside { position: static; }
+        .onboard-wizard .service-grid { grid-template-columns: 1fr; }
+      }
+    </style>
 </head>
-<body class="ws-body">
-  <header class="ws-topbar">
-    <div class="ws-shell ws-topbar-inner">
-      <a class="ws-logo" href="/"><img src="/images/brand/sleek-academia-logo.webp" alt="Sleek Academia"></a>
-      <nav class="ws-topbar-links" aria-label="Order navigation"><a href="/about.html">About</a><a href="/blog.html">Blog</a><a href="/store.html">Store</a><a class="ws-button" href="/login.html">Login</a></nav>
-    </div>
-  </header>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header site-shell">
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a class="brand-lockup" href="/" aria-label="Sleek Academia home">
+          <img class="brand-lockup__mark" src="/images/brand/sleek-academia-mark.webp" width="591" height="591" alt="" />
+          <span class="brand-lockup__copy">
+            <span class="brand-lockup__name">Sleek Academia</span>
+            <span class="brand-lockup__tagline">Pass. Guaranteed.</span>
+          </span>
+        </a>
+        <div class="nav-links" id="primary-links">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/about.html">About Us</a>
+          <a class="nav-link" href="/blog.html">Blog</a>
+          <a class="nav-link" href="/store.html">Store</a>
+        </div>
+        <div class="nav-actions">
+          <a class="nav-login" href="/login.html">Log in</a>
+          <a class="button button--primary" href="/assignment-help.html">Assignment Help <span class="button__arrow" aria-hidden="true">→</span></a>
+          <button class="menu-button" type="button" aria-controls="primary-links" aria-expanded="false" aria-label="Open navigation menu"><span></span></button>
+        </div>
+      </nav>
+    </header>
 
-  <main class="ws-shell wizard-layout">
-    <aside class="wizard-aside">
-      <span class="ws-kicker" style="color:#d9cbff">Start with context</span>
-      <h1>Tell us what is on your desk.</h1>
-      <p>A good order gives us enough context to understand the work, clarify the scope, and respond with the right next step.</p>
-      <div class="wizard-assurance">
-        <div><b>01</b><span><strong>No payment is taken here</strong>Your confirmed quote and payment milestones appear later in your private workspace.</span></div>
-        <div><b>02</b><span><strong>Your files stay connected</strong>Briefs, messages, and deliverables belong to one order record.</span></div>
-        <div><b>03</b><span><strong>You stay in control</strong>Review every detail before creating an account or submitting in localhost demo mode.</span></div>
+    <main id="main-content">
+      <section class="section section--soft onboard-wizard" aria-labelledby="onboard-title">
+        <div class="site-shell">
+          <div class="section-heading" data-reveal>
+            <div><p class="section-kicker">Start an order</p><h2 class="section-title" id="onboard-title">Tell us what is on your desk.</h2></div>
+            <p class="section-intro">A good order gives us enough context to understand the work, clarify the scope, and respond with the right next step. No payment is taken here.</p>
+          </div>
+
+          <div class="wizard-layout">
+            <aside class="wizard-aside">
+              <p class="eyebrow">Start with context</p>
+              <h1>Share the brief once.</h1>
+              <p>The public form collects only what we need to understand your request. The conversation, files, tracking, and payments continue privately in your workspace after you sign in.</p>
+              <div class="wizard-assurance">
+                <div><b>01</b><span><strong>No payment is taken here</strong>Your confirmed quote and payment milestones appear later in your private workspace.</span></div>
+                <div><b>02</b><span><strong>Your files stay connected</strong>Briefs, messages, and deliverables belong to one order record.</span></div>
+                <div><b>03</b><span><strong>You stay in control</strong>Review every detail before creating an account or submitting in localhost demo mode.</span></div>
+              </div>
+            </aside>
+
+            <section class="wizard-panel">
+              <div class="wizard-progress" aria-label="Order progress"><span class="is-active"></span><span></span><span></span><span></span></div>
+              <form id="request-wizard" novalidate>
+                <section class="wizard-step is-active" data-wizard-step="service">
+                  <span class="section-kicker">Step 1 of 4</span>
+                  <h2>What kind of support do you need?</h2>
+                  <p>Choose the closest match. You can explain the nuance in the next step.</p>
+                  <input type="hidden" name="service" value="">
+                  <div class="service-grid">
+                    <button class="service-choice" type="button" data-service="essay" aria-pressed="false"><b class="service-icon">WR</b><strong>Essay or coursework</strong><span>Writing, research, presentations, reports, and structured feedback.</span></button>
+                    <button class="service-choice" type="button" data-service="exam" aria-pressed="false"><b class="service-icon">EX</b><strong>Exam preparation</strong><span>A practical plan, focused review, or support for a professional exam.</span></button>
+                    <button class="service-choice" type="button" data-service="tutoring" aria-pressed="false"><b class="service-icon">1:1</b><strong>Personal tutoring</strong><span>Ongoing guidance for a course, subject, or difficult concept.</span></button>
+                    <button class="service-choice" type="button" data-service="other" aria-pressed="false"><b class="service-icon">OT</b><strong>Something else</strong><span>Tell us about a custom academic or professional learning need.</span></button>
+                  </div>
+                  <p class="field-error" data-error-for="service"></p>
+                </section>
+
+                <section class="wizard-step" data-wizard-step="brief">
+                  <span class="section-kicker">Step 2 of 4</span>
+                  <h2>Give us the useful details.</h2>
+                  <p>Share the actual goal, timing, and any requirements that shape the work.</p>
+                  <div class="form-grid">
+                    <div class="form-field"><label for="subject">Subject or course</label><select id="subject" name="subject" required><option value="">Choose a subject or course</option><optgroup label="Nursing"><option>NCLEX-RN</option><option>Pathophysiology</option><option>Pharmacology</option><option>Medical-Surgical Nursing</option><option>Mental Health Nursing</option><option>Maternal and Child Health</option><option>Community Health Nursing</option><option>Nursing Leadership</option><option>Evidence-Based Practice</option></optgroup><optgroup label="Law"><option>UBE / Bar Exam</option><option>Constitutional Law</option><option>Contracts</option><option>Criminal Law and Procedure</option><option>Civil Procedure</option><option>Evidence</option><option>Torts</option><option>Property Law</option><option>Legal Research and Writing</option></optgroup><optgroup label="ICT"><option>CompTIA Security+</option><option>CompTIA Network+</option><option>CompTIA A+</option><option>Cybersecurity</option><option>Cloud Computing</option><option>Computer Networking</option><option>Programming</option><option>Databases</option><option>Systems Analysis</option></optgroup><optgroup label="Finance"><option>CFA Level I</option><option>Financial Accounting</option><option>Managerial Accounting</option><option>Corporate Finance</option><option>Investments</option><option>Economics</option><option>Quantitative Methods</option><option>Taxation</option></optgroup><optgroup label="Academic skills"><option>Academic Writing</option><option>Research Methods</option><option>Statistics</option><option>Presentation Skills</option></optgroup><option value="other">Other subject or course</option></select><span class="field-error" data-error-for="subject"></span></div>
+                    <div class="form-field" id="subject-other-field" hidden><label for="subjectOther">Enter your subject or course</label><input id="subjectOther" name="subjectOther" maxlength="180" autocomplete="off"><span class="field-error" data-error-for="subjectOther"></span></div>
+                    <div class="form-field"><label for="title">Working title <span class="form-hint">optional</span></label><input id="title" name="title" maxlength="240" autocomplete="off"></div>
+                    <div class="form-field"><label for="helpType">What do you need help with?</label><select id="helpType" name="helpType" required><option value="">Choose the closest type</option><option value="assignment">Assignment, essay, or report</option><option value="exam-preparation">Exam preparation</option><option value="live-exam-assistance">Live exam assistance</option><option value="tutoring">Tutoring or concept explanation</option><option value="problem-set">Calculations or problem set</option><option value="research">Research or literature review</option><option value="presentation">Presentation or slides</option><option value="editing">Editing, citations, or formatting</option><option value="discussion">Discussion post</option><option value="case-study">Case study</option><option value="other">Other type of help</option></select><span class="field-error" data-error-for="helpType"></span></div>
+                    <div class="form-field" id="help-type-other-field" hidden><label for="helpTypeOther">Describe the type of help</label><input id="helpTypeOther" name="helpTypeOther" maxlength="180" autocomplete="off"><span class="field-error" data-error-for="helpTypeOther"></span></div>
+                    <div class="form-field full"><label for="description">Instructions and expected outcome</label><textarea id="description" name="description" maxlength="5000" required placeholder="Include the complete instructions, expected outcome, what you have tried, and where you feel stuck."></textarea><span class="field-error" data-error-for="description"></span></div>
+                    <div class="form-field"><label for="deadline">Deadline</label><input id="deadline" name="deadline" type="date"></div>
+
+                    <div data-service-fields="essay">
+                      <div class="form-field"><label for="citationStyle">Citation style</label><select id="citationStyle" name="citationStyle"><option value="">Not specified</option><option>APA 7</option><option>MLA 9</option><option>Chicago</option><option>Harvard</option><option>Other</option></select></div>
+                      <div class="form-field"><label for="writing-unit">Estimate by</label><select id="writing-unit"><option value="pages">Pages</option><option value="words">Word count</option></select><span class="form-hint">Each page is 275 words. That is 275 words per page.</span></div>
+                      <div class="form-field" data-writing-unit="pages"><label for="pageCount">Pages</label><input id="pageCount" name="pageCount" type="number" min="1" step="1" inputmode="numeric" placeholder="6"><span class="form-hint">Standard writing is $15 per page.</span></div>
+                      <div class="form-field" data-writing-unit="words" hidden><label for="wordCount">Words</label><input id="wordCount" name="wordCount" type="number" min="1" step="1" inputmode="numeric" placeholder="1650"><span class="form-hint">We round up to the next 275-word page.</span></div>
+                      <div class="form-field full"><label><input id="urgency" name="urgency" type="checkbox" value="six-hour"> Six-hour urgent writing</label><span class="form-hint">Urgent writing is $16.50 per page.</span></div>
+                    </div>
+
+                    <div data-service-fields="exam">
+                      <div class="form-field"><label for="examName">Exam name</label><input id="examName" name="examName" maxlength="160" placeholder="NCLEX-RN, UBE, CFA Level I, Security+"></div>
+                      <div class="form-field"><label for="examDate">Exam date</label><input id="examDate" name="examDate" type="date"></div>
+                      <div class="form-field"><label for="examHours">Assistance hours</label><input id="examHours" name="examHours" type="number" min="1" step="1" inputmode="numeric" placeholder="2"><span class="form-hint"><strong>Assistance hours means the number of hours allocated to your exam.</strong> Exam assistance is billed at $150 per whole hour.</span></div>
+                      <div class="form-field"><label for="attemptStatus">Attempt status</label><select id="attemptStatus" name="attemptStatus"><option value="">Choose one</option><option>First attempt</option><option>Retaking</option><option>Not scheduled</option></select></div>
+                      <div class="form-field"><label for="assistanceType">Support focus</label><select id="assistanceType" name="assistanceType"><option value="">Choose one</option><option>Build a study plan</option><option>Review weak areas</option><option>Practice questions and feedback</option><option>Accountability and tutoring</option></select></div>
+                    </div>
+
+                    <div data-service-fields="tutoring">
+                      <div class="form-field"><label for="tutoringAssistanceType">Tutoring focus</label><select id="tutoringAssistanceType" data-alias="assistanceType"><option value="">Choose one</option><option>Understand course concepts</option><option>Prepare for an assessment</option><option>Work through practice problems</option><option>Ongoing accountability</option></select></div>
+                      <p class="form-hint">Our team of experts will provide a custom quote after reviewing the complete scope and materials.</p>
+                    </div>
+
+                    <div data-service-fields="other"><p class="form-hint">Our team of experts will provide a custom quote after reviewing the complete scope and materials.</p></div>
+
+                    <div class="form-field full" id="order-estimate" aria-live="polite"><strong>Informational estimate</strong><p id="order-estimate-value">Choose a service and units to preview the server-calculated rate.</p><span class="form-hint">This browser estimate is informational. The server calculates and stores the official quote.</span></div>
+
+                    <div class="form-field full upload-zone"><label for="initial-files">Helpful files <span class="form-hint">optional, uploaded after your request is created</span></label><input id="initial-files" type="file" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.webp"><span class="form-hint">Add a rubric, prompt, syllabus, notes, or screenshots. Maximum 8 MB per file.</span></div>
+                  </div>
+                </section>
+
+                <section class="wizard-step" data-wizard-step="contact">
+                  <span class="section-kicker">Step 3 of 4</span>
+                  <h2>How should we reach you?</h2>
+                  <p>These details create your order profile and help us respond to urgent timing.</p>
+                  <div class="form-grid">
+                    <div class="form-field"><label for="name">Full name</label><input id="name" name="name" maxlength="160" autocomplete="name" required><span class="field-error" data-error-for="name"></span></div>
+                    <div class="form-field"><label for="email">Email</label><input id="email" name="email" type="email" maxlength="320" autocomplete="email" required><span class="field-error" data-error-for="email"></span></div>
+                    <div class="form-field"><label for="urgentPhone">Phone for urgent deadlines <span class="form-hint">optional</span></label><input id="urgentPhone" name="urgentPhone" maxlength="80" autocomplete="tel"></div>
+                    <div class="form-field"><label for="school">School or organization <span class="form-hint">optional</span></label><input id="school" name="school" maxlength="180" autocomplete="organization"></div>
+                  </div>
+                </section>
+
+                <section class="wizard-step" data-wizard-step="review">
+                  <span class="section-kicker">Step 4 of 4</span>
+                  <h2>Review, then continue securely.</h2>
+                  <p>Your order is saved locally first. After sign up, it is handed to the protected workspace exactly once.</p>
+                  <div class="review-list" id="request-review"></div>
+                  <div class="clerk-frame" id="clerk-onboard-sign-up"></div>
+                  <p class="wizard-status" id="wizard-status" role="status" aria-live="polite"></p>
+                </section>
+
+                <div class="wizard-actions"><button class="ws-button" id="wizard-back" type="button" disabled>Back</button><button class="ws-button primary" id="wizard-next" type="button">Continue</button></div>
+              </form>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-main site-shell">
+        <div class="footer-brand">
+          <a class="brand-lockup" href="/" aria-label="Sleek Academia home">
+            <img class="brand-lockup__mark" src="/images/brand/sleek-academia-mark.webp" width="591" height="591" alt="" loading="lazy" />
+            <span class="brand-lockup__copy"><span class="brand-lockup__name">Sleek Academia</span><span class="brand-lockup__tagline">Pass. Guaranteed.</span></span>
+          </a>
+          <p>Focused academic support for ambitious learners in Nursing, Law, ICT, and Finance.</p>
+        </div>
+        <div class="footer-column"><h2>Explore</h2><ul><li><a href="/about.html">About Us</a></li><li><a href="/blog.html">Blog</a></li><li><a href="/store.html">Store</a></li><li><a href="/onboard.html">Get Started</a></li></ul></div>
+        <div class="footer-column"><h2>Programs</h2><ul><li><a href="/nclex-prep.html">NCLEX-RN</a></li><li><a href="/ube-bar-exam-prep.html">UBE Bar Exam</a></li><li><a href="/cfa-level-1-prep.html">CFA Level I</a></li><li><a href="/comptia-security-plus-prep.html">CompTIA Security+</a></li></ul></div>
+        <div class="footer-column"><h2>Workspace</h2><ul><li><a href="/login.html">Log in</a></li><li><a href="/sign-up.html">Create account</a></li><li><a href="/dashboard.html">Dashboard</a></li><li><a href="/onboard.html">Start a request</a></li></ul></div>
       </div>
-    </aside>
+      <div class="footer-base site-shell">
+        <span>© 2026 Sleek Academia. All rights reserved.</span>
+        <nav class="footer-social" aria-label="Sleek Academia social profiles">
+          <a href="https://instagram.com/sleek_academia" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a href="https://tiktok.com/@sleek_e_learn" target="_blank" rel="noopener noreferrer">TikTok</a>
+          <a href="https://www.youtube.com/channel/UCID9SDULAMHqyKjB65Bo01A" target="_blank" rel="noopener noreferrer">YouTube</a>
+        </nav>
+        <div class="footer-legal"><span>Personal academic support</span></div>
+      </div>
+    </footer>
 
-    <section class="wizard-panel">
-      <div class="wizard-progress" aria-label="Order progress"><span class="is-active"></span><span></span><span></span><span></span></div>
-      <form id="request-wizard" novalidate>
-        <section class="wizard-step is-active" data-wizard-step="service">
-          <span class="ws-kicker">Step 1 of 4</span>
-          <h2>What kind of support do you need?</h2>
-          <p>Choose the closest match. You can explain the nuance in the next step.</p>
-          <input type="hidden" name="service" value="">
-          <div class="service-grid">
-            <button class="service-choice" type="button" data-service="essay" aria-pressed="false"><b class="service-icon">WR</b><strong>Essay or coursework</strong><span>Writing, research, presentations, reports, and structured feedback.</span></button>
-            <button class="service-choice" type="button" data-service="exam" aria-pressed="false"><b class="service-icon">EX</b><strong>Exam preparation</strong><span>A practical plan, focused review, or support for a professional exam.</span></button>
-            <button class="service-choice" type="button" data-service="tutoring" aria-pressed="false"><b class="service-icon">1:1</b><strong>Personal tutoring</strong><span>Ongoing guidance for a course, subject, or difficult concept.</span></button>
-            <button class="service-choice" type="button" data-service="other" aria-pressed="false"><b class="service-icon">OT</b><strong>Something else</strong><span>Tell us about a custom academic or professional learning need.</span></button>
-          </div>
-          <p class="field-error" data-error-for="service"></p>
-        </section>
-
-        <section class="wizard-step" data-wizard-step="brief">
-          <span class="ws-kicker">Step 2 of 4</span>
-          <h2>Give us the useful details.</h2>
-          <p>Share the actual goal, timing, and any requirements that shape the work.</p>
-          <div class="form-grid">
-            <div class="form-field"><label for="subject">Subject or course</label><select id="subject" name="subject" required><option value="">Choose a subject or course</option><optgroup label="Nursing"><option>NCLEX-RN</option><option>Pathophysiology</option><option>Pharmacology</option><option>Medical-Surgical Nursing</option><option>Mental Health Nursing</option><option>Maternal and Child Health</option><option>Community Health Nursing</option><option>Nursing Leadership</option><option>Evidence-Based Practice</option></optgroup><optgroup label="Law"><option>UBE / Bar Exam</option><option>Constitutional Law</option><option>Contracts</option><option>Criminal Law and Procedure</option><option>Civil Procedure</option><option>Evidence</option><option>Torts</option><option>Property Law</option><option>Legal Research and Writing</option></optgroup><optgroup label="ICT"><option>CompTIA Security+</option><option>CompTIA Network+</option><option>CompTIA A+</option><option>Cybersecurity</option><option>Cloud Computing</option><option>Computer Networking</option><option>Programming</option><option>Databases</option><option>Systems Analysis</option></optgroup><optgroup label="Finance"><option>CFA Level I</option><option>Financial Accounting</option><option>Managerial Accounting</option><option>Corporate Finance</option><option>Investments</option><option>Economics</option><option>Quantitative Methods</option><option>Taxation</option></optgroup><optgroup label="Academic skills"><option>Academic Writing</option><option>Research Methods</option><option>Statistics</option><option>Presentation Skills</option></optgroup><option value="other">Other subject or course</option></select><span class="field-error" data-error-for="subject"></span></div>
-            <div class="form-field" id="subject-other-field" hidden><label for="subjectOther">Enter your subject or course</label><input id="subjectOther" name="subjectOther" maxlength="180" autocomplete="off"><span class="field-error" data-error-for="subjectOther"></span></div>
-            <div class="form-field"><label for="title">Working title <span class="form-hint">optional</span></label><input id="title" name="title" maxlength="240" autocomplete="off"></div>
-            <div class="form-field"><label for="helpType">What do you need help with?</label><select id="helpType" name="helpType" required><option value="">Choose the closest type</option><option value="assignment">Assignment, essay, or report</option><option value="exam-preparation">Exam preparation</option><option value="live-exam-assistance">Live exam assistance</option><option value="tutoring">Tutoring or concept explanation</option><option value="problem-set">Calculations or problem set</option><option value="research">Research or literature review</option><option value="presentation">Presentation or slides</option><option value="editing">Editing, citations, or formatting</option><option value="discussion">Discussion post</option><option value="case-study">Case study</option><option value="other">Other type of help</option></select><span class="field-error" data-error-for="helpType"></span></div>
-            <div class="form-field" id="help-type-other-field" hidden><label for="helpTypeOther">Describe the type of help</label><input id="helpTypeOther" name="helpTypeOther" maxlength="180" autocomplete="off"><span class="field-error" data-error-for="helpTypeOther"></span></div>
-            <div class="form-field full"><label for="description">Instructions and expected outcome</label><textarea id="description" name="description" maxlength="5000" required placeholder="Include the complete instructions, expected outcome, what you have tried, and where you feel stuck."></textarea><span class="field-error" data-error-for="description"></span></div>
-            <div class="form-field"><label for="deadline">Deadline</label><input id="deadline" name="deadline" type="date"></div>
-
-            <div data-service-fields="essay">
-              <div class="form-field"><label for="citationStyle">Citation style</label><select id="citationStyle" name="citationStyle"><option value="">Not specified</option><option>APA 7</option><option>MLA 9</option><option>Chicago</option><option>Harvard</option><option>Other</option></select></div>
-              <div class="form-field"><label for="writing-unit">Estimate by</label><select id="writing-unit"><option value="pages">Pages</option><option value="words">Word count</option></select><span class="form-hint">Each page is 275 words. That is 275 words per page.</span></div>
-              <div class="form-field" data-writing-unit="pages"><label for="pageCount">Pages</label><input id="pageCount" name="pageCount" type="number" min="1" step="1" inputmode="numeric" placeholder="6"><span class="form-hint">Standard writing is $15 per page.</span></div>
-              <div class="form-field" data-writing-unit="words" hidden><label for="wordCount">Words</label><input id="wordCount" name="wordCount" type="number" min="1" step="1" inputmode="numeric" placeholder="1650"><span class="form-hint">We round up to the next 275-word page.</span></div>
-              <div class="form-field full"><label><input id="urgency" name="urgency" type="checkbox" value="six-hour"> Six-hour urgent writing</label><span class="form-hint">Urgent writing is $16.50 per page.</span></div>
-            </div>
-
-            <div data-service-fields="exam">
-              <div class="form-field"><label for="examName">Exam name</label><input id="examName" name="examName" maxlength="160" placeholder="NCLEX-RN, UBE, CFA Level I, Security+"></div>
-              <div class="form-field"><label for="examDate">Exam date</label><input id="examDate" name="examDate" type="date"></div>
-              <div class="form-field"><label for="examHours">Assistance hours</label><input id="examHours" name="examHours" type="number" min="1" step="1" inputmode="numeric" placeholder="2"><span class="form-hint"><strong>Assistance hours means the number of hours allocated to your exam.</strong> Exam assistance is billed at $150 per whole hour.</span></div>
-              <div class="form-field"><label for="attemptStatus">Attempt status</label><select id="attemptStatus" name="attemptStatus"><option value="">Choose one</option><option>First attempt</option><option>Retaking</option><option>Not scheduled</option></select></div>
-              <div class="form-field"><label for="assistanceType">Support focus</label><select id="assistanceType" name="assistanceType"><option value="">Choose one</option><option>Build a study plan</option><option>Review weak areas</option><option>Practice questions and feedback</option><option>Accountability and tutoring</option></select></div>
-            </div>
-
-            <div data-service-fields="tutoring">
-              <div class="form-field"><label for="tutoringAssistanceType">Tutoring focus</label><select id="tutoringAssistanceType" data-alias="assistanceType"><option value="">Choose one</option><option>Understand course concepts</option><option>Prepare for an assessment</option><option>Work through practice problems</option><option>Ongoing accountability</option></select></div>
-              <p class="form-hint">Our team of experts will provide a custom quote after reviewing the complete scope and materials.</p>
-            </div>
-
-            <div data-service-fields="other"><p class="form-hint">Our team of experts will provide a custom quote after reviewing the complete scope and materials.</p></div>
-
-            <div class="form-field full" id="order-estimate" aria-live="polite"><strong>Informational estimate</strong><p id="order-estimate-value">Choose a service and units to preview the server-calculated rate.</p><span class="form-hint">This browser estimate is informational. The server calculates and stores the official quote.</span></div>
-
-            <div class="form-field full upload-zone"><label for="initial-files">Helpful files <span class="form-hint">optional, uploaded after your request is created</span></label><input id="initial-files" type="file" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.webp"><span class="form-hint">Add a rubric, prompt, syllabus, notes, or screenshots. Maximum 8 MB per file.</span></div>
-          </div>
-        </section>
-
-        <section class="wizard-step" data-wizard-step="contact">
-          <span class="ws-kicker">Step 3 of 4</span>
-          <h2>How should we reach you?</h2>
-          <p>These details create your order profile and help us respond to urgent timing.</p>
-          <div class="form-grid">
-            <div class="form-field"><label for="name">Full name</label><input id="name" name="name" maxlength="160" autocomplete="name" required><span class="field-error" data-error-for="name"></span></div>
-            <div class="form-field"><label for="email">Email</label><input id="email" name="email" type="email" maxlength="320" autocomplete="email" required><span class="field-error" data-error-for="email"></span></div>
-            <div class="form-field"><label for="urgentPhone">Phone for urgent deadlines <span class="form-hint">optional</span></label><input id="urgentPhone" name="urgentPhone" maxlength="80" autocomplete="tel"></div>
-            <div class="form-field"><label for="school">School or organization <span class="form-hint">optional</span></label><input id="school" name="school" maxlength="180" autocomplete="organization"></div>
-          </div>
-        </section>
-
-        <section class="wizard-step" data-wizard-step="review">
-          <span class="ws-kicker">Step 4 of 4</span>
-          <h2>Review, then continue securely.</h2>
-          <p>Your order is saved locally first. After sign up, it is handed to the protected workspace exactly once.</p>
-          <div class="review-list" id="request-review"></div>
-          <div class="clerk-frame" id="clerk-onboard-sign-up"></div>
-          <p class="wizard-status" id="wizard-status" role="status" aria-live="polite"></p>
-        </section>
-
-        <div class="wizard-actions"><button class="ws-button" id="wizard-back" type="button" disabled>Back</button><button class="ws-button primary" id="wizard-next" type="button">Continue</button></div>
-      </form>
-    </section>
-  </main>
-  <script src="/js/onboard.js" defer></script>
-</body>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2344858129372736&amp;ev=PageView&amp;noscript=1" alt="" /></noscript>
+    <script src="/js/platform-motion.js" defer></script>
+    <script src="/js/onboard.js" defer></script>
+  </body>
 </html>

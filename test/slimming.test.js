@@ -62,7 +62,7 @@ test("landing routes service visitors into the signup-first request flow", async
   const html = await (await fetch(`${BASE}/`)).text();
   assert.doesNotMatch(html, /id="pricing"|href="\/?#pricing"/i);
   assert.match(html, /href="\/onboard\.html(?:\?goal=[^"]+)?"/i);
-  assert.match(html, /Authorship matters at Sleek Academia/i);
+  assert.match(html, /From \$15\/page/i);
 });
 
 test("service-request rejects anonymous submissions", async () => {
