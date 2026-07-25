@@ -73,6 +73,24 @@ Plan:
    served distribution, plus a companion test that fails if shuffling stops
    reordering. Documented in `renal-cardiac-bank.js`.
 
+## LIVE AND VERIFIED
+Deployed 2026-07-25 as `522dc2c` (merge of `756b1ac`).
+- `https://sleekacademia.com/renal-cardiac-quiz` → 200, reads its own QUIZ_CONFIG
+  (28 patho topic chips, "NURS 5315 student", 100/106/50/$10, "Body systems").
+- `/api/patho-quiz/health` → `quizId=renal-cardiac`, 0 bank problems, tutor on,
+  paypalLive true, payee `macsiemoney@gmail.com`.
+- Live security: `/next` leaks no answer-key field, option ids opaque, paid
+  question / tutor endpoint / forged token all 402, wrong access code 403.
+- **Antimicrobial quiz re-verified live on the shared assets** — start, render,
+  grade, rationale. `/api/quiz/health` healthy.
+- Server tree: all new files present, antimicrobial files intact, and the two
+  renamed assets correctly removed by `rsync --delete` (old paths now 404).
+- Rest of the site unaffected: `/`, `/blog.html`, `/nclex-prep.html`,
+  `/store.html`, `/about.html`, `/onboard.html`, `/assignment-help.html`,
+  `/api/health` all 200.
+- Restart was required and performed (killed lsnode pid 2000311; the old process
+  was 1h31m old and the tell-tale was `/api/quiz/health` returning no `quizId`).
+
 ## Next
 - [ ] Nothing blocking.
 - [ ] Optional: the only untested link is a real human-approved $10 payment.
