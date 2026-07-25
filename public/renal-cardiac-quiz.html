@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NURS 5334 Antimicrobial Mastery Challenge — Sleek Academia</title>
-<meta name="description" content="An adaptive 100-question antimicrobial pharmacology challenge for graduate nursing students. Immediate rationales, targeted remediation and topic-level mastery tracking.">
+<title>NURS 5315 Renal, Urologic &amp; Cardiac Pathophysiology Challenge — Sleek Academia</title>
+<meta name="description" content="An adaptive 100-question renal, urologic and cardiac pathophysiology challenge for graduate nursing students. Immediate rationales, targeted remediation and topic-level mastery tracking.">
 <meta name="robots" content="noindex, follow">
 <link rel="icon" type="image/png" sizes="32x32" href="/images/brand/favicon-32.png">
 <link rel="apple-touch-icon" href="/images/brand/apple-touch-icon.png">
@@ -31,10 +31,10 @@
       </picture>
       <span class="brand-text">
         <strong>Sleek Academia</strong>
-        <small>Graduate Nursing Pharmacology</small>
+        <small>Graduate Nursing Pathophysiology</small>
       </span>
     </a>
-    <p class="masthead-meta">NURS&nbsp;5334 &middot; Antimicrobial Pharmacology</p>
+    <p class="masthead-meta">NURS&nbsp;5315 &middot; Advanced Pathophysiology</p>
   </div>
 </header>
 
@@ -51,15 +51,17 @@
   <section id="screen-start" class="screen" hidden>
     <div class="card hero">
       <p class="eyebrow">Adaptive Mastery Challenge</p>
-      <h1>Antimicrobial Pharmacology</h1>
+      <h1>Renal, Urologic &amp; Cardiac Pathophysiology</h1>
       <p class="lede">
-        One hundred questions across mechanisms, stewardship, toxicity recognition,
-        pregnancy safety and clinical prioritisation. Difficulty adapts to your
-        performance, and every miss triggers a short tutorial before you continue.
+        One hundred questions across renal physiology, fluid, electrolyte and
+        acid-base balance, kidney injury, urologic disorders, cardiac
+        haemodynamics, heart failure and vascular disease. Difficulty adapts to
+        your performance, and every miss triggers a short tutorial before you
+        continue.
       </p>
 
       <dl class="spec-grid">
-        <div><dt>Prepared for</dt><dd id="start-student">Bryton B.</dd></div>
+        <div><dt>Prepared for</dt><dd id="start-student">NURS 5315 student</dd></div>
         <div><dt>Questions</dt><dd><span id="start-total">100</span> items, <span id="start-points">106</span> points</dd></div>
         <div><dt>Free access</dt><dd>Questions 1&ndash;<span id="start-free">50</span></dd></div>
         <div><dt>Full access</dt><dd>$<span id="start-price">10</span> one-time unlock</dd></div>
@@ -193,7 +195,7 @@
 
       <ul class="unlock-list">
         <li>Fifty further questions, weighted toward levels 4 and 5</li>
-        <li>Aminoglycosides, fluoroquinolones, sulfonamides, linezolid, rifampin, tuberculosis therapy, antifungals and antivirals</li>
+        <li>Deeper renal, urologic and cardiac work: glomerular disease, stones and obstruction, coronary perfusion, heart failure phenotypes, arrhythmias, valvular lesions, aortic and peripheral vascular disease and shock</li>
         <li>The full results dashboard with topic mastery and a printable summary</li>
         <li>One-time payment. Your progress so far is preserved</li>
       </ul>
@@ -249,7 +251,7 @@
     </div>
 
     <div class="card">
-      <h2>Medication classes</h2>
+      <h2>Body systems</h2>
       <div id="results-classes" class="bar-list"></div>
     </div>
 
@@ -293,8 +295,8 @@
 </main>
 
 <footer class="footer">
-  <p>Sleek Academia &middot; Original practice items written for NURS&nbsp;5334. Not affiliated with, and containing no content from, Elsevier, EAQ, NCLEX, ATI or HESI.</p>
-  <p class="footer-fine">For educational use. Always follow your institution's protocols and verify medication information against current references.</p>
+  <p>Sleek Academia &middot; Original practice items written for NURS&nbsp;5315. Not affiliated with, and containing no content from, Elsevier, EAQ, NCLEX, ATI or HESI.</p>
+  <p class="footer-fine">For educational use. Always follow your institution's protocols and verify clinical information against current references.</p>
 </footer>
 
 <!-- Restart confirmation -->
@@ -309,14 +311,25 @@
   </div>
 </div>
 
-<!-- Identifies this quiz to the shared engine. The storage keys must stay exactly
-     as they are: learners' in-progress attempts and paid unlocks are saved under
-     them, and renaming either would lose both. -->
+<!-- Identifies this quiz to the shared engine. These keys are distinct from the
+     other quiz's so progress and paid unlocks never cross between them. Do not
+     rename them once learners have attempts or unlocks saved. -->
 <script>
   window.QUIZ_CONFIG = {
-    apiBase: "/api/quiz",
-    storeKey: "sleek.antimicrobial.attempt.v1",
-    entitlementKey: "sleek.antimicrobial.entitlement.v1"
+    apiBase: "/api/patho-quiz",
+    storeKey: "sleek.renalcardiac.attempt.v1",
+    entitlementKey: "sleek.renalcardiac.entitlement.v1",
+    topics: [
+      "Nephron & GFR", "Renal autoregulation", "RAAS", "Fluid & electrolytes",
+      "Sodium & water", "Potassium", "Calcium & phosphate", "Acid-base",
+      "Arterial blood gases", "Acute kidney injury", "Urinary sediment",
+      "Chronic kidney disease", "Glomerular disease", "Nephrotic & nephritic",
+      "Urinary tract infection", "Kidney stones", "Obstruction & retention",
+      "Cardiac output", "Preload & afterload", "Coronary perfusion",
+      "Heart failure", "Ischaemic heart disease", "Arrhythmias & conduction",
+      "Valvular disease", "Hypertension", "Vascular disease", "Shock",
+      "Prioritisation"
+    ]
   };
 </script>
 <script src="/js/quiz-engine.js?v=4" defer></script>

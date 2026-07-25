@@ -19,20 +19,44 @@ const NIM_ENDPOINT = "https://integrate.api.nvidia.com/v1/chat/completions";
 const REQUEST_TIMEOUT_MS = 25_000;
 const RETRY_TIMEOUT_MS = 15_000;
 
-const SYSTEM_PROMPT = [
-  "You are a graduate-level nursing pharmacology tutor for Sleek Academia, coaching a",
-  "Doctor of Nursing Practice student through NURS 5334 antimicrobial pharmacology.",
-  "",
-  "Rules:",
-  "- Be precise and clinically accurate. Graduate level, not undergraduate.",
-  "- Be concise. No filler, no praise padding, no emoji, no exclamation marks.",
-  "- Never invent drug facts. If something is genuinely uncertain, say so plainly.",
-  "- Never state that a medication is universally safe or universally contraindicated.",
-  "- Use 'notify the prescriber', 'hold according to protocol' or 'obtain urgent evaluation'",
-  "  rather than implying a nurse independently discontinues therapy.",
-  "- Never include patient-identifying information.",
-  "- Return only the JSON object requested. No markdown fences, no commentary.",
-].join("\n");
+/**
+ * Per-quiz tutor framing. Everything domain-specific in the prompts comes from
+ * here so one tutor implementation serves every quiz.
+ *
+ * @typedef {object} TutorDomain
+ * @property {string} subject       - what the tutor teaches, e.g. "antimicrobial pharmacology"
+ * @property {string} course        - course context, e.g. "NURS 5334 antimicrobial pharmacology"
+ * @property {string} categoryLabel - label for the bank's secondary axis
+ * @property {string} inventionRule - the "never invent X" guard for this domain
+ * @property {string} absolutesRule - the "never claim universal X" guard
+ */
+
+/** @type {TutorDomain} */
+export const DEFAULT_DOMAIN = {
+  subject: "nursing pharmacology",
+  course: "NURS 5334 antimicrobial pharmacology",
+  categoryLabel: "Medication class",
+  inventionRule: "Never invent drug facts.",
+  absolutesRule:
+    "Never state that a medication is universally safe or universally contraindicated.",
+};
+
+function systemPrompt(domain) {
+  return [
+    `You are a graduate-level ${domain.subject} tutor for Sleek Academia, coaching a`,
+    `Doctor of Nursing Practice student through ${domain.course}.`,
+    "",
+    "Rules:",
+    "- Be precise and clinically accurate. Graduate level, not undergraduate.",
+    "- Be concise. No filler, no praise padding, no emoji, no exclamation marks.",
+    `- ${domain.inventionRule} If something is genuinely uncertain, say so plainly.`,
+    `- ${domain.absolutesRule}`,
+    "- Use 'notify the prescriber', 'hold according to protocol' or 'obtain urgent evaluation'",
+    "  rather than implying a nurse independently discontinues therapy.",
+    "- Never include patient-identifying information.",
+    "- Return only the JSON object requested. No markdown fences, no commentary.",
+  ].join("\n");
+}
 
 export function isConfigured() {
   return Boolean(process.env.NVIDIA_API_KEY);
@@ -68,13 +92,13 @@ function parseJsonObject(text) {
   }
 }
 
-async function postOnce(apiKey, userPrompt, maxTokens, temperature, timeout) {
+async function postOnce(apiKey, userPrompt, maxTokens, temperature, timeout, domain) {
   const { data } = await axios.post(
     NIM_ENDPOINT,
     {
       model: NEMOTRON_MODEL,
       messages: [
-        { role: "system", content: SYSTEM_PROMPT },
+        { role: "system", content: systemPrompt(domain) },
         { role: "user", content: userPrompt },
       ],
       max_tokens: maxTokens,
@@ -100,12 +124,17 @@ async function postOnce(apiKey, userPrompt, maxTokens, temperature, timeout) {
  * returns empty so the caller uses its bank-derived fallback rather than
  * blocking the learner.
  */
-async function callNemotron(userPrompt, { maxTokens = 900, temperature = 0.3 } = {}) {
+async function callNemotron(
+  userPrompt,
+  { maxTokens = 900, temperature = 0.3, domain = DEFAULT_DOMAIN } = {}
+) {
   const apiKey = process.env.NVIDIA_API_KEY;
   if (!apiKey) throw Object.assign(new Error("NVIDIA_API_KEY is not configured"), { code: "NO_KEY" });
 
   try {
-    const first = await postOnce(apiKey, userPrompt, maxTokens, temperature, REQUEST_TIMEOUT_MS);
+    const first = await postOnce(
+      apiKey, userPrompt, maxTokens, temperature, REQUEST_TIMEOUT_MS, domain
+    );
     if (first) return first;
     console.warn("[quiz] Nemotron returned empty content; retrying once");
   } catch (error) {
@@ -115,13 +144,13 @@ async function callNemotron(userPrompt, { maxTokens = 900, temperature = 0.3 } =
     console.warn(`[quiz] Nemotron transient failure (${status || error.code}); retrying once`);
   }
 
-  return postOnce(apiKey, userPrompt, maxTokens, temperature, RETRY_TIMEOUT_MS);
+  return postOnce(apiKey, userPrompt, maxTokens, temperature, RETRY_TIMEOUT_MS, domain);
 }
 
-function questionContext(question) {
+function questionContext(question, domain = DEFAULT_DOMAIN) {
   return [
     `Topic: ${question.topic}`,
-    `Medication class: ${question.medicationClass}`,
+    `${domain.categoryLabel}: ${question.category ?? question.medicationClass}`,
     `Difficulty level: ${question.difficulty} of 5`,
     `Question: ${question.stem}`,
     `Correct answer: ${question.correct
@@ -139,11 +168,11 @@ function questionContext(question) {
 /**
  * @returns {Promise<{heading: string, notes: string[], pitfall: string, source: 'ai'|'fallback'}>}
  */
-export async function generateNotes(question, learnerAnswerText) {
+export async function generateNotes(question, learnerAnswerText, domain = DEFAULT_DOMAIN) {
   const prompt = [
     "The student just answered this question incorrectly.",
     "",
-    questionContext(question),
+    questionContext(question, domain),
     learnerAnswerText ? `The student chose: ${learnerAnswerText}` : "",
     "",
     "Write short remediation notes that close this specific knowledge gap.",
@@ -154,7 +183,7 @@ export async function generateNotes(question, learnerAnswerText) {
     .join("\n");
 
   try {
-    const parsed = parseJsonObject(await callNemotron(prompt, { maxTokens: 800 }));
+    const parsed = parseJsonObject(await callNemotron(prompt, { maxTokens: 800, domain }));
     if (parsed && Array.isArray(parsed.notes) && parsed.notes.length) {
       return {
         heading: String(parsed.heading || question.topic).slice(0, 90),
@@ -187,11 +216,11 @@ export function fallbackNotes(question) {
 /**
  * @returns {Promise<{questions: string[], source: 'ai'|'fallback'}>}
  */
-export async function generateProbes(question) {
+export async function generateProbes(question, domain = DEFAULT_DOMAIN) {
   const prompt = [
     "The student just missed this question and has read remediation notes.",
     "",
-    questionContext(question),
+    questionContext(question, domain),
     "",
     "Write exactly two open-ended questions that make the student reason aloud about this",
     "concept. Not multiple choice. The first should test the underlying mechanism or",
@@ -202,7 +231,7 @@ export async function generateProbes(question) {
   ].join("\n");
 
   try {
-    const parsed = parseJsonObject(await callNemotron(prompt, { maxTokens: 500 }));
+    const parsed = parseJsonObject(await callNemotron(prompt, { maxTokens: 500, domain }));
     if (parsed && Array.isArray(parsed.questions) && parsed.questions.length >= 2) {
       return {
         questions: parsed.questions.slice(0, 2).map((q) => String(q).slice(0, 400)),
@@ -217,9 +246,10 @@ export async function generateProbes(question) {
 }
 
 export function fallbackProbes(question) {
+  const category = String(question.category ?? question.medicationClass ?? "this area");
   return {
     questions: [
-      `In your own words, explain the underlying principle behind ${question.topic.toLowerCase()} as it applies to ${question.medicationClass.toLowerCase()}.`,
+      `In your own words, explain the underlying principle behind ${question.topic.toLowerCase()} as it applies to ${category.toLowerCase()}.`,
       `Describe how you would recognise and respond to this issue in a patient on your unit, and say who you would notify.`,
     ],
     source: "fallback",
@@ -231,7 +261,7 @@ export function fallbackProbes(question) {
 /**
  * @returns {Promise<{verdict: string, feedback: string[], corrected: string, understood: boolean, source: 'ai'|'fallback'}>}
  */
-export async function evaluateAnswers(question, probes, answers) {
+export async function evaluateAnswers(question, probes, answers, domain = DEFAULT_DOMAIN) {
   const pairs = probes
     .map((p, i) => `Q${i + 1}: ${p}\nStudent answer ${i + 1}: ${answers[i] || "(no answer given)"}`)
     .join("\n\n");
@@ -239,7 +269,7 @@ export async function evaluateAnswers(question, probes, answers) {
   const prompt = [
     "Evaluate this student's free-text answers about the concept below.",
     "",
-    questionContext(question),
+    questionContext(question, domain),
     "",
     pairs,
     "",
@@ -251,7 +281,9 @@ export async function evaluateAnswers(question, probes, answers) {
   ].join("\n");
 
   try {
-    const parsed = parseJsonObject(await callNemotron(prompt, { maxTokens: 900, temperature: 0.2 }));
+    const parsed = parseJsonObject(
+      await callNemotron(prompt, { maxTokens: 900, temperature: 0.2, domain })
+    );
     if (parsed && typeof parsed.understood === "boolean") {
       return {
         understood: parsed.understood,

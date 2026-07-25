@@ -21,16 +21,12 @@ import {
   verifyEntitlement,
   checkAccessCode,
 } from "../src/quiz/signing.js";
-import {
-  selectNext,
-  deriveState,
-  gradeSubmission,
-  buildResults,
-  topicMastery,
-  nearestAvailableDifficulty,
-  performanceBand,
-} from "../src/quiz/adaptive.js";
+import { gradeSubmission, performanceBand } from "../src/quiz/engine.js";
+import { antimicrobialQuiz } from "../src/quiz/quizzes.js";
 import { fallbackNotes, fallbackProbes, fallbackEvaluation } from "../src/quiz/nemotron.js";
+
+const { selectNext, deriveState, buildResults, topicMastery, nearestAvailableDifficulty } =
+  antimicrobialQuiz.engine;
 
 const SALT = "testsalt12345678";
 
@@ -531,10 +527,25 @@ test("page references its css and js with a version query", async () => {
     "utf8"
   );
 
-  const css = html.match(/href="\/css\/antimicrobial-quiz\.css\?v=(\d+)"/);
-  const js = html.match(/src="\/js\/antimicrobial-quiz\.js\?v=(\d+)"/);
+  const css = html.match(/href="\/css\/quiz\.css\?v=(\d+)"/);
+  const js = html.match(/src="\/js\/quiz-engine\.js\?v=(\d+)"/);
 
   assert.ok(css, "stylesheet must carry a ?v= version");
   assert.ok(js, "script must carry a ?v= version");
   assert.equal(css[1], js[1], "css and js versions should be bumped together");
+});
+
+test("the page keeps the storage keys that hold sold unlocks", async () => {
+  // Renaming either key would orphan every in-progress attempt and every paid
+  // unlock already saved in a learner's browser, with no way to recover them.
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  const html = fs.readFileSync(
+    path.join(process.cwd(), "public", "antimicrobial-quiz.html"),
+    "utf8"
+  );
+
+  assert.match(html, /storeKey:\s*"sleek\.antimicrobial\.attempt\.v1"/);
+  assert.match(html, /entitlementKey:\s*"sleek\.antimicrobial\.entitlement\.v1"/);
+  assert.match(html, /apiBase:\s*"\/api\/quiz"/);
 });
