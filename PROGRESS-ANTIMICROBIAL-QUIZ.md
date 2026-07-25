@@ -93,15 +93,28 @@ Plan:
   barred by the brief's own QC rules — bank is the 100 original questions supplied.
 - Answer key must never reach the client pre-submission: grading is server-side and
   option ids are HMAC-derived per attempt.
-- **Production env vars still to add** to `/home/sleenegb/public_html/sleekacademianewsite/.env`:
-  - `QUIZ_SIGNING_SECRET=<64 hex chars>` — without it, tokens use an ephemeral
-    per-process secret and paying learners lose access on every app restart.
-  - `QUIZ_ACCESS_CODE=<>=8 chars>` — the free-unlock escape hatch; disabled when unset.
-  - `QUIZ_PAYEE_EMAIL=macsiemoney@gmail.com` — defaults to this anyway.
-  - `PAYPAL_BASE_URL=https://api-m.paypal.com` — must be the LIVE host; the
-    vault creds are rejected by sandbox. The rest of the app defaults to sandbox,
-    so confirm this value is set rather than assuming.
-  Then restart Passenger: `touch ~/public_html/sleekacademianewsite/tmp/restart.txt`
+- **Production env vars are ALL SET** in `/home/sleenegb/public_html/sleekacademianewsite/.env`
+  (mode 600, web-blocked 403, rsync-excluded so it survives deploys):
+  `NVIDIA_API_KEY`, `QUIZ_SIGNING_SECRET`, `QUIZ_ACCESS_CODE`, `QUIZ_PAYEE_EMAIL`,
+  and `PAYPAL_*` with `PAYPAL_BASE_URL=https://api-m.paypal.com` (LIVE — the vault
+  creds are rejected by sandbox). Access-code value is in the vault, not here.
+  Do NOT rotate `QUIZ_SIGNING_SECRET` casually: it invalidates unlocks already sold.
+- **RESTART: `touch tmp/restart.txt` DOES NOT WORK on this host.** It runs
+  LiteSpeed (`lsnode`), not Phusion Passenger. Kill the process and issue one request:
+  ```
+  PID=$(ps -eo pid,args | grep "[l]snode:/home/sleenegb/public_html/sleekacademianewsite" | awk '{print $1}' | head -1); kill "$PID"
+  curl -s -o /dev/null https://sleekacademia.com/
+  ```
+  Tell-tale: `ps -eo pid,etime,args | grep [l]snode` — an `etime` predating the
+  deploy means it never reloaded. New routes 404ing while new static files are
+  live is always this.
+- **Bump `?v=` on the css/js links in the HTML on every CSS/JS edit.** Assets ship
+  as `public, max-age=14400`; without a bump, returning visitors keep the old
+  stylesheet for up to 4 hours and a redesign looks like it never deployed.
+  Enforced by a test.
+- Cloudflare fronts the site and 403s (error 1010) non-browser user agents —
+  Python `urllib` is blocked, `curl` passes. Use a browser UA when testing live,
+  or you will misread a healthy endpoint as broken.
 - Deploy trigger: push to `main` → GitHub webhook → `POST /deploy.php` → git pull
   + rsync. Requires `GITHUB_WEBHOOK_SECRET` set on the server.
 - Local dev needs `ALLOWED_ORIGINS` to include `http://localhost:3200`, otherwise
