@@ -1081,7 +1081,44 @@
   }
 
   // ── Boot ───────────────────────────────────────────────────────────────
-  entitlement = loadEntitlement();
+
+  /**
+   * Redeem an access link from the buyer's confirmation email:
+   * `/renal-cardiac-quiz#unlock=<token>`.
+   *
+   * The token is in the fragment, not the query string, so it never reaches a
+   * server log or a Referer header. It is stripped from the address bar straight
+   * away so it is not left sitting in the URL to be shared or bookmarked.
+   *
+   * No validation here: the /config call below sends the token and drops it if
+   * the server rejects it, so a stale or tampered link simply shows the paywall.
+   */
+  function adoptUnlockFromLink() {
+    var match = /(?:^|[#&])unlock=([^&]+)/.exec(window.location.hash || "");
+    if (!match) return null;
+
+    var token;
+    try { token = decodeURIComponent(match[1]); } catch (e) { return null; }
+    if (!token) return null;
+
+    saveEntitlement(token);
+    try {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    } catch (e) {
+      window.location.hash = "";
+    }
+    return token;
+  }
+
+  // Changing only the fragment on a page the browser is already showing is a
+  // same-document navigation: nothing reloads and boot never re-runs. That is
+  // exactly what happens when someone pastes their access link into a tab already
+  // sitting on the quiz. Adopt the token and reload so /config revalidates it.
+  window.addEventListener("hashchange", function () {
+    if (adoptUnlockFromLink()) window.location.reload();
+  });
+
+  entitlement = adoptUnlockFromLink() || loadEntitlement();
 
   apiGet("/config")
     .then(function (data) {

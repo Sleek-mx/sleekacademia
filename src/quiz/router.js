@@ -24,6 +24,7 @@ import {
 import { gradeSubmission } from "./engine.js";
 import * as nemotron from "./nemotron.js";
 import * as paypal from "./paypal.js";
+import * as notify from "./notify.js";
 import { antimicrobialQuiz } from "./quizzes.js";
 
 const MAX_HISTORY = 400;
@@ -325,10 +326,28 @@ export function createQuizRouter(quiz = antimicrobialQuiz) {
         `[quiz:${quiz.id}] unlock granted via PayPal order ${result.orderId} ` +
           `(capture ${result.captureId}, ${result.amount} USD)`
       );
-      return res.json({ entitlement, amount: result.amount, orderId: result.orderId });
+
+      // Respond first, then notify. Email is slower than the learner's patience
+      // and must never be able to cost them the unlock they just paid for.
+      res.json({ entitlement, amount: result.amount, orderId: result.orderId });
+
+      // The buyer's link is attempted first so its outcome can be folded into
+      // Max's alert — a bounced buyer email is then never silent.
+      const buyerEmailOutcome = await notify.emailBuyerAccessLink(quiz, result, entitlement);
+      await notify.notifyUnlock(quiz, result, {
+        buyerEmailOutcome,
+        link: buyerEmailOutcome.link,
+      });
+      return undefined;
     } catch (error) {
       console.error(`[quiz:${quiz.id}] capture failed:`, error.response?.data || error.message);
-      return res.status(502).json({ error: "Could not confirm payment. Please contact support." });
+      // Money may have moved without an unlock being issued, so this is the one
+      // failure worth alerting on.
+      if (!res.headersSent) {
+        res.status(502).json({ error: "Could not confirm payment. Please contact support." });
+      }
+      await notify.notifyCaptureFailure(quiz, req.body?.orderId, error);
+      return undefined;
     }
   });
 
@@ -359,6 +378,11 @@ export function createQuizRouter(quiz = antimicrobialQuiz) {
       paypalConfigured: paypal.isConfigured(),
       paypalLive: paypal.isLive(),
       payee: paypal.payeeEmail(),
+      notifications: {
+        configured: notify.isConfigured(),
+        channel: notify.channel(),
+        alertsTo: notify.notifyAddress(),
+      },
     });
   });
 
