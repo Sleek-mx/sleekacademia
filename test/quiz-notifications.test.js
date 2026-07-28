@@ -163,26 +163,32 @@ test("send() throws a typed error when no channel is configured", async () => {
 
 // ── Content ────────────────────────────────────────────────────────────────
 
-test("the capture route notifies only after the response is sent", () => {
-  // Ordering is the guarantee that a slow mail provider cannot delay, or a failing
-  // one cannot break, the unlock the learner just paid for.
+test("the manual-claim route notifies only after the response is sent", () => {
+  // Ordering is the guarantee that a slow mail provider cannot delay, or a
+  // failing one cannot break, the buyer's confirmation that their claim landed.
   const source = fs.readFileSync(path.join(process.cwd(), "src", "quiz", "router.js"), "utf8");
-  const respond = source.indexOf("res.json({ entitlement");
-  const buyerMail = source.indexOf("notify.emailBuyerAccessLink");
-  const maxMail = source.indexOf("notify.notifyUnlock");
+  const claimRoute = source.indexOf("/unlock/manual-claim");
+  const respond = source.indexOf("res.json({ received: true })", claimRoute);
+  const operatorMail = source.indexOf("notify.notifyManualPaymentClaim", claimRoute);
+  const buyerMail = source.indexOf("notify.confirmClaimReceived", claimRoute);
 
-  assert.ok(respond > -1 && buyerMail > -1 && maxMail > -1, "capture route wiring not found");
-  assert.ok(respond < buyerMail, "the response must be sent before the buyer email");
-  assert.ok(buyerMail < maxMail, "the buyer outcome must be known before Max is alerted");
+  assert.ok(
+    claimRoute > -1 && respond > -1 && operatorMail > -1 && buyerMail > -1,
+    "manual-claim route wiring not found"
+  );
+  assert.ok(respond < operatorMail, "the response must be sent before the operator alert");
+  assert.ok(respond < buyerMail, "the response must be sent before the buyer confirmation");
 });
 
-test("a failed capture alerts rather than failing silently", () => {
+test("the manual-claim route never issues an entitlement on its own", () => {
+  // Nothing about this route is verified — MoneyGram has no API to check
+  // against. Only the operator's access code (a separate route) may grant access.
   const source = fs.readFileSync(path.join(process.cwd(), "src", "quiz", "router.js"), "utf8");
-  const catchBlock = source.slice(source.indexOf("} catch (error) {", source.indexOf("/unlock/paypal/capture")));
-  assert.ok(
-    catchBlock.includes("notify.notifyCaptureFailure"),
-    "a capture that throws may have taken money without unlocking; it must alert"
+  const claimRoute = source.slice(
+    source.indexOf('router.post("/unlock/manual-claim"'),
+    source.indexOf('router.post("/unlock/code"')
   );
+  assert.doesNotMatch(claimRoute, /issueEntitlement/);
 });
 
 // ── Client redemption ──────────────────────────────────────────────────────

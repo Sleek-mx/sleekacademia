@@ -268,3 +268,67 @@ export async function notifyCaptureFailure(quiz, orderId, error) {
     return { sent: false, reason: sendError.message };
   }
 }
+
+// ── Manual MoneyGram claim (temporary, no automated verification) ─────────
+
+/**
+ * A learner claims they sent MoneyGram-to-mobile-money payment. Nothing is
+ * verified here — this alerts the operator to check the M-Pesa line and issue
+ * an access code by hand if it checks out.
+ */
+export async function notifyManualPaymentClaim(quiz, { email, reference, note }) {
+  if (skipIfUnconfigured("manual payment claim")) return { sent: false, reason: "not-configured" };
+
+  try {
+    await send({
+      to: notifyAddress(),
+      replyTo: email || undefined,
+      subject: `MoneyGram claim — ${quiz.shortTitle}`,
+      html: wrap(
+        "A learner claims they paid via MoneyGram",
+        `<p style="line-height:1.7">Unverified — check the M-Pesa line for a
+           matching payout before issuing an access code.</p>
+         <table style="width:100%;border-collapse:collapse;background:#f8fafc;border-radius:8px;overflow:hidden">
+           ${row("Quiz", quiz.title)}
+           ${row("Buyer email", email || "not given")}
+           ${row("MoneyGram reference", reference || "not given")}
+         </table>
+         ${note ? `<p style="line-height:1.7;margin-top:16px">${esc(note)}</p>` : ""}`
+      ),
+    });
+    return { sent: true };
+  } catch (error) {
+    console.error("[quiz] manual claim alert failed:", error.response?.data || error.message);
+    return { sent: false, reason: error.message };
+  }
+}
+
+/** Acknowledges the claim to the buyer so they know it did not vanish. */
+export async function confirmClaimReceived(quiz, email) {
+  if (!email) return { sent: false, reason: "no buyer email" };
+  if (skipIfUnconfigured("claim confirmation")) return { sent: false, reason: "not-configured" };
+
+  try {
+    await send({
+      to: email,
+      replyTo: notifyAddress(),
+      subject: `We received your payment claim — ${quiz.shortTitle}`,
+      html: wrap(
+        "Claim received",
+        `<p style="line-height:1.7">Thanks — we have your MoneyGram reference for
+           <strong>${esc(quiz.title)}</strong> and are checking it against the
+           M-Pesa line now.</p>
+         <p style="line-height:1.7">Once confirmed, we will reply to this email
+           with your access code. Enter it on the quiz page under
+           <strong>"I have an access code."</strong></p>
+         <p style="line-height:1.7;font-size:14px;color:#6b6488">This usually
+           takes a few hours. If you have not heard back after a day, reply to
+           this email.</p>`
+      ),
+    });
+    return { sent: true };
+  } catch (error) {
+    console.error("[quiz] claim confirmation failed:", error.response?.data || error.message);
+    return { sent: false, reason: error.message };
+  }
+}

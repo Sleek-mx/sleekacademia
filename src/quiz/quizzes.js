@@ -13,7 +13,12 @@
 import { createEngine } from "./engine.js";
 import { antimicrobialBank, FREE_QUESTION_COUNT } from "./question-bank.js";
 import { renalCardiacBank } from "./renal-cardiac-bank.js";
-import { UNLOCK_PRICE_USD } from "./paypal.js";
+
+// PayPal is restricted on the account behind this quiz, so the paywall runs on
+// a manual MoneyGram-to-mobile-money claim for now (see src/quiz/router.js
+// "/unlock/manual-claim" and public/js/quiz-engine.js "MoneyGram wizard").
+// src/quiz/paypal.js is left in place, unused, in case PayPal is restored.
+export const UNLOCK_PRICE_USD = "10.00";
 
 // ── NURS 5334 — Antimicrobial pharmacology ─────────────────────────────────
 

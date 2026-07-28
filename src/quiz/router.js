@@ -7,10 +7,16 @@
 //      sanitised, option ids are HMAC-derived per attempt, and grading happens
 //      here — not in the browser.
 //   2. Paid questions are neither served nor graded without a verified
-//      entitlement. Paying is proven by a server-side PayPal capture, never by
-//      a client claim.
+//      entitlement. Entitlements are only ever issued by this server — either
+//      from a verified payment capture, or by the operator's access code after
+//      manually confirming a payment. A client's own claim is never trusted.
 //   3. Entitlements are scoped per quiz, so unlocking one quiz does not unlock
 //      another.
+//
+// PayPal is currently restricted on the account this quiz used, so the paywall
+// runs on a manual MoneyGram-to-mobile-money claim (see "/unlock/manual-claim"
+// below) until an automated processor is back in place. src/quiz/paypal.js is
+// left unused rather than deleted in case PayPal is restored.
 
 import express from "express";
 import {
@@ -23,8 +29,8 @@ import {
 } from "./signing.js";
 import { gradeSubmission } from "./engine.js";
 import * as nemotron from "./nemotron.js";
-import * as paypal from "./paypal.js";
 import * as notify from "./notify.js";
+import { MONEYGRAM_RECIPIENT, isPlausibleReference } from "./moneygram.js";
 import { antimicrobialQuiz } from "./quizzes.js";
 
 const MAX_HISTORY = 400;
@@ -133,12 +139,14 @@ export function createQuizRouter(quiz = antimicrobialQuiz) {
       categoryLabelPlural: quiz.categoryLabelPlural,
       totalQuestions: QUESTIONS.length,
       freeQuestions: FREE_QUESTION_COUNT,
-      unlockPriceUsd: order.price || paypal.UNLOCK_PRICE_USD,
+      unlockPriceUsd: order.price,
       entitled: isEntitled(req),
-      paypal: {
-        configured: paypal.isConfigured(),
-        clientId: paypal.clientId(),
-        live: paypal.isLive(),
+      moneygram: {
+        phone: MONEYGRAM_RECIPIENT.phone,
+        countryCode: MONEYGRAM_RECIPIENT.countryCode,
+        recipientName: MONEYGRAM_RECIPIENT.recipientName,
+        country: MONEYGRAM_RECIPIENT.country,
+        receiveMethod: MONEYGRAM_RECIPIENT.receiveMethod,
       },
       tutor: { configured: nemotron.isConfigured(), model: nemotron.NEMOTRON_MODEL },
       bank: bankProblems.length
@@ -284,71 +292,38 @@ export function createQuizRouter(quiz = antimicrobialQuiz) {
     return res.json(engine.buildResults(history, isEntitled(req)));
   });
 
-  // ── Paywall: PayPal ──────────────────────────────────────────────────────
+  // ── Paywall: manual MoneyGram claim ──────────────────────────────────────
+  //
+  // No automated verification — MoneyGram has no public API for it. This route
+  // only records the claim and alerts the operator; it never issues an
+  // entitlement. The learner gets access once the operator confirms the payout
+  // on the M-Pesa line and sends an access code by email (see "/unlock/code").
+  router.post("/unlock/manual-claim", async (req, res) => {
+    const email = typeof req.body?.email === "string" ? req.body.email.trim().slice(0, 200) : "";
+    const reference =
+      typeof req.body?.reference === "string" ? req.body.reference.trim().slice(0, 40) : "";
 
-  router.post("/unlock/paypal/create", async (req, res) => {
-    if (!paypal.isConfigured()) {
-      return res.status(503).json({ error: "Payment is not configured on this server." });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: "Enter a valid email address." });
     }
-    try {
-      const created = await paypal.createOrder(order);
-      return res.json({ orderId: created.id, status: created.status });
-    } catch (error) {
-      console.error(`[quiz:${quiz.id}] create order failed:`, error.response?.data || error.message);
-      return res.status(502).json({ error: "Could not start checkout. Please try again." });
-    }
-  });
-
-  router.post("/unlock/paypal/capture", async (req, res) => {
-    if (!paypal.isConfigured()) {
-      return res.status(503).json({ error: "Payment is not configured on this server." });
-    }
-
-    try {
-      const result = await paypal.captureOrder(req.body?.orderId, order.price);
-      if (!result.ok) {
-        return res.status(402).json({ error: "Payment was not completed.", reason: result.reason });
-      }
-
-      const entitlement = issueEntitlement(
-        {
-          sub: result.payer || "paypal-payer",
-          source: "paypal",
-          quiz: quiz.id,
-          orderId: result.orderId,
-          captureId: result.captureId,
-        },
-        365,
-        scope
-      );
-
-      console.log(
-        `[quiz:${quiz.id}] unlock granted via PayPal order ${result.orderId} ` +
-          `(capture ${result.captureId}, ${result.amount} USD)`
-      );
-
-      // Respond first, then notify. Email is slower than the learner's patience
-      // and must never be able to cost them the unlock they just paid for.
-      res.json({ entitlement, amount: result.amount, orderId: result.orderId });
-
-      // The buyer's link is attempted first so its outcome can be folded into
-      // Max's alert — a bounced buyer email is then never silent.
-      const buyerEmailOutcome = await notify.emailBuyerAccessLink(quiz, result, entitlement);
-      await notify.notifyUnlock(quiz, result, {
-        buyerEmailOutcome,
-        link: buyerEmailOutcome.link,
+    if (!isPlausibleReference(reference)) {
+      return res.status(400).json({
+        error: "Enter the MoneyGram reference number shown on your receipt.",
       });
-      return undefined;
-    } catch (error) {
-      console.error(`[quiz:${quiz.id}] capture failed:`, error.response?.data || error.message);
-      // Money may have moved without an unlock being issued, so this is the one
-      // failure worth alerting on.
-      if (!res.headersSent) {
-        res.status(502).json({ error: "Could not confirm payment. Please contact support." });
-      }
-      await notify.notifyCaptureFailure(quiz, req.body?.orderId, error);
-      return undefined;
     }
+
+    console.log(`[quiz:${quiz.id}] manual MoneyGram claim from ${email} (reference ${reference})`);
+
+    // Respond first — a slow or failed notification must not make the buyer
+    // think their claim was lost.
+    res.json({ received: true });
+
+    const claimAlert = await notify.notifyManualPaymentClaim(quiz, { email, reference });
+    if (!claimAlert.sent) {
+      console.error(`[quiz:${quiz.id}] claim alert did not send: ${claimAlert.reason}`);
+    }
+    await notify.confirmClaimReceived(quiz, email);
+    return undefined;
   });
 
   // ── Paywall: tutor access code ───────────────────────────────────────────
@@ -375,9 +350,8 @@ export function createQuizRouter(quiz = antimicrobialQuiz) {
       bank: bank.bankStats(),
       bankProblems: bankProblems.length,
       tutorConfigured: nemotron.isConfigured(),
-      paypalConfigured: paypal.isConfigured(),
-      paypalLive: paypal.isLive(),
-      payee: paypal.payeeEmail(),
+      paywallMode: "manual-moneygram",
+      moneygramRecipient: MONEYGRAM_RECIPIENT.phone,
       notifications: {
         configured: notify.isConfigured(),
         channel: notify.channel(),

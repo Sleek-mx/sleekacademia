@@ -48,7 +48,6 @@
   var state = null;      // { salt, history, current, phase, probes }
   var entitlement = null;
   var submitting = false;
-  var paypalRendered = false;
 
   function newSalt() {
     var bytes = new Uint8Array(16);
@@ -655,6 +654,57 @@
   }
 
   // ── Paywall ────────────────────────────────────────────────────────────
+  //
+  // Manual MoneyGram-to-mobile-money claim, for now. There is no automated
+  // payment processor wired in (PayPal is restricted on this account), so this
+  // walks the learner through sending MoneyGram, then collects their reference
+  // number for the operator to verify by hand. It never issues an entitlement
+  // itself — that only happens once the operator emails an access code, which
+  // the learner enters through the existing "I have an access code" flow.
+  var wizardStep = 0;
+  var wizardSubmitted = false;
+
+  function moneygramSteps() {
+    var mg = config.moneygram || {};
+    var display = (mg.countryCode || "") + " " + (mg.phone || "");
+    return [
+      {
+        title: "Before you start",
+        body: [
+          "Payment for this quiz currently runs through MoneyGram, sent to a mobile money " +
+            "(M-Pesa) number in " + (mg.country || "Kenya") + ".",
+          "You will need MoneyGram (app or moneygram.com) and a card or bank account to fund the transfer.",
+          "MoneyGram adds its own transfer fee on top of the $" + config.unlockPriceUsd +
+            " — you'll see the exact total before you confirm.",
+        ],
+      },
+      {
+        title: "Step 1 — Start a transfer",
+        body: [
+          "Open the MoneyGram app, or go to moneygram.com, and choose “Send money.”",
+          "Set the destination country to " + (mg.country || "Kenya") + ".",
+          "For receive method, choose “" + (mg.receiveMethod || "Mobile Wallet") + ".”",
+        ],
+      },
+      {
+        title: "Step 2 — Enter the recipient",
+        body: [
+          "Phone number: " + display,
+          "Recipient name: enter it exactly as shown below — a mismatch can delay or fail the payout.",
+          mg.recipientName || "(name not configured — contact Sleek Academia before paying)",
+        ],
+      },
+      {
+        title: "Step 3 — Pay and confirm",
+        body: [
+          "Enter the amount so the recipient receives at least $" + config.unlockPriceUsd + " USD equivalent.",
+          "Pay with your card or bank account, then confirm the transfer.",
+          "MoneyGram will show an 8-character reference number on your receipt — save it, you'll need it next.",
+        ],
+      },
+    ];
+  }
+
   function renderPaywall() {
     text($("paywall-price"), String(config.unlockPriceUsd).replace(/\.00$/, ""));
 
@@ -668,81 +718,130 @@
       " questions cover the material most likely to appear on your exam.");
 
     $("paywall-error").hidden = true;
+    text($("paywall-mode"), "Pay by MoneyGram to mobile money. This is a manual process — " +
+      "an access code follows by email once payment is confirmed.");
 
-    if (!config.paypal.configured) {
-      var err = $("paywall-error");
-      err.textContent = "Card checkout is not configured on this server. Use an access code, or contact Sleek Academia.";
-      err.hidden = false;
-      text($("paywall-mode"), "");
-    } else {
-      text($("paywall-mode"), config.paypal.live
-        ? "Secure checkout by PayPal. This is a live payment."
-        : "Secure checkout by PayPal (sandbox test mode — no real money moves).");
-      mountPayPal();
-    }
+    wizardStep = 0;
+    wizardSubmitted = false;
+    renderWizard();
 
     show("paywall");
   }
 
-  function mountPayPal() {
-    if (paypalRendered) return;
+  function renderWizard() {
+    var container = $("checkout-container");
+    if (!container) return;
 
-    var container = $("paypal-container");
-    container.innerHTML = '<p class="loading-text">Loading secure checkout<span class="ellipsis"></span></p>';
+    if (wizardSubmitted) {
+      container.innerHTML =
+        '<div class="wizard-done">' +
+        '<p><strong>Claim received.</strong></p>' +
+        '<p>We are checking the M-Pesa line now. Your access code will arrive by email, ' +
+        'usually within a few hours. Enter it below under &ldquo;I have an access code&rdquo; once it lands.</p>' +
+        '</div>';
+      return;
+    }
 
-    loadPayPalSdk()
-      .then(function () {
-        container.innerHTML = "";
-        paypalRendered = true;
-        window.paypal.Buttons({
-          style: { layout: "vertical", shape: "pill", label: "pay", height: 45 },
-          createOrder: function () {
-            return api("/unlock/paypal/create", {}).then(function (d) { return d.orderId; });
-          },
-          onApprove: function (data) {
-            container.innerHTML = '<p class="loading-text">Confirming your payment<span class="ellipsis"></span></p>';
-            return api("/unlock/paypal/capture", { orderId: data.orderID })
-              .then(function (res) {
-                saveEntitlement(res.entitlement);
-                config.entitled = true;
-                paypalRendered = false;
-                nextQuestion();
-              })
-              .catch(function (err) {
-                paypalRendered = false;
-                container.innerHTML = "";
-                var e = $("paywall-error");
-                e.textContent = err.message +
-                  " If you were charged, contact Sleek Academia with your PayPal receipt and access will be restored.";
-                e.hidden = false;
-                mountPayPal();
-              });
-          },
-          onError: function () {
-            var e = $("paywall-error");
-            e.textContent = "PayPal reported a problem. Please try again, or use an access code.";
-            e.hidden = false;
-          }
-        }).render("#paypal-container");
-      })
-      .catch(function () {
-        container.innerHTML = "";
-        var e = $("paywall-error");
-        e.textContent = "Could not load PayPal. Check your connection, or use an access code.";
-        e.hidden = false;
+    var steps = moneygramSteps();
+    var onLastInfoStep = wizardStep === steps.length - 1;
+    var onClaimStep = wizardStep === steps.length;
+    container.innerHTML = "";
+
+    var dots = document.createElement("div");
+    dots.className = "wizard-dots";
+    for (var i = 0; i <= steps.length; i++) {
+      var dot = document.createElement("span");
+      dot.className = "wizard-dot" + (i === wizardStep ? " wizard-dot-active" : "");
+      dots.appendChild(dot);
+    }
+    container.appendChild(dots);
+
+    var pdfLink = document.createElement("a");
+    pdfLink.className = "wizard-pdf-link";
+    pdfLink.href = "/downloads/moneygram-payment-instructions.pdf";
+    pdfLink.target = "_blank";
+    pdfLink.rel = "noopener";
+    pdfLink.textContent = "Prefer a PDF? Download these instructions";
+    container.appendChild(pdfLink);
+
+    var panel = document.createElement("div");
+    panel.className = "wizard-panel";
+
+    if (onClaimStep) {
+      panel.innerHTML =
+        '<h3>Step 4 — Tell us you paid</h3>' +
+        '<p>Enter the email you want your access code sent to, and the MoneyGram reference number from your receipt.</p>';
+
+      var form = document.createElement("form");
+      form.className = "wizard-form";
+      form.innerHTML =
+        '<label for="wizard-email">Your email</label>' +
+        '<input type="email" id="wizard-email" name="wizard-email" required autocomplete="email">' +
+        '<label for="wizard-reference">MoneyGram reference number</label>' +
+        '<input type="text" id="wizard-reference" name="wizard-reference" required autocomplete="off" spellcheck="false" maxlength="40">' +
+        '<p class="form-error" id="wizard-form-error" role="alert" hidden></p>' +
+        '<button type="submit" class="btn btn-primary">Submit claim</button>';
+      panel.appendChild(form);
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var email = $("wizard-email").value.trim();
+        var reference = $("wizard-reference").value.trim();
+        var err = $("wizard-form-error");
+        err.hidden = true;
+
+        var submitBtn = form.querySelector("button");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Submitting…";
+
+        api("/unlock/manual-claim", { email: email, reference: reference })
+          .then(function () {
+            wizardSubmitted = true;
+            renderWizard();
+          })
+          .catch(function (apiErr) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Submit claim";
+            err.textContent = apiErr.message || "Could not submit your claim. Please try again.";
+            err.hidden = false;
+          });
       });
-  }
+    } else {
+      var step = steps[wizardStep];
+      var h = document.createElement("h3");
+      h.textContent = step.title;
+      panel.appendChild(h);
+      var list = document.createElement("ul");
+      list.className = "wizard-list";
+      step.body.forEach(function (line) {
+        var li = document.createElement("li");
+        li.textContent = line;
+        list.appendChild(li);
+      });
+      panel.appendChild(list);
+    }
 
-  function loadPayPalSdk() {
-    if (window.paypal) return Promise.resolve();
-    return new Promise(function (resolve, reject) {
-      var s = document.createElement("script");
-      s.src = "https://www.paypal.com/sdk/js?client-id=" +
-        encodeURIComponent(config.paypal.clientId) + "&currency=USD&intent=capture";
-      s.onload = resolve;
-      s.onerror = reject;
-      document.head.appendChild(s);
-    });
+    container.appendChild(panel);
+
+    var nav = document.createElement("div");
+    nav.className = "wizard-nav";
+    if (wizardStep > 0) {
+      var back = document.createElement("button");
+      back.type = "button";
+      back.className = "btn btn-ghost";
+      back.textContent = "Back";
+      back.addEventListener("click", function () { wizardStep -= 1; renderWizard(); });
+      nav.appendChild(back);
+    }
+    if (!onClaimStep) {
+      var next = document.createElement("button");
+      next.type = "button";
+      next.className = "btn btn-primary";
+      next.textContent = onLastInfoStep ? "I've paid — continue" : "Next";
+      next.addEventListener("click", function () { wizardStep += 1; renderWizard(); });
+      nav.appendChild(next);
+    }
+    container.appendChild(nav);
   }
 
   function onSubmitCode(event) {

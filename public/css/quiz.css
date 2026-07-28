@@ -354,8 +354,33 @@ main { max-width: var(--container); margin: 0 auto; padding: 1rem .9rem 2.5rem; 
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 .unlock-caption { color: var(--muted); font-size: .82rem; }
-/* PayPal renders its own branded iframe — give it a plain, unstyled well. */
-.paypal-container { min-height: 3rem; margin-bottom: .5rem; }
+.checkout-container { min-height: 3rem; margin-bottom: .5rem; }
+
+/* MoneyGram claim wizard */
+.wizard-dots { display: flex; gap: .4rem; justify-content: center; margin-bottom: 1rem; }
+.wizard-dot {
+  width: .5rem; height: .5rem; border-radius: 50%;
+  background: var(--dark); box-shadow: var(--press);
+}
+.wizard-dot-active { background: linear-gradient(135deg, var(--brand), var(--brand2)); }
+.wizard-pdf-link {
+  display: block; text-align: center; font-size: .8rem; font-weight: 700;
+  color: var(--brand); text-decoration: none; margin-bottom: .8rem;
+}
+.wizard-pdf-link:hover { text-decoration: underline; }
+.wizard-panel { padding: .2rem 0 1rem; }
+.wizard-panel h3 { margin: 0 0 .6rem; font-size: 1.05rem; }
+.wizard-list { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: .5rem; }
+.wizard-list li { line-height: 1.5; }
+.wizard-nav { display: flex; gap: .6rem; justify-content: flex-end; }
+.wizard-form { display: flex; flex-direction: column; gap: .6rem; margin-top: .8rem; }
+.wizard-form label { font-size: .76rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.wizard-form input {
+  font: inherit; padding: .75rem .9rem; border: 0; border-radius: var(--r-sm);
+  background: var(--surface); box-shadow: var(--press); color: var(--txt);
+}
+.wizard-form button { align-self: flex-start; }
+.wizard-done { padding: 1rem 0; line-height: 1.6; }
 
 .code-details { margin-top: 1.2rem; padding-top: .9rem; }
 .code-details summary { cursor: pointer; color: var(--brand); font-size: .88rem; font-weight: 700; }
@@ -499,7 +524,7 @@ main { max-width: var(--container); margin: 0 auto; padding: 1rem .9rem 2.5rem; 
   .code-form input { width: auto; min-width: 13rem; }
   .code-form .btn { width: auto; }
   .missed-summary { flex-direction: row; align-items: baseline; gap: .6rem; flex-wrap: wrap; }
-  .paypal-container { max-width: 26rem; }
+  .checkout-container { max-width: 26rem; }
 }
 
 /* ── Print: flatten entirely — shadows do not print ─────────────────── */
