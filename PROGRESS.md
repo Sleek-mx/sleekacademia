@@ -33,6 +33,7 @@ Plan:
 - [x] Attached `sleekacademia.com` and `www.sleekacademia.com` to Vercel. Changed only the two Cloudflare web records: apex `A 198.54.115.224`, Proxied, Auto → `A 76.76.21.21`, DNS only, Auto; `www CNAME sleekacademia.com`, Proxied, Auto → the same CNAME, DNS only, Auto. All mail, Clerk, tunnel, and other records were preserved.
 - [x] Verified the cutover from both authoritative Cloudflare nameservers, `1.1.1.1`, and `8.8.8.8`; all resolve the apex to `76.76.21.21`, and Vercel reports both domains configured.
 - [x] Verified the public production site: apex and `www` TLS/homepages, all four health endpoints, pharmacology page, favicon, quiz CSS/JavaScript, same-origin question serving and grading, the 30-question free boundary/paywall lock, cross-site mutation rejection, and the disabled cPanel webhook all pass. Desktop and mobile browser layouts have no horizontal overflow and no console warnings/errors.
+- [x] Reproduced a stable-alias-only regression: `sleek-academia.vercel.app` served pages but rejected same-origin quiz mutations with 403. Added a failing regression test and the minimal Vercel-only origin allowance. Release gate: 305/305 application tests, 6/6 SEO tests, security scan passed, zero production audit vulnerabilities, clean syntax, and clean diff.
 
 ## Next
 
@@ -41,6 +42,7 @@ Plan:
 - [ ] Watch for Namecheap's reply or a live-site recovery, then respond with any requested non-secret diagnostics.
 - [x] Verify the Git-connected preview, promote the exact commit, attach both domains, and change only the Cloudflare apex/`www` records.
 - [x] Verify `/`, `/api/health`, `/api/pharm-quiz/health`, `/api/quiz/health`, `/api/patho-quiz/health`, and `/pharmacology-quiz` at the public URL.
+- [ ] Commit and push the stable-alias fix to `main`, then verify its Git-triggered Vercel production deployment.
 
 ## Facts a fresh session needs
 

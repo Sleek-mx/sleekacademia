@@ -81,6 +81,21 @@ test("the exact Vercel preview origin can use same-origin quiz mutations", async
   assert.equal(typeof payload.question?.id, "string");
 });
 
+test("the stable Vercel production alias can use same-origin quiz mutations", async () => {
+  const response = await fetch(`${baseUrl}/api/pharm-quiz/next`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      origin: "https://sleek-academia.vercel.app",
+      "sec-fetch-site": "same-origin",
+    },
+    body: JSON.stringify({ salt: "production_attempt_123", history: [] }),
+  });
+  assert.equal(response.status, 200);
+  const payload = await response.json();
+  assert.equal(typeof payload.question?.id, "string");
+});
+
 test("Vercel mode rejects JSON bodies above the safe function payload budget", async () => {
   const response = await fetch(`${baseUrl}/api/pharm-quiz/next`, {
     method: "POST",

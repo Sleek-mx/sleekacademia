@@ -196,7 +196,10 @@ app.use(express.json({
   },
 }));
 const allowedOrigins = buildAllowedOrigins({
-  configured: process.env.ALLOWED_ORIGINS || "https://sleekacademia.com",
+  configured: [
+    process.env.ALLOWED_ORIGINS || "https://sleekacademia.com",
+    isVercelRuntime() ? "https://sleek-academia.vercel.app" : "",
+  ].filter(Boolean).join(","),
   productionOrigin: "https://sleekacademia.com",
   localDemoMode,
   port,
