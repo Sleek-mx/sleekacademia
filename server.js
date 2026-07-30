@@ -27,6 +27,11 @@ import {
 import { createPlatformRouter } from "./src/platform/http.js";
 import { createPlatformIdentityResolver } from "./src/platform/identity.js";
 import { createPaymentProvider } from "./src/platform/payments.js";
+import {
+  buildAllowedOrigins,
+  isVercelRuntime,
+  jsonBodyLimit,
+} from "./src/platform/runtime.js";
 import { createPlatformStore, isLoopbackHostname } from "./src/platform/store.js";
 import { createQuizRouter } from "./src/quiz/router.js";
 import { antimicrobialQuiz, renalCardiacQuiz, pharmacologyQuiz } from "./src/quiz/quizzes.js";
@@ -103,6 +108,11 @@ app.use(createSecurityHeaders({
 }));
 
 app.post("/deploy.php", rateLimiters.webhooks, express.raw({ type: "application/json", limit: "2mb" }), async (req, res) => {
+  if (isVercelRuntime()) {
+    return res.status(410).json({
+      error: "The cPanel deployment webhook is disabled on Vercel.",
+    });
+  }
   const secret = process.env.GITHUB_WEBHOOK_SECRET;
   if (!secret) {
     return res.status(503).json({ error: "Deployment webhook is not configured" });
@@ -180,14 +190,18 @@ app.get("/deploy.php", (_req, res) => {
 });
 
 app.use(express.json({
-  limit: "12mb",
+  limit: jsonBodyLimit(),
   verify: (req, _res, buffer) => {
     if (req.originalUrl === "/api/platform/payments/stripe-webhook") req.rawBody = Buffer.from(buffer);
   },
 }));
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || "https://sleekacademia.com")
-  .split(",").map((origin) => origin.trim()).filter(Boolean);
-if (localDemoMode) allowedOrigins.push(`http://localhost:${port}`, `http://127.0.0.1:${port}`);
+const allowedOrigins = buildAllowedOrigins({
+  configured: process.env.ALLOWED_ORIGINS || "https://sleekacademia.com",
+  productionOrigin: "https://sleekacademia.com",
+  localDemoMode,
+  port,
+  vercelUrl: process.env.VERCEL_URL || "",
+});
 app.use(createOriginGuard({
   allowedOrigins,
   productionOrigin: "https://sleekacademia.com",

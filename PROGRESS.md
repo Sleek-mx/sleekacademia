@@ -4,10 +4,10 @@ Goal: Restore `https://sleekacademia.com`, then verify the pharmacology quiz liv
 
 Plan:
 
-1. Revalidate the live failure and repository/deploy identity.
-2. Recheck the Passenger process and isolate the failing boundary.
-3. Escalate the host-only LiteSpeed/Passenger fault with current evidence.
-4. Verify the public homepage, health API, and pharmacology quiz after recovery.
+1. Make the Express runtime and uploads safe for Vercel.
+2. Create the Git-connected Vercel project and transfer production configuration securely.
+3. Verify a preview deployment, promote the exact commit, and attach the production domains.
+4. Change only the Cloudflare apex and `www` records, then verify the public site and quiz.
 
 ## Done
 
@@ -23,14 +23,18 @@ Plan:
 - [x] Sent the complete outage escalation to `support@namecheaphosting.com` on 2026-07-29 and verified it in Gmail Sent; message/thread ID `19fb0df3a25794cd`.
 - [x] Approved the emergency Vercel recovery approach: Git-connected preview, full verification, then an apex/`www` Cloudflare cutover with all mail and Clerk records preserved.
 - [x] Wrote the approved cutover specification at `docs/superpowers/specs/2026-07-29-vercel-emergency-cutover-design.md`.
+- [x] Wrote the executable cutover plan at `docs/superpowers/plans/2026-07-29-vercel-emergency-cutover.md`.
+- [x] Added Vercel runtime safeguards: exact preview-origin handling, a Vercel-safe JSON parser budget, Node 22 pinning, and a hard-disabled cPanel shell deployment webhook. Focused runtime/security gate: 9/9 passing.
 
 ## Next
 
 - [x] With Max's confirmation, send the outage diagnostic from the connected Sleek Academia Gmail account to `support@namecheaphosting.com`.
 - [ ] Ask Namecheap to inspect the LiteSpeed virtual-host/Passenger external-app mapping for `/usr/local/lsws/extapp-sock/APVH_sleekacademia.com:81:_.sock` and the server-side LiteSpeed error log at the matching request time.
 - [ ] Watch for Namecheap's reply or a live-site recovery, then respond with any requested non-secret diagnostics.
-- [ ] Review and approve the written Vercel cutover specification, then create the implementation plan.
-- [ ] After host recovery, verify `/`, `/api/health`, `/api/pharm-quiz/health`, and `/pharmacology-quiz` at the public URL.
+- [ ] Lower the base64 upload limit to 3 MB and pass the complete local release gate.
+- [ ] Create the Vercel project, configure Preview and Production environments without exposing secrets, and connect GitHub.
+- [ ] Verify the Git-connected preview, promote the exact commit, attach both domains, and change only the Cloudflare apex/`www` records.
+- [ ] Verify `/`, `/api/health`, `/api/pharm-quiz/health`, `/api/quiz/health`, `/api/patho-quiz/health`, and `/pharmacology-quiz` at the public URL.
 
 ## Facts a fresh session needs
 
