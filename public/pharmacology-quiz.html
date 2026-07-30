@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NURS 5334 Pharmacology Final Exam Review Challenge — Sleek Academia</title>
+<meta name="description" content="An adaptive 70-question pharmacology final exam review for graduate nursing students, covering pharmacokinetics, cardiovascular, CNS/psychiatric, endocrine, renal/GI, pain and autonomic pharmacology. Immediate rationales and topic-level mastery tracking.">
+<meta name="robots" content="noindex, follow">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/brand/favicon-32.png">
+<link rel="apple-touch-icon" href="/images/brand/apple-touch-icon.png">
+<!-- Asset URLs carry a version because the server sends CSS/JS with
+     `public, max-age=14400`, so without it a returning visitor keeps the old
+     stylesheet for up to 4 hours after a deploy. The HTML itself is `no-cache`,
+     so bumping this number is what ships a redesign. BUMP ON EVERY CSS/JS EDIT.
+     The stylesheet and engine are shared with the other quiz pages. -->
+<link rel="stylesheet" href="/css/quiz.css?v=7">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <a class="brand" href="/">
+      <!-- Square mark, not /images/logo.png: that file is a 400x99 horizontal
+           lockup and squashed badly in a compact square header on mobile. -->
+      <picture>
+        <source srcset="/images/brand/sleek-academia-mark.webp" type="image/webp">
+        <img class="brand-mark" src="/images/brand/sleek-academia-mark.png"
+             alt="Sleek Academia" width="591" height="591" decoding="async">
+      </picture>
+      <span class="brand-text">
+        <strong>Sleek Academia</strong>
+        <small>Graduate Nursing Pharmacology</small>
+      </span>
+    </a>
+    <p class="masthead-meta">NURS&nbsp;5334 &middot; Advanced Pharmacology</p>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ── Loading ─────────────────────────────────────────────────────── -->
+  <section id="screen-loading" class="screen" aria-busy="true">
+    <div class="card card-centred">
+      <p class="loading-text">Preparing your challenge<span class="ellipsis"></span></p>
+    </div>
+  </section>
+
+  <!-- ── Start ───────────────────────────────────────────────────────── -->
+  <section id="screen-start" class="screen" hidden>
+    <div class="card hero">
+      <p class="eyebrow">Adaptive Mastery Challenge</p>
+      <h1>Pharmacology Final Exam Review</h1>
+      <p class="lede">
+        Seventy questions spanning pharmacokinetics and prescriptive law,
+        cardiovascular drugs, CNS and psychiatric medications, endocrine
+        therapy, renal/urologic and GI drugs, pain management, and autonomic
+        pharmacology. Difficulty adapts to your performance, and every miss
+        triggers a short tutorial before you continue.
+      </p>
+
+      <dl class="spec-grid">
+        <div><dt>Prepared for</dt><dd id="start-student">NURS 5334 student</dd></div>
+        <div><dt>Questions</dt><dd><span id="start-total">70</span> items, <span id="start-points">78</span> points</dd></div>
+        <div><dt>Free access</dt><dd>Questions 1&ndash;<span id="start-free">30</span></dd></div>
+        <div><dt>Full access</dt><dd>$<span id="start-price">10</span> one-time unlock</dd></div>
+      </dl>
+
+      <div class="topic-cloud" id="start-topics" aria-label="Topics covered"></div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="btn-start">Begin the challenge</button>
+        <button type="button" class="btn btn-ghost" id="btn-resume" hidden>Resume attempt</button>
+      </div>
+      <p class="fineprint" id="start-note"></p>
+    </div>
+
+    <!-- Sleek Academia offerings — shown once, before the learner starts. -->
+    <div class="card promo-card">
+      <p class="eyebrow eyebrow-gold">Also from Sleek Academia</p>
+      <p class="lede">
+        Beyond this challenge, Sleek Academia offers nursing, law, IT and
+        accounting <a href="/assignment-help.html">assignment help</a> and
+        <a href="/online-course-support.html">online course support</a>,
+        our <a href="/store.html">study materials store</a>, and a growing
+        library of adaptive practice quizzes — including the
+        <a href="/antimicrobial-quiz">Antimicrobial Mastery Challenge</a> and
+        the <a href="/renal-cardiac-quiz">Renal, Urologic &amp; Cardiac
+        Pathophysiology Challenge</a>. Explore everything at
+        <a href="/">sleekacademia.com</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Quiz ────────────────────────────────────────────────────────── -->
+  <section id="screen-quiz" class="screen" hidden>
+
+    <div class="statusbar">
+      <div class="statusbar-row">
+        <p class="status-primary">
+          Question <span id="status-index">1</span>
+          <span class="status-sep">of</span>
+          <span id="status-total">30</span>
+        </p>
+        <div class="status-tags">
+          <span class="tag tag-topic" id="status-topic">&mdash;</span>
+          <span class="tag tag-level" id="status-level">Level 3</span>
+          <span class="tag tag-remediation" id="status-remediation" hidden>Concept re-test</span>
+        </div>
+      </div>
+      <div class="progress" role="progressbar" aria-labelledby="status-index" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="statusbar-row statusbar-row-sub">
+        <p class="status-score">Score <strong id="status-score">0</strong> &middot; <span id="status-accuracy">&mdash;</span></p>
+        <button type="button" class="linkbtn" id="btn-restart">Restart</button>
+      </div>
+    </div>
+
+    <form class="card question-card" id="question-form" novalidate>
+      <fieldset>
+        <legend class="question-stem" id="question-stem"></legend>
+        <p class="sata-hint" id="sata-hint" hidden></p>
+        <div class="options" id="options" role="group" aria-labelledby="question-stem"></div>
+      </fieldset>
+      <p class="form-error" id="form-error" role="alert" hidden></p>
+      <div class="actions">
+        <button type="submit" class="btn btn-primary" id="btn-submit">Submit answer</button>
+      </div>
+    </form>
+
+    <!-- Feedback -->
+    <div class="card feedback" id="feedback" hidden tabindex="-1">
+      <p class="verdict" id="verdict"></p>
+
+      <div class="feedback-block">
+        <h2>Why this is the answer</h2>
+        <p id="feedback-rationale"></p>
+      </div>
+
+      <div class="feedback-block">
+        <h2>Each option</h2>
+        <ul class="option-review" id="option-review"></ul>
+      </div>
+
+      <div class="callouts">
+        <div class="callout callout-clue">
+          <h3>Key clue</h3>
+          <p id="feedback-clue"></p>
+        </div>
+        <div class="callout callout-takeaway">
+          <h3>Clinical takeaway</h3>
+          <p id="feedback-takeaway"></p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="btn-next">Next question</button>
+      </div>
+    </div>
+
+    <!-- Remediation: AI notes → probes → evaluation -->
+    <div class="card remediation" id="remediation" hidden tabindex="-1">
+      <p class="eyebrow eyebrow-gold">Targeted remediation</p>
+
+      <div id="remediation-notes" class="remediation-stage">
+        <h2 id="notes-heading">Reviewing the concept</h2>
+        <div id="notes-body" aria-live="polite">
+          <p class="loading-text">Your tutor is preparing notes<span class="ellipsis"></span></p>
+        </div>
+        <p class="pitfall" id="notes-pitfall" hidden></p>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="btn-to-probes" disabled>Continue to two questions</button>
+        </div>
+      </div>
+
+      <form id="remediation-probes" class="remediation-stage" hidden>
+        <h2>Explain it in your own words</h2>
+        <p class="stage-note">Two short answers. Two or three sentences each is plenty.</p>
+        <div id="probe-fields" aria-live="polite"></div>
+        <p class="form-error" id="probe-error" role="alert" hidden></p>
+        <div class="actions">
+          <button type="submit" class="btn btn-primary" id="btn-submit-probes">Submit answers</button>
+          <button type="button" class="btn btn-ghost" id="btn-skip-probes">Skip</button>
+        </div>
+      </form>
+
+      <div id="remediation-result" class="remediation-stage" hidden>
+        <h2>Tutor feedback</h2>
+        <div id="evaluation-body" aria-live="polite">
+          <p class="loading-text">Reviewing your answers<span class="ellipsis"></span></p>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="btn-resume-quiz" disabled>Resume the quiz</button>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ── Paywall ─────────────────────────────────────────────────────── -->
+  <section id="screen-paywall" class="screen" hidden>
+    <div class="card hero">
+      <p class="eyebrow eyebrow-gold">Halfway there</p>
+      <h1>Unlock questions 31&ndash;70</h1>
+      <p class="lede" id="paywall-summary">
+        You have completed the free portion of the challenge.
+      </p>
+
+      <ul class="unlock-list">
+        <li>Forty further questions, weighted toward levels 4 and 5</li>
+        <li>Deeper cardiovascular, CNS/psychiatric, endocrine, renal/GI, pain and autonomic pharmacology</li>
+        <li>The full results dashboard with topic mastery and a printable summary</li>
+        <li>One-time payment. Your progress so far is preserved</li>
+      </ul>
+
+      <div class="unlock-price">
+        <span class="unlock-amount">$<span id="paywall-price">10</span></span>
+        <span class="unlock-caption">one-time, USD</span>
+      </div>
+
+      <div id="checkout-container" class="checkout-container"></div>
+      <p class="form-error" id="paywall-error" role="alert" hidden></p>
+      <p class="fineprint" id="paywall-mode"></p>
+
+      <details class="code-details">
+        <summary>I have an access code</summary>
+        <form id="code-form" class="code-form">
+          <label for="access-code">Access code</label>
+          <input type="text" id="access-code" name="access-code" autocomplete="off" spellcheck="false">
+          <button type="submit" class="btn btn-ghost">Unlock</button>
+        </form>
+        <p class="form-error" id="code-error" role="alert" hidden></p>
+      </details>
+
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" id="btn-see-results">See my results for questions 1&ndash;30</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Results ─────────────────────────────────────────────────────── -->
+  <section id="screen-results" class="screen" hidden>
+    <div class="card results-hero">
+      <p class="eyebrow">Performance summary</p>
+      <h1 id="results-band">&mdash;</h1>
+      <div class="scoreline">
+        <span class="score-big" id="results-percent">0%</span>
+        <span class="score-detail">
+          <strong id="results-score">0</strong> of <strong id="results-possible">0</strong> points
+          &middot; <span id="results-completed">0</span> questions completed
+        </span>
+      </div>
+      <div class="metric-grid" id="results-metrics"></div>
+    </div>
+
+    <div class="card">
+      <h2>Sub-score breakdown</h2>
+      <div id="results-buckets" class="bucket-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>Topic mastery</h2>
+      <div id="results-topics" class="bar-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>Topic areas</h2>
+      <div id="results-classes" class="bar-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>Difficulty performance</h2>
+      <div id="results-difficulty" class="bar-list"></div>
+    </div>
+
+    <div class="card" id="results-recs-card">
+      <h2>Recommended next steps</h2>
+      <ul id="results-recs" class="rec-list"></ul>
+    </div>
+
+    <div class="card" id="results-missed-card">
+      <h2>Review missed questions</h2>
+      <p class="stage-note" id="results-missed-count"></p>
+      <div id="results-missed" class="missed-list"></div>
+    </div>
+
+    <div class="card card-centred results-actions">
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="btn-print">Print or save as PDF</button>
+        <button type="button" class="btn btn-ghost" id="btn-continue-quiz" hidden>Continue the quiz</button>
+        <button type="button" class="btn btn-ghost" id="btn-unlock-from-results" hidden>Unlock questions 31&ndash;70</button>
+        <button type="button" class="btn btn-ghost" id="btn-restart-results">Start a new attempt</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Error ───────────────────────────────────────────────────────── -->
+  <section id="screen-error" class="screen" hidden>
+    <div class="card card-centred">
+      <h1>Something went wrong</h1>
+      <p id="error-message">The challenge could not be loaded.</p>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="btn-reload">Reload</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>Sleek Academia &middot; Original practice items written for NURS&nbsp;5334. Not affiliated with, and containing no content from, Elsevier, EAQ, NCLEX, ATI or HESI.</p>
+  <p class="footer-fine">For educational use. Always follow your institution's protocols and verify clinical information against current references.</p>
+  <p class="footer-fine">
+    Need more support? Sleek Academia offers
+    <a href="/assignment-help.html">assignment help</a>,
+    <a href="/online-course-support.html">online course support</a>, our
+    <a href="/store.html">study materials store</a>, and other adaptive
+    practice quizzes at <a href="/">sleekacademia.com</a>.
+  </p>
+</footer>
+
+<!-- Restart confirmation -->
+<div class="modal-backdrop" id="confirm-backdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-body">
+    <h2 id="confirm-title">Restart the challenge?</h2>
+    <p id="confirm-body">This clears your saved progress, score and remediation history. Your unlock is kept.</p>
+    <div class="actions">
+      <button type="button" class="btn btn-danger" id="btn-confirm-restart">Yes, restart</button>
+      <button type="button" class="btn btn-ghost" id="btn-cancel-restart">Keep my progress</button>
+    </div>
+  </div>
+</div>
+
+<!-- Identifies this quiz to the shared engine. These keys are distinct from the
+     other quizzes' so progress and paid unlocks never cross between them. Do
+     not rename them once learners have attempts or unlocks saved. -->
+<script>
+  window.QUIZ_CONFIG = {
+    apiBase: "/api/pharm-quiz",
+    storeKey: "sleek.pharmacology.attempt.v1",
+    entitlementKey: "sleek.pharmacology.entitlement.v1",
+    topics: [
+      "Pharmacokinetics", "Bioavailability and routes", "Prescriptive authority",
+      "Controlled substance scheduling", "Pharmacodynamics", "Nitrate therapy",
+      "ACE inhibitors", "Beta blockers", "Calcium channel blockers", "Digoxin",
+      "Anticoagulation", "Statins", "SSRIs", "Serotonin syndrome",
+      "Benzodiazepines", "Antipsychotics", "Lithium", "MAOIs", "Anticonvulsants",
+      "Tricyclic antidepressants", "Glucocorticoids", "Insulin therapy",
+      "Metformin", "Levothyroxine", "Sulfonylureas", "SGLT2 inhibitors",
+      "Bladder pharmacology", "Diuretics", "Proton pump inhibitors", "Laxatives",
+      "Antiemetics", "Opioid safety and overdose", "Acetaminophen toxicity",
+      "NSAIDs", "Neuropathic pain agents", "Controlled substance monitoring",
+      "Anaphylaxis management", "Adrenergic receptors", "Cholinergic crisis",
+      "Herbal-drug interactions", "Medication safety", "Black box warnings",
+      "Medication adherence"
+    ]
+  };
+</script>
+<script src="/js/quiz-engine.js?v=7" defer></script>
+</body>
+</html>

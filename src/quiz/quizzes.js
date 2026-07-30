@@ -13,6 +13,7 @@
 import { createEngine } from "./engine.js";
 import { antimicrobialBank, FREE_QUESTION_COUNT } from "./question-bank.js";
 import { renalCardiacBank } from "./renal-cardiac-bank.js";
+import { pharmacologyBank } from "./pharmacology-bank.js";
 
 // PayPal is restricted on the account behind this quiz, so the paywall runs on
 // a manual MoneyGram-to-mobile-money claim for now (see src/quiz/router.js
@@ -135,9 +136,67 @@ export const renalCardiacQuiz = Object.freeze({
   },
 });
 
+// ── NURS 5334 — General pharmacology (final exam review) ──────────────────
+
+const PHARMACOLOGY_META = {
+  student: "NURS 5334 student",
+  course: "NURS 5334",
+  bucketLabels: {
+    pregnancySafety: "Pregnancy safety",
+    toxicityRecognition: "Toxicity recognition",
+    medicationInteractions: "Medication interactions",
+    priorityAction: "Priority action",
+    patientEducationAdherence: "Patient education and adherence",
+  },
+  recommendations: {
+    pregnancySafety:
+      "Review ACE inhibitors/ARBs, valproic acid, and NSAIDs in the third trimester, and which antihypertensives are considered pregnancy-safer.",
+    toxicityRecognition:
+      "Review digoxin, lithium, acetaminophen, and statin (rhabdomyolysis) toxicity presentations and their priority labs.",
+    medicationInteractions:
+      "Review nitrates with PDE5 inhibitors, MAOIs with tyramine, St. John's Wort with SSRIs, grapefruit juice with CYP3A4 substrates, and warfarin with antibiotics.",
+    priorityAction:
+      "Review opioid and benzodiazepine overdose response, anaphylaxis management, neuroleptic malignant syndrome, and serotonin syndrome recognition.",
+    patientEducationAdherence:
+      "Review beta blocker and steroid tapering, levothyroxine timing, opioid bowel regimens, and addressing cost-related nonadherence.",
+  },
+  // Bank-organisation labels, not drug classes a learner can go and revise.
+  excludeFromAdvice: [],
+};
+
+export const pharmacologyQuiz = Object.freeze({
+  id: "pharmacology",
+  title: "NURS 5334 Pharmacology Final Exam Review Challenge",
+  shortTitle: "Pharmacology Final Exam Review",
+  scope: "pharmacology-quiz:full",
+  apiBase: "/api/pharm-quiz",
+  pagePath: "/pharmacology-quiz",
+  accessCodeEnv: "QUIZ_ACCESS_CODE_PHARMACOLOGY",
+  categoryLabel: "Topic area",
+  categoryLabelPlural: "Topic areas",
+  bank: pharmacologyBank,
+  meta: PHARMACOLOGY_META,
+  engine: createEngine(pharmacologyBank, PHARMACOLOGY_META),
+  tutorDomain: {
+    subject: "nursing pharmacology",
+    course: "NURS 5334 general pharmacology",
+    categoryLabel: "Topic area",
+    inventionRule: "Never invent drug facts.",
+    absolutesRule:
+      "Never state that a medication is universally safe or universally contraindicated.",
+  },
+  order: {
+    referenceId: "pharmacology-quiz-full",
+    description: "NURS 5334 Pharmacology Final Exam Review Challenge — questions 31 to 70",
+    customId: "pharmacology-quiz",
+    price: UNLOCK_PRICE_USD,
+  },
+});
+
 export const FREE_QUESTIONS = FREE_QUESTION_COUNT;
 
 export const QUIZZES = Object.freeze({
   [antimicrobialQuiz.id]: antimicrobialQuiz,
   [renalCardiacQuiz.id]: renalCardiacQuiz,
+  [pharmacologyQuiz.id]: pharmacologyQuiz,
 });

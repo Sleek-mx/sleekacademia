@@ -29,7 +29,7 @@ import { createPlatformIdentityResolver } from "./src/platform/identity.js";
 import { createPaymentProvider } from "./src/platform/payments.js";
 import { createPlatformStore, isLoopbackHostname } from "./src/platform/store.js";
 import { createQuizRouter } from "./src/quiz/router.js";
-import { antimicrobialQuiz, renalCardiacQuiz } from "./src/quiz/quizzes.js";
+import { antimicrobialQuiz, renalCardiacQuiz, pharmacologyQuiz } from "./src/quiz/quizzes.js";
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" })
@@ -240,6 +240,7 @@ app.get("/api/health", (_req, res) => {
 // returning learners' browsers call it, and unlocks have been sold against it.
 app.use("/api/quiz", rateLimiters.platform, createQuizRouter(antimicrobialQuiz));
 app.use("/api/patho-quiz", rateLimiters.platform, createQuizRouter(renalCardiacQuiz));
+app.use("/api/pharm-quiz", rateLimiters.platform, createQuizRouter(pharmacologyQuiz));
 
 app.use("/assets", express.static(assetsDir));
 app.use((req, res, next) => {
