@@ -40,10 +40,14 @@ test("rejects executable, polyglot, and binary text content", () => {
   assert.ok(upload("null.txt", "text/plain", Buffer.from("safe\u0000hidden", "binary")).error);
 });
 
-test("enforces strict base64, non-empty content, and the eight-megabyte limit", () => {
+test("enforces strict base64, non-empty content, and the three-megabyte limit", () => {
   assert.ok(validateUpload({ fileName: "paper.pdf", mimeType: "application/pdf", contentBase64: "%%%" }).error);
   assert.ok(validateUpload({ fileName: "paper.pdf", mimeType: "application/pdf", contentBase64: "" }).error);
-  assert.match(upload("large.pdf", "application/pdf", Buffer.alloc(8 * 1024 * 1024 + 1, 1)).error, /8 MB/i);
+  const boundaryPdf = Buffer.alloc(3 * 1024 * 1024, 1);
+  boundaryPdf.write("%PDF-1.7\n", 0, "ascii");
+  boundaryPdf.write("%%EOF", boundaryPdf.length - 5, "ascii");
+  assert.equal(upload("boundary.pdf", "application/pdf", boundaryPdf).error, undefined);
+  assert.match(upload("large.pdf", "application/pdf", Buffer.alloc(3 * 1024 * 1024 + 1, 1)).error, /3 MB/i);
 });
 
 test("sanitizes client filenames so paths and headers cannot be injected", () => {

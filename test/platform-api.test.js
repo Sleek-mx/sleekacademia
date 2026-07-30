@@ -172,11 +172,11 @@ test("uploads reject unsupported and oversized files", async () => {
     body: {
       fileName: "large.pdf",
       mimeType: "application/pdf",
-      contentBase64: Buffer.alloc(8 * 1024 * 1024 + 1).toString("base64"),
+      contentBase64: Buffer.alloc(3 * 1024 * 1024 + 1).toString("base64"),
     },
   });
   assert.equal(oversized.status, 400);
-  assert.match((await oversized.json()).error, /8 MB/i);
+  assert.match((await oversized.json()).error, /3 MB/i);
 });
 
 test("locked final attachment returns 423 until the request is fully paid", async () => {

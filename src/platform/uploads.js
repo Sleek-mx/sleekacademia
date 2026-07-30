@@ -1,7 +1,7 @@
 import path from "node:path";
 import { TextDecoder } from "node:util";
 
-export const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
+export const MAX_UPLOAD_BYTES = 3 * 1024 * 1024;
 
 const FILE_TYPES = new Map([
   ["application/pdf", { extensions: new Set([".pdf"]), signature: "pdf" }],
@@ -88,10 +88,10 @@ export function validateUpload(input) {
   if (!type.extensions.has(extension)) return { error: "The file extension and MIME type do not match." };
   const decoded = decodeBase64(input?.contentBase64);
   if (!decoded) return { error: "File content is invalid." };
-  if (decoded.tooLarge) return { error: "Files must be 8 MB or smaller." };
+  if (decoded.tooLarge) return { error: "Files must be 3 MB or smaller." };
   const { bytes } = decoded;
   if (!bytes.length) return { error: "The uploaded file is empty." };
-  if (bytes.length > MAX_UPLOAD_BYTES) return { error: "Files must be 8 MB or smaller." };
+  if (bytes.length > MAX_UPLOAD_BYTES) return { error: "Files must be 3 MB or smaller." };
   if (!hasSignature(bytes, type.signature)) return { error: "The file content does not match its declared type or signature." };
   return { fileName, mimeType, bytes };
 }
