@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 const publicPages = ["index.html", "about.html", "blog.html", "store.html"];
-const workspacePages = ["dashboard.html", "admin.html", "client-order.html", "admin-order.html", "login.html", "sign-up.html"];
+const workspacePages = ["dashboard.html", "admin.html", "client-order.html", "admin-order.html", "login.html", "sign-up.html", "onboard.html"];
 
 test("public pages load the neumorphic layer after the structural brand stylesheet", () => {
   for (const page of publicPages) {

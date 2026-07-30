@@ -10,6 +10,7 @@ const canonicalOrigin = "https://sleekacademia.com";
 const socialProfiles = [
   "https://instagram.com/sleek_academia",
   "https://tiktok.com/@sleek_e_learn",
+  "https://www.linkedin.com/in/sir-maxwell-763b9818b",
   "https://www.youtube.com/channel/UCID9SDULAMHqyKjB65Bo01A",
 ];
 

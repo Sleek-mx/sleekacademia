@@ -1,0 +1,208 @@
+/* Sleek Academia - liquid glass top navigation.
+   The neumorphic layer paints the nav bar in the page's own surface colour with
+   an extruded shadow, so it reads as part of the background. This file lifts it
+   off: a translucent, blurred pane of glass with its own cast shadow, plus a
+   droplet that travels between the links to mark the current page.
+
+   Loaded after public-neumorphic.css, and selectors are doubled where that
+   sheet is more specific. */
+
+:root {
+  --liquid-glass-tint: 255, 255, 255;
+  --liquid-glass-edge: rgba(255, 255, 255, 0.72);
+  --liquid-cast: 58, 38, 110;
+  --liquid-brand: 112, 42, 225;
+  --liquid-spring: cubic-bezier(0.34, 1.32, 0.5, 1);
+}
+
+/* ---------------------------------------------------------------- the pane */
+
+/* brand-v2 sets `overflow-x: hidden` on body, which turns body into a scroll
+   container and silently kills position:sticky inside it. `clip` does the same
+   horizontal clipping without creating one, and html already clips as well. */
+body {
+  overflow-x: clip;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  /* Room for the cast shadow so it is not clipped while sticky. */
+  padding-bottom: 0.35rem;
+}
+
+.site-header .site-nav,
+.site-nav {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid var(--liquid-glass-edge);
+  border-radius: 2.1rem;
+  background: linear-gradient(
+    170deg,
+    rgba(var(--liquid-glass-tint), 0.62) 0%,
+    rgba(var(--liquid-glass-tint), 0.34) 46%,
+    rgba(var(--liquid-glass-tint), 0.46) 100%
+  );
+  -webkit-backdrop-filter: blur(26px) saturate(185%);
+  backdrop-filter: blur(26px) saturate(185%);
+  box-shadow:
+    /* the drop shadow that detaches the pane from the surface */
+    0 26px 46px -20px rgba(var(--liquid-cast), 0.46),
+    0 10px 22px -14px rgba(var(--liquid-cast), 0.32),
+    /* refracted rim: bright along the top, faint underneath */
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
+    inset 1px 0 0 rgba(255, 255, 255, 0.34),
+    inset -1px 0 0 rgba(255, 255, 255, 0.34);
+  transition: box-shadow 400ms ease, background 400ms ease;
+}
+
+/* Specular sheen across the top third, the way light sits on curved glass. */
+.site-nav::before {
+  content: "";
+  position: absolute;
+  inset: 1px 1px auto;
+  z-index: -1;
+  height: 46%;
+  border-radius: 2rem 2rem 60% 60% / 2rem 2rem 100% 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.66) 0%,
+    rgba(255, 255, 255, 0.16) 62%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+}
+
+/* Once the page scrolls under it, the glass thickens slightly. */
+.site-header.is-lifted .site-nav {
+  background: linear-gradient(
+    170deg,
+    rgba(var(--liquid-glass-tint), 0.74) 0%,
+    rgba(var(--liquid-glass-tint), 0.46) 46%,
+    rgba(var(--liquid-glass-tint), 0.56) 100%
+  );
+  box-shadow:
+    0 30px 54px -20px rgba(var(--liquid-cast), 0.54),
+    0 12px 26px -14px rgba(var(--liquid-cast), 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.44),
+    inset 1px 0 0 rgba(255, 255, 255, 0.38),
+    inset -1px 0 0 rgba(255, 255, 255, 0.38);
+}
+
+/* ------------------------------------------------------------- the droplet */
+
+/* The droplet needs a positioned parent. Only at desktop widths, though: below
+   76rem brand-v2 turns .nav-links into a `position: fixed` dropdown panel, and
+   that is already a containing block. */
+@media (min-width: 76.0625rem) {
+  .nav-links {
+    position: relative;
+  }
+}
+
+.nav-droplet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    165deg,
+    rgba(var(--liquid-brand), 0.22) 0%,
+    rgba(var(--liquid-brand), 0.13) 55%,
+    rgba(255, 255, 255, 0.42) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 1px rgba(var(--liquid-brand), 0.16),
+    0 6px 14px -6px rgba(var(--liquid-brand), 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: center;
+  will-change: transform, width, height;
+}
+
+.nav-droplet.is-visible {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------- the links */
+
+.site-nav .nav-link {
+  position: relative;
+  z-index: 1;
+  padding-inline: 1rem;
+  border-radius: 999px;
+  transition: color 320ms ease;
+}
+
+/* public-neumorphic.css presses the active link into the surface with an inset
+   shadow and no radius, which is the smudge this replaces. */
+.site-nav .nav-link[aria-current="page"] {
+  box-shadow: none;
+  color: var(--public-neu-brand, #702ae1);
+}
+
+.site-nav .nav-link:hover {
+  color: var(--public-neu-brand, #702ae1);
+}
+
+.site-nav .nav-link:focus-visible {
+  outline: 2px solid rgba(var(--liquid-brand), 0.7);
+  outline-offset: 2px;
+}
+
+/* Without JS there is no droplet, so the active link keeps a static pill. */
+.no-js .site-nav .nav-link[aria-current="page"],
+.site-nav:not(:has(.nav-droplet)) .nav-link[aria-current="page"] {
+  background: linear-gradient(
+    165deg,
+    rgba(var(--liquid-brand), 0.2) 0%,
+    rgba(255, 255, 255, 0.4) 100%
+  );
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* ------------------------------------------------------------- responsive */
+
+@media (max-width: 76rem) {
+  /* The links become a fixed dropdown panel; give it the same glass. */
+  /* A menu has to stay readable, so this pane is much denser than the bar. */
+  .nav-links {
+    border-color: var(--liquid-glass-edge);
+    background: linear-gradient(
+      180deg,
+      rgba(var(--liquid-glass-tint), 0.96),
+      rgba(var(--liquid-glass-tint), 0.88)
+    );
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    backdrop-filter: blur(30px) saturate(180%);
+    box-shadow:
+      0 26px 46px -20px rgba(var(--liquid-cast), 0.46),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  .site-nav .nav-link[aria-current="page"],
+  .site-nav .nav-link:hover {
+    background: none;
+    box-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header .site-nav,
+  .site-nav {
+    transition: none;
+  }
+}
+
+/* Safari and Firefox without backdrop-filter would show a nearly transparent
+   bar, so fall back to a solid-enough pane. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .site-header .site-nav,
+  .site-nav {
+    background: rgba(255, 255, 255, 0.86);
+  }
+}

@@ -1,0 +1,129 @@
+/* Sleek Academia - footer social buttons.
+   Self-contained on purpose: this file is loaded by pages themed with
+   brand-v2, platform-v2 and raw Tailwind, so nothing here may depend on
+   another stylesheet's tokens. Selectors are doubled up (.sa-social .x)
+   because platform-v2 styles every footer link with .platform-footer a. */
+
+.sa-social {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 1.5rem 2.25rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(91, 33, 182, 0.12);
+  text-align: center;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.sa-social .sa-social__label {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.sa-social .sa-social__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sa-social .sa-social__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0; /* platform-v2 puts a vertical margin on every footer link */
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(91, 33, 182, 0.14);
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(26, 26, 46, 0.06), 0 6px 16px rgba(91, 33, 182, 0.07);
+  color: #1a1a2e;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  transition: transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease,
+    color 200ms ease, border-color 200ms ease;
+}
+
+.sa-social .sa-social__btn svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  fill: currentColor;
+  color: #7c3aed;
+  transition: color 200ms ease;
+}
+
+.sa-social .sa-social__btn:hover,
+.sa-social .sa-social__btn:focus-visible {
+  transform: translateY(-2px);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 8px 22px rgba(26, 26, 46, 0.18);
+}
+
+.sa-social .sa-social__btn:hover svg,
+.sa-social .sa-social__btn:focus-visible svg {
+  color: #ffffff;
+}
+
+.sa-social .sa-social__btn:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 3px;
+}
+
+.sa-social .sa-social__btn:active {
+  transform: translateY(0);
+  box-shadow: inset 0 2px 6px rgba(26, 26, 46, 0.18);
+}
+
+.sa-social .sa-social__btn--instagram:hover,
+.sa-social .sa-social__btn--instagram:focus-visible {
+  background: linear-gradient(45deg, #f09433, #dc2743 45%, #bc1888);
+}
+
+.sa-social .sa-social__btn--tiktok:hover,
+.sa-social .sa-social__btn--tiktok:focus-visible {
+  background: #010101;
+}
+
+.sa-social .sa-social__btn--linkedin:hover,
+.sa-social .sa-social__btn--linkedin:focus-visible {
+  background: #0a66c2;
+}
+
+.sa-social .sa-social__btn--youtube:hover,
+.sa-social .sa-social__btn--youtube:focus-visible {
+  background: #ff0000;
+}
+
+@media (max-width: 480px) {
+  .sa-social .sa-social__list {
+    gap: 0.5rem;
+  }
+
+  .sa-social .sa-social__btn {
+    padding: 0.55rem 0.9rem;
+    font-size: 0.82rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sa-social .sa-social__btn {
+    transition: none;
+  }
+
+  .sa-social .sa-social__btn:hover,
+  .sa-social .sa-social__btn:focus-visible {
+    transform: none;
+  }
+}
