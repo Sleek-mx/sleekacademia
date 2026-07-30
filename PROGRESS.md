@@ -42,7 +42,7 @@ Plan:
 - [ ] Watch for Namecheap's reply or a live-site recovery, then respond with any requested non-secret diagnostics.
 - [x] Verify the Git-connected preview, promote the exact commit, attach both domains, and change only the Cloudflare apex/`www` records.
 - [x] Verify `/`, `/api/health`, `/api/pharm-quiz/health`, `/api/quiz/health`, `/api/patho-quiz/health`, and `/pharmacology-quiz` at the public URL.
-- [ ] Commit and push the stable-alias fix to `main`, then verify its Git-triggered Vercel production deployment.
+- [x] Committed and pushed the stable-alias fix to `main`; Ready production deployment `dpl_C7H3fpjxdLGarJRrKPUw629XRX4R` accepts same-origin quiz mutations from the apex, `www`, and the stable Vercel alias while continuing to reject cross-site requests.
 
 ## Facts a fresh session needs
 
