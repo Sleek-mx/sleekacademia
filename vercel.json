@@ -1,0 +1,25 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/services.html",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/pricing.html",
+      "destination": "/onboard.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/blogs.html",
+      "destination": "/blog.html",
+      "statusCode": 301
+    }
+  ]
+}
