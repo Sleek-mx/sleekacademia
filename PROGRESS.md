@@ -211,13 +211,19 @@ Goal: Restore `https://sleekacademia.com` by making the Express listener compati
 
 - [x] Proved the exact regression assertion fails on the delayed listener and passes when `app.listen()` is invoked during Passenger's synchronous entrypoint load.
 - [x] Started Express synchronously, moved demo-only seeding after the listener, preserved initialization-failure shutdown, and passed 305/305 application tests, 6/6 SEO tests, the 144-file security gate, zero production dependency vulnerabilities, and diff validation.
-- [ ] Commit and push the verified fix, validate the deployment source/destination, recover the production Passenger worker, and run public health/SEO checks.
-- [ ] Create an Obsidian incident note in a new folder covering symptoms, root cause, resolution, and preventive controls.
+- [x] Pushed startup fix `ca74b56`, validated the cPanel deployment source/destination and live hashes, restored the required directory permissions, recycled the exact Passenger worker, and confirmed the new worker stayed alive without application stderr.
+- [x] Isolated the remaining Namecheap failure to LiteSpeed's external-app socket handoff: the corrected application process was healthy, but the Namecheap origin still returned HTTP 500.
+- [x] Restored the public site by changing only Cloudflare's root and `www` web records to the healthy Vercel production deployment; preserved all mail, Clerk, tunnel, and other DNS records.
+- [x] Added source-controlled Vercel 301 redirects for legacy `.html` URLs and the canonical `www` host, with regression coverage in `test/vercel-config.test.js`.
+- [x] Verified the production deployment at commit `c930d4d`: root and all quiz health endpoints return HTTP 200, `www` redirects to the root domain, TLS is valid, the server is Vercel, and the live SEO gate passes 54 URLs.
+- [x] Created `13 - Incidents & Postmortems/2026-07-30 - Sleek Academia 500 Outage` in Obsidian with the symptoms, layered root cause, resolution, verification evidence, and prevention checklist.
 
 ### Recovery facts
 
 - Production URL: `https://sleekacademia.com`
+- Current public runtime: Vercel project `sleek-academia`; Cloudflare root A record targets `76.76.21.21` as DNS-only and `www` is a DNS-only CNAME to the root.
 - Namecheap app root: `/home/sleenegb/public_html/sleekacademianewsite`
 - Passenger loads `server.js` with synchronous CommonJS `require()`.
 - The failing code gates `app.listen()` behind `seedDemoPlatform(platformStore).then(...)`; production seeding is a no-op, but the promise still defers the listen hook to a microtask.
+- Namecheap remains a non-public fallback until its LiteSpeed/Passenger socket handoff can serve the full application on a staging hostname.
 - Do not store credentials, hashes, or secret values in this progress file or the future Obsidian incident note.
