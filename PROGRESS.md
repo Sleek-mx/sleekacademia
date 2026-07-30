@@ -29,14 +29,18 @@ Plan:
 - [x] Created and linked Vercel project `macsie-s-projects/sleek-academia` (`prj_8DhISikX0iLeTzDHQFG2d42irWt6`), connected `Sleek-mx/sleekacademia`, and securely configured 30 encrypted Production variable names from the existing runtime without recording values.
 - [x] Pushed `emergency/vercel-cutover`, configured the same 30 encrypted variables for that Preview branch, and confirmed Vercel Production branch tracking remains `main`.
 - [x] Verified Preview deployment `dpl_9AaEnuahRoGJDrGinfWJ7quJG86M` from commit `1046eea`: build Ready on Node 22; homepage, quiz page, all four health endpoints, favicon, quiz CSS, and quiz JavaScript return 200; pharmacology config reports 70 total/30 free; a real question was served and graded; history at question 30 returned the expected paywall lock; `/deploy.php` returned the Vercel-only 410.
+- [x] Fast-forwarded the verified cutover to `main`, passed the exact-commit release gate again (304/304 application tests, 6/6 SEO, security scan, zero production audit vulnerabilities, syntax, and diff), pushed commit `4c5331a`, and reached Ready production deployment `dpl_2Vyui2xu9XnsjkXXZDR1aRRCXGVu`.
+- [x] Attached `sleekacademia.com` and `www.sleekacademia.com` to Vercel. Changed only the two Cloudflare web records: apex `A 198.54.115.224`, Proxied, Auto → `A 76.76.21.21`, DNS only, Auto; `www CNAME sleekacademia.com`, Proxied, Auto → the same CNAME, DNS only, Auto. All mail, Clerk, tunnel, and other records were preserved.
+- [x] Verified the cutover from both authoritative Cloudflare nameservers, `1.1.1.1`, and `8.8.8.8`; all resolve the apex to `76.76.21.21`, and Vercel reports both domains configured.
+- [x] Verified the public production site: apex and `www` TLS/homepages, all four health endpoints, pharmacology page, favicon, quiz CSS/JavaScript, same-origin question serving and grading, the 30-question free boundary/paywall lock, cross-site mutation rejection, and the disabled cPanel webhook all pass. Desktop and mobile browser layouts have no horizontal overflow and no console warnings/errors.
 
 ## Next
 
 - [x] With Max's confirmation, send the outage diagnostic from the connected Sleek Academia Gmail account to `support@namecheaphosting.com`.
 - [ ] Ask Namecheap to inspect the LiteSpeed virtual-host/Passenger external-app mapping for `/usr/local/lsws/extapp-sock/APVH_sleekacademia.com:81:_.sock` and the server-side LiteSpeed error log at the matching request time.
 - [ ] Watch for Namecheap's reply or a live-site recovery, then respond with any requested non-secret diagnostics.
-- [ ] Verify the Git-connected preview, promote the exact commit, attach both domains, and change only the Cloudflare apex/`www` records.
-- [ ] Verify `/`, `/api/health`, `/api/pharm-quiz/health`, `/api/quiz/health`, `/api/patho-quiz/health`, and `/pharmacology-quiz` at the public URL.
+- [x] Verify the Git-connected preview, promote the exact commit, attach both domains, and change only the Cloudflare apex/`www` records.
+- [x] Verify `/`, `/api/health`, `/api/pharm-quiz/health`, `/api/quiz/health`, `/api/patho-quiz/health`, and `/pharmacology-quiz` at the public URL.
 
 ## Facts a fresh session needs
 
@@ -47,7 +51,8 @@ Plan:
 - Current Passenger PID at last check: `2911555`
 - Passenger socket: `/usr/local/lsws/extapp-sock/APVH_sleekacademia.com:81:_.sock`
 - Direct Node boot with the production binary and environment returns a clean health response; the failure is specific to Passenger/LiteSpeed handling.
-- Emergency recovery design: Git-connected Vercel preview, verified promotion to production, then change only Cloudflare apex and `www` web records.
+- Current production host: Vercel project `macsie-s-projects/sleek-academia`; Git-connected `main` auto-deploys.
+- Rollback remains available by restoring the prior Cloudflare apex `A 198.54.115.224` and `www CNAME sleekacademia.com` proxy state after Namecheap resolves the Passenger fault.
 - Vercel compatibility decision: keep the root Express server, disable cPanel shell deployment on Vercel, and temporarily cap base64 JSON uploads at 3 MB because Vercel's payload limit is 4.5 MB.
 - Three restart-style interventions have already failed: SSH kill/re-spawn, cPanel Restart, and cPanel Stop/Start. Do not repeat without new evidence.
 - Never record secret values in this file or chat; use `/Users/ephantusmacharia/Obsidian/Secret Stash/08 - Credentials & Keys`.
