@@ -625,16 +625,16 @@ app.use((req, res) => {
   res.status(404).sendFile(path.join(publicDir, "404.html"));
 });
 
-seedDemoPlatform(platformStore)
-  .then(() => {
-    app.listen(port, () => {
-      console.log(`Sleek Academia is running at http://localhost:${port}`);
-    });
-  })
-  .catch((error) => {
-    console.error("Sleek Academia failed to start:", error);
+const server = app.listen(port, () => {
+  console.log(`Sleek Academia is running at http://localhost:${port}`);
+});
+
+seedDemoPlatform(platformStore).catch((error) => {
+  console.error("Sleek Academia failed to initialize:", error);
+  server.close(() => {
     process.exitCode = 1;
   });
+});
 
 function shellQuote(value) {
   return `'${String(value).replace(/'/g, "'\\''")}'`;

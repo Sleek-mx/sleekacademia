@@ -193,3 +193,31 @@ Current restoration: apply the canonical lavender neumorphism to Home, About, Bl
 - Approved refresh plan: `docs/superpowers/plans/2026-07-13-neumorphic-workspace-and-blog-refresh.md`.
 - Security release status: dependency audit, CSP/security headers, rate limits, CSRF, upload signature checks, tenant isolation, private-file gates, provider verification, and hardened MCX password/session controls are implemented and passing. Production secret/provider configuration and MCX MFA remain launch-time work; MFA is explicitly deferred.
 - Approved revised implementation plan: `docs/superpowers/plans/2026-07-13-secure-admin-client-platform.md`.
+
+## Passenger startup recovery — 2026-07-30
+
+Goal: Restore `https://sleekacademia.com` by making the Express listener compatible with Namecheap LiteSpeed Passenger's synchronous CommonJS startup hook, then document the incident in Obsidian.
+
+### Done
+
+- [x] Confirmed the production application and clean staging copy start manually and answer `/api/health`.
+- [x] Confirmed Namecheap's simple synchronous Node application returns HTTP 200 from the same hosting environment.
+- [x] Confirmed the configured `ADMIN_PASSWORD_HASH` is currently structurally valid; Namecheap's hash exception came from a temporary environment override that was reverted.
+- [x] Reproduced Passenger's `require("./server.js")` entrypoint load under Namecheap Node 20.
+- [x] Isolated the fix from unrelated user files in `.worktrees/fix-passenger-startup-order` on `fix/passenger-startup-order`, based on current `origin/main` at `899de01`.
+- [x] Established a clean baseline of 305 passing tests.
+
+### Next
+
+- [x] Proved the exact regression assertion fails on the delayed listener and passes when `app.listen()` is invoked during Passenger's synchronous entrypoint load.
+- [x] Started Express synchronously, moved demo-only seeding after the listener, preserved initialization-failure shutdown, and passed 305/305 application tests, 6/6 SEO tests, the 144-file security gate, zero production dependency vulnerabilities, and diff validation.
+- [ ] Commit and push the verified fix, validate the deployment source/destination, recover the production Passenger worker, and run public health/SEO checks.
+- [ ] Create an Obsidian incident note in a new folder covering symptoms, root cause, resolution, and preventive controls.
+
+### Recovery facts
+
+- Production URL: `https://sleekacademia.com`
+- Namecheap app root: `/home/sleenegb/public_html/sleekacademianewsite`
+- Passenger loads `server.js` with synchronous CommonJS `require()`.
+- The failing code gates `app.listen()` behind `seedDemoPlatform(platformStore).then(...)`; production seeding is a no-op, but the promise still defers the listen hook to a microtask.
+- Do not store credentials, hashes, or secret values in this progress file or the future Obsidian incident note.
