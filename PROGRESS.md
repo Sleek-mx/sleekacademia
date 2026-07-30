@@ -26,13 +26,14 @@ Plan:
 - [x] Wrote the executable cutover plan at `docs/superpowers/plans/2026-07-29-vercel-emergency-cutover.md`.
 - [x] Added Vercel runtime safeguards: exact preview-origin handling, a Vercel-safe JSON parser budget, Node 22 pinning, and a hard-disabled cPanel shell deployment webhook. Focused runtime/security gate: 9/9 passing.
 - [x] Reduced supported uploads to 3 MB with an exact-boundary regression contract and patched the current `body-parser` advisory. Release gate: 304/304 application tests, 6/6 SEO tests, security scan passed, zero production audit vulnerabilities, clean syntax, and clean diff.
+- [x] Created and linked Vercel project `macsie-s-projects/sleek-academia` (`prj_8DhISikX0iLeTzDHQFG2d42irWt6`), connected `Sleek-mx/sleekacademia`, and securely configured 30 encrypted Production variable names from the existing runtime without recording values.
 
 ## Next
 
 - [x] With Max's confirmation, send the outage diagnostic from the connected Sleek Academia Gmail account to `support@namecheaphosting.com`.
 - [ ] Ask Namecheap to inspect the LiteSpeed virtual-host/Passenger external-app mapping for `/usr/local/lsws/extapp-sock/APVH_sleekacademia.com:81:_.sock` and the server-side LiteSpeed error log at the matching request time.
 - [ ] Watch for Namecheap's reply or a live-site recovery, then respond with any requested non-secret diagnostics.
-- [ ] Create the Vercel project, configure Preview and Production environments without exposing secrets, and connect GitHub.
+- [ ] Push `emergency/vercel-cutover`, attach the same encrypted variables to that Preview branch, and trigger a configuration-complete checkpoint deployment.
 - [ ] Verify the Git-connected preview, promote the exact commit, attach both domains, and change only the Cloudflare apex/`www` records.
 - [ ] Verify `/`, `/api/health`, `/api/pharm-quiz/health`, `/api/quiz/health`, `/api/patho-quiz/health`, and `/pharmacology-quiz` at the public URL.
 
