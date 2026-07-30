@@ -9,6 +9,12 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 test("Vercel preserves the canonical 301 redirects before static file handling", () => {
   const config = JSON.parse(fs.readFileSync(path.join(root, "vercel.json"), "utf8"));
   assert.deepEqual(config.redirects[0], {
+    source: "/",
+    has: [{ type: "host", value: "www.sleekacademia.com" }],
+    destination: "https://sleekacademia.com/",
+    statusCode: 301,
+  });
+  assert.deepEqual(config.redirects[1], {
     source: "/:path*",
     has: [{ type: "host", value: "www.sleekacademia.com" }],
     destination: "https://sleekacademia.com/:path*",

@@ -2,6 +2,17 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.sleekacademia.com"
+        }
+      ],
+      "destination": "https://sleekacademia.com/",
+      "statusCode": 301
+    },
+    {
       "source": "/:path*",
       "has": [
         {
