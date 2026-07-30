@@ -1,4 +1,54 @@
-# PROGRESS — Sleek Academia Platform Redesign
+# PROGRESS — Sleek Academia Production Outage
+
+Goal: Restore `https://sleekacademia.com`, then verify the pharmacology quiz live.
+
+Plan:
+
+1. Revalidate the live failure and repository/deploy identity.
+2. Recheck the Passenger process and isolate the failing boundary.
+3. Escalate the host-only LiteSpeed/Passenger fault with current evidence.
+4. Verify the public homepage, health API, and pharmacology quiz after recovery.
+
+## Done
+
+- [x] Pharmacology quiz completed, tested (301/301), committed as `f6690f7`, pushed to `origin/main`, and verified locally.
+- [x] Revalidated the outage on 2026-07-29: both Cloudflare and direct-origin HTTPS return Namecheap's generic 500; direct-origin HTTP still redirects to HTTPS.
+- [x] Reconfirmed repository identity: `origin` is `https://github.com/Sleek-mx/sleekacademia.git`; local `main` and `origin/main` both point to `f6690f7`.
+- [x] Reconfirmed Passenger PID `2911555` is alive under the correct account, executable, working directory, and app socket; its configured `stderr.log` remains empty.
+- [x] Reconfirmed the live `.env` contains every required key by name only, including `ADMIN_PASSWORD_HASH`; no values were recorded here.
+- [x] Proved a `/api/health` origin request causes Passenger process I/O, so LiteSpeed connects to the worker, but the public response is still 500.
+- [x] Confirmed account isolation blocks `strace` attachment, so the LiteSpeed/Passenger protocol exchange cannot be inspected without host/root access.
+- [x] Searched the connected `macsinjobs@gmail.com` mailbox for recent Namecheap/web-hosting/support-ticket mail; found no confirmation that an outage ticket was submitted.
+- [x] Checked Namecheap's current support surfaces: the legacy ticket URL now redirects to support instructions; shared-hosting issues should be emailed to `support@namecheaphosting.com`.
+- [x] Sent the complete outage escalation to `support@namecheaphosting.com` on 2026-07-29 and verified it in Gmail Sent; message/thread ID `19fb0df3a25794cd`.
+- [x] Approved the emergency Vercel recovery approach: Git-connected preview, full verification, then an apex/`www` Cloudflare cutover with all mail and Clerk records preserved.
+- [x] Wrote the approved cutover specification at `docs/superpowers/specs/2026-07-29-vercel-emergency-cutover-design.md`.
+
+## Next
+
+- [x] With Max's confirmation, send the outage diagnostic from the connected Sleek Academia Gmail account to `support@namecheaphosting.com`.
+- [ ] Ask Namecheap to inspect the LiteSpeed virtual-host/Passenger external-app mapping for `/usr/local/lsws/extapp-sock/APVH_sleekacademia.com:81:_.sock` and the server-side LiteSpeed error log at the matching request time.
+- [ ] Watch for Namecheap's reply or a live-site recovery, then respond with any requested non-secret diagnostics.
+- [ ] Review and approve the written Vercel cutover specification, then create the implementation plan.
+- [ ] After host recovery, verify `/`, `/api/health`, `/api/pharm-quiz/health`, and `/pharmacology-quiz` at the public URL.
+
+## Facts a fresh session needs
+
+- Repository: `/Users/ephantusmacharia/Websites/Active Projects/sleek-academia-render`
+- Production: `https://sleekacademia.com`
+- Origin IP: `198.54.115.224`; SSH port `21098`; account `sleenegb`; key `~/.ssh/sleekacademia`
+- Live directory: `/home/sleenegb/public_html/sleekacademianewsite`
+- Current Passenger PID at last check: `2911555`
+- Passenger socket: `/usr/local/lsws/extapp-sock/APVH_sleekacademia.com:81:_.sock`
+- Direct Node boot with the production binary and environment returns a clean health response; the failure is specific to Passenger/LiteSpeed handling.
+- Emergency recovery design: Git-connected Vercel preview, verified promotion to production, then change only Cloudflare apex and `www` web records.
+- Vercel compatibility decision: keep the root Express server, disable cPanel shell deployment on Vercel, and temporarily cap base64 JSON uploads at 3 MB because Vercel's payload limit is 4.5 MB.
+- Three restart-style interventions have already failed: SSH kill/re-spawn, cPanel Restart, and cPanel Stop/Start. Do not repeat without new evidence.
+- Never record secret values in this file or chat; use `/Users/ephantusmacharia/Obsidian/Secret Stash/08 - Credentials & Keys`.
+
+---
+
+# Previous checkpoint — Sleek Academia Platform Redesign
 
 Goal: Rebuild the public site and authenticated client workspace, then verify the completed platform live on Namecheap.
 
