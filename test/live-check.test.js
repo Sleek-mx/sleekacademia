@@ -61,6 +61,14 @@ test("live SEO checker accepts a conforming site", async () => {
   });
 });
 
+test("live SEO checker accepts both standards-compliant permanent redirect codes", async () => {
+  const { isPermanentRedirectStatus } = await import("../scripts/check-live-seo.mjs");
+  assert.equal(isPermanentRedirectStatus(301), true);
+  assert.equal(isPermanentRedirectStatus(308), true);
+  assert.equal(isPermanentRedirectStatus(302), false);
+  assert.equal(isPermanentRedirectStatus(307), false);
+});
+
 test("live SEO checker identifies a missing homepage canonical", async () => {
   const { checkSite } = await import("../scripts/check-live-seo.mjs");
   await withFixture({ includeCanonical: false }, async (baseUrl) => {

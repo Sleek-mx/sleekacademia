@@ -14,6 +14,10 @@ function expectedRedirectUrl(baseUrl, destination) {
   return new URL(destination, `${baseUrl}/`).href;
 }
 
+export function isPermanentRedirectStatus(status) {
+  return status === 301 || status === 308;
+}
+
 export async function checkSite(inputBaseUrl = "https://sleekacademia.com") {
   const baseUrl = inputBaseUrl.replace(/\/$/, "");
   const origin = new URL(baseUrl).origin;
@@ -88,7 +92,10 @@ export async function checkSite(inputBaseUrl = "https://sleekacademia.com") {
     for (const variant of ["http://sleekacademia.com", "https://www.sleekacademia.com"]) {
       const { response } = await request(variant, { redirect: "manual" });
       checkedUrls += 1;
-      assert.equal(response.status, 301, `${variant} must return HTTP 301`);
+      assert.ok(
+        isPermanentRedirectStatus(response.status),
+        `${variant} must return a permanent HTTP redirect (301 or 308)`,
+      );
       assert.equal(
         new URL(response.headers.get("location"), variant).href,
         "https://sleekacademia.com/",
