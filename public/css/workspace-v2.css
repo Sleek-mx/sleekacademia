@@ -212,3 +212,41 @@ body.ws-body { margin: 0; min-height: 100vh; background: var(--ws-paper); color:
 @media (prefers-reduced-motion: reduce) {
   *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; }
 }
+
+/* onboard.html only: align the wizard with the site's public neumorphic theme
+   (public-neumorphic.css), so Get Started doesn't read as a different app. */
+.page-onboard.ws-body { background: radial-gradient(circle at 8% 8%, rgba(157, 107, 255, 0.12), transparent 24rem), radial-gradient(circle at 92% 32%, rgba(112, 42, 225, 0.08), transparent 28rem), var(--public-neu-surface); color: var(--public-neu-text); }
+.page-onboard .wizard-aside { background: radial-gradient(circle at 82% 18%, rgba(157, 107, 255, 0.3), transparent 13rem), linear-gradient(135deg, #2b1354, #4d1fb0 70%, #6f3ff5); box-shadow: var(--public-neu-raised); }
+.page-onboard .wizard-panel,
+.page-onboard .service-choice,
+.page-onboard .upload-zone,
+.page-onboard .wizard-status,
+.page-onboard .ws-button {
+  border-color: transparent;
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-raised-small);
+}
+.page-onboard .wizard-panel { box-shadow: var(--public-neu-raised); }
+.page-onboard .wizard-panel h2, .page-onboard .wizard-panel p, .page-onboard .form-field label, .page-onboard .form-label { color: var(--public-neu-text); }
+.page-onboard .wizard-step > p, .page-onboard .form-hint, .page-onboard .service-choice span { color: var(--public-neu-muted); }
+.page-onboard .service-choice:hover,
+.page-onboard .service-choice[aria-pressed="true"] { border-color: transparent; background: var(--public-neu-surface); box-shadow: var(--public-neu-pressed); }
+.page-onboard .service-icon { color: #fff; background: linear-gradient(135deg, var(--public-neu-brand), var(--public-neu-brand-light)) !important; box-shadow: var(--public-neu-pressed); }
+.page-onboard .form-field input,
+.page-onboard .form-field select,
+.page-onboard .form-field textarea { border-color: transparent; background: var(--public-neu-surface); color: var(--public-neu-text); box-shadow: var(--public-neu-pressed); }
+.page-onboard .form-field input:focus,
+.page-onboard .form-field select:focus,
+.page-onboard .form-field textarea:focus { border-color: transparent; box-shadow: var(--public-neu-pressed), 0 0 0 3px rgba(112, 42, 225, 0.2); }
+.page-onboard .upload-zone { border: 1px dashed rgba(112, 42, 225, 0.35); }
+.page-onboard .wizard-progress span { background: rgba(112, 42, 225, 0.15); }
+.page-onboard .wizard-progress span.is-active { background: linear-gradient(90deg, var(--public-neu-brand), var(--public-neu-brand-light)); }
+.page-onboard .ws-kicker { color: var(--platform-violet-dark); }
+.page-onboard .ws-kicker::before { background: linear-gradient(90deg, var(--public-neu-brand), var(--public-neu-brand-light)); }
+.page-onboard .ws-button:hover { color: var(--public-neu-brand); box-shadow: var(--public-neu-raised); }
+.page-onboard .ws-button:active { box-shadow: var(--public-neu-pressed); }
+.page-onboard .ws-button.primary { border: 2px solid rgba(255, 255, 255, 0.88); color: #fff !important; background: linear-gradient(135deg, var(--public-neu-brand), var(--public-neu-brand-light)); box-shadow: var(--public-neu-cta); }
+.page-onboard .ws-button.primary:hover { background: linear-gradient(135deg, #6222cf, #8f5af0); }
+.page-onboard .wizard-status { color: var(--public-neu-muted); }
+.page-onboard .review-row { border-color: var(--public-neu-line); }
+.page-onboard .review-row span { color: var(--public-neu-muted); }
