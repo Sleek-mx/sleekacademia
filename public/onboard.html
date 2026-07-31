@@ -12,17 +12,22 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/brand-v2.css">
   <link rel="stylesheet" href="/css/workspace-v2.css">
+  <link rel="stylesheet" href="/css/social.css?v=20260725" />
+  <link rel="stylesheet" href="/css/liquid-nav.css?v=20260725" />
 </head>
 <body class="ws-body">
-  <header class="ws-topbar">
-    <div class="ws-shell ws-topbar-inner">
-      <a class="ws-logo" href="/"><img src="/images/brand/sleek-academia-logo.webp" alt="Sleek Academia"></a>
-      <nav class="ws-topbar-links" aria-label="Order navigation"><a href="/about.html">About</a><a href="/blog.html">Blog</a><a href="/store.html">Store</a><a class="ws-button" href="/login.html">Login</a></nav>
-    </div>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header site-shell">
+    <nav class="site-nav" aria-label="Primary navigation">
+      <a class="brand-lockup" href="/" aria-label="Sleek Academia home"><img class="brand-lockup__mark" src="/images/brand/sleek-academia-mark.webp" width="591" height="591" alt=""><span class="brand-lockup__copy"><span class="brand-lockup__name">Sleek Academia</span><span class="brand-lockup__tagline">Pass. Guaranteed.</span></span></a>
+      <div class="nav-links" id="primary-links"><a class="nav-link" href="/">Home</a><a class="nav-link" href="/about.html">About Us</a><a class="nav-link" href="/blog.html">Blog</a><a class="nav-link" href="/store.html">Store</a></div>
+      <div class="nav-actions"><a class="nav-login" href="/login.html">Log in</a><a class="button button--primary" href="/onboard.html" aria-current="page">Get Started <span class="button__arrow" aria-hidden="true">→</span></a><button class="menu-button" type="button" aria-controls="primary-links" aria-expanded="false" aria-label="Open navigation menu"><span></span></button></div>
+    </nav>
   </header>
 
-  <main class="ws-shell wizard-layout">
+  <main id="main-content" class="ws-shell wizard-layout">
     <aside class="wizard-aside">
       <span class="ws-kicker" style="color:#d9cbff">Start with context</span>
       <h1>Tell us what is on your desk.</h1>
@@ -118,6 +123,8 @@
       </form>
     </section>
   </main>
+  <script src="/js/platform-motion.js" defer></script>
+  <script src="/js/liquid-nav.js?v=20260725" defer></script>
   <script src="/js/onboard.js" defer></script>
 </body>
 </html>
