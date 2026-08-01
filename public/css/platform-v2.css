@@ -43,7 +43,9 @@ body.platform-page::before {
 .platform-page h4 { margin-top: 0; font-family: "Outfit", system-ui, sans-serif; }
 .platform-page a:not(.platform-button):not(.button) { color: inherit; }
 .platform-page img { display: block; max-width: 100%; }
-.platform-shell { width: min(1180px, calc(100% - 40px)); margin-inline: auto; }
+/* Stays 1180px up to ~1640px viewports, then grows with the screen so wide
+   displays don't leave the page stranded in a narrow centre column. */
+.platform-shell { width: min(clamp(1180px, 72vw, 1620px), calc(100% - 40px)); margin-inline: auto; }
 .platform-button {
   display: inline-flex;
   min-height: 44px;
@@ -158,7 +160,8 @@ body.platform-page::before {
   .platform-footer-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 620px) {
-  .platform-shell { width: min(100% - 28px, 1180px); }
+  /* 20px gutter, same as the header shell, so nav and content edges align. */
+  .platform-shell { width: min(100% - 40px, 1180px); }
   .platform-hero { padding: 34px 0 56px; }
   .platform-hero-grid { gap: 32px; }
   .platform-display { margin-bottom: 22px; font-size: clamp(3rem, 12vw, 3.8rem); line-height: 1.04; letter-spacing: -0.035em; }

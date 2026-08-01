@@ -21,7 +21,10 @@
   --radius-xl: 2.6rem;
   --shadow-soft: 0 1.2rem 3.2rem rgba(26, 48, 79, 0.1);
   --shadow-card: 0 0.8rem 2.2rem rgba(26, 48, 79, 0.08);
-  --container: 92rem;
+  /* Grows with the viewport on large displays instead of stopping at a fixed
+     centre column. Below ~110rem wide it resolves to 92rem, so laptops and
+     tablets keep the exact layout they had before. */
+  --container: clamp(92rem, 84vw, 124rem);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -1147,8 +1150,10 @@ a {
 }
 
 @media (max-width: 42rem) {
+  /* One 20px gutter for the whole page: the shell owns it, sections and the
+     footer stop adding their own so every edge lines up. */
   .site-shell {
-    width: min(calc(100% - 1rem), var(--container));
+    width: min(calc(100% - 2.5rem), var(--container));
   }
 
   .site-header {
@@ -1188,34 +1193,57 @@ a {
 
   .hero {
     min-height: auto;
-    gap: 2.25rem;
-    padding-top: 1.75rem;
-    padding-bottom: 3.75rem;
+    gap: 1.9rem;
+    padding-top: 1.4rem;
+    padding-bottom: 3rem;
+    padding-inline: 0;
   }
 
+  .eyebrow {
+    margin-bottom: 0.9rem;
+    gap: 0.5rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+  }
+
+  .eyebrow::before {
+    width: 1.7rem;
+  }
+
+  /* Was 13vw: the headline alone filled a whole phone screen and pushed the
+     lead copy and both CTAs below the fold. */
   .hero h1 {
-    font-size: clamp(3rem, 13vw, 4rem);
-    line-height: 0.96;
-    letter-spacing: -0.045em;
+    font-size: clamp(2.4rem, 10.2vw, 3.35rem);
+    line-height: 1;
+    letter-spacing: -0.042em;
     overflow-wrap: anywhere;
   }
 
   .hero__lead {
-    font-size: 0.98rem;
+    margin-top: 1.15rem;
+    font-size: 1rem;
+    line-height: 1.65;
   }
 
   .hero__actions {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0.8rem;
+    gap: 0.7rem;
+    margin-top: 1.6rem;
   }
 
   .button--large {
     width: 100%;
+    min-height: 3.6rem;
+    font-size: 0.98rem;
+  }
+
+  .hero__trust {
+    margin-top: 1.5rem;
   }
 
   .hero__visual {
-    margin-top: 1.25rem;
+    margin-top: 0.5rem;
   }
 
   .hero__media {
@@ -1223,29 +1251,82 @@ a {
   }
 
   .section {
-    padding: 5rem 0.35rem;
+    padding: 3.9rem 0;
+  }
+
+  .section-heading {
+    gap: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  .section-kicker {
+    margin-bottom: 0.6rem;
+    font-size: 0.68rem;
   }
 
   .section-title,
   .proof-statement .section-title,
   .final-cta h2 {
-    font-size: clamp(2.65rem, 12vw, 3.7rem);
+    font-size: clamp(2.05rem, 8.8vw, 2.85rem);
+    line-height: 1.04;
+  }
+
+  .section-intro {
+    font-size: 0.97rem;
+    line-height: 1.7;
+  }
+
+  .service-layout {
+    gap: 0.9rem;
   }
 
   .service-feature {
-    min-height: 27rem;
-    padding: 1.55rem;
+    min-height: 21rem;
+    padding: 1.5rem 1.5rem 4.5rem;
+  }
+
+  .service-feature__icon {
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 1.05rem;
+    font-size: 1.4rem;
   }
 
   .service-feature h3 {
-    margin-top: 5rem;
+    margin-top: 3.25rem;
+    font-size: 2.05rem;
+  }
+
+  .service-feature::after {
+    right: -1.5rem;
+    bottom: -4.5rem;
+    font-size: 15rem;
+  }
+
+  .service-feature a {
+    bottom: 1.7rem;
+  }
+
+  .service-list {
+    gap: 0.9rem;
   }
 
   .service-row {
     grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.85rem;
-    min-height: 9rem;
-    padding: 1.15rem;
+    gap: 0.9rem;
+    min-height: 0;
+    padding: 1.15rem 1.2rem;
+  }
+
+  .service-row__icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 1rem;
+    font-size: 1.15rem;
+  }
+
+  .service-row h3 {
+    font-size: 1.22rem;
   }
 
   .service-row__arrow {
@@ -1254,11 +1335,42 @@ a {
 
   .assurance {
     grid-template-columns: auto 1fr;
-    padding: 1rem;
+    gap: 0.9rem 1rem;
+    padding: 1.15rem;
+  }
+
+  .assurance__icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.9rem;
+    font-size: 1.15rem;
   }
 
   .assurance a {
     grid-column: 2;
+  }
+
+  .process-grid {
+    gap: 0.9rem;
+  }
+
+  .process-step {
+    min-height: 0;
+    padding: 1.5rem 1.5rem 1.75rem;
+  }
+
+  .process-step h3 {
+    margin-top: 2.6rem;
+    font-size: 1.7rem;
+  }
+
+  .process-step p {
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .program {
+    padding: 1.35rem 1.4rem;
   }
 
   .program-strip,
@@ -1278,8 +1390,14 @@ a {
   }
 
   .final-cta {
-    padding: 2.2rem 1.45rem;
+    gap: 1.5rem;
+    padding: 2rem 1.5rem 2.2rem;
     border-radius: var(--radius-lg);
+  }
+
+  .final-cta p {
+    margin-top: 0.9rem;
+    font-size: 0.97rem;
   }
 
   .final-cta .button {
@@ -1287,11 +1405,12 @@ a {
   }
 
   .site-footer {
-    padding-inline: 0.75rem;
+    padding: 3.5rem 0 1.5rem;
   }
 
   .footer-main {
-    gap: 2.4rem;
+    gap: 2.1rem;
+    padding-bottom: 2.4rem;
   }
 
   .footer-base {

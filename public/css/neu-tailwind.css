@@ -171,3 +171,12 @@ body.bg-slate-950 .text-white { color: var(--txt) !important; }
 body.bg-slate-950 .text-slate-400 { color: var(--muted) !important; }
 
 /* ---------- reduced motion already covered by neumorphism.css ---------- */
+
+/* ---------- wide displays ----------
+   Tailwind caps .max-w-7xl at 80rem, which strands the page nav and footer in
+   a narrow centre column on large monitors. Above ~1640px they track the rest
+   of the site (72vw, 1620px ceiling). Reading columns (max-w-3xl) are left
+   alone on purpose. */
+@media (min-width: 1640px) {
+  .max-w-7xl { max-width: min(72vw, 1620px); }
+}
