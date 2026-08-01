@@ -33,6 +33,7 @@ import {
   jsonBodyLimit,
 } from "./src/platform/runtime.js";
 import { createPlatformStore, isLoopbackHostname } from "./src/platform/store.js";
+import { createChatRouter } from "./src/chat/router.js";
 import { createQuizRouter } from "./src/quiz/router.js";
 import { antimicrobialQuiz, renalCardiacQuiz, pharmacologyQuiz } from "./src/quiz/quizzes.js";
 
@@ -255,6 +256,10 @@ app.get("/api/health", (_req, res) => {
 //
 // `/api/quiz` is the antimicrobial quiz's original path and must not change —
 // returning learners' browsers call it, and unlocks have been sold against it.
+// Site chatbot. Mounted before the static handler for the same reason as the quizzes. It only
+// claims GET /health and POST /, so /api/chat/send-summary still falls through to its own route.
+app.use("/api/chat", rateLimiters.platform, createChatRouter());
+
 app.use("/api/quiz", rateLimiters.platform, createQuizRouter(antimicrobialQuiz));
 app.use("/api/patho-quiz", rateLimiters.platform, createQuizRouter(renalCardiacQuiz));
 app.use("/api/pharm-quiz", rateLimiters.platform, createQuizRouter(pharmacologyQuiz));

@@ -14,6 +14,15 @@
       "runtimeArgs": ["server.js"],
       "port": 3200,
       "autoPort": true
+    },
+    {
+      "name": "sleek-academia-chat",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        "PORT=3210 ALLOWED_ORIGINS=https://sleekacademia.com,http://localhost:3210,http://127.0.0.1:3210 node server.js"
+      ],
+      "port": 3210
     }
   ]
 }
