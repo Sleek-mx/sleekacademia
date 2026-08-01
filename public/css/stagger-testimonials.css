@@ -1,0 +1,191 @@
+/* Sleek Academia — stagger testimonial deck.
+   Progressive enhancement layer: without JS the quote wall stays a grid.
+   Visual language follows public-neumorphic.css (soft purple UI). */
+
+.quote-wall.is-stagger {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  height: var(--stagger-height, 30rem);
+  padding: 0;
+  margin: 0;
+  touch-action: pan-y;
+  /* Soften the hard clip where side cards leave the frame. */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%);
+}
+
+.quote-wall.is-stagger .testimonial {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 1.6rem 1.7rem 1.7rem;
+  border: 0;
+  border-radius: var(--radius-lg);
+  color: var(--public-neu-text);
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-raised);
+  backdrop-filter: none;
+  cursor: pointer;
+  opacity: 1;
+  transform: translate(-50%, -50%);
+  transition:
+    transform 0.5s var(--ease),
+    box-shadow 0.5s var(--ease),
+    background 0.5s var(--ease),
+    color 0.5s var(--ease);
+  will-change: transform;
+}
+
+.quote-wall.is-stagger .testimonial:nth-child(2),
+.quote-wall.is-stagger .testimonial:nth-child(4) {
+  transform: translate(-50%, -50%);
+}
+
+.quote-wall.is-stagger .testimonial:not(.is-center):hover {
+  box-shadow: var(--public-neu-raised-hover);
+}
+
+/* Centre card — brand gradient, lifted. */
+.quote-wall.is-stagger .testimonial.is-center {
+  z-index: 3;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--public-neu-brand), var(--public-neu-brand-light));
+  box-shadow:
+    14px 14px 34px rgba(112, 42, 225, 0.32),
+    -12px -12px 28px #ffffff,
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  cursor: default;
+}
+
+.quote-wall.is-stagger .testimonial__stars {
+  color: var(--public-neu-brand);
+  font-size: 0.95rem;
+}
+
+.quote-wall.is-stagger .testimonial.is-center .testimonial__stars {
+  color: var(--yellow, #ffd51a);
+}
+
+.quote-wall.is-stagger .testimonial blockquote {
+  flex: 1;
+  margin: 1.4rem 0 1.5rem;
+  color: var(--public-neu-muted);
+  font-size: 1.02rem;
+  line-height: 1.7;
+}
+
+.quote-wall.is-stagger .testimonial.is-center blockquote {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* .testimonial__person span sets display:block site-wide, which flattens the
+   avatar; restore the centred badge here. */
+.quote-wall.is-stagger .testimonial__person span.testimonial__avatar {
+  display: grid;
+  width: 2.65rem;
+  height: 2.65rem;
+  margin: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 0.9rem;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 900;
+  box-shadow: var(--public-neu-raised-small);
+}
+
+.quote-wall.is-stagger .testimonial.is-center .testimonial__person span.testimonial__avatar {
+  color: var(--public-neu-brand);
+  background: #ffffff !important;
+  box-shadow: 0 0.4rem 1rem rgba(40, 12, 88, 0.28);
+}
+
+.quote-wall.is-stagger .testimonial.is-center .testimonial__person strong {
+  color: #ffffff;
+}
+
+.quote-wall.is-stagger .testimonial.is-center .testimonial__person span {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* Controls */
+.stagger-controls {
+  position: absolute;
+  left: 50%;
+  bottom: 0.35rem;
+  z-index: 5;
+  display: flex;
+  gap: 0.75rem;
+  transform: translateX(-50%);
+}
+
+.stagger-controls button {
+  display: grid;
+  width: 3.1rem;
+  height: 3.1rem;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: var(--public-neu-brand);
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-raised-small);
+  cursor: pointer;
+  transition:
+    box-shadow 0.25s var(--ease),
+    color 0.25s var(--ease),
+    background 0.25s var(--ease),
+    transform 0.25s var(--ease);
+}
+
+.stagger-controls button:hover {
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--public-neu-brand), var(--public-neu-brand-light));
+  transform: translateY(-2px);
+}
+
+.stagger-controls button:active {
+  box-shadow: var(--public-neu-pressed);
+  transform: translateY(0);
+}
+
+.stagger-controls button:focus-visible {
+  outline: 2px solid var(--public-neu-brand);
+  outline-offset: 3px;
+}
+
+.stagger-controls svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (max-width: 720px) {
+  .quote-wall.is-stagger {
+    height: var(--stagger-height, 27rem);
+  }
+
+  .quote-wall.is-stagger .testimonial {
+    padding: 1.35rem 1.4rem 1.5rem;
+  }
+
+  .quote-wall.is-stagger .testimonial blockquote {
+    margin: 1.1rem 0 1.2rem;
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quote-wall.is-stagger .testimonial {
+    transition: none;
+  }
+}
