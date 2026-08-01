@@ -36,8 +36,24 @@ WhatsApp/email. Launcher is the brand mark, fixed bottom-right, animated, never 
 - [x] Local browser verification — launcher pinned, panel opens, live model answers, no console
       errors, mobile sheet correct, session persistence works.
 
+- [x] Phase 6 — commit `a067bc2`, pushed to `Sleek-mx/sleekacademia` main, Vercel rebuilt.
+      Verified live: `/api/chat/health` `ok:true configured:true`, `/css/chat-widget.css` and
+      `/js/chat-widget.js` both 200, homepage carries the include, `/antimicrobial-quiz` does not,
+      the launcher and panel render on sleekacademia.com, a live pricing question returns the real
+      rates, a quiz-answer question is refused by the guard, and the browser console is clean.
+
 ## Next
-- [ ] Phase 6: commit, push to `Sleek-mx/sleekacademia` main, wait for Vercel, verify the live URL.
+- [ ] Nothing outstanding. Future changes: edit `src/chat/kb/*.md`, bump `WIDGET_VERSION` in
+      `scripts/inject-chat-widget.mjs` and `VERSION` in `public/js/chat-widget.js` together, run
+      `node scripts/inject-chat-widget.mjs`, then `npm test`.
+
+## Shared-worktree note (2026-08-01)
+Another session was mid-build on a "stagger testimonials" homepage feature in this same working
+tree (`public/css/brand-v2.css`, `neumorphism.css`, `platform-v2.css`, `public/index.html`).
+Commit `a067bc2` deliberately excludes all of it — `public/index.html` was staged as HEAD plus the
+widget include only, via `git hash-object` + `git update-index`, so their uncommitted work stayed in
+the worktree and never reached production. Their staged/unstaged split was reset in the process;
+their file contents were not touched.
 
 ## Known, not mine
 `test/public-neumorphism.test.js` "workspace and dashboard pages remain isolated from the public
