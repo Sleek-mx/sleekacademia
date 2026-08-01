@@ -80,7 +80,16 @@ test("the system prompt carries the knowledge base and the handoff marker", () =
 
 test("the system prompt never reaches the browser bundle", () => {
   assert.ok(!/systemPrompt/i.test(widgetJs), "the client must not be able to set the system prompt");
-  assert.ok(!widgetJs.includes("You are Aria, the assistant on the Sleek Academia website"));
+  assert.ok(!widgetJs.includes("You are Sleekie, the assistant on the Sleek Academia website"));
+});
+
+test("the chatbot is branded Sleekie throughout its visitor-facing identity", () => {
+  assert.ok(widgetJs.includes("Hi, I'm Sleekie"));
+  assert.ok(widgetJs.includes("el('strong', null, 'Sleekie')"));
+  assert.ok(buildSystemPrompt().includes("You are Sleekie, the assistant"));
+  assert.ok(KNOWLEDGE_BASE.includes("Sleekie is a guide to the site"));
+  assert.ok(!widgetJs.includes("Aria"));
+  assert.ok(!buildSystemPrompt().includes("Aria"));
 });
 
 test("academic-work requests are refused before the model is called", () => {

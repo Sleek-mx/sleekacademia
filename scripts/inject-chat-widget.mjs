@@ -15,7 +15,7 @@ import { fileURLToPath } from "url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const publicDir = path.join(root, "public");
 
-export const WIDGET_VERSION = "20260801";
+export const WIDGET_VERSION = "20260802";
 export const EXCLUDED_PAGES = Object.freeze([
   "antimicrobial-quiz.html",
   "renal-cardiac-quiz.html",

@@ -1,4 +1,4 @@
-/* Sleek Academia — floating site assistant ("Aria").
+/* Sleek Academia — floating site assistant ("Sleekie").
  *
  * Loaded on every public page except the three paid quiz pages.
  *
@@ -12,14 +12,14 @@
 (function () {
   'use strict';
 
-  var VERSION = '20260801';
+  var VERSION = '20260802';
   var STORE_KEY = 'sleek.chat.v1';
   var WHATSAPP_NUMBER = '254742836835';
   var MARK = '/images/brand/sleek-academia-mark.webp';
   var MAX_TURNS = 12;
 
   var GREETING =
-    "Hi, I'm Aria — the assistant here at Sleek Academia. " +
+    "Hi, I'm Sleekie — the assistant here at Sleek Academia. " +
     'I can explain how our support works, what things cost, or take your details through to the team. ' +
     'What brings you in today?';
 
@@ -87,7 +87,7 @@
     avatar.appendChild(avatarImg);
 
     var headText = el('div', 'sa-head-text');
-    headText.appendChild(el('strong', null, 'Aria'));
+    headText.appendChild(el('strong', null, 'Sleekie'));
     var status = el('span');
     status.appendChild(el('i', 'sa-dot'));
     status.appendChild(document.createTextNode('Sleek Academia assistant'));
@@ -124,7 +124,7 @@
     var legal = el(
       'div',
       'sa-legal',
-      'Aria is an assistant and does not give academic, clinical or legal advice.'
+      'Sleekie is an assistant and does not give academic, clinical or legal advice.'
     );
 
     panel.appendChild(head);
@@ -352,23 +352,23 @@
   function transcript() {
     return history
       .map(function (message) {
-        return (message.role === 'user' ? 'Student' : 'Aria') + ': ' + message.content;
+        return (message.role === 'user' ? 'Student' : 'Sleekie') + ': ' + message.content;
       })
       .join('\n\n');
   }
 
   function summary() {
     var answers = history.filter(function (m) { return m.role === 'user'; });
-    var lastAria = '';
+    var lastSleekie = '';
     for (var i = history.length - 1; i >= 0; i--) {
-      if (history[i].role === 'assistant') { lastAria = history[i].content; break; }
+      if (history[i].role === 'assistant') { lastSleekie = history[i].content; break; }
     }
     var labels = ['Name', 'Field or exam', 'Timing', 'Needs'];
     var lines = labels.map(function (label, index) {
       return label + ': ' + (answers[index] ? answers[index].content.trim() : 'not given');
     });
     lines.push('Page: ' + window.location.pathname);
-    return lines.join('\n') + '\n\n' + lastAria + '\n\n--- Full conversation ---\n' + transcript();
+    return lines.join('\n') + '\n\n' + lastSleekie + '\n\n--- Full conversation ---\n' + transcript();
   }
 
   function enterHandoff() {
