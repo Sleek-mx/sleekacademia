@@ -80,9 +80,6 @@ body.platform-page::before {
 .platform-woman-poster { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; object-position: right center; }
 .platform-woman-video { position: absolute; inset: 0; z-index: 1; display: block; width: 100%; height: 100%; background: var(--platform-paper); object-fit: cover; object-position: right center; }
 .is-reduced-motion .platform-woman-video { visibility: hidden; }
-.platform-note { position: absolute; z-index: 2; max-width: 190px; padding: 14px 16px; border: 1px solid rgba(111, 63, 245, 0.13); border-radius: 13px; background: #fff; box-shadow: 0 16px 40px rgba(48, 28, 92, 0.13); font-size: 0.83rem; font-weight: 800; line-height: 1.45; letter-spacing: .005em; transform: rotate(-3deg); }
-.platform-note.one { top: 13%; left: 3%; }
-.platform-note.two { right: 3%; bottom: 15%; background: #f5ffdf; transform: rotate(4deg); }
 .platform-section { padding: 88px 0; }
 .platform-section.tint { border-block: 1px solid var(--platform-line); background: var(--platform-wash); }
 .platform-section-heading { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(300px, 0.55fr); align-items: end; gap: 48px; margin-bottom: 42px; }
@@ -154,8 +151,6 @@ body.platform-page::before {
   .platform-art-card { min-height: 0; aspect-ratio: 4 / 3; }
   .platform-story-panel.visual { min-height: 380px; }
   .platform-story-media { min-height: 0; aspect-ratio: 4 / 3; }
-  .platform-note.one { left: 2%; }
-  .platform-note.two { right: 2%; }
   .platform-grid, .blog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .platform-footer-grid { grid-template-columns: repeat(2, 1fr); }
 }
@@ -168,9 +163,6 @@ body.platform-page::before {
   .platform-lede { font-size: 1rem; line-height: 1.72; }
   .platform-hero-actions { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 26px; }
   .platform-button { width: 100%; }
-  .platform-note { max-width: 145px; padding: 10px 12px; font-size: .72rem; line-height: 1.38; }
-  .platform-note.one { top: 7%; left: 3%; }
-  .platform-note.two { right: 3%; bottom: 8%; }
   .platform-grid, .blog-grid { grid-template-columns: 1fr; }
   .platform-section { padding: 66px 0; }
   .platform-story-panel, .platform-cta, .store-feature { padding: 26px; }

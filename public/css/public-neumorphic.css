@@ -5,16 +5,17 @@
   --public-neu-surface: #e7e4f1;
   --public-neu-shadow: #c3bdd8;
   --public-neu-highlight: #ffffff;
-  --public-neu-text: #372f52;
-  --public-neu-muted: #6b6488;
-  --public-neu-brand: #702ae1;
-  --public-neu-brand-light: #9d6bff;
-  --public-neu-line: rgba(107, 100, 136, 0.18);
+  --public-neu-text: #1b1f24;
+  --public-neu-muted: #5c6d7d;
+  --public-neu-brand: #009fe3;
+  --public-neu-brand-light: #e33393;
+  --public-neu-yellow: var(--public-neu-brand-light);
+  --public-neu-line: rgba(92, 109, 125, 0.18);
   --public-neu-raised: 10px 10px 24px #c3bdd8, -10px -10px 24px #ffffff;
   --public-neu-raised-small: 6px 6px 14px #c3bdd8, -6px -6px 14px #ffffff;
   --public-neu-raised-hover: 15px 15px 32px #c3bdd8, -14px -14px 30px #ffffff;
   --public-neu-pressed: inset 6px 6px 12px #c3bdd8, inset -6px -6px 12px #ffffff;
-  --public-neu-cta: 8px 8px 20px rgba(112, 42, 225, 0.34), -8px -8px 18px #ffffff, inset 0 1px 0 rgba(255, 255, 255, 0.38);
+  --public-neu-cta: 8px 8px 20px rgba(0, 159, 227, 0.30), -8px -8px 18px #ffffff, inset 0 1px 0 rgba(255, 255, 255, 0.38);
 
   --ink: var(--public-neu-text);
   --body: var(--public-neu-muted);
@@ -33,7 +34,7 @@
   --platform-paper: var(--public-neu-surface);
   --platform-wash: var(--public-neu-surface);
   --platform-violet: var(--public-neu-brand);
-  --platform-violet-dark: #5a1fc2;
+  --platform-violet-dark: #007ab8;
   --platform-cyan: var(--public-neu-brand-light);
   --platform-line: var(--public-neu-line);
   --platform-shadow: var(--public-neu-raised);
@@ -49,15 +50,15 @@ body.platform-page {
 
 body {
   background:
-    radial-gradient(circle at 8% 8%, rgba(157, 107, 255, 0.12), transparent 24rem),
-    radial-gradient(circle at 92% 32%, rgba(112, 42, 225, 0.08), transparent 28rem),
+    radial-gradient(circle at 8% 8%, rgba(0, 159, 227, 0.12), transparent 24rem),
+    radial-gradient(circle at 92% 32%, rgba(227, 51, 147, 0.08), transparent 28rem),
     var(--public-neu-surface);
 }
 
 body.platform-page::before {
   background:
-    radial-gradient(circle at 10% 8%, rgba(157, 107, 255, 0.12), transparent 28rem),
-    radial-gradient(circle at 90% 30%, rgba(112, 42, 225, 0.08), transparent 26rem);
+    radial-gradient(circle at 10% 8%, rgba(0, 159, 227, 0.12), transparent 28rem),
+    radial-gradient(circle at 90% 30%, rgba(227, 51, 147, 0.08), transparent 26rem);
 }
 
 :focus-visible {
@@ -127,7 +128,7 @@ body.platform-page::before {
 .platform-page .store-button--primary {
   border: 2px solid rgba(255, 255, 255, 0.88);
   color: #ffffff !important;
-  background: linear-gradient(135deg, var(--public-neu-brand), var(--public-neu-brand-light));
+  background: var(--public-neu-brand);
   box-shadow: var(--public-neu-cta);
 }
 
@@ -135,8 +136,8 @@ body.platform-page::before {
 .platform-page .platform-button.primary:hover,
 .platform-page .store-button--primary:hover {
   color: #ffffff !important;
-  background: linear-gradient(135deg, #6222cf, #8f5af0);
-  box-shadow: 12px 12px 28px rgba(112, 42, 225, 0.42), -8px -8px 18px #ffffff, inset 0 1px 0 rgba(255, 255, 255, 0.48);
+  background: #007ab8;
+  box-shadow: 12px 12px 28px rgba(0, 159, 227, 0.34), -8px -8px 18px #ffffff, inset 0 1px 0 rgba(255, 255, 255, 0.48);
 }
 
 .button--secondary,
@@ -167,16 +168,35 @@ body.platform-page::before {
   color: var(--public-neu-brand);
 }
 
+.hero h1 .text-magenta {
+  color: var(--public-neu-brand-light);
+}
+
+.hero h1 .text-magenta-faded {
+  color: rgba(227, 51, 147, 0.58);
+}
+
+.hero h1 .text-blue {
+  text-decoration: underline;
+  text-decoration-color: var(--public-neu-brand-light);
+  text-decoration-thickness: 0.1em;
+  text-underline-offset: 0.08em;
+}
+
+.button__arrow {
+  color: #ffffff;
+}
+
 .text-green {
   color: var(--public-neu-brand-light);
 }
 
 .platform-display .accent::after {
-  background: rgba(157, 107, 255, 0.42);
+  background: rgba(227, 51, 147, 0.32);
 }
 
 .hero::before {
-  border-color: rgba(112, 42, 225, 0.13);
+  border-color: rgba(7, 143, 236, 0.13);
 }
 
 .hero__media,
@@ -189,17 +209,6 @@ body.platform-page::before {
 
 .hero__video,
 .platform-woman-video {
-  background: var(--public-neu-surface);
-}
-
-.platform-note {
-  border-color: transparent;
-  color: var(--public-neu-text);
-  background: var(--public-neu-surface);
-  box-shadow: var(--public-neu-raised-small);
-}
-
-.platform-note.two {
   background: var(--public-neu-surface);
 }
 
@@ -233,12 +242,12 @@ body.platform-page::before {
 
 .service-feature {
   background:
-    radial-gradient(circle at 82% 18%, rgba(157, 107, 255, 0.16), transparent 13rem),
+    radial-gradient(circle at 82% 18%, rgba(227, 51, 147, 0.12), transparent 13rem),
     var(--public-neu-surface);
 }
 
 .service-feature::after {
-  color: rgba(112, 42, 225, 0.07);
+  color: rgba(7, 143, 236, 0.07);
 }
 
 .service-feature__icon,
@@ -250,9 +259,13 @@ body.platform-page::before {
 .trust-dot {
   border-color: var(--public-neu-surface);
   color: #ffffff;
-  background: linear-gradient(135deg, var(--public-neu-brand), var(--public-neu-brand-light)) !important;
+  background: var(--public-neu-brand) !important;
   box-shadow: var(--public-neu-pressed);
 }
+
+.trust-dot:nth-child(1),
+.trust-dot:nth-child(3) { background: var(--public-neu-brand) !important; }
+.trust-dot:nth-child(2) { background: var(--public-neu-brand-light) !important; }
 
 .service-feature p,
 .service-row p,
@@ -297,7 +310,7 @@ body.platform-page::before {
 
 .program__accent {
   background: var(--public-neu-brand) !important;
-  box-shadow: 0 0 0.9rem rgba(112, 42, 225, 0.42);
+  box-shadow: 0 0 0.9rem rgba(7, 143, 236, 0.34);
 }
 
 .testimonial__stars {
@@ -307,7 +320,7 @@ body.platform-page::before {
 .final-cta {
   color: var(--public-neu-text);
   background:
-    radial-gradient(circle at 85% 12%, rgba(157, 107, 255, 0.2), transparent 13rem),
+    radial-gradient(circle at 85% 12%, rgba(227, 51, 147, 0.12), transparent 13rem),
     var(--public-neu-surface);
   box-shadow: var(--public-neu-raised);
 }
@@ -318,7 +331,7 @@ body.platform-page::before {
 
 .final-cta .button {
   color: #ffffff;
-  background: linear-gradient(135deg, var(--public-neu-brand), var(--public-neu-brand-light));
+  background: var(--public-neu-brand);
   box-shadow: var(--public-neu-cta);
 }
 
@@ -333,7 +346,7 @@ body.platform-page::before {
 
 .platform-search:focus {
   border-color: transparent;
-  box-shadow: var(--public-neu-pressed), 0 0 0 3px rgba(112, 42, 225, 0.2);
+  box-shadow: var(--public-neu-pressed), 0 0 0 3px rgba(7, 143, 236, 0.2);
 }
 
 .blog-card-image,
@@ -350,7 +363,7 @@ body.platform-page::before {
 .store-feature {
   color: var(--public-neu-text);
   background:
-    radial-gradient(circle at 85% 15%, rgba(157, 107, 255, 0.18), transparent 14rem),
+    radial-gradient(circle at 85% 15%, rgba(227, 51, 147, 0.12), transparent 14rem),
     var(--public-neu-surface);
   box-shadow: var(--public-neu-raised);
 }

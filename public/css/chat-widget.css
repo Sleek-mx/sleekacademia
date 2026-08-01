@@ -1,7 +1,7 @@
 /* ============================================================
    Sleek Academia — floating chat widget ("Sleekie")
    Neumorphism, matching public-neumorphic.css / neumorphism.css:
-   surface #e7e4f1, shadows #c3bdd8 / #ffffff, accent #702ae1 -> #9d6bff.
+   surface #e7e4f1, shadows #c3bdd8 / #ffffff, accent #009FE3.
 
    Everything is scoped under #sa-chat-root and declares its own tokens,
    because the widget ships on four different stylesheets (public-neumorphic,
@@ -16,10 +16,10 @@
   --sa-surface: #e7e4f1;
   --sa-dark: #c3bdd8;
   --sa-light: #ffffff;
-  --sa-txt: #372f52;
-  --sa-muted: #6b6488;
-  --sa-brand: #702ae1;
-  --sa-brand2: #9d6bff;
+  --sa-txt: #1b1f24;
+  --sa-muted: #5c6d7d;
+  --sa-brand: #009fe3;
+  --sa-brand2: #009fe3;
   --sa-raised: 10px 10px 24px var(--sa-dark), -10px -10px 24px var(--sa-light);
   --sa-raised-sm: 6px 6px 14px var(--sa-dark), -6px -6px 14px var(--sa-light);
   --sa-pressed: inset 6px 6px 12px var(--sa-dark), inset -6px -6px 12px var(--sa-light);
@@ -75,7 +75,7 @@
 
 .sa-launcher:focus-visible {
   outline: none;
-  box-shadow: var(--sa-raised), 0 0 0 3px rgba(112, 42, 225, 0.4);
+  box-shadow: var(--sa-raised), 0 0 0 3px rgba(0, 159, 227, 0.4);
 }
 
 .sa-launcher img {
@@ -104,7 +104,7 @@
   position: absolute;
   inset: -4px;
   border-radius: 50%;
-  border: 2px solid rgba(112, 42, 225, 0.35);
+  border: 2px solid rgba(0, 159, 227, 0.35);
   opacity: 0;
   pointer-events: none;
   animation: sa-pulse 3.2s ease-out infinite;
@@ -120,7 +120,7 @@
   height: 12px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--sa-brand), var(--sa-brand2));
-  box-shadow: 0 0 0 3px var(--sa-surface), 0 0 12px rgba(112, 42, 225, 0.7);
+  box-shadow: 0 0 0 3px var(--sa-surface), 0 0 12px rgba(0, 159, 227, 0.7);
   transform: scale(0);
   transition: transform 0.4s var(--sa-spring);
 }
@@ -239,7 +239,7 @@
   height: 7px;
   border-radius: 50%;
   background: var(--sa-brand);
-  box-shadow: 0 0 9px rgba(112, 42, 225, 0.7);
+  box-shadow: 0 0 9px rgba(0, 159, 227, 0.7);
   animation: sa-blink 2.2s ease-in-out infinite;
 }
 
@@ -310,7 +310,7 @@
   border-bottom-right-radius: 7px;
   color: #fff;
   background: linear-gradient(135deg, var(--sa-brand), var(--sa-brand2));
-  box-shadow: 6px 6px 16px rgba(112, 42, 225, 0.32), -5px -5px 12px var(--sa-light);
+  box-shadow: 6px 6px 16px rgba(0, 159, 227, 0.32), -5px -5px 12px var(--sa-light);
 }
 
 .sa-msg-note {
@@ -387,7 +387,7 @@
 .sa-chip.sa-chip-primary {
   color: #fff;
   background: linear-gradient(135deg, var(--sa-brand), var(--sa-brand2));
-  box-shadow: 6px 6px 16px rgba(112, 42, 225, 0.34), -5px -5px 12px var(--sa-light);
+  box-shadow: 6px 6px 16px rgba(0, 159, 227, 0.34), -5px -5px 12px var(--sa-light);
 }
 
 .sa-chip.sa-chip-primary:hover { color: #fff; }
@@ -418,8 +418,8 @@
   transition: box-shadow 0.25s;
 }
 
-.sa-input::placeholder { color: #9a92b8; }
-.sa-input:focus { outline: none; box-shadow: var(--sa-pressed), 0 0 0 2px rgba(112, 42, 225, 0.28); }
+.sa-input::placeholder { color: #8090a0; }
+.sa-input:focus { outline: none; box-shadow: var(--sa-pressed), 0 0 0 2px rgba(0, 159, 227, 0.28); }
 .sa-input:disabled { opacity: 0.6; }
 
 .sa-send {
@@ -434,13 +434,13 @@
   cursor: pointer;
   color: #fff;
   background: linear-gradient(135deg, var(--sa-brand), var(--sa-brand2));
-  box-shadow: 6px 6px 16px rgba(112, 42, 225, 0.34), -5px -5px 12px var(--sa-light);
+  box-shadow: 6px 6px 16px rgba(0, 159, 227, 0.34), -5px -5px 12px var(--sa-light);
   transition: transform 0.25s var(--sa-spring), box-shadow 0.25s, opacity 0.25s;
 }
 
 .sa-send svg { width: 19px; height: 19px; fill: currentColor; }
 .sa-send:hover { transform: translateY(-2px) scale(1.05); }
-.sa-send:active { transform: scale(0.94); box-shadow: inset 5px 5px 12px rgba(60, 10, 140, 0.55); }
+.sa-send:active { transform: scale(0.94); box-shadow: inset 5px 5px 12px rgba(0, 110, 160, 0.55); }
 .sa-send:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
 .sa-legal {
