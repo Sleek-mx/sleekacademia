@@ -11,6 +11,8 @@
     "dev": "node --watch server.js",
     "test": "node --test test/*.test.js",
     "test:seo": "node --test test/seo-*.test.js",
+    "build:store": "node scripts/build-store-schema.mjs",
+    "check:store-schema": "node scripts/build-store-schema.mjs --check",
     "check:live-seo": "node scripts/check-live-seo.mjs",
     "check:security": "node scripts/check-security.mjs"
   },
