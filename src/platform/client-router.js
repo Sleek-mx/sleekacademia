@@ -2,6 +2,12 @@ import express from "express";
 
 import { canDownloadAttachment, deriveOrderQueues, getRevisionEligibility, validateRequestInput } from "./domain.js";
 import { asyncRoute, orderAccess, orderDetails, publicAttachment, text } from "./http-utils.js";
+import {
+  detachAlert,
+  notifyCheckoutStarted,
+  notifyOrderSubmitted,
+  notifyPaymentConfirmed,
+} from "./owner-alerts.js";
 import { getServerPaymentDue, recordVerifiedPayment } from "./payments.js";
 import { calculateOrderQuote } from "./pricing.js";
 import { isLoopbackHostname } from "./store.js";
@@ -57,6 +63,7 @@ export function createClientRouter({ paymentProvider = null, csrfService = null 
       pricingSnapshot: pricingSnapshot || null, currency: "usd",
     });
     await store.appendEvent({ requestId: order.id, actorId: identity.userId, type: "order.submitted", data: { status: order.status, service: order.service } });
+    detachAlert(notifyOrderSubmitted(order));
     return res.status(201).json({ order, request: order, duplicate: false });
   });
   aliases(router, "post", ["/orders/handoff", "/requests/handoff"], handoff);
@@ -157,7 +164,9 @@ export function createClientRouter({ paymentProvider = null, csrfService = null 
     if (!paymentProvider?.stripeAvailable) return res.status(503).json({ error: "Stripe is not configured." });
     const access = await clientOrderAccess(req); if (access.error) return res.status(404).json({ error: access.error });
     const due = getServerPaymentDue(access.order); if (!due.milestone || !due.amountCents) return res.status(409).json({ error: "This order has no payment due." });
-    return res.status(201).json(await paymentProvider.createStripeIntent({ request: access.order, due }));
+    const intent = await paymentProvider.createStripeIntent({ request: access.order, due });
+    detachAlert(notifyCheckoutStarted({ order: access.order, milestone: due.milestone, amountCents: due.amountCents, currency: due.currency, provider: "stripe" }));
+    return res.status(201).json(intent);
   });
   aliases(router, "post", ["/orders/:orderId/payments/stripe-intent", "/requests/:requestId/payments/stripe-intent"], stripeIntent);
 
@@ -165,7 +174,9 @@ export function createClientRouter({ paymentProvider = null, csrfService = null 
     if (!paymentProvider?.paypalAvailable) return res.status(503).json({ error: "PayPal is not configured." });
     const access = await clientOrderAccess(req); if (access.error) return res.status(404).json({ error: access.error });
     const due = getServerPaymentDue(access.order); if (!due.milestone || !due.amountCents) return res.status(409).json({ error: "This order has no payment due." });
-    return res.status(201).json(await paymentProvider.createPayPalOrder({ request: access.order, due }));
+    const paypal = await paymentProvider.createPayPalOrder({ request: access.order, due });
+    detachAlert(notifyCheckoutStarted({ order: access.order, milestone: due.milestone, amountCents: due.amountCents, currency: due.currency, provider: "paypal" }));
+    return res.status(201).json(paypal);
   });
   aliases(router, "post", ["/orders/:orderId/payments/paypal-order", "/requests/:requestId/payments/paypal-order"], paypalOrder);
 
@@ -176,7 +187,14 @@ export function createClientRouter({ paymentProvider = null, csrfService = null 
     const due = getServerPaymentDue(access.order); if (!due.milestone || !due.amountCents) return res.status(409).json({ error: "This order has no payment due." });
     const capture = await paymentProvider.capturePayPalOrder(orderId, { requestId: access.order.id, due });
     if (capture.requestId !== access.order.id) return res.status(409).json({ error: "PayPal order does not belong to this order." });
-    return res.json(await recordVerifiedPayment({ store: req.platformStore, request: access.order, provider: "paypal", providerTransactionId: capture.providerTransactionId, milestone: capture.milestone, amountCents: capture.amountCents }));
+    const result = await recordVerifiedPayment({ store: req.platformStore, request: access.order, provider: "paypal", providerTransactionId: capture.providerTransactionId, milestone: capture.milestone, amountCents: capture.amountCents });
+    if (!result.duplicate) {
+      detachAlert(notifyPaymentConfirmed({
+        order: access.order, provider: "paypal", milestone: capture.milestone,
+        amountCents: capture.amountCents, currency: due.currency, transactionId: capture.providerTransactionId,
+      }));
+    }
+    return res.json(result);
   });
   aliases(router, "post", ["/orders/:orderId/payments/paypal-capture", "/requests/:requestId/payments/paypal-capture"], paypalCapture);
 

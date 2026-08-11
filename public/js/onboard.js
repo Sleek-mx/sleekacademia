@@ -19,6 +19,7 @@
   const estimateValue = document.getElementById("order-estimate-value");
   let currentStep = 0;
   let authMounted = false;
+  let leadReported = false;
   let idempotencyKey = createIdempotencyKey();
 
   function createIdempotencyKey() {
@@ -248,6 +249,27 @@
     return payload.order;
   }
 
+  // Fire-and-forget: a failed ping must never block the wizard, so errors are
+  // swallowed and nothing is awaited.
+  function reportOrderStarted() {
+    if (leadReported) return;
+    leadReported = true;
+    const payload = JSON.stringify({
+      name: formValue("name"),
+      email: formValue("email"),
+      service: serviceLabel(selectedService()),
+      deadline: formValue("deadline"),
+      estimate: estimateText(),
+    });
+    fetch("/api/onboard-lead", {
+      method: "POST",
+      credentials: "same-origin",
+      keepalive: true,
+      headers: { "Content-Type": "application/json" },
+      body: payload,
+    }).catch(function () { /* the order matters, the alert does not */ });
+  }
+
   async function getCsrfToken() {
     const response = await fetch("/api/security/csrf", { credentials: "same-origin" });
     const payload = await response.json();
@@ -306,7 +328,14 @@
     document.querySelectorAll("[data-writing-unit]").forEach(function (field) { field.hidden = field.dataset.writingUnit !== writingUnit.value; });
     updateEstimate();
   });
-  nextButton.addEventListener("click", function () { if (validateStep(currentStep)) showStep(currentStep + 1); });
+  nextButton.addEventListener("click", function () {
+    if (!validateStep(currentStep)) return;
+    // Contact step just passed: tell the server a real person with a real email
+    // is mid-order. Everything after this point can be abandoned, and without
+    // this ping an abandoned order leaves no trace at all.
+    if (currentStep === 2) reportOrderStarted();
+    showStep(currentStep + 1);
+  });
   backButton.addEventListener("click", function () { showStep(currentStep - 1); });
   form.addEventListener("input", function () { updateEstimate(); if (currentStep === steps.length - 1) renderReview(persistPendingRequest()); });
 

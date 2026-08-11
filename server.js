@@ -24,6 +24,8 @@ import {
   createRateLimiters,
   createSecurityHeaders,
 } from "./src/platform/security.js";
+import { createClerkWebhookHandler } from "./src/platform/clerk-webhook.js";
+import { detachAlert, notifyAccountCreated, notifyOrderStarted } from "./src/platform/owner-alerts.js";
 import { createPlatformRouter } from "./src/platform/http.js";
 import { createPlatformIdentityResolver } from "./src/platform/identity.js";
 import { createPaymentProvider } from "./src/platform/payments.js";
@@ -84,6 +86,7 @@ const adminSessionService = adminPasswordHash && adminSessionSecret
       sessionSecret: adminSessionSecret,
     })
   : null;
+const clerkWebhookSigningSecret = process.env.CLERK_WEBHOOK_SIGNING_SECRET || "";
 const publishableKey = process.env.CLERK_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "";
 const clerkFrontendApi = process.env.CLERK_FRONTEND_API_URL || frontendApiFromPublishableKey(publishableKey);
 const scriptHashes = collectInlineScriptHashes(publicDir);
@@ -190,10 +193,17 @@ app.get("/deploy.php", (_req, res) => {
   res.status(404).send("Not found");
 });
 
+// Webhook bodies must survive parsing byte-for-byte: Stripe and Clerk both sign
+// the exact bytes they sent, so a re-serialised body fails verification.
+const RAW_BODY_PATHS = new Set([
+  "/api/platform/payments/stripe-webhook",
+  "/api/webhooks/clerk",
+]);
+
 app.use(express.json({
   limit: jsonBodyLimit(),
   verify: (req, _res, buffer) => {
-    if (req.originalUrl === "/api/platform/payments/stripe-webhook") req.rawBody = Buffer.from(buffer);
+    if (RAW_BODY_PATHS.has(req.originalUrl)) req.rawBody = Buffer.from(buffer);
   },
 }));
 const allowedOrigins = buildAllowedOrigins({
@@ -209,7 +219,7 @@ const allowedOrigins = buildAllowedOrigins({
 app.use(createOriginGuard({
   allowedOrigins,
   productionOrigin: "https://sleekacademia.com",
-  exemptPaths: ["/deploy.php", "/api/platform/payments/stripe-webhook"],
+  exemptPaths: ["/deploy.php", "/api/platform/payments/stripe-webhook", "/api/webhooks/clerk"],
 }));
 app.use("/api/admin-auth/login", rateLimiters.adminLogin);
 app.use("/api/admin-auth", createAdminAuthRouter({ service: adminSessionService }));
@@ -248,6 +258,32 @@ for (const [source, destination] of dashboardRedirects) {
 
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, service: "sleek-academia" });
+});
+
+// Clerk tells the server when an account is created. Without this the sign-up
+// happens entirely inside Clerk's widget and nobody is told.
+app.post("/api/webhooks/clerk", rateLimiters.webhooks, createClerkWebhookHandler({
+  signingSecret: clerkWebhookSigningSecret,
+  onUserCreated: (user) => detachAlert(notifyAccountCreated(user)),
+}));
+
+// The order wizard pings this as soon as its contact step is valid, which is
+// well before an account exists. It is what makes an abandoned order visible:
+// no "order submitted" alert after this one means they walked away.
+app.post("/api/onboard-lead", rateLimiters.platform, (req, res) => {
+  const value = (field, max) => String(req.body?.[field] ?? "").trim().slice(0, max);
+  const email = value("email", 200);
+  const name = value("name", 120);
+  if (!/^\S+@\S+\.\S+$/.test(email)) return res.status(400).json({ error: "A valid email is required." });
+
+  detachAlert(notifyOrderStarted({
+    name,
+    email,
+    service: value("service", 80),
+    deadline: value("deadline", 80),
+    estimate: value("estimate", 200),
+  }));
+  return res.status(202).json({ received: true });
 });
 
 // Adaptive quizzes. Mounted before the static handler so the API is never
