@@ -25,7 +25,7 @@ import {
   createSecurityHeaders,
 } from "./src/platform/security.js";
 import { createClerkWebhookHandler } from "./src/platform/clerk-webhook.js";
-import { detachAlert, notifyAccountCreated, notifyOrderStarted } from "./src/platform/owner-alerts.js";
+import { settleAlert, notifyAccountCreated, notifyOrderStarted } from "./src/platform/owner-alerts.js";
 import { createPlatformRouter } from "./src/platform/http.js";
 import { createPlatformIdentityResolver } from "./src/platform/identity.js";
 import { createPaymentProvider } from "./src/platform/payments.js";
@@ -264,19 +264,21 @@ app.get("/api/health", (_req, res) => {
 // happens entirely inside Clerk's widget and nobody is told.
 app.post("/api/webhooks/clerk", rateLimiters.webhooks, createClerkWebhookHandler({
   signingSecret: clerkWebhookSigningSecret,
-  onUserCreated: (user) => detachAlert(notifyAccountCreated(user)),
+  onUserCreated: async (user) => { await settleAlert(notifyAccountCreated(user)); },
 }));
 
 // The order wizard pings this as soon as its contact step is valid, which is
 // well before an account exists. It is what makes an abandoned order visible:
 // no "order submitted" alert after this one means they walked away.
-app.post("/api/onboard-lead", rateLimiters.platform, (req, res) => {
+// The alert is awaited rather than detached: on Vercel the function freezes as
+// soon as the response is flushed, so a detached send never reaches Resend.
+app.post("/api/onboard-lead", rateLimiters.platform, async (req, res) => {
   const value = (field, max) => String(req.body?.[field] ?? "").trim().slice(0, max);
   const email = value("email", 200);
   const name = value("name", 120);
   if (!/^\S+@\S+\.\S+$/.test(email)) return res.status(400).json({ error: "A valid email is required." });
 
-  detachAlert(notifyOrderStarted({
+  await settleAlert(notifyOrderStarted({
     name,
     email,
     service: value("service", 80),

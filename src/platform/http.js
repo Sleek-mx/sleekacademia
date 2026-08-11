@@ -3,7 +3,7 @@ import express from "express";
 import { createAdminRouter } from "./admin-router.js";
 import { createClientRouter } from "./client-router.js";
 import { asyncRoute, getStore, text } from "./http-utils.js";
-import { detachAlert, notifyPaymentAbandoned, notifyPaymentConfirmed } from "./owner-alerts.js";
+import { settleAlert, notifyPaymentAbandoned, notifyPaymentConfirmed } from "./owner-alerts.js";
 import { recordVerifiedPayment } from "./payments.js";
 
 export function createPlatformRouter({ store: fallbackStore, resolveIdentity, paymentProvider = null, csrfService = null } = {}) {
@@ -21,7 +21,7 @@ export function createPlatformRouter({ store: fallbackStore, resolveIdentity, pa
       // most wants to hear about, so these are alerted rather than dropped.
       if (event.type === "payment_intent.payment_failed" || event.type === "payment_intent.canceled") {
         const failed = event.data.object;
-        detachAlert(notifyPaymentAbandoned({
+        await settleAlert(notifyPaymentAbandoned({
           email: failed.receipt_email || failed.metadata?.email || "",
           provider: "stripe",
           milestone: text(failed.metadata?.milestone, 40),
@@ -46,7 +46,7 @@ export function createPlatformRouter({ store: fallbackStore, resolveIdentity, pa
         milestone: text(intent.metadata?.milestone, 40), amountCents: Number(intent.amount_received),
       });
       if (!result.duplicate) {
-        detachAlert(notifyPaymentConfirmed({
+        await settleAlert(notifyPaymentConfirmed({
           order, provider: "stripe", milestone: text(intent.metadata?.milestone, 40),
           amountCents: Number(intent.amount_received), currency: intent.currency || order.currency,
           transactionId: intent.id,

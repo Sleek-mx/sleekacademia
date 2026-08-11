@@ -91,7 +91,7 @@ export function createClerkWebhookHandler({
   onUserCreated,
   now = () => Date.now(),
 } = {}) {
-  return function clerkWebhookHandler(req, res) {
+  return async function clerkWebhookHandler(req, res) {
     if (!signingSecret) return res.status(503).json({ error: "Clerk webhook is not configured." });
 
     // `req.rawBody` is captured by the express.json verify hook; falling back to
@@ -123,10 +123,16 @@ export function createClerkWebhookHandler({
       return res.json({ received: true, ignored: true, type: event?.type || "unknown" });
     }
 
-    // Respond first; the alert is fire-and-forget so a slow mail provider can
-    // never cause Clerk to retry a webhook that was handled.
-    res.json({ received: true, type: "user.created" });
-    onUserCreated?.(userFromClerkEvent(event));
-    return undefined;
+    // The alert must finish before the response is flushed. On Vercel the
+    // function is frozen the moment the response goes out, which kills any
+    // in-flight mail request — the exact failure this endpoint exists to avoid.
+    // `onUserCreated` is expected to cap its own wait and swallow its errors, so
+    // a mail outage still leaves Clerk with a 200 and no retry storm.
+    try {
+      await onUserCreated?.(userFromClerkEvent(event));
+    } catch (error) {
+      console.error("[clerk-webhook] alert failed:", error?.message || error);
+    }
+    return res.json({ received: true, type: "user.created" });
   };
 }

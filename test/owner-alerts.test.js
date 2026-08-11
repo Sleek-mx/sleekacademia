@@ -17,8 +17,9 @@ import {
   notifyPaymentAbandoned,
   ownerAddress,
   resetAlertDedupe,
+  settleAlert,
 } from "../src/platform/owner-alerts.js";
-import { verifySvixSignature, userFromClerkEvent } from "../src/platform/clerk-webhook.js";
+import { createClerkWebhookHandler, verifySvixSignature, userFromClerkEvent } from "../src/platform/clerk-webhook.js";
 import crypto from "node:crypto";
 
 const MAIL_ENV = [
@@ -185,6 +186,38 @@ test("multiple offered signatures pass when one matches (secret rotation)", () =
   const headers = signed(body);
   headers["svix-signature"] = `v1,ZmFrZQ== ${headers["svix-signature"]}`;
   assert.deepEqual(verifySvixSignature({ payload: body, headers, signingSecret: SECRET }), { ok: true });
+});
+
+// Regression: the first deploy of this feature responded before firing the
+// alert. On Vercel the function freezes when the response flushes, so the email
+// was killed in flight and nothing ever arrived.
+test("the webhook finishes the alert before it responds", async () => {
+  const order = [];
+  let resolveAlert;
+  const handler = createClerkWebhookHandler({
+    signingSecret: SECRET,
+    onUserCreated: () => {
+      order.push("alert-started");
+      return new Promise((resolve) => { resolveAlert = () => { order.push("alert-finished"); resolve(); }; });
+    },
+  });
+
+  const body = JSON.stringify({ type: "user.created", data: { id: "user_race", email_addresses: [] } });
+  const req = { headers: signed(body), rawBody: Buffer.from(body) };
+  const res = { json: () => { order.push("responded"); return res; } };
+
+  const handled = handler(req, res);
+  assert.deepEqual(order, ["alert-started"], "the response must not go out while the alert is in flight");
+  resolveAlert();
+  await handled;
+  assert.deepEqual(order, ["alert-started", "alert-finished", "responded"]);
+});
+
+test("a hung mail provider still lets the request finish", async () => {
+  const started = Date.now();
+  const result = await settleAlert(new Promise(() => {}), { timeoutMs: 50 });
+  assert.deepEqual(result, { sent: false, reason: "timeout" });
+  assert.ok(Date.now() - started < 2_000);
 });
 
 test("the Clerk payload is flattened to the primary email address", () => {

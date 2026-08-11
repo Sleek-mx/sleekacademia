@@ -136,14 +136,29 @@ export async function alertOwner({ subject, heading, intro = "", rows = [], note
 }
 
 /**
- * Run an alert without making the visitor wait for it, and without letting a
- * rejected promise reach the process. Use this from request handlers:
- * `detachAlert(notifyOrderSubmitted(order))`.
+ * Wait for an alert to finish, but never fail or hang the request because of it.
+ *
+ * This is deliberately **not** fire-and-forget. On Vercel the function is frozen
+ * the moment the response is flushed, so a detached promise is killed mid-flight
+ * and the email silently never sends — which is exactly the bug this whole
+ * feature exists to fix. Callers therefore await this before responding, and the
+ * timeout keeps a slow mail provider from holding the visitor hostage.
  */
-export function detachAlert(promise) {
-  Promise.resolve(promise).catch((error) =>
-    console.error("[alerts] unexpected alert failure:", error?.message || error)
-  );
+export async function settleAlert(promise, { timeoutMs = 5_000 } = {}) {
+  let timer;
+  try {
+    return await Promise.race([
+      Promise.resolve(promise),
+      new Promise((resolve) => {
+        timer = setTimeout(() => resolve({ sent: false, reason: "timeout" }), timeoutMs);
+      }),
+    ]);
+  } catch (error) {
+    console.error("[alerts] unexpected alert failure:", error?.message || error);
+    return { sent: false, reason: error?.message || "unknown" };
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 function dashboardUrl(pathname = "/admin.html") {
