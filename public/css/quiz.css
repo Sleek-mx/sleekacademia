@@ -19,8 +19,8 @@
   --light:   #ffffff;   /* highlight, top-left */
   --txt:     #372f52;   /* body text */
   --muted:   #6b6488;   /* secondary text */
-  --brand:   #702ae1;   /* the single accent family */
-  --brand2:  #9d6bff;
+  --brand:   #009fe3;   /* the single accent family — brand blue, site-wide */
+  --brand2:  #4cc4f0;   /* tint of the same hue, never a second colour */
 
   --ok:      #1d7a4f;
   --ok-ink:  #14603c;

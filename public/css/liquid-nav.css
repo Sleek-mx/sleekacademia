@@ -142,11 +142,11 @@ body {
    shadow and no radius, which is the smudge this replaces. */
 .site-nav .nav-link[aria-current="page"] {
   box-shadow: none;
-  color: var(--public-neu-brand, #702ae1);
+  color: var(--public-neu-brand, #009fe3);
 }
 
 .site-nav .nav-link:hover {
-  color: var(--public-neu-brand, #702ae1);
+  color: var(--public-neu-brand, #009fe3);
 }
 
 .site-nav .nav-link:focus-visible {

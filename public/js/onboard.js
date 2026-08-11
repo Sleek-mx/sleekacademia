@@ -227,7 +227,7 @@
         signInUrl: "/login.html",
         afterSignUpUrl: "/dashboard.html",
         afterSignInUrl: "/dashboard.html",
-        appearance: { variables: { colorPrimary: "#6f3ff5", borderRadius: "0.8rem" } },
+        appearance: { variables: { colorPrimary: "#009fe3", borderRadius: "0.8rem" } },
       });
       status.textContent = "Create your secure account to send this request to the workspace.";
     } catch (error) {

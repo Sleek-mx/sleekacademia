@@ -1,28 +1,17 @@
+const brandTheme = {
+  primary: "#009fe3",
+  secondary: "#4cc4f0",
+  text: "#007ab8",
+  surface: "#e8f6fd",
+};
+
+// One accent for the whole site. Categories keep their keys so the rest of the
+// file is unchanged, but every category resolves to the same brand blue.
 const categoryThemes = {
-  nursing: {
-    primary: "#06b6d4",
-    secondary: "#67e8f9",
-    text: "#0e7490",
-    surface: "#ecfeff",
-  },
-  law: {
-    primary: "#ef4444",
-    secondary: "#fca5a5",
-    text: "#dc2626",
-    surface: "#fef2f2",
-  },
-  finance: {
-    primary: "#22c55e",
-    secondary: "#86efac",
-    text: "#15803d",
-    surface: "#f0fdf4",
-  },
-  ict: {
-    primary: "#f97316",
-    secondary: "#fdba74",
-    text: "#ea580c",
-    surface: "#fff7ed",
-  },
+  nursing: brandTheme,
+  law: brandTheme,
+  finance: brandTheme,
+  ict: brandTheme,
 };
 
 const exams = [

@@ -7,12 +7,15 @@
   --line: #e5ebf2;
   --surface: #f5f8fc;
   --surface-blue: #eef8ff;
-  --blue: #078fec;
-  --teal: #12c8ae;
-  --green: #42c83f;
-  --orange: #ff9c0a;
-  --pink: #ed3489;
-  --yellow: #ffd51a;
+  /* ONE accent for the whole site: brand blue #009fe3. The legacy multi-colour
+     tokens below are kept as names so existing rules keep working, but they all
+     resolve to the same blue family — no rainbow icon chips. */
+  --blue: #009fe3;
+  --teal: #4cc4f0;
+  --green: #009fe3;
+  --orange: #009fe3;
+  --pink: #009fe3;
+  --yellow: #009fe3;
   --navy: #12233b;
   --white: #ffffff;
   --radius-sm: 0.9rem;
@@ -50,7 +53,7 @@ body {
   overflow-x: hidden;
   color: var(--ink);
   background:
-    radial-gradient(circle at 8% 7%, rgba(7, 143, 236, 0.06), transparent 22rem),
+    radial-gradient(circle at 8% 7%, rgba(0, 159, 227, 0.06), transparent 22rem),
     var(--white);
   font-family: "Manrope", sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -284,11 +287,11 @@ a {
 .button--primary {
   color: var(--white);
   background: linear-gradient(105deg, var(--blue), var(--teal));
-  box-shadow: 0 0.8rem 1.8rem rgba(7, 143, 236, 0.24);
+  box-shadow: 0 0.8rem 1.8rem rgba(0, 159, 227, 0.24);
 }
 
 .button--primary:hover {
-  box-shadow: 0 1rem 2.2rem rgba(7, 143, 236, 0.34);
+  box-shadow: 0 1rem 2.2rem rgba(0, 159, 227, 0.34);
 }
 
 .button--secondary {
@@ -331,7 +334,7 @@ a {
   left: -14%;
   width: 27rem;
   aspect-ratio: 1;
-  border: 1px solid rgba(7, 143, 236, 0.1);
+  border: 1px solid rgba(0, 159, 227, 0.1);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -568,7 +571,7 @@ a {
   background:
     radial-gradient(circle at 82% 18%, rgba(255, 255, 255, 0.18), transparent 12rem),
     linear-gradient(145deg, #0a9ef1, #087eea 62%, #056cc9);
-  box-shadow: 0 1.6rem 3rem rgba(7, 143, 236, 0.2);
+  box-shadow: 0 1.6rem 3rem rgba(0, 159, 227, 0.2);
 }
 
 .service-feature::after {
@@ -646,7 +649,7 @@ a {
 
 .service-row:hover {
   transform: translateX(0.4rem);
-  border-color: rgba(7, 143, 236, 0.25);
+  border-color: rgba(0, 159, 227, 0.25);
   box-shadow: var(--shadow-card);
 }
 
@@ -922,10 +925,10 @@ a {
   border-radius: var(--radius-xl);
   color: var(--white);
   background:
-    radial-gradient(circle at 80% 10%, rgba(255, 213, 26, 0.7), transparent 11rem),
-    radial-gradient(circle at 92% 90%, rgba(237, 52, 137, 0.75), transparent 18rem),
+    radial-gradient(circle at 80% 10%, rgba(76, 196, 240, 0.7), transparent 11rem),
+    radial-gradient(circle at 92% 90%, rgba(0, 122, 184, 0.75), transparent 18rem),
     linear-gradient(120deg, var(--blue), var(--teal));
-  box-shadow: 0 1.8rem 3.5rem rgba(7, 143, 236, 0.22);
+  box-shadow: 0 1.8rem 3.5rem rgba(0, 159, 227, 0.22);
 }
 
 .final-cta h2 {

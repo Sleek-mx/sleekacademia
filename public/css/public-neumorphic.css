@@ -7,9 +7,12 @@
   --public-neu-highlight: #ffffff;
   --public-neu-text: #1b1f24;
   --public-neu-muted: #5c6d7d;
+  /* ONE accent for the whole site: brand blue. The "light" partner is a tint of
+     the same hue (never a second colour) so gradients read as depth, not decoration. */
   --public-neu-brand: #009fe3;
-  --public-neu-brand-light: #e33393;
-  --public-neu-yellow: var(--public-neu-brand-light);
+  --public-neu-brand-light: #4cc4f0;
+  --public-neu-brand-dark: #007ab8;
+  --public-neu-yellow: var(--public-neu-brand);
   --public-neu-line: rgba(92, 109, 125, 0.18);
   --public-neu-raised: 10px 10px 24px #c3bdd8, -10px -10px 24px #ffffff;
   --public-neu-raised-small: 6px 6px 14px #c3bdd8, -6px -6px 14px #ffffff;
@@ -51,14 +54,14 @@ body.platform-page {
 body {
   background:
     radial-gradient(circle at 8% 8%, rgba(0, 159, 227, 0.12), transparent 24rem),
-    radial-gradient(circle at 92% 32%, rgba(227, 51, 147, 0.08), transparent 28rem),
+    radial-gradient(circle at 92% 32%, rgba(0, 159, 227, 0.08), transparent 28rem),
     var(--public-neu-surface);
 }
 
 body.platform-page::before {
   background:
     radial-gradient(circle at 10% 8%, rgba(0, 159, 227, 0.12), transparent 28rem),
-    radial-gradient(circle at 90% 30%, rgba(227, 51, 147, 0.08), transparent 26rem);
+    radial-gradient(circle at 90% 30%, rgba(0, 159, 227, 0.08), transparent 26rem);
 }
 
 :focus-visible {
@@ -169,16 +172,16 @@ body.platform-page::before {
 }
 
 .hero h1 .text-magenta {
-  color: var(--public-neu-brand-light);
+  color: var(--public-neu-brand);
 }
 
 .hero h1 .text-magenta-faded {
-  color: rgba(227, 51, 147, 0.58);
+  color: rgba(0, 159, 227, 0.58);
 }
 
 .hero h1 .text-blue {
   text-decoration: underline;
-  text-decoration-color: var(--public-neu-brand-light);
+  text-decoration-color: var(--public-neu-brand);
   text-decoration-thickness: 0.1em;
   text-underline-offset: 0.08em;
 }
@@ -188,15 +191,15 @@ body.platform-page::before {
 }
 
 .text-green {
-  color: var(--public-neu-brand-light);
+  color: var(--public-neu-brand);
 }
 
 .platform-display .accent::after {
-  background: rgba(227, 51, 147, 0.32);
+  background: rgba(0, 159, 227, 0.32);
 }
 
 .hero::before {
-  border-color: rgba(7, 143, 236, 0.13);
+  border-color: rgba(0, 159, 227, 0.13);
 }
 
 .hero__media,
@@ -242,12 +245,12 @@ body.platform-page::before {
 
 .service-feature {
   background:
-    radial-gradient(circle at 82% 18%, rgba(227, 51, 147, 0.12), transparent 13rem),
+    radial-gradient(circle at 82% 18%, rgba(0, 159, 227, 0.12), transparent 13rem),
     var(--public-neu-surface);
 }
 
 .service-feature::after {
-  color: rgba(7, 143, 236, 0.07);
+  color: rgba(0, 159, 227, 0.07);
 }
 
 .service-feature__icon,
@@ -264,8 +267,8 @@ body.platform-page::before {
 }
 
 .trust-dot:nth-child(1),
+.trust-dot:nth-child(2),
 .trust-dot:nth-child(3) { background: var(--public-neu-brand) !important; }
-.trust-dot:nth-child(2) { background: var(--public-neu-brand-light) !important; }
 
 .service-feature p,
 .service-row p,
@@ -310,7 +313,7 @@ body.platform-page::before {
 
 .program__accent {
   background: var(--public-neu-brand) !important;
-  box-shadow: 0 0 0.9rem rgba(7, 143, 236, 0.34);
+  box-shadow: 0 0 0.9rem rgba(0, 159, 227, 0.34);
 }
 
 .testimonial__stars {
@@ -320,7 +323,7 @@ body.platform-page::before {
 .final-cta {
   color: var(--public-neu-text);
   background:
-    radial-gradient(circle at 85% 12%, rgba(227, 51, 147, 0.12), transparent 13rem),
+    radial-gradient(circle at 85% 12%, rgba(0, 159, 227, 0.12), transparent 13rem),
     var(--public-neu-surface);
   box-shadow: var(--public-neu-raised);
 }
@@ -346,7 +349,7 @@ body.platform-page::before {
 
 .platform-search:focus {
   border-color: transparent;
-  box-shadow: var(--public-neu-pressed), 0 0 0 3px rgba(7, 143, 236, 0.2);
+  box-shadow: var(--public-neu-pressed), 0 0 0 3px rgba(0, 159, 227, 0.2);
 }
 
 .blog-card-image,
@@ -363,7 +366,7 @@ body.platform-page::before {
 .store-feature {
   color: var(--public-neu-text);
   background:
-    radial-gradient(circle at 85% 15%, rgba(227, 51, 147, 0.12), transparent 14rem),
+    radial-gradient(circle at 85% 15%, rgba(0, 159, 227, 0.12), transparent 14rem),
     var(--public-neu-surface);
   box-shadow: var(--public-neu-raised);
 }

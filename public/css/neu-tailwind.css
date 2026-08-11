@@ -180,3 +180,28 @@ body.bg-slate-950 .text-slate-400 { color: var(--muted) !important; }
 @media (min-width: 1640px) {
   .max-w-7xl { max-width: min(72vw, 1620px); }
 }
+
+/* ---------- ONE accent: every Tailwind violet utility resolves to brand blue ----------
+   The prep pages were authored with Tailwind's violet ramp. Rather than rewriting
+   hundreds of class names, remap the ramp itself to the single brand blue family
+   (#009fe3 with #007ab8 dark and #4cc4f0 light) so the whole site shares one accent. */
+.text-violet-300 { color: #7fd7f5 !important; }
+.text-violet-400 { color: #4cc4f0 !important; }
+.text-violet-500 { color: #22b1e9 !important; }
+.text-violet-600 { color: #009fe3 !important; }
+.text-violet-700 { color: #008ac6 !important; }
+.text-violet-800 { color: #007ab8 !important; }
+.text-violet-900 { color: #045b86 !important; }
+.bg-violet-50 { background-color: #f2fafe !important; }
+.bg-violet-100 { background-color: #e2f4fc !important; }
+.bg-violet-500 { background-color: #22b1e9 !important; }
+.bg-violet-600 { background-color: #009fe3 !important; }
+.border-violet-100 { border-color: #e2f4fc !important; }
+.border-violet-200 { border-color: #c4e9f8 !important; }
+.border-violet-600 { border-color: #009fe3 !important; }
+.ring-violet-200 { --tw-ring-color: #c4e9f8 !important; }
+.ring-violet-300 { --tw-ring-color: #7fd7f5 !important; }
+.from-violet-50 { --tw-gradient-from: #f2fafe !important; --tw-gradient-to: rgba(242, 250, 254, 0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+.to-violet-50 { --tw-gradient-to: #f2fafe !important; }
+.to-violet-100 { --tw-gradient-to: #e2f4fc !important; }
+.shadow-violet-900\/15 { --tw-shadow-color: rgba(4, 91, 134, 0.1) !important; --tw-shadow: var(--tw-shadow-colored) !important; }

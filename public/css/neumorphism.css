@@ -4,7 +4,7 @@
    Surface #e7e4f1 on everything (element bg = page bg, never white cards).
    Dual shadows #c3bdd8 (dark, bottom-right) / #ffffff (light, top-left).
    Raised = resting, pressed(inset) = active/selected/input.
-   ONE purple accent #702ae1 -> #9d6bff. Plus Jakarta Sans + Inter.
+   ONE blue accent #009fe3 -> #4cc4f0. Plus Jakarta Sans + Inter.
    Shared across every reskinned page — no per-page one-offs.
    ============================================================ */
 
@@ -14,8 +14,8 @@
   --light:   #ffffff;   /* highlight, top-left */
   --txt:     #372f52;   /* body text (real contrast on the surface) */
   --muted:   #6b6488;   /* secondary text */
-  --brand:   #702ae1;   /* the single accent family */
-  --brand2:  #9d6bff;
+  --brand:   #009fe3;   /* the single accent family — brand blue, site-wide */
+  --brand2:  #4cc4f0;   /* tint of the same hue, never a second colour */
   --r:       22px;
 }
 

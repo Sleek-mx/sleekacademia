@@ -173,8 +173,8 @@ async function mountClerk({ status, target, mode, config }) {
 
 function clerkAppearance() {
   return {
-    variables: { colorPrimary: "#702ae1", colorBackground: "#ffffff", colorText: "#202432", borderRadius: "1rem" },
-    elements: { card: "shadow-none border border-slate-100 rounded-[1.5rem]", formButtonPrimary: "bg-[#702ae1] hover:bg-[#5d22c2] text-white rounded-2xl font-semibold", socialButtonsBlockButton: "rounded-2xl border border-slate-200 hover:bg-slate-50", footerActionLink: "text-[#702ae1] hover:text-[#5d22c2]" },
+    variables: { colorPrimary: "#009fe3", colorBackground: "#ffffff", colorText: "#202432", borderRadius: "1rem" },
+    elements: { card: "shadow-none border border-slate-100 rounded-[1.5rem]", formButtonPrimary: "bg-[#009fe3] hover:bg-[#007ab8] text-white rounded-2xl font-semibold", socialButtonsBlockButton: "rounded-2xl border border-slate-200 hover:bg-slate-50", footerActionLink: "text-[#009fe3] hover:text-[#007ab8]" },
   };
 }
 
