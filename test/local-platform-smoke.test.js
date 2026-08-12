@@ -38,7 +38,7 @@ test("all review surfaces load from the real Express app", async () => {
     assert.equal(response.status, 200, path);
   }
   const health = await (await fetch(`${base}/api/health`)).json();
-  assert.deepEqual(health, { ok: true, service: "sleek-academia" });
+  assert.deepEqual(health, { ok: true, service: "sleek-academia", alerts: false, cardPayments: false });
 
   const homepage = await fetch(`${base}/`);
   const homepageHtml = await homepage.text();
@@ -140,5 +140,9 @@ test("request, quote, deposit, delivery lock, balance, and download work end to 
   assert.equal((await completed.json()).order.status, "Completed");
 
   assert.equal((await api("/admin/overview")).status, 403);
-  assert.equal((await api(`/admin/orders/${requestId}/payments/manual`, { method: "POST", role: "admin", body: {} })).status, 404);
+
+  // MoneyGram payments are recorded by the operator, never by the client, and
+  // never without the reference number from the receipt.
+  assert.equal((await api(`/admin/orders/${requestId}/payments/manual`, { method: "POST", body: { reference: "12345678" } })).status, 403);
+  assert.equal((await api(`/admin/orders/${requestId}/payments/manual`, { method: "POST", role: "admin", body: {} })).status, 400);
 });

@@ -209,7 +209,7 @@ test("the retired chatbot files are gone", () => {
 // ── theme and motion ───────────────────────────────────────────────────────
 
 test("the widget uses the site's neumorphic tokens", () => {
-  for (const token of ["#e7e4f1", "#c3bdd8", "#ffffff", "#702ae1", "#9d6bff", "#372f52"]) {
+  for (const token of ["#e7e4f1", "#c3bdd8", "#ffffff", "#009fe3", "#5c6d7d"]) {
     assert.ok(widgetCss.includes(token), `${token} is part of the site's neumorphism palette`);
   }
 });

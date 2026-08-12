@@ -77,41 +77,16 @@ export async function recordVerifiedPayment({
   return { request: updated, payment, duplicate: false };
 }
 
-function parsePayPalCustomId(value) {
-  const [requestId, milestone, amount] = clean(value, 500).split(":");
-  const amountCents = Number(amount);
-  if (!requestId || !new Set(["deposit", "balance"]).has(milestone) || !Number.isSafeInteger(amountCents)) {
-    throw new Error("PayPal returned invalid request metadata.");
-  }
-  return { requestId, milestone, amountCents };
-}
-
+// Card payment is Stripe only. PayPal was removed after the account was
+// restricted; when Stripe is unconfigured the client checkout falls back to the
+// manual MoneyGram-to-M-Pesa claim in client-router.js, which never marks an
+// order paid on its own.
 export function createPaymentProvider({
   stripeClient = null,
   stripeWebhookSecret = "",
-  paypalClientId = "",
-  paypalSecret = "",
-  paypalBaseUrl = "https://api-m.sandbox.paypal.com",
-  fetchImpl = globalThis.fetch,
 } = {}) {
-  async function paypalToken() {
-    if (!paypalClientId || !paypalSecret) throw new Error("PayPal is not configured.");
-    const response = await fetchImpl(`${paypalBaseUrl}/v1/oauth2/token`, {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${Buffer.from(`${paypalClientId}:${paypalSecret}`).toString("base64")}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: "grant_type=client_credentials",
-    });
-    const payload = await response.json();
-    if (!response.ok || !payload.access_token) throw new Error("PayPal authorization failed.");
-    return payload.access_token;
-  }
-
   return {
     stripeAvailable: Boolean(stripeClient),
-    paypalAvailable: Boolean(paypalClientId && paypalSecret),
     async createStripeIntent({ request, due }) {
       if (!stripeClient) throw new Error("Stripe is not configured.");
       const intent = await stripeClient.paymentIntents.create({
@@ -126,51 +101,6 @@ export function createPaymentProvider({
     parseStripeWebhook(rawBody, signature) {
       if (!stripeClient || !stripeWebhookSecret) throw new Error("Stripe webhook verification is not configured.");
       return stripeClient.webhooks.constructEvent(rawBody, signature, stripeWebhookSecret);
-    },
-    async createPayPalOrder({ request, due }) {
-      const token = await paypalToken();
-      const response = await fetchImpl(`${paypalBaseUrl}/v2/checkout/orders`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", "PayPal-Request-Id": `request-${request.id}-${due.milestone}-${due.amountCents}` },
-        body: JSON.stringify({
-          intent: "CAPTURE",
-          purchase_units: [{
-            custom_id: `${request.id}:${due.milestone}:${due.amountCents}`,
-            description: `Sleek Academia ${due.milestone}`,
-            amount: { currency_code: due.currency.toUpperCase(), value: (due.amountCents / 100).toFixed(2) },
-          }],
-        }),
-      });
-      const payload = await response.json();
-      if (!response.ok || !payload.id) throw new Error("PayPal order creation failed.");
-      return { orderId: payload.id, milestone: due.milestone, amountCents: due.amountCents, currency: due.currency };
-    },
-    async capturePayPalOrder(orderId, { requestId, due }) {
-      const token = await paypalToken();
-      const orderResponse = await fetchImpl(`${paypalBaseUrl}/v2/checkout/orders/${encodeURIComponent(clean(orderId, 200))}`, {
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      });
-      const order = await orderResponse.json();
-      const orderMetadata = parsePayPalCustomId(order.purchase_units?.[0]?.custom_id);
-      const orderedCurrency = clean(order.purchase_units?.[0]?.amount?.currency_code, 12).toLowerCase();
-      if (!orderResponse.ok || orderMetadata.requestId !== requestId || orderMetadata.milestone !== due.milestone || orderMetadata.amountCents !== due.amountCents || orderedCurrency !== due.currency) {
-        throw new Error("PayPal order does not match this request's server-calculated payment.");
-      }
-      const response = await fetchImpl(`${paypalBaseUrl}/v2/checkout/orders/${encodeURIComponent(clean(orderId, 200))}/capture`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      });
-      const payload = await response.json();
-      const unit = payload.purchase_units?.[0];
-      const capture = unit?.payments?.captures?.[0];
-      if (!response.ok || payload.status !== "COMPLETED" || capture?.status !== "COMPLETED") {
-        throw new Error("PayPal did not confirm this payment.");
-      }
-      const metadata = parsePayPalCustomId(unit.custom_id);
-      const capturedCents = Math.round(Number(capture.amount?.value) * 100);
-      const capturedCurrency = clean(capture.amount?.currency_code, 12).toLowerCase();
-      if (capturedCents !== metadata.amountCents || capturedCurrency !== due.currency) throw new Error("PayPal confirmed an unexpected amount or currency.");
-      return { ...metadata, providerTransactionId: capture.id, currency: clean(capture.amount?.currency_code, 12).toLowerCase() };
     },
   };
 }

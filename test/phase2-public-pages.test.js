@@ -80,8 +80,6 @@ test("public woman artwork is animated with responsive reduced-motion fallbacks"
   }
   assert.match(css, /\.platform-display\s*{[^}]*line-height:\s*1\.02[^}]*letter-spacing:\s*-0\.045em/s);
   assert.match(css, /\.platform-woman-video\s*{[^}]*object-fit:\s*cover[^}]*object-position:\s*right center/s);
-  assert.match(css, /\.platform-note\.one\s*{[^}]*left:\s*3%/s);
-  assert.match(css, /\.platform-note\.two\s*{[^}]*right:\s*3%/s);
   assert.match(css, /\.is-reduced-motion \.platform-woman-video\s*{[^}]*visibility:\s*hidden/s);
   assert.match(css, /@media \(max-width: 900px\)[\s\S]*\.platform-art-card\s*{[^}]*aspect-ratio:\s*4\s*\/\s*3/s);
   assert.match(script, /querySelectorAll\("\[data-ambient-video\]"\)/);

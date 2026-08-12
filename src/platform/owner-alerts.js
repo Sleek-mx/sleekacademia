@@ -6,9 +6,11 @@
 //   1. someone creates an account            (Clerk `user.created` webhook)
 //   2. someone starts the order wizard       (lead beacon from onboard.js)
 //   3. someone submits an order              (order.submitted)
-//   4. someone opens checkout                (Stripe intent / PayPal order created)
-//   5. a payment confirms                    (Stripe webhook / PayPal capture)
+//   4. someone opens checkout                (Stripe intent created)
+//   5. a payment confirms                    (Stripe webhook)
 //   6. a payment fails or is abandoned       (Stripe webhook)
+//   7. someone claims a MoneyGram transfer   (manual claim, nothing paid yet)
+//   8. someone sends a message               (contact dock on every page)
 //
 // Rules this module never breaks:
 //
@@ -277,6 +279,59 @@ export function notifyPaymentConfirmed({ order, provider, milestone, amountCents
     actionUrl: dashboardUrl("/admin.html"),
     actionLabel: "Open the order",
     dedupeKey: `payment:${provider}:${transactionId}`,
+  });
+}
+
+/**
+ * A client says they sent a MoneyGram transfer and gave the reference number.
+ *
+ * Nothing is marked paid by this — MoneyGram has no verification API, so the
+ * operator confirms the payout landed on the M-Pesa side and then records the
+ * payment from the admin dashboard. This alert is the only thing that tells
+ * them a claim is waiting, so it must never be silently dropped.
+ */
+export function notifyManualPaymentClaim({ order, reference, milestone, amountCents, currency }, { now = new Date() } = {}) {
+  return alertOwner({
+    subject: `ACTION: confirm MoneyGram payment — ${money(amountCents, currency)} — ${order?.email || "unknown"}`,
+    heading: "A client submitted a MoneyGram reference",
+    intro:
+      "Check the M-Pesa payout landed, then record the payment in the admin dashboard. " +
+      "The order is <strong>not</strong> marked paid until you do.",
+    rows: [
+      ["Client", order?.name || "not given"],
+      ["Email", order?.email || "not given"],
+      ["MoneyGram reference", reference || "not given"],
+      ["Milestone", milestone || "unknown"],
+      ["Amount claimed", money(amountCents, currency)],
+      ["Order id", order?.id || "unknown"],
+      ["Claimed", stamp(now)],
+    ],
+    replyTo: order?.email || "",
+    actionUrl: dashboardUrl("/admin.html"),
+    actionLabel: "Open the order",
+    dedupeKey: `claim:${order?.id}:${reference}`,
+  });
+}
+
+/**
+ * Someone used the contact dock instead of the order wizard. This is the
+ * "I have a question before I commit" lead, and it is the one the site had no
+ * way of capturing at all.
+ */
+export function notifyContactMessage({ name, email, message, page }, { now = new Date() } = {}) {
+  return alertOwner({
+    subject: `Website message — ${email || "unknown"}`,
+    heading: "Someone sent a message from the website",
+    intro: "They did not start an order. Replying quickly is the whole point of this one.",
+    rows: [
+      ["Name", name || "not given"],
+      ["Email", email || "not given"],
+      ["Page", page || "not reported"],
+      ["Sent", stamp(now)],
+    ],
+    note: `<strong>Message</strong><br />${esc(message || "").replace(/\n/g, "<br />")}`,
+    replyTo: email || "",
+    dedupeKey: `contact:${String(email || "").toLowerCase()}:${String(message || "").slice(0, 60)}`,
   });
 }
 

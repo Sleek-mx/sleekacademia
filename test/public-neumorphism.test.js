@@ -4,7 +4,9 @@ import { readFileSync } from "node:fs";
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 const publicPages = ["index.html", "about.html", "blog.html", "store.html"];
-const workspacePages = ["dashboard.html", "admin.html", "client-order.html", "admin-order.html", "login.html", "sign-up.html", "onboard.html"];
+// onboard.html deliberately wears the public theme (commit a71fafb) — it is a
+// marketing surface, not a workspace one.
+const workspacePages = ["dashboard.html", "admin.html", "client-order.html", "admin-order.html", "login.html", "sign-up.html"];
 
 test("public pages load the neumorphic layer after the structural brand stylesheet", () => {
   for (const page of publicPages) {
@@ -26,7 +28,7 @@ test("workspace and dashboard pages remain isolated from the public theme", () =
 test("public theme contains the canonical raised and inset soft UI primitives", () => {
   const css = read("public/css/public-neumorphic.css");
 
-  for (const value of ["#e7e4f1", "#c3bdd8", "#ffffff", "#372f52", "#6b6488", "#702ae1", "#9d6bff"]) {
+  for (const value of ["#e7e4f1", "#c3bdd8", "#ffffff", "#1b1f24", "#5c6d7d", "#009fe3", "#4cc4f0"]) {
     assert.match(css, new RegExp(value, "i"), `missing canonical token ${value}`);
   }
   assert.match(css, /--public-neu-raised:\s*[^;]*#c3bdd8[^;]*#ffffff/i);

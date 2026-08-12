@@ -15,8 +15,8 @@
 //
 // PayPal is currently restricted on the account this quiz used, so the paywall
 // runs on a manual MoneyGram-to-mobile-money claim (see "/unlock/manual-claim"
-// below) until an automated processor is back in place. src/quiz/paypal.js is
-// left unused rather than deleted in case PayPal is restored.
+// below) until an automated processor is back in place. The PayPal integration
+// was deleted after the account was restricted.
 
 import express from "express";
 import {

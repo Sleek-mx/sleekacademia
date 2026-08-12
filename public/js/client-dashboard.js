@@ -341,14 +341,15 @@
         stripe.dataset.stripePayment = "true";
         actions.append(stripe);
       }
-      if (state.config.paypalClientId) {
-        const paypal = element("button", "dash-button", "Pay with PayPal");
-        paypal.type = "button";
-        paypal.dataset.paypalPayment = "true";
-        actions.append(paypal);
-      }
     }
     target.append(actions);
+    if (!state.config.demoMode && !state.config.stripePublishableKey) {
+      // No card processor: send them to the order page, which carries the full
+      // MoneyGram-to-M-Pesa instructions and the reference form.
+      const link = element("a", "dash-button primary", "Pay by MoneyGram to M-Pesa");
+      link.href = `/client-order.html?id=${encodeURIComponent(state.currentOrderId)}`;
+      target.append(link);
+    }
   }
 
   async function sendMessage(event) {
@@ -418,24 +419,6 @@
         if (result.error) { submit.disabled = false; showToast(result.error.message || "Stripe could not confirm payment.", true); }
         else { showToast("Payment submitted. Waiting for provider confirmation."); window.setTimeout(() => void refreshOrder(), 1800); }
       });
-    });
-  }
-
-  async function payWithPayPal(control) {
-    await withPending(control, async () => {
-      const providerOrder = await api(`/api/platform/orders/${encodeURIComponent(state.currentOrderId)}/payments/paypal-order`, { method: "POST", body: {} });
-      await loadExternalScript(`https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(state.config.paypalClientId)}&currency=USD`, "paypal-js");
-      const mount = element("div");
-      byId("client-payment-actions").append(mount);
-      await window.paypal.Buttons({
-        style: { layout: "horizontal", height: 38, tagline: false },
-        createOrder: () => providerOrder.orderId,
-        onApprove: async (data) => {
-          await api(`/api/platform/orders/${encodeURIComponent(state.currentOrderId)}/payments/paypal-capture`, { method: "POST", body: { orderId: data.orderID } });
-          await refreshOrder("PayPal payment confirmed.");
-        },
-        onError: () => showToast("PayPal could not complete the payment.", true),
-      }).render(mount);
     });
   }
 
@@ -583,8 +566,6 @@
       if (download) void downloadAttachment(download.dataset.attachmentId, download.dataset.fileName, download).catch((error) => showToast(error.message, true));
       const stripe = event.target.closest("[data-stripe-payment]");
       if (stripe) void payWithStripe(stripe).catch((error) => showToast(error.message, true));
-      const paypal = event.target.closest("[data-paypal-payment]");
-      if (paypal) void payWithPayPal(paypal).catch((error) => showToast(error.message, true));
       const demo = event.target.closest("[data-demo-payment]");
       if (demo) void confirmDemoPayment(demo).catch((error) => showToast(error.message, true));
     });

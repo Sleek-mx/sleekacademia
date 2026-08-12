@@ -1,6 +1,9 @@
 import { deriveOrderQueues, ORDER_STATUSES } from "./domain.js";
 
-const REAL_PROVIDERS = new Set(["stripe", "paypal"]);
+// Providers whose payments count as real money. "paypal" stays for the
+// historical rows recorded before that account was restricted; "moneygram" is
+// the operator-confirmed offline transfer. "demo" is deliberately absent.
+const REAL_PROVIDERS = new Set(["stripe", "paypal", "moneygram"]);
 
 function confirmedPayments(payments = []) {
   return payments.filter((payment) => payment?.status === "confirmed" && REAL_PROVIDERS.has(payment.provider));

@@ -11,7 +11,7 @@ test("dashboard neumorphic system uses only the approved Sleek Academia palette"
 
   assert.match(css, /--dash-canvas:\s*#e0e5ec/i);
   assert.match(css, /\[data-theme=["']night["']\][\s\S]*--dash-canvas:\s*#20242b/i);
-  for (const color of ["#702ae1", "#9d6bff", "#078fec", "#12c8ae", "#42c83f", "#ff9c0a", "#ed3489", "#ffd51a"]) {
+  for (const color of ["#009fe3", "#4cc4f0", "#12c8ae", "#42c83f", "#ff9c0a", "#ed3489", "#ffd51a"]) {
     assert.match(css.toLowerCase(), new RegExp(color));
   }
   assert.match(css, /--dash-raised:/);

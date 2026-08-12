@@ -2,7 +2,9 @@ import express from "express";
 
 import { canTransitionOrder } from "./domain.js";
 import { asyncRoute, orderDetails, publicAttachment, text } from "./http-utils.js";
+import { getServerPaymentDue, recordVerifiedPayment } from "./payments.js";
 import { calculateCustomQuote, calculateOrderQuote } from "./pricing.js";
+import { isPlausibleReference } from "../quiz/moneygram.js";
 import { buildAdminOverview, buildClientDirectory, buildEarningsReport, filterAndSortOrders, ordersToCsv } from "./reporting.js";
 import { validateUpload } from "./uploads.js";
 
@@ -90,6 +92,32 @@ export function createAdminRouter() {
     return res.status(201).json({ attachment: publicAttachment(attachment) });
   });
   router.post("/orders/:orderId/deliverables", deliverable);
+
+  // Record a MoneyGram-to-M-Pesa payment the operator has confirmed by hand.
+  //
+  // MoneyGram has no verification API, so this is the only way an offline
+  // transfer can ever mark an order paid — and it stays behind the MCX admin
+  // session for exactly that reason. The amount is never taken from the request
+  // body: recordVerifiedPayment recalculates what is due and rejects anything
+  // that does not match, so a mistyped reference cannot change the money.
+  router.post("/orders/:orderId/payments/manual", asyncRoute(async (req, res) => {
+    const order = await adminOrder(req, res); if (!order) return;
+    const reference = text(req.body?.reference, 40);
+    if (!isPlausibleReference(reference)) return res.status(400).json({ error: "Enter the MoneyGram reference number from the client's receipt." });
+    const due = getServerPaymentDue(order);
+    if (!due.milestone || !due.amountCents) return res.status(409).json({ error: "This order has no payment due." });
+    const result = await recordVerifiedPayment({
+      store: req.platformStore, request: order, provider: "moneygram",
+      providerTransactionId: reference, milestone: due.milestone, amountCents: due.amountCents,
+    });
+    if (!result.duplicate) {
+      await req.platformStore.appendEvent({
+        requestId: order.id, actorId: req.platformIdentity.userId,
+        type: "payment.manual_recorded", data: { reference, milestone: due.milestone, amountCents: due.amountCents },
+      });
+    }
+    return res.json(result);
+  }));
 
   router.get("/clients", asyncRoute(async (req, res) => res.json({ clients: buildClientDirectory(await allData(req.platformStore)) })));
   router.get("/messages", asyncRoute(async (req, res) => res.json({ messages: (await allData(req.platformStore)).messages.slice().reverse() })));

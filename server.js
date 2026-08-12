@@ -25,7 +25,14 @@ import {
   createSecurityHeaders,
 } from "./src/platform/security.js";
 import { createClerkWebhookHandler } from "./src/platform/clerk-webhook.js";
-import { settleAlert, notifyAccountCreated, notifyOrderStarted } from "./src/platform/owner-alerts.js";
+import {
+  settleAlert,
+  alertsConfigured,
+  notifyAccountCreated,
+  notifyContactMessage,
+  notifyOrderStarted,
+} from "./src/platform/owner-alerts.js";
+import { MONEYGRAM_RECIPIENT } from "./src/quiz/moneygram.js";
 import { createPlatformRouter } from "./src/platform/http.js";
 import { createPlatformIdentityResolver } from "./src/platform/identity.js";
 import { createPaymentProvider } from "./src/platform/payments.js";
@@ -45,10 +52,12 @@ const stripe = process.env.STRIPE_SECRET_KEY
 const paymentProvider = createPaymentProvider({
   stripeClient: stripe,
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || "",
-  paypalClientId: process.env.PAYPAL_CLIENT_ID || "",
-  paypalSecret: process.env.PAYPAL_SECRET || "",
-  paypalBaseUrl: process.env.PAYPAL_BASE_URL || "https://api-m.sandbox.paypal.com",
 });
+// Card checkout needs both halves of the Stripe key pair. With either missing
+// the client falls back to the manual MoneyGram-to-M-Pesa claim, so this one
+// flag decides which payment path the whole site offers.
+const stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY || "";
+const cardPaymentsEnabled = Boolean(stripe && stripePublishableKey);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -257,7 +266,37 @@ for (const [source, destination] of dashboardRedirects) {
 }
 
 app.get("/api/health", (_req, res) => {
-  res.json({ ok: true, service: "sleek-academia" });
+  // `alerts` is a boolean on purpose — it says whether a mail channel exists at
+  // all, never which one or with what credentials. Without it, a site that
+  // silently stopped emailing leads looks identical to a healthy one.
+  res.json({
+    ok: true,
+    service: "sleek-academia",
+    alerts: alertsConfigured(),
+    cardPayments: cardPaymentsEnabled,
+  });
+});
+
+// The contact dock on every public page. This is the no-account, no-wizard path
+// for someone who just wants to ask a question — previously the site had none,
+// and those visitors left without a trace.
+app.post("/api/contact", rateLimiters.platform, async (req, res) => {
+  const value = (field, max) => String(req.body?.[field] ?? "").trim().slice(0, max);
+  const email = value("email", 200);
+  const message = value("message", 2000);
+  if (!/^\S+@\S+\.\S+$/.test(email)) return res.status(400).json({ error: "A valid email is required." });
+  if (message.length < 5) return res.status(400).json({ error: "Tell us a little about what you need." });
+
+  const alert = await settleAlert(notifyContactMessage({
+    name: value("name", 120),
+    email,
+    message,
+    page: value("page", 200),
+  }));
+  if (!alert.sent && alert.reason === "not-configured") {
+    return res.status(503).json({ error: "Messages are temporarily unavailable — please use WhatsApp." });
+  }
+  return res.status(202).json({ received: true });
 });
 
 // Clerk tells the server when an account is created. Without this the sign-up
@@ -367,8 +406,10 @@ app.get("/api/config", (req, res) => {
     publishableKey, frontendApiUrl, clerkJsUrl,
     signInUrl: "/onboard.html", signUpUrl: "/onboard.html",
     afterSignInUrl: "/dashboard.html", afterSignUpUrl: "/dashboard.html",
-    stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || "",
-    paypalClientId: process.env.PAYPAL_CLIENT_ID || "",
+    stripePublishableKey: cardPaymentsEnabled ? stripePublishableKey : "",
+    // When no card processor is live the checkout must not dead-end. The client
+    // falls back to the manual MoneyGram-to-M-Pesa claim using these details.
+    manualPayment: { enabled: !cardPaymentsEnabled, ...MONEYGRAM_RECIPIENT },
     demoMode: localDemoMode && isLoopbackHostname(req.hostname),
   });
 });

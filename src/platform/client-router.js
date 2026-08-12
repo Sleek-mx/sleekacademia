@@ -5,9 +5,10 @@ import { asyncRoute, orderAccess, orderDetails, publicAttachment, text } from ".
 import {
   settleAlert,
   notifyCheckoutStarted,
+  notifyManualPaymentClaim,
   notifyOrderSubmitted,
-  notifyPaymentConfirmed,
 } from "./owner-alerts.js";
+import { isPlausibleReference } from "../quiz/moneygram.js";
 import { getServerPaymentDue, recordVerifiedPayment } from "./payments.js";
 import { calculateOrderQuote } from "./pricing.js";
 import { isLoopbackHostname } from "./store.js";
@@ -170,33 +171,38 @@ export function createClientRouter({ paymentProvider = null, csrfService = null 
   });
   aliases(router, "post", ["/orders/:orderId/payments/stripe-intent", "/requests/:requestId/payments/stripe-intent"], stripeIntent);
 
-  const paypalOrder = asyncRoute(async (req, res) => {
-    if (!paymentProvider?.paypalAvailable) return res.status(503).json({ error: "PayPal is not configured." });
+  // Manual MoneyGram-to-M-Pesa claim. This is the fallback when card payment is
+  // not configured, and it is deliberately *not* a payment: the claim is
+  // recorded and the owner is alerted, but only a provider-verified transaction
+  // (Stripe) or an operator acting on the admin side can mark an order paid.
+  const mpesaClaim = asyncRoute(async (req, res) => {
     const access = await clientOrderAccess(req); if (access.error) return res.status(404).json({ error: access.error });
-    const due = getServerPaymentDue(access.order); if (!due.milestone || !due.amountCents) return res.status(409).json({ error: "This order has no payment due." });
-    const paypal = await paymentProvider.createPayPalOrder({ request: access.order, due });
-    await settleAlert(notifyCheckoutStarted({ order: access.order, milestone: due.milestone, amountCents: due.amountCents, currency: due.currency, provider: "paypal" }));
-    return res.status(201).json(paypal);
-  });
-  aliases(router, "post", ["/orders/:orderId/payments/paypal-order", "/requests/:requestId/payments/paypal-order"], paypalOrder);
-
-  const paypalCapture = asyncRoute(async (req, res) => {
-    if (!paymentProvider?.paypalAvailable) return res.status(503).json({ error: "PayPal is not configured." });
-    const access = await clientOrderAccess(req); if (access.error) return res.status(404).json({ error: access.error });
-    const orderId = text(req.body?.orderId, 200); if (!orderId) return res.status(400).json({ error: "PayPal order ID is required." });
-    const due = getServerPaymentDue(access.order); if (!due.milestone || !due.amountCents) return res.status(409).json({ error: "This order has no payment due." });
-    const capture = await paymentProvider.capturePayPalOrder(orderId, { requestId: access.order.id, due });
-    if (capture.requestId !== access.order.id) return res.status(409).json({ error: "PayPal order does not belong to this order." });
-    const result = await recordVerifiedPayment({ store: req.platformStore, request: access.order, provider: "paypal", providerTransactionId: capture.providerTransactionId, milestone: capture.milestone, amountCents: capture.amountCents });
-    if (!result.duplicate) {
-      await settleAlert(notifyPaymentConfirmed({
-        order: access.order, provider: "paypal", milestone: capture.milestone,
-        amountCents: capture.amountCents, currency: due.currency, transactionId: capture.providerTransactionId,
-      }));
+    const reference = text(req.body?.reference, 40);
+    if (!isPlausibleReference(reference)) {
+      return res.status(400).json({ error: "Enter the MoneyGram reference number shown on your receipt." });
     }
-    return res.json(result);
+    const due = getServerPaymentDue(access.order); if (!due.milestone || !due.amountCents) return res.status(409).json({ error: "This order has no payment due." });
+
+    await req.platformStore.appendEvent({
+      requestId: access.order.id,
+      actorId: `client:${req.platformIdentity.userId}`,
+      type: "payment.claim.submitted",
+      data: { provider: "moneygram", reference, milestone: due.milestone, amountCents: due.amountCents },
+    });
+    await req.platformStore.createNotification({
+      userId: access.order.userId,
+      requestId: access.order.id,
+      type: "payment.claim.submitted",
+      title: "Payment reference received",
+      body: "We are confirming the transfer landed. This is usually done within a few hours, and the order moves on as soon as it clears.",
+    });
+    await settleAlert(notifyManualPaymentClaim({
+      order: access.order, reference, milestone: due.milestone,
+      amountCents: due.amountCents, currency: due.currency,
+    }));
+    return res.status(202).json({ received: true, milestone: due.milestone, amountCents: due.amountCents, currency: due.currency });
   });
-  aliases(router, "post", ["/orders/:orderId/payments/paypal-capture", "/requests/:requestId/payments/paypal-capture"], paypalCapture);
+  aliases(router, "post", ["/orders/:orderId/payments/mpesa-claim", "/requests/:requestId/payments/mpesa-claim"], mpesaClaim);
 
   const demoPayment = asyncRoute(async (req, res) => {
     if (!req.platformIdentity.demo || !isLoopbackHostname(req.hostname)) return res.status(403).json({ error: "Payment simulation is available only in localhost demo mode." });

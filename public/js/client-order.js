@@ -216,14 +216,52 @@
         stripe.dataset.stripePayment = "true";
         actions.append(stripe);
       }
-      if (state.config.paypalClientId) {
-        const paypal = element("button", "dash-button", "Pay with PayPal");
-        paypal.type = "button";
-        paypal.dataset.paypalPayment = "true";
-        actions.append(paypal);
-      }
     }
     target.append(actions);
+    // Without a card processor the payment step used to render an empty box.
+    // The MoneyGram-to-M-Pesa instructions are what keeps the order alive.
+    if (!state.config.demoMode && !state.config.stripePublishableKey) {
+      target.append(manualPaymentPanel(due));
+    }
+  }
+
+  function manualPaymentPanel(due) {
+    const recipient = state.config.manualPayment || {};
+    const panel = element("div", "manual-pay");
+    panel.append(element("h3", "", "Pay by MoneyGram to M-Pesa"));
+    panel.append(element("p", "", `Send ${money(due.cents)} through MoneyGram (app or moneygram.com), choose “Mobile Wallet — M-Pesa”, and use the details below. Then enter your MoneyGram reference number here so we can confirm it.`));
+
+    const details = element("ul", "manual-pay__details");
+    [
+      ["Receive method", recipient.receiveMethod || "Mobile Wallet — M-Pesa"],
+      ["Country", recipient.country || "Kenya"],
+      ["Recipient name", recipient.recipientName || ""],
+      ["Mobile number", `${recipient.countryCode || "+254"}${String(recipient.phone || "").replace(/^0/, "")}`],
+      ["Amount", money(due.cents)],
+    ].forEach(([label, value]) => {
+      const row = element("li");
+      row.append(element("span", "manual-pay__label", label));
+      row.append(element("strong", "manual-pay__value", value));
+      details.append(row);
+    });
+    panel.append(details);
+
+    const form = element("form", "manual-pay__form");
+    form.dataset.mpesaClaim = "true";
+    const label = element("label", "", "MoneyGram reference number");
+    label.setAttribute("for", "client-mpesa-reference");
+    const input = element("input");
+    input.id = "client-mpesa-reference";
+    input.name = "reference";
+    input.required = true;
+    input.autocomplete = "off";
+    input.placeholder = "e.g. 12345678";
+    const submit = element("button", "dash-button primary", "I have sent the money");
+    submit.type = "submit";
+    form.append(label, input, submit);
+    panel.append(form);
+    panel.append(element("p", "manual-pay__note", "Nothing is marked paid automatically. We check the transfer landed and move the order on — usually within a few hours."));
+    return panel;
   }
 
   function renderRevisionEligibility(eligibility) {
@@ -337,21 +375,13 @@
     });
   }
 
-  async function payWithPayPal(control) {
-    await withPending(control, async () => {
-      const providerOrder = await api(`/api/platform/orders/${encodeURIComponent(state.orderId)}/payments/paypal-order`, { method: "POST", body: {} });
-      await loadExternalScript(`https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(state.config.paypalClientId)}&currency=USD`, "paypal-js");
-      const mount = element("div");
-      byId("client-payment-actions").append(mount);
-      await window.paypal.Buttons({
-        style: { layout: "horizontal", height: 38, tagline: false },
-        createOrder: () => providerOrder.orderId,
-        onApprove: async (data) => {
-          await api(`/api/platform/orders/${encodeURIComponent(state.orderId)}/payments/paypal-capture`, { method: "POST", body: { orderId: data.orderID } });
-          await refresh("PayPal payment confirmed.");
-        },
-        onError: () => showToast("PayPal could not complete the payment.", true),
-      }).render(mount);
+  async function submitMpesaClaim(form) {
+    const submit = form.querySelector("button[type=submit]");
+    const reference = form.querySelector("input[name=reference]").value.trim();
+    await withPending(submit, async () => {
+      await api(`/api/platform/orders/${encodeURIComponent(state.orderId)}/payments/mpesa-claim`, { method: "POST", body: { reference } });
+      form.reset();
+      await refresh("Reference received. We are confirming the transfer and will update this order.");
     });
   }
 
@@ -393,8 +423,12 @@
       if (demo) void confirmDemoPayment(demo).catch((error) => showToast(error.message, true));
       const stripe = event.target.closest("[data-stripe-payment]");
       if (stripe) void payWithStripe(stripe).catch((error) => showToast(error.message, true));
-      const paypal = event.target.closest("[data-paypal-payment]");
-      if (paypal) void payWithPayPal(paypal).catch((error) => showToast(error.message, true));
+    });
+    document.addEventListener("submit", (event) => {
+      const claim = event.target.closest("[data-mpesa-claim]");
+      if (!claim) return;
+      event.preventDefault();
+      void submitMpesaClaim(claim).catch((error) => showToast(error.message, true));
     });
   }
 

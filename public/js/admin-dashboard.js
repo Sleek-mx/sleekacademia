@@ -17,7 +17,7 @@
     orders: ["Orders", "Review every lifecycle and payment queue."],
     clients: ["Clients", "Client history, active work, and confirmed payments."],
     messages: ["Messages", "Conversations across every client order."],
-    payments: ["Payments", "Verified Stripe and PayPal transactions."],
+    payments: ["Payments", "Card and confirmed MoneyGram transactions."],
     earnings: ["Earnings", "Confirmed revenue and outstanding balances."],
     files: ["Files", "Private materials and every delivery version."],
     settings: ["Settings", "Security boundaries and workspace policy."],
@@ -169,7 +169,7 @@
   function renderKpis(overview) {
     const kpis = [
       ["Total orders", overview.totalOrders, "Every client order"],
-      ["Confirmed revenue", money(overview.confirmedRevenueCents), "Stripe and PayPal only"],
+      ["Confirmed revenue", money(overview.confirmedRevenueCents), "Card and confirmed MoneyGram"],
       ["Outstanding", money(overview.outstandingCents), "Open client balances"],
       ["Unread messages", overview.unreadMessages, "Needs a reply"],
     ];

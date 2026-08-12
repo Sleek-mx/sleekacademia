@@ -30,7 +30,7 @@ test("client dashboard exposes the complete client workspace without admin contr
 
 test("client controller uses server-owned payment and revision state", () => {
   const script = read("public/js/client-dashboard.js");
-  for (const name of ["loadSession", "loadOrders", "loadOrder", "renderOverview", "renderOrders", "renderOrderDetail", "renderDelivery", "sendMessage", "uploadMaterial", "payWithStripe", "payWithPayPal", "downloadAttachment", "requestRevision", "saveProfile", "logout"]) {
+  for (const name of ["loadSession", "loadOrders", "loadOrder", "renderOverview", "renderOrders", "renderOrderDetail", "renderDelivery", "sendMessage", "uploadMaterial", "payWithStripe", "downloadAttachment", "requestRevision", "saveProfile", "logout"]) {
     assert.match(script, new RegExp(`function\\s+${name}\\b|const\\s+${name}\\s*=`), `${name} is missing`);
   }
   assert.match(script, /\/api\/platform\/session/);
@@ -40,8 +40,10 @@ test("client controller uses server-owned payment and revision state", () => {
   assert.match(script, /Locked - pay balance to download/);
   assert.match(script, /x-csrf-token/i);
   assert.match(script, /\/payments\/stripe-intent/);
-  assert.match(script, /\/payments\/paypal-order/);
-  assert.match(script, /\/payments\/paypal-capture/);
+  // PayPal is gone. With no card processor configured the dashboard must still
+  // offer a way to pay, which is the MoneyGram-to-M-Pesa route on the order page.
+  assert.doesNotMatch(script, /paypal/i);
+  assert.match(script, /Pay by MoneyGram to M-Pesa/);
   assert.doesNotMatch(script, /quoteCents\s*=|paidCents\s*=|amountCents\s*:/);
   assert.doesNotMatch(script, /x-demo-role|admin\/orders|manual paid|mark.{0,10}paid/i);
 });

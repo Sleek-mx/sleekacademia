@@ -13,10 +13,7 @@ let store;
 let request;
 const paymentProvider = {
   stripeAvailable: true,
-  paypalAvailable: true,
   async createStripeIntent({ due }) { return { providerTransactionId: "pi_created", clientSecret: "secret", ...due }; },
-  async createPayPalOrder({ due }) { return { orderId: "order_created", ...due }; },
-  async capturePayPalOrder() { return { requestId: request.id, milestone: "deposit", amountCents: 12000, providerTransactionId: "capture_verified" }; },
 };
 
 function resolveIdentity(req) {
@@ -83,7 +80,7 @@ test("provider order creation ignores browser amounts and enforces membership", 
   assert.equal(stripe.status, 201);
   assert.equal((await stripe.json()).amountCents, 12000);
 
-  const forbidden = await api(`/requests/${request.id}/payments/paypal-order`, { user: "other", body: { amountCents: 1 } });
+  const forbidden = await api(`/requests/${request.id}/payments/stripe-intent`, { user: "other", body: { amountCents: 1 } });
   assert.equal(forbidden.status, 404);
 });
 
@@ -131,4 +128,30 @@ test("demo confirmation is rejected when identity is not an explicit local demo"
   const response = await api(`/requests/${request.id}/payments/demo-confirm`, { demo: false });
   assert.equal(response.status, 403);
   assert.match((await response.json()).error, /localhost demo/i);
+});
+
+test("a MoneyGram claim records the reference and notifies, but never marks the order paid", async () => {
+  const claim = await api(`/requests/${request.id}/payments/mpesa-claim`, { body: { reference: "12345678" } });
+  assert.equal(claim.status, 202);
+  assert.equal((await claim.json()).amountCents, 12000);
+
+  const unchanged = await store.getRequestForUser(request.id, "client");
+  assert.equal(unchanged.paidCents, 0);
+  assert.equal(unchanged.status, "Deposit Due");
+  assert.equal((await store.listPayments(request.id)).length, 0);
+
+  const events = await store.listEvents(request.id);
+  assert.ok(events.some((event) => event.type === "payment.claim.submitted"));
+});
+
+test("a MoneyGram claim needs a plausible reference and order membership", async () => {
+  const empty = await api(`/requests/${request.id}/payments/mpesa-claim`, { body: {} });
+  assert.equal(empty.status, 400);
+  assert.match((await empty.json()).error, /reference/i);
+
+  const nonsense = await api(`/requests/${request.id}/payments/mpesa-claim`, { body: { reference: "no spaces allowed!" } });
+  assert.equal(nonsense.status, 400);
+
+  const forbidden = await api(`/requests/${request.id}/payments/mpesa-claim`, { user: "other", body: { reference: "12345678" } });
+  assert.equal(forbidden.status, 404);
 });

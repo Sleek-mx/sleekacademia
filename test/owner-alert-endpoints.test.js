@@ -123,3 +123,53 @@ test("the beacon rejects a body with no usable email", async () => {
   });
   assert.equal(response.status, 400);
 });
+
+// The contact dock's message form. Mail is deliberately unconfigured in this
+// child process, which is exactly the case that must not silently swallow a
+// lead: the visitor is told to use WhatsApp instead of being shown a false
+// "sent" confirmation.
+test("the contact form rejects a message with no usable email", async () => {
+  const response = await fetch(`${BASE}/api/contact`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Origin: `http://127.0.0.1:${PORT}` },
+    body: JSON.stringify({ name: "No Email", email: "nope", message: "I need help with a care plan." }),
+  });
+  assert.equal(response.status, 400);
+});
+
+test("the contact form rejects an empty message", async () => {
+  const response = await fetch(`${BASE}/api/contact`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Origin: `http://127.0.0.1:${PORT}` },
+    body: JSON.stringify({ email: "student@client.com", message: "hi" }),
+  });
+  assert.equal(response.status, 400);
+});
+
+test("the contact form says so instead of pretending when no mail channel exists", async () => {
+  const response = await fetch(`${BASE}/api/contact`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Origin: `http://127.0.0.1:${PORT}` },
+    body: JSON.stringify({
+      name: "Real Student", email: "student@client.com",
+      message: "Can you help with a NURS 5334 paper due Friday?",
+    }),
+  });
+  assert.equal(response.status, 503);
+  assert.match((await response.json()).error, /WhatsApp/i);
+});
+
+test("health reports whether alerts and card payments are available", async () => {
+  const payload = await (await fetch(`${BASE}/api/health`)).json();
+  assert.equal(payload.ok, true);
+  assert.equal(payload.alerts, false);
+  assert.equal(payload.cardPayments, false);
+});
+
+test("the browser config offers the MoneyGram fallback when no card processor is live", async () => {
+  const payload = await (await fetch(`${BASE}/api/config`)).json();
+  assert.equal(payload.stripePublishableKey, "");
+  assert.equal(payload.manualPayment.enabled, true);
+  assert.equal(payload.manualPayment.receiveMethod, "Mobile Wallet — M-Pesa");
+  assert.doesNotMatch(JSON.stringify(payload), /paypal/i);
+});

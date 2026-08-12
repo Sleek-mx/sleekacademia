@@ -454,3 +454,73 @@ body.platform-page::before {
     transform: none;
   }
 }
+
+/* ── Conversion blocks added 2026-08-12 ───────────────────────────────────
+   Free-practice cards, the public price list, and the hero microcopy. These
+   exist because the homepage previously showed no price and offered no way in
+   except the four-step wizard. */
+
+.hero__microcopy {
+  margin: 0.9rem 0 0;
+  color: var(--public-neu-muted);
+  font-size: 0.92rem;
+}
+
+.practice-grid,
+.pricing-grid {
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.practice-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.6rem;
+  border-radius: var(--radius-md);
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-raised);
+  color: var(--public-neu-text);
+  text-decoration: none;
+  transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+
+.practice-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--public-neu-raised-hover);
+}
+
+.practice-card__field {
+  margin: 0;
+  color: var(--public-neu-brand);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.practice-card h3 { margin: 0.15rem 0; font-size: 1.25rem; }
+.practice-card__meta { margin: 0; color: var(--public-neu-muted); font-size: 0.92rem; }
+.practice-card__cta { margin-top: 0.9rem; color: var(--public-neu-brand); font-weight: 800; }
+
+.pricing-card {
+  padding: 1.6rem;
+  border-radius: var(--radius-md);
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-raised);
+}
+
+.pricing-card h3 { margin: 0 0 0.6rem; font-size: 1.05rem; }
+.pricing-card__price { margin: 0; font-size: 2.1rem; font-weight: 800; line-height: 1.1; }
+.pricing-card__price span { color: var(--public-neu-muted); font-size: 0.95rem; font-weight: 700; }
+.pricing-card__meta { margin: 0.5rem 0 0; color: var(--public-neu-muted); font-size: 0.92rem; }
+.pricing-card--accent { box-shadow: var(--public-neu-pressed); }
+.pricing-card--accent .pricing-card__price { color: var(--public-neu-brand); }
+
+.pricing-note { margin: 1.6rem 0 0; color: var(--public-neu-muted); }
+.pricing-note a { color: var(--public-neu-brand); font-weight: 800; }
+
+@media (prefers-reduced-motion: reduce) {
+  .practice-card:hover { transform: none; }
+}
