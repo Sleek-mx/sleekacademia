@@ -15,24 +15,20 @@ const socialProfiles = [
 ];
 
 const redirectOnly = new Set(["blogs.html"]);
+// The quiz pages used to live here, kept noindex "so a paywalled quiz does not
+// compete with the marketing pages". That reasoning no longer holds: the
+// marketing pages rank for nothing, the quizzes are half free and need no
+// account, and they are the product students actually pass to each other. They
+// are now indexable and carry their own canonical, OG tags and Quiz schema.
 const utilityPages = new Set([
   "404.html",
   "admin-order.html",
   "admin.html",
-  // Gated, student-specific assessment: deliberately noindex and out of the
-  // sitemap so a paywalled quiz does not compete with the marketing pages.
-  "antimicrobial-quiz.html",
   "client-order.html",
   "dashboard.html",
   "login.html",
   "onboard.html",
   "payment-success.html",
-  // Gated, student-specific assessment: deliberately noindex and out of the
-  // sitemap so a paywalled quiz does not compete with the marketing pages.
-  "renal-cardiac-quiz.html",
-  // Gated, student-specific assessment: deliberately noindex and out of the
-  // sitemap so a paywalled quiz does not compete with the marketing pages.
-  "pharmacology-quiz.html",
   "sign-up.html",
 ]);
 

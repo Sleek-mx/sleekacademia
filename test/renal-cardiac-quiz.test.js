@@ -482,7 +482,7 @@ test("the page wires itself to this quiz with its own storage keys", () => {
   assert.match(html, /apiBase:\s*"\/api\/patho-quiz"/);
   assert.match(html, /storeKey:\s*"sleek\.renalcardiac\.attempt\.v1"/);
   assert.match(html, /entitlementKey:\s*"sleek\.renalcardiac\.entitlement\.v1"/);
-  assert.match(html, /name="robots"\s+content="noindex/);
+  assert.match(html, /name="robots"\s+content="index, follow"/);
 
   // Shared, versioned assets — bumped together.
   const css = html.match(/href="\/css\/quiz\.css\?v=(\d+)"/);

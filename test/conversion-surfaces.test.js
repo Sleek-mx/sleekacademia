@@ -100,3 +100,42 @@ test("the order page can pay by MoneyGram when no card processor is configured",
   // The client must never be told a manual claim is a completed payment.
   assert.match(script, /Nothing is marked paid automatically/i);
 });
+
+// ── Distribution: the quizzes are the only thing students pass to each other ──
+
+const QUIZ_PAGES = ["antimicrobial-quiz.html", "renal-cardiac-quiz.html", "pharmacology-quiz.html"];
+
+test("quiz pages are indexable and carry link-preview metadata", () => {
+  for (const page of QUIZ_PAGES) {
+    const html = read(`public/${page}`);
+    assert.match(html, /name="robots" content="index, follow"/, `${page} is not indexable`);
+    assert.match(html, new RegExp(`rel="canonical" href="https://sleekacademia\\.com/${page}"`), `${page} has no canonical`);
+    // Without these a link shared into a group chat renders as bare text.
+    for (const tag of ["og:title", "og:description", "og:image", "og:url", "twitter:card"]) {
+      assert.match(html, new RegExp(`(property|name)="${tag}"`), `${page} is missing ${tag}`);
+    }
+    assert.match(html, /"@type": "Quiz"/, `${page} has no Quiz schema`);
+    assert.equal((html.match(/<h1/g) || []).length, 1, `${page} must have exactly one h1`);
+  }
+});
+
+test("the sitemap lists every quiz", () => {
+  const sitemap = read("public/sitemap.xml");
+  for (const page of QUIZ_PAGES) {
+    assert.match(sitemap, new RegExp(`https://sleekacademia\\.com/${page}`), `${page} is not in the sitemap`);
+  }
+});
+
+test("quizzes offer a classmate share on both the paywall and the results screen", () => {
+  for (const page of QUIZ_PAGES) {
+    const html = read(`public/${page}`);
+    assert.equal((html.match(/data-quiz-share/g) || []).length, 2, `${page} needs a share block on both screens`);
+    assert.match(html, /\/js\/quiz-share\.js/, `${page} does not load the share module`);
+  }
+  const share = read("public/js/quiz-share.js");
+  assert.match(share, /wa\.me\//);
+  // Shares must be attributable, or the channel cannot be judged.
+  assert.match(share, /utm_source", "student_share"/);
+  assert.match(share, /utm_medium/);
+  assert.match(share, /quiz_shared/);
+});

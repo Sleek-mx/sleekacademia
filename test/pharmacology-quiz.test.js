@@ -352,7 +352,7 @@ test("the page wires itself to this quiz with its own storage keys", () => {
   assert.match(html, /apiBase:\s*"\/api\/pharm-quiz"/);
   assert.match(html, /storeKey:\s*"sleek\.pharmacology\.attempt\.v1"/);
   assert.match(html, /entitlementKey:\s*"sleek\.pharmacology\.entitlement\.v1"/);
-  assert.match(html, /name="robots"\s+content="noindex/);
+  assert.match(html, /name="robots"\s+content="index, follow"/);
 
   const css = html.match(/href="\/css\/quiz\.css\?v=(\d+)"/);
   const js = html.match(/src="\/js\/quiz-engine\.js\?v=(\d+)"/);
