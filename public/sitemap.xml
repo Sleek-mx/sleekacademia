@@ -46,6 +46,18 @@
     <changefreq>monthly</changefreq>
     <priority>0.95</priority>
   </url>
+  <url>
+    <loc>https://sleekacademia.com/online-nursing-class-help.html</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://sleekacademia.com/essay-writing-help.html</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
 
   <!-- Blog index -->
   <url>
@@ -113,6 +125,20 @@
   <url>
     <loc>https://sleekacademia.com/blog/sy0-701-pbq-practice-guide.html</loc>
     <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Cluster blog posts — Online Class & Essay Writing -->
+  <url>
+    <loc>https://sleekacademia.com/blog/online-class-help-guide.html</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sleekacademia.com/blog/ai-free-writing-explained.html</loc>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
