@@ -2,6 +2,20 @@
   "use strict";
 
   const PENDING_ORDER_KEY = "sleekAcademia.pendingRequest.v2";
+  const GUMROAD_ORDER_PAYMENT_URL = "https://sleekmx.gumroad.com/l/OrderPayment";
+
+  // The price box is a "pay what you want" suggestion the buyer can edit, so
+  // this link is a starting point, not a guarantee — the webhook that credits
+  // the order treats whatever was actually paid as authoritative. See
+  // .planning/specs/gumroad-custom-order-payments.md.
+  function gumroadPaymentUrl(orderId, milestone, amountCents) {
+    const params = new URLSearchParams({
+      price: (amountCents / 100).toFixed(2),
+      order_id: orderId,
+      milestone,
+    });
+    return `${GUMROAD_ORDER_PAYMENT_URL}?${params.toString()}`;
+  }
 
   const state = {
     config: null,
@@ -355,18 +369,17 @@
       demo.dataset.demoPayment = "true";
       actions.append(demo);
     } else {
-      if (state.config.stripePublishableKey) {
-        const stripe = element("button", "dash-button primary", "Pay by card");
-        stripe.type = "button";
-        stripe.dataset.stripePayment = "true";
-        actions.append(stripe);
-      }
+      const gumroad = element("a", "dash-button primary", "Pay via Gumroad");
+      gumroad.href = gumroadPaymentUrl(state.currentOrderId, due.milestone, due.cents);
+      gumroad.target = "_blank";
+      gumroad.rel = "noopener";
+      actions.append(gumroad);
     }
     target.append(actions);
-    if (!state.config.demoMode && !state.config.stripePublishableKey) {
-      // No card processor: send them to the order page, which carries the full
-      // MoneyGram-to-M-Pesa instructions and the reference form.
-      const link = element("a", "dash-button primary", "Pay by MoneyGram to M-Pesa");
+    if (!state.config.demoMode) {
+      // Backup path for a client Gumroad can't process — full instructions and
+      // the reference-number claim form live on the order detail page.
+      const link = element("a", "dash-button", "Or pay by MoneyGram to M-Pesa");
       link.href = `/client-order.html?id=${encodeURIComponent(state.currentOrderId)}`;
       target.append(link);
     }
@@ -406,41 +419,6 @@
     });
   }
 
-  function loadExternalScript(src, id) {
-    return new Promise((resolve, reject) => {
-      if (document.getElementById(id)) return resolve();
-      const script = document.createElement("script");
-      script.id = id;
-      script.src = src;
-      script.async = true;
-      script.onload = resolve;
-      script.onerror = () => reject(new Error("The payment provider could not load."));
-      document.head.append(script);
-    });
-  }
-
-  async function payWithStripe(control) {
-    await withPending(control, async () => {
-      const intent = await api(`/api/platform/orders/${encodeURIComponent(state.currentOrderId)}/payments/stripe-intent`, { method: "POST", body: {} });
-      await loadExternalScript("https://js.stripe.com/v3/", "stripe-js");
-      const stripe = window.Stripe(state.config.stripePublishableKey);
-      const elements = stripe.elements({ clientSecret: intent.clientSecret });
-      const form = element("form", "dash-stack");
-      const mount = element("div");
-      const submit = element("button", "dash-button primary", `Confirm ${money(intent.amountCents)}`);
-      submit.type = "submit";
-      form.append(mount, submit);
-      byId("client-payment-actions").append(form);
-      elements.create("payment").mount(mount);
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        submit.disabled = true;
-        const result = await stripe.confirmPayment({ elements, confirmParams: { return_url: `${location.origin}/dashboard.html?order=${encodeURIComponent(state.currentOrderId)}` }, redirect: "if_required" });
-        if (result.error) { submit.disabled = false; showToast(result.error.message || "Stripe could not confirm payment.", true); }
-        else { showToast("Payment submitted. Waiting for provider confirmation."); window.setTimeout(() => void refreshOrder(), 1800); }
-      });
-    });
-  }
 
   async function confirmDemoPayment(control) {
     await withPending(control, async () => {
@@ -584,8 +562,6 @@
       if (event.target.closest("[data-drawer-close]")) byId("client-shell").dataset.drawerOpen = "false";
       const download = event.target.closest("[data-attachment-id]");
       if (download) void downloadAttachment(download.dataset.attachmentId, download.dataset.fileName, download).catch((error) => showToast(error.message, true));
-      const stripe = event.target.closest("[data-stripe-payment]");
-      if (stripe) void payWithStripe(stripe).catch((error) => showToast(error.message, true));
       const demo = event.target.closest("[data-demo-payment]");
       if (demo) void confirmDemoPayment(demo).catch((error) => showToast(error.message, true));
     });

@@ -3,10 +3,16 @@ import express from "express";
 import { createAdminRouter } from "./admin-router.js";
 import { createClientRouter } from "./client-router.js";
 import { asyncRoute, getStore, text } from "./http-utils.js";
-import { settleAlert, notifyPaymentAbandoned, notifyPaymentConfirmed } from "./owner-alerts.js";
-import { recordVerifiedPayment } from "./payments.js";
+import { settleAlert, notifyPaymentAbandoned, notifyPaymentConfirmed, notifyPaymentUnderpaid } from "./owner-alerts.js";
+import { getServerPaymentDue, recordGumroadPayment, recordVerifiedPayment } from "./payments.js";
 
-export function createPlatformRouter({ store: fallbackStore, resolveIdentity, paymentProvider = null, csrfService = null } = {}) {
+export function createPlatformRouter({
+  store: fallbackStore,
+  resolveIdentity,
+  paymentProvider = null,
+  csrfService = null,
+  gumroadWebhookSecret = "",
+} = {}) {
   const router = express.Router();
 
   router.post("/payments/stripe-webhook", asyncRoute(async (req, res) => {
@@ -57,6 +63,56 @@ export function createPlatformRouter({ store: fallbackStore, resolveIdentity, pa
       return res.status(400).json({ error: error instanceof Error ? error.message : "Stripe webhook verification failed." });
     }
   }));
+
+  // Gumroad Ping sends application/x-www-form-urlencoded, and it has no signing
+  // secret — the account-wide Ping URL fires for every product this seller has,
+  // not just this one, so the secret query param and the product_permalink
+  // check below are the only things standing between this route and a spoofed
+  // "mark this order paid" request. See .planning/specs/gumroad-custom-order-payments.md.
+  router.post(
+    "/payments/gumroad-webhook",
+    express.urlencoded({ extended: true }),
+    asyncRoute(async (req, res) => {
+      const store = getStore(req, fallbackStore);
+      if (!store?.available) return res.status(503).json({ error: "Payment storage is unavailable." });
+      const providedKey = text(req.query?.key, 200);
+      if (!gumroadWebhookSecret || !providedKey || providedKey !== gumroadWebhookSecret) {
+        return res.status(404).end();
+      }
+
+      const permalink = text(req.body?.product_permalink, 200);
+      if (permalink !== "OrderPayment") return res.json({ received: true, ignored: true });
+
+      const saleId = text(req.body?.sale_id, 200);
+      const orderId = text(req.body?.url_params?.order_id, 200);
+      const milestone = text(req.body?.url_params?.milestone, 40);
+      const priceCents = Number(req.body?.price);
+      if (!saleId || !orderId || !Number.isSafeInteger(priceCents) || priceCents <= 0) {
+        return res.status(400).json({ error: "The Gumroad payload is missing required fields." });
+      }
+
+      const order = await store.getRequestForUser(orderId, null, { role: "admin" });
+      if (!order) return res.status(404).json({ error: "The order for this payment could not be found." });
+
+      const before = getServerPaymentDue(order);
+      const result = await recordGumroadPayment({
+        store, request: order, providerTransactionId: saleId, milestone, amountCents: priceCents,
+      });
+      if (!result.duplicate) {
+        if (result.underpaid) {
+          await settleAlert(notifyPaymentUnderpaid({
+            order: result.request, milestone, paidAmountCents: priceCents,
+            dueAmountCents: before.amountCents || priceCents, currency: "usd", transactionId: saleId,
+          }));
+        } else {
+          await settleAlert(notifyPaymentConfirmed({
+            order: result.request, provider: "gumroad", milestone, amountCents: priceCents, currency: "usd", transactionId: saleId,
+          }));
+        }
+      }
+      return res.json({ recorded: true, duplicate: result.duplicate, orderId: result.request.id, status: result.request.status });
+    }),
+  );
 
   router.use(asyncRoute(async (req, res, next) => {
     const store = getStore(req, fallbackStore);

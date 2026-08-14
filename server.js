@@ -209,6 +209,11 @@ const RAW_BODY_PATHS = new Set([
   "/api/webhooks/clerk",
 ]);
 
+// Gumroad Ping has no signature to verify, so it needs no raw-body preservation —
+// it's exempted below for origin/CSRF only, same reasoning as Stripe and Clerk:
+// it's a server-to-server POST, not a browser form submission.
+const GUMROAD_WEBHOOK_PATH = "/api/platform/payments/gumroad-webhook";
+
 app.use(express.json({
   limit: jsonBodyLimit(),
   verify: (req, _res, buffer) => {
@@ -228,7 +233,7 @@ const allowedOrigins = buildAllowedOrigins({
 app.use(createOriginGuard({
   allowedOrigins,
   productionOrigin: "https://sleekacademia.com",
-  exemptPaths: ["/deploy.php", "/api/platform/payments/stripe-webhook", "/api/webhooks/clerk"],
+  exemptPaths: ["/deploy.php", "/api/platform/payments/stripe-webhook", "/api/webhooks/clerk", GUMROAD_WEBHOOK_PATH],
 }));
 app.use("/api/admin-auth/login", rateLimiters.adminLogin);
 app.use("/api/admin-auth", createAdminAuthRouter({ service: adminSessionService }));
@@ -363,11 +368,11 @@ const resolvePlatformIdentity = createPlatformIdentityResolver({
 });
 
 app.use("/api/platform", csrfService.protect({
-  exemptPaths: ["/payments/stripe-webhook"],
+  exemptPaths: ["/payments/stripe-webhook", "/payments/gumroad-webhook"],
   adminSessionService,
 }));
 app.use("/api/platform", (req, res, next) => {
-  if (req.path === "/payments/stripe-webhook") return rateLimiters.webhooks(req, res, next);
+  if (req.path === "/payments/stripe-webhook" || req.path === "/payments/gumroad-webhook") return rateLimiters.webhooks(req, res, next);
   if (/\/messages(?:\/|$)/.test(req.path)) return rateLimiters.messages(req, res, next);
   if (/\/(?:attachments|deliverables)(?:\/|$)/.test(req.path)) return rateLimiters.uploads(req, res, next);
   if (/\/payments(?:\/|$)/.test(req.path)) return rateLimiters.payments(req, res, next);
@@ -378,6 +383,7 @@ app.use("/api/platform", createPlatformRouter({
   resolveIdentity: resolvePlatformIdentity,
   paymentProvider,
   csrfService,
+  gumroadWebhookSecret: process.env.GUMROAD_WEBHOOK_SECRET || "",
 }));
 
 app.get("/app", (req, res) => {

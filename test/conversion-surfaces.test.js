@@ -92,11 +92,13 @@ test("no public surface still advertises PayPal", () => {
   assert.equal(fs.existsSync(path.join(rootDir, "src/quiz/paypal.js")), false);
 });
 
-test("the order page can pay by MoneyGram when no card processor is configured", () => {
+test("the order page offers Gumroad checkout with MoneyGram as a manual backup", () => {
   const script = read("public/js/client-order.js");
   assert.match(script, /manualPaymentPanel/);
   assert.match(script, /payments\/mpesa-claim/);
-  assert.match(script, /!state\.config\.stripePublishableKey/);
+  assert.match(script, /sleekmx\.gumroad\.com\/l\/OrderPayment/);
+  // MoneyGram is always available alongside Gumroad, not gated behind a missing card processor.
+  assert.doesNotMatch(script, /stripe/i);
   // The client must never be told a manual claim is a completed payment.
   assert.match(script, /Nothing is marked paid automatically/i);
 });

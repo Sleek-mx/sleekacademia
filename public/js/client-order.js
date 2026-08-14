@@ -3,6 +3,16 @@
 
   const state = { config: null, csrfToken: "", orderId: "", payload: null };
   const byId = (id) => document.getElementById(id);
+  const GUMROAD_ORDER_PAYMENT_URL = "https://sleekmx.gumroad.com/l/OrderPayment";
+
+  function gumroadPaymentUrl(orderId, milestone, amountCents) {
+    const params = new URLSearchParams({
+      price: (amountCents / 100).toFixed(2),
+      order_id: orderId,
+      milestone,
+    });
+    return `${GUMROAD_ORDER_PAYMENT_URL}?${params.toString()}`;
+  }
 
   function element(tag, className, value) {
     const node = document.createElement(tag);
@@ -210,17 +220,16 @@
       demo.dataset.demoPayment = "true";
       actions.append(demo);
     } else {
-      if (state.config.stripePublishableKey) {
-        const stripe = element("button", "dash-button primary", "Pay by card");
-        stripe.type = "button";
-        stripe.dataset.stripePayment = "true";
-        actions.append(stripe);
-      }
+      const gumroad = element("a", "dash-button primary", "Pay via Gumroad");
+      gumroad.href = gumroadPaymentUrl(state.orderId, due.milestone, due.cents);
+      gumroad.target = "_blank";
+      gumroad.rel = "noopener";
+      actions.append(gumroad);
     }
     target.append(actions);
-    // Without a card processor the payment step used to render an empty box.
-    // The MoneyGram-to-M-Pesa instructions are what keeps the order alive.
-    if (!state.config.demoMode && !state.config.stripePublishableKey) {
+    // MoneyGram-to-M-Pesa stays available as a manual backup alongside Gumroad,
+    // not gated behind Gumroad being unavailable.
+    if (!state.config.demoMode) {
       target.append(manualPaymentPanel(due));
     }
   }
@@ -338,43 +347,6 @@
     });
   }
 
-  function loadExternalScript(src, id) {
-    return new Promise((resolve, reject) => {
-      if (document.getElementById(id)) return resolve();
-      const script = document.createElement("script");
-      script.id = id;
-      script.src = src;
-      script.async = true;
-      script.onload = resolve;
-      script.onerror = () => reject(new Error("The payment provider could not load."));
-      document.head.append(script);
-    });
-  }
-
-  async function payWithStripe(control) {
-    await withPending(control, async () => {
-      const intent = await api(`/api/platform/orders/${encodeURIComponent(state.orderId)}/payments/stripe-intent`, { method: "POST", body: {} });
-      await loadExternalScript("https://js.stripe.com/v3/", "stripe-js");
-      const stripe = window.Stripe(state.config.stripePublishableKey);
-      const elements = stripe.elements({ clientSecret: intent.clientSecret });
-      const form = element("form", "dash-stack");
-      const mount = element("div");
-      const submit = element("button", "dash-button primary", `Confirm ${money(intent.amountCents)}`);
-      submit.type = "submit";
-      form.append(mount, submit);
-      byId("client-payment-actions").append(form);
-      elements.create("payment").mount(mount);
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        submit.disabled = true;
-        const returnUrl = `${location.origin}/client-order.html?id=${encodeURIComponent(state.orderId)}`;
-        const result = await stripe.confirmPayment({ elements, confirmParams: { return_url: returnUrl }, redirect: "if_required" });
-        if (result.error) { submit.disabled = false; showToast(result.error.message || "Stripe could not confirm payment.", true); }
-        else { showToast("Payment submitted. Waiting for provider confirmation."); window.setTimeout(() => void refresh(), 1800); }
-      });
-    });
-  }
-
   async function submitMpesaClaim(form) {
     const submit = form.querySelector("button[type=submit]");
     const reference = form.querySelector("input[name=reference]").value.trim();
@@ -421,8 +393,6 @@
       if (download) void downloadAttachment(download.dataset.attachmentId, download.dataset.fileName, download).catch((error) => showToast(error.message, true));
       const demo = event.target.closest("[data-demo-payment]");
       if (demo) void confirmDemoPayment(demo).catch((error) => showToast(error.message, true));
-      const stripe = event.target.closest("[data-stripe-payment]");
-      if (stripe) void payWithStripe(stripe).catch((error) => showToast(error.message, true));
     });
     document.addEventListener("submit", (event) => {
       const claim = event.target.closest("[data-mpesa-claim]");

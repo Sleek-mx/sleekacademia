@@ -5,7 +5,7 @@ import express from "express";
 
 import { createPlatformRouter } from "../src/platform/http.js";
 import { MemoryPlatformStore } from "../src/platform/memory-store.js";
-import { getServerPaymentDue, recordVerifiedPayment } from "../src/platform/payments.js";
+import { getServerPaymentDue, recordGumroadPayment, recordVerifiedPayment } from "../src/platform/payments.js";
 
 let server;
 let baseUrl;
@@ -142,6 +142,40 @@ test("a MoneyGram claim records the reference and notifies, but never marks the 
 
   const events = await store.listEvents(request.id);
   assert.ok(events.some((event) => event.type === "payment.claim.submitted"));
+});
+
+test("a Gumroad underpay credits the actual amount but does not unlock progress", async () => {
+  const result = await recordGumroadPayment({ store, request, providerTransactionId: "gum_short", milestone: "deposit", amountCents: 8000 });
+  assert.equal(result.request.paidCents, 8000);
+  assert.equal(result.request.status, "Deposit Due");
+  assert.equal(result.payment.amountCents, 8000);
+});
+
+test("a Gumroad payment that reaches the deposit threshold moves work into progress", async () => {
+  const result = await recordGumroadPayment({ store, request, providerTransactionId: "gum_deposit", milestone: "deposit", amountCents: 12000 });
+  assert.equal(result.request.paidCents, 12000);
+  assert.equal(result.request.status, "In Progress");
+});
+
+test("a Gumroad overpay is credited in full and capped at the order total", async () => {
+  const result = await recordGumroadPayment({ store, request, providerTransactionId: "gum_over", milestone: "deposit", amountCents: 30000 });
+  assert.equal(result.request.paidCents, 24000);
+  assert.equal(result.request.status, "In Progress");
+});
+
+test("a Gumroad payment is idempotent by sale id", async () => {
+  const first = await recordGumroadPayment({ store, request, providerTransactionId: "gum_dup", milestone: "deposit", amountCents: 12000 });
+  assert.equal(first.duplicate, false);
+  const second = await recordGumroadPayment({ store, request: first.request, providerTransactionId: "gum_dup", milestone: "deposit", amountCents: 12000 });
+  assert.equal(second.duplicate, true);
+  assert.equal((await store.listPayments(request.id)).length, 1);
+});
+
+test("a Gumroad balance payment after deposit completes the order total without a second checkout link", async () => {
+  const deposit = await recordGumroadPayment({ store, request, providerTransactionId: "gum_dep2", milestone: "deposit", amountCents: 12000 });
+  const balanceDue = await store.updateRequest(request.id, { status: "Balance Due" });
+  const balance = await recordGumroadPayment({ store, request: { ...deposit.request, ...balanceDue }, providerTransactionId: "gum_bal2", milestone: "balance", amountCents: 12000 });
+  assert.equal(balance.request.paidCents, 24000);
 });
 
 test("a MoneyGram claim needs a plausible reference and order membership", async () => {

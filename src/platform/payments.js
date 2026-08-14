@@ -77,6 +77,73 @@ export async function recordVerifiedPayment({
   return { request: updated, payment, duplicate: false };
 }
 
+// Gumroad's "pay what you want" checkout lets the buyer edit the prefilled
+// amount, so unlike recordVerifiedPayment (Stripe, exact-match only) this
+// credits whatever was actually paid and lets the existing paidCents-vs-quote
+// threshold in the request decide when a milestone is really cleared. An
+// underpay just leaves a smaller balance showing; it never throws.
+export async function recordGumroadPayment({
+  store,
+  request,
+  providerTransactionId,
+  milestone,
+  amountCents,
+}) {
+  if (!store?.available) throw new Error("Payment storage is unavailable.");
+  const transactionId = clean(providerTransactionId, 200);
+  if (!transactionId) throw new Error("A Gumroad sale id is required.");
+  const milestoneName = clean(milestone, 40);
+  if (!Number.isSafeInteger(amountCents) || amountCents <= 0) {
+    throw new Error("A positive Gumroad payment amount is required.");
+  }
+
+  const duplicate = await store.findPaymentByProviderId("gumroad", transactionId);
+  if (duplicate) {
+    const current = await store.getRequestForUser(request.id, request.userId, { role: "admin" });
+    return { request: current, payment: duplicate, duplicate: true };
+  }
+
+  const current = await store.getRequestForUser(request.id, request.userId, { role: "admin" });
+  if (!current) throw new Error("The payment request no longer exists.");
+
+  const payment = await store.createPayment({
+    requestId: current.id,
+    userId: current.userId,
+    provider: "gumroad",
+    providerTransactionId: transactionId,
+    milestone: milestoneName,
+    amountCents,
+    currency: clean(current.currency, 12).toLowerCase() || "usd",
+    status: "confirmed",
+  });
+  const paidCents = Math.min(current.quoteCents, (current.paidCents || 0) + amountCents);
+  const depositCents = Math.ceil((current.quoteCents || 0) / 2);
+  let status = current.status;
+  if (current.status === "Deposit Due" && paidCents >= depositCents) status = "In Progress";
+  const underpaid = milestoneName === "deposit"
+    ? paidCents < depositCents
+    : paidCents < (current.quoteCents || 0);
+  const updated = await store.updateRequest(current.id, { paidCents, status });
+  await store.appendEvent({
+    requestId: current.id,
+    actorId: "payment:gumroad",
+    type: "payment.confirmed",
+    data: { paymentId: payment.id, provider: "gumroad", milestone: milestoneName, amountCents, status, underpaid },
+  });
+  await store.createNotification({
+    userId: current.userId,
+    requestId: current.id,
+    type: "payment.confirmed",
+    title: status === "In Progress" ? "Deposit confirmed" : "Payment received",
+    body: status === "In Progress"
+      ? "Work can now move into progress."
+      : underpaid
+        ? "A partial payment was received and applied to your order. A balance remains."
+        : "Your payment was received and applied to your order.",
+  });
+  return { request: updated, payment, duplicate: false, underpaid };
+}
+
 // Card payment is Stripe only. PayPal was removed after the account was
 // restricted; when Stripe is unconfigured the client checkout falls back to the
 // manual MoneyGram-to-M-Pesa claim in client-router.js, which never marks an

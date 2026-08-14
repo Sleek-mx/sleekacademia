@@ -15,6 +15,7 @@ import {
   notifyOrderStarted,
   notifyOrderSubmitted,
   notifyPaymentAbandoned,
+  notifyPaymentUnderpaid,
   ownerAddress,
   resetAlertDedupe,
   settleAlert,
@@ -123,6 +124,19 @@ test("abandoned-payment alert reports the decline reason", async () => {
     });
     assert.match(sent[0].body.subject, /Payment not completed/);
     assert.match(sent[0].body.html, /card was declined/);
+  }));
+});
+
+test("underpaid-Gumroad alert flags the shortfall for manual follow-up", async () => {
+  await withEnv({ RESEND_API_KEY: "test-key" }, () => captureSends(async (sent) => {
+    await notifyPaymentUnderpaid({
+      order: { id: "order_9", name: "Client", email: "client@school.edu" },
+      milestone: "deposit", paidAmountCents: 8_000, dueAmountCents: 12_000, currency: "usd", transactionId: "gum_1",
+    });
+    assert.match(sent[0].body.subject, /ACTION/);
+    assert.match(sent[0].body.html, /80\.00 USD/);
+    assert.match(sent[0].body.html, /120\.00 USD/);
+    assert.match(sent[0].body.html, /order_9/);
   }));
 });
 
