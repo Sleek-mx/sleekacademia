@@ -5,6 +5,7 @@ import express from "express";
 
 import { createPlatformRouter } from "../src/platform/http.js";
 import { MemoryPlatformStore } from "../src/platform/memory-store.js";
+import { renalCardiacQuiz } from "../src/quiz/quizzes.js";
 
 const WEBHOOK_SECRET = "test-secret-abc123";
 
@@ -138,4 +139,44 @@ test("a duplicate sale id is a no-op the second time", async () => {
   assert.equal(second.status, 200);
   assert.equal((await second.json()).duplicate, true);
   assert.equal((await store.listPayments(request.id)).length, 1);
+});
+
+// ── Quiz unlock (a different product on the same account-wide Ping URL) ────
+
+test("a verified quiz sale mints an entitlement and reports unlocked", async () => {
+  const response = await ping({
+    sale_id: "gum_quiz_1", price: "1000", product_permalink: "QuizUnlock",
+    email: "buyer@example.com", "url_params[quiz_id]": renalCardiacQuiz.id,
+  });
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).unlocked, true);
+});
+
+test("a quiz sale for an unresolvable quiz_id is rejected", async () => {
+  const response = await ping({
+    sale_id: "gum_quiz_2", price: "1000", product_permalink: "QuizUnlock",
+    email: "buyer@example.com", "url_params[quiz_id]": "not-a-real-quiz",
+  });
+  assert.equal(response.status, 404);
+});
+
+test("a duplicate quiz sale id is a no-op the second time", async () => {
+  const body = {
+    sale_id: "gum_quiz_3", price: "1000", product_permalink: "QuizUnlock",
+    email: "buyer@example.com", "url_params[quiz_id]": renalCardiacQuiz.id,
+  };
+  await ping(body);
+  const second = await ping(body);
+  assert.equal(second.status, 200);
+  assert.equal((await second.json()).duplicate, true);
+});
+
+test("a quiz sale never touches the order store at all", async () => {
+  const response = await ping({
+    sale_id: "gum_quiz_4", price: "1000", product_permalink: "QuizUnlock",
+    email: "buyer@example.com", "url_params[quiz_id]": renalCardiacQuiz.id,
+  });
+  assert.equal(response.status, 200);
+  const unchanged = await store.getRequestForUser(request.id, "client");
+  assert.equal(unchanged.paidCents, 0);
 });

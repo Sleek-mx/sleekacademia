@@ -30,6 +30,7 @@
   var STORE_KEY = CFG.storeKey || "sleek.antimicrobial.attempt.v1";
   var ENTITLEMENT_KEY = CFG.entitlementKey || "sleek.antimicrobial.entitlement.v1";
   var API = CFG.apiBase || "/api/quiz";
+  var GUMROAD_QUIZ_UNLOCK_URL = "https://sleekmx.gumroad.com/l/QuizUnlock";
 
   // ── DOM ────────────────────────────────────────────────────────────────
   var $ = function (id) { return document.getElementById(id); };
@@ -718,14 +719,36 @@
       " questions cover the material most likely to appear on your exam.");
 
     $("paywall-error").hidden = true;
-    text($("paywall-mode"), "Pay by MoneyGram to mobile money. This is a manual process — " +
+    text($("paywall-mode"), "MoneyGram to mobile money is also available below as a manual backup — " +
       "an access code follows by email once payment is confirmed.");
+
+    renderGumroadCheckout();
 
     wizardStep = 0;
     wizardSubmitted = false;
     renderWizard();
 
     show("paywall");
+  }
+
+  // Same product/webhook pattern as the site's custom-order payments: the
+  // quiz id rides in url_params so the webhook (src/platform/http.js) knows
+  // which quiz's entitlement to mint. Gumroad's own buyer-email field is used
+  // to deliver the access link — no account or login needed on this side.
+  function renderGumroadCheckout() {
+    var container = $("gumroad-checkout");
+    if (!container) return;
+    var params = new URLSearchParams({
+      price: String(config.unlockPriceUsd || "10.00"),
+      quiz_id: config.quizId || "",
+    });
+    var link = document.createElement("a");
+    link.className = "btn btn-primary";
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.href = GUMROAD_QUIZ_UNLOCK_URL + "?" + params.toString();
+    link.textContent = "Pay via Gumroad — $" + String(config.unlockPriceUsd || "10").replace(/\.00$/, "");
+    container.replaceChildren(link);
   }
 
   function renderWizard() {

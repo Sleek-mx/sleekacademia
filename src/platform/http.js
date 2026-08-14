@@ -7,6 +7,7 @@ import { createClientRouter } from "./client-router.js";
 import { asyncRoute, getStore, text } from "./http-utils.js";
 import { settleAlert, notifyPaymentAbandoned, notifyPaymentConfirmed, notifyPaymentUnderpaid } from "./owner-alerts.js";
 import { getServerPaymentDue, recordGumroadPayment, recordVerifiedPayment } from "./payments.js";
+import { unlockQuizFromGumroadSale } from "../quiz/gumroad-unlock.js";
 
 function timingSafeEqual(a, b) {
   const left = Buffer.from(a);
@@ -23,6 +24,19 @@ export function createPlatformRouter({
   gumroadWebhookSecret = "",
 } = {}) {
   const router = express.Router();
+
+  // Quiz unlocks have no persistent payments table to dedup against (unlike
+  // orders — entitlements are stateless signed tokens). A duplicate Ping just
+  // means the buyer might get the access-link email twice, which is low-harm,
+  // so best-effort in-memory dedup is enough here — same "duplicates-free, not
+  // exactly-once" standard owner-alerts.js already uses for alert dedup.
+  const processedQuizSaleIds = new Set();
+  function rememberQuizSale(saleId) {
+    processedQuizSaleIds.add(saleId);
+    if (processedQuizSaleIds.size > 500) {
+      processedQuizSaleIds.delete(processedQuizSaleIds.values().next().value);
+    }
+  }
 
   router.post("/payments/stripe-webhook", asyncRoute(async (req, res) => {
     const store = getStore(req, fallbackStore);
@@ -90,6 +104,24 @@ export function createPlatformRouter({
       }
 
       const permalink = text(req.body?.product_permalink, 200);
+
+      if (permalink === "QuizUnlock") {
+        const quizSaleId = text(req.body?.sale_id, 200);
+        const quizId = text(req.body?.url_params?.quiz_id, 60);
+        const buyerEmail = text(req.body?.email, 200);
+        const quizPriceCents = Number(req.body?.price);
+        if (!quizSaleId || !quizId || !Number.isSafeInteger(quizPriceCents) || quizPriceCents <= 0) {
+          return res.status(400).json({ error: "The Gumroad payload is missing required fields." });
+        }
+        if (processedQuizSaleIds.has(quizSaleId)) return res.json({ received: true, duplicate: true });
+        const quizResult = await unlockQuizFromGumroadSale({
+          quizId, buyerEmail, saleId: quizSaleId, priceCents: quizPriceCents,
+        });
+        if (!quizResult.ok) return res.status(404).json({ error: "Could not resolve the quiz for this payment." });
+        rememberQuizSale(quizSaleId);
+        return res.json({ received: true, unlocked: true });
+      }
+
       if (permalink !== "OrderPayment") return res.json({ received: true, ignored: true });
 
       const saleId = text(req.body?.sale_id, 200);

@@ -1,10 +1,11 @@
 // Email notifications for quiz unlocks.
 //
-// Three messages, all triggered by the PayPal capture route:
+// Three messages, triggered by a verified payment (originally PayPal's capture
+// route; now also the Gumroad unlock path in gumroad-unlock.js):
 //   1. notifyUnlock          — tells Max a sale happened
 //   2. emailBuyerAccessLink  — gives the buyer a link that restores paid access
 //   3. notifyCaptureFailure  — flags a capture that errored, where money may have
-//                              moved without an unlock being issued
+//                              moved without an unlock being issued (PayPal-specific)
 //
 // Two rules this module never breaks:
 //
@@ -170,9 +171,9 @@ export async function notifyUnlock(quiz, result, { buyerEmailOutcome, link } = {
         `<table style="width:100%;border-collapse:collapse;background:#f8fafc;border-radius:8px;overflow:hidden">
           ${row("Quiz", quiz.title)}
           ${row("Amount", `${result.amount || "10.00"} USD`)}
-          ${row("Buyer", result.payer || "not reported by PayPal")}
-          ${row("PayPal order", result.orderId)}
-          ${row("Capture id", result.captureId)}
+          ${row("Provider", result.provider || "unknown")}
+          ${row("Buyer", result.payer || "not reported by the payment provider")}
+          ${row("Order / sale id", result.orderId)}
         </table>
         ${buyerLine}`
       ),
@@ -193,8 +194,8 @@ export async function emailBuyerAccessLink(quiz, result, entitlement) {
   const link = accessLink(quiz, entitlement);
 
   if (!result.payer) {
-    console.warn("[quiz] PayPal reported no buyer email; cannot send the access link");
-    return { sent: false, reason: "PayPal did not report a buyer email", link };
+    console.warn("[quiz] payment provider reported no buyer email; cannot send the access link");
+    return { sent: false, reason: "the payment provider did not report a buyer email", link };
   }
   if (skipIfUnconfigured("buyer access link")) {
     return { sent: false, reason: "email not configured", link };
