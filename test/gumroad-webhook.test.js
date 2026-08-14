@@ -5,7 +5,8 @@ import express from "express";
 
 import { createPlatformRouter } from "../src/platform/http.js";
 import { MemoryPlatformStore } from "../src/platform/memory-store.js";
-import { renalCardiacQuiz } from "../src/quiz/quizzes.js";
+import { antimicrobialQuiz, renalCardiacQuiz } from "../src/quiz/quizzes.js";
+import { createQuizRouter } from "../src/quiz/router.js";
 
 const WEBHOOK_SECRET = "test-secret-abc123";
 
@@ -179,4 +180,74 @@ test("a quiz sale never touches the order store at all", async () => {
   assert.equal(response.status, 200);
   const unchanged = await store.getRequestForUser(request.id, "client");
   assert.equal(unchanged.paidCents, 0);
+});
+
+test("a quiz sale still unlocks even when the order-payment store is unavailable", async () => {
+  const unavailableApp = express();
+  unavailableApp.use("/api/platform", (req, _res, next) => { req.platformStore = { available: false }; next(); });
+  unavailableApp.use("/api/platform", createPlatformRouter({ resolveIdentity, gumroadWebhookSecret: WEBHOOK_SECRET }));
+  const unavailableServer = unavailableApp.listen(0, "127.0.0.1");
+  await new Promise((resolve) => unavailableServer.once("listening", resolve));
+  try {
+    const port = unavailableServer.address().port;
+    const response = await fetch(`http://127.0.0.1:${port}/api/platform/payments/gumroad-webhook?key=${WEBHOOK_SECRET}`, {
+      method: "POST",
+      headers: { "content-type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        sale_id: "gum_quiz_5", price: "1000", product_permalink: "QuizUnlock",
+        email: "buyer@example.com", "url_params[quiz_id]": renalCardiacQuiz.id,
+      }).toString(),
+    });
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).unlocked, true);
+  } finally {
+    unavailableServer.close();
+  }
+});
+
+test("end-to-end: a Gumroad-minted entitlement unlocks the paid quiz but not a different one", async () => {
+  const response = await ping({
+    sale_id: "gum_quiz_scope", price: "1000", product_permalink: "QuizUnlock",
+    email: "buyer@example.com", "url_params[quiz_id]": renalCardiacQuiz.id,
+  });
+  assert.equal(response.status, 200);
+
+  // Pull the actual minted token from the buyer's email instead of trusting
+  // the webhook's own bookkeeping — this is what proves the token that left
+  // the building really carries the right scope.
+  const axios = (await import("axios")).default;
+  const sent = [];
+  const original = axios.post;
+  axios.post = async (url, body) => { sent.push({ url, body }); return { data: { id: "stub" } }; };
+  let token;
+  try {
+    process.env.RESEND_API_KEY = "test-key";
+    await ping({
+      sale_id: "gum_quiz_scope_2", price: "1000", product_permalink: "QuizUnlock",
+      email: "buyer@example.com", "url_params[quiz_id]": renalCardiacQuiz.id,
+    });
+    const buyerMail = sent.find((entry) => entry.body.to.includes("buyer@example.com"));
+    const match = /#unlock=([^"&\s]+)/.exec(buyerMail.body.html);
+    token = decodeURIComponent(match[1]);
+  } finally {
+    axios.post = original;
+    delete process.env.RESEND_API_KEY;
+  }
+
+  const quizApp = express();
+  quizApp.use(express.json());
+  quizApp.use("/api/renal-cardiac", createQuizRouter(renalCardiacQuiz));
+  quizApp.use("/api/antimicrobial", createQuizRouter(antimicrobialQuiz));
+  const quizServer = quizApp.listen(0, "127.0.0.1");
+  await new Promise((resolve) => quizServer.once("listening", resolve));
+  try {
+    const port = quizServer.address().port;
+    const paidQuiz = await fetch(`http://127.0.0.1:${port}/api/renal-cardiac/config`, { headers: { "x-quiz-entitlement": token } });
+    assert.equal((await paidQuiz.json()).entitled, true, "the quiz that was actually paid for must unlock");
+
+    const wrongQuiz = await fetch(`http://127.0.0.1:${port}/api/antimicrobial/config`, { headers: { "x-quiz-entitlement": token } });
+    assert.equal((await wrongQuiz.json()).entitled, false, "a different quiz must not unlock from the same token");
+  } finally {
+    quizServer.close();
+  }
 });

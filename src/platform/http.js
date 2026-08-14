@@ -96,8 +96,6 @@ export function createPlatformRouter({
     "/payments/gumroad-webhook",
     express.urlencoded({ extended: true }),
     asyncRoute(async (req, res) => {
-      const store = getStore(req, fallbackStore);
-      if (!store?.available) return res.status(503).json({ error: "Payment storage is unavailable." });
       const providedKey = text(req.query?.key, 200);
       if (!gumroadWebhookSecret || !providedKey || !timingSafeEqual(providedKey, gumroadWebhookSecret)) {
         return res.status(404).end();
@@ -105,6 +103,10 @@ export function createPlatformRouter({
 
       const permalink = text(req.body?.product_permalink, 200);
 
+      // Quiz unlocks never touch the order-payment store (entitlements are
+      // stateless signed tokens), so they must not fail just because that
+      // store happens to be unavailable — the two product types on this
+      // shared webhook are otherwise fully independent.
       if (permalink === "QuizUnlock") {
         const quizSaleId = text(req.body?.sale_id, 200);
         const quizId = text(req.body?.url_params?.quiz_id, 60);
@@ -123,6 +125,9 @@ export function createPlatformRouter({
       }
 
       if (permalink !== "OrderPayment") return res.json({ received: true, ignored: true });
+
+      const store = getStore(req, fallbackStore);
+      if (!store?.available) return res.status(503).json({ error: "Payment storage is unavailable." });
 
       const saleId = text(req.body?.sale_id, 200);
       const orderId = text(req.body?.url_params?.order_id, 200);
