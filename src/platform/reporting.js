@@ -1,9 +1,10 @@
 import { deriveOrderQueues, ORDER_STATUSES } from "./domain.js";
 
-// Providers whose payments count as real money. "paypal" stays for the
-// historical rows recorded before that account was restricted; "moneygram" is
+// Providers whose payments count as real money. "gumroad" is the current
+// primary path for both custom orders and quiz unlocks; "stripe"/"paypal"
+// stay for historical rows recorded before each was retired; "moneygram" is
 // the operator-confirmed offline transfer. "demo" is deliberately absent.
-const REAL_PROVIDERS = new Set(["stripe", "paypal", "moneygram"]);
+const REAL_PROVIDERS = new Set(["gumroad", "stripe", "paypal", "moneygram"]);
 
 function confirmedPayments(payments = []) {
   return payments.filter((payment) => payment?.status === "confirmed" && REAL_PROVIDERS.has(payment.provider));

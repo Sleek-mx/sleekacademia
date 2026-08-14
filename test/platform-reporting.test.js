@@ -19,6 +19,15 @@ const payments = [
   { id: "p3", requestId: "o2", provider: "demo", status: "confirmed", amountCents: 99999, confirmedAt: "2026-07-13T00:00:00.000Z" },
 ];
 
+test("admin overview counts confirmed Gumroad payments as real revenue", () => {
+  const gumroadPayments = [
+    ...payments,
+    { id: "p4", requestId: "o1", provider: "gumroad", status: "confirmed", amountCents: 1000, confirmedAt: "2026-07-13T00:00:00.000Z" },
+  ];
+  const overview = buildAdminOverview({ orders, payments: gumroadPayments, messages: [] }, new Date("2026-07-13T12:00:00.000Z"));
+  assert.equal(overview.confirmedRevenueCents, 17500);
+});
+
 test("admin overview separates lifecycle counts, revenue, and outstanding balance", () => {
   const overview = buildAdminOverview({ orders, payments, messages: [] }, new Date("2026-07-13T12:00:00.000Z"));
   assert.equal(overview.totalOrders, 2);
