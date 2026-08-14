@@ -150,7 +150,8 @@ test("Store preserves Gumroad commerce and live product synchronization", () => 
   assert.doesNotMatch(html, /https:\/\/gumroad\.com\/js\/gumroad\.js/);
   assert.match(html, /id="products-grid"/);
   assert.match(html, /\/api\/gumroad\/products/);
-  assert.match(html, /macsin6\.gumroad\.com/);
+  assert.match(html, /sleekmx\.gumroad\.com/);
+  assert.doesNotMatch(html, /macsin6\.gumroad\.com/);
   assert.match(html, /class="platform-button store-button--primary"[^>]*>Browse materials</);
   assert.match(html, /class="platform-button store-button--secondary"[^>]*>Visit Gumroad store</);
 
