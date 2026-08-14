@@ -1,6 +1,8 @@
 (function initializeClientDashboard() {
   "use strict";
 
+  const PENDING_ORDER_KEY = "sleekAcademia.pendingRequest.v2";
+
   const state = {
     config: null,
     session: null,
@@ -129,6 +131,24 @@
     byId("client-profile-phone").value = profile.urgentPhone || "";
     byId("client-profile-school").value = profile.school || "";
     return state.session;
+  }
+
+  // A request started on onboard.html before the account existed is saved to localStorage,
+  // not the server. Clerk's own post-signup redirect can land the browser here without ever
+  // running onboard.js's handoff call, so that draft has to be reclaimed on first load or the
+  // order is silently lost and the person has to redo the whole wizard.
+  async function reclaimPendingOrder() {
+    let pending;
+    try { pending = JSON.parse(localStorage.getItem(PENDING_ORDER_KEY) || "null"); } catch { pending = null; }
+    if (!pending || !pending.idempotencyKey) return null;
+    try {
+      const payload = await api("/api/platform/orders/handoff", { method: "POST", body: pending });
+      localStorage.removeItem(PENDING_ORDER_KEY);
+      return payload.order || null;
+    } catch (error) {
+      showToast(`We found an order you started earlier but could not save it automatically: ${error.message}`, true);
+      return null;
+    }
   }
 
   async function loadOrders() {
@@ -579,10 +599,11 @@
     showLoading(true);
     try {
       await loadSession();
+      const reclaimed = await reclaimPendingOrder();
       await loadOrders();
       showLoading(false);
       await showView("overview");
-      const requested = new URLSearchParams(window.location.search).get("order");
+      const requested = reclaimed?.id || new URLSearchParams(window.location.search).get("order");
       if (requested && state.orders.some((order) => order.id === requested)) window.location.replace(`/client-order.html?id=${encodeURIComponent(requested)}`);
     } catch (error) { showError(error); }
   }

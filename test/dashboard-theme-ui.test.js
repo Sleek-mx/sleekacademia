@@ -23,14 +23,14 @@ test("dashboard neumorphic system uses only the approved Sleek Academia palette"
   assert.doesNotMatch(css, /workspace-v2\.css/);
 });
 
-test("dashboard theme follows system preference until the user chooses a mode", () => {
+test("dashboard theme defaults to light until the user chooses night mode", () => {
   const script = read("public/js/dashboard-theme.js");
 
   assert.match(script, /sleekAcademia\.dashboardTheme\.v1/);
-  assert.match(script, /prefers-color-scheme:\s*dark/);
+  assert.match(script, /storedTheme\(\)\s*\|\|\s*["']light["']/);
+  assert.doesNotMatch(script, /matchMedia/);
   assert.match(script, /root\.dataset\.theme/);
   assert.match(script, /aria-pressed/);
-  assert.match(script, /addEventListener\(["']change["']/);
   assert.match(script, /sleek:dashboard-theme-change/);
   assert.doesNotMatch(script, /innerHTML/);
 });

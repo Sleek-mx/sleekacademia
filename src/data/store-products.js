@@ -14,7 +14,7 @@
 
 export const STORE_ORIGIN = "https://sleekacademia.com";
 export const STORE_PATH = "/store.html";
-export const GUMROAD_STORE = "https://macsin6.gumroad.com";
+export const GUMROAD_STORE = "https://sleekmx.gumroad.com";
 
 /** Offers stay valid until this date; bump it when prices are reviewed. */
 export const PRICE_VALID_UNTIL = "2027-12-31";
@@ -36,8 +36,8 @@ export const RATING_POLICY = "real-reviews-only";
 
 export const STORE_PRODUCTS = Object.freeze([
   Object.freeze({
-    sku: "eiwdcu",
-    gumroadPermalink: "eiwdcu",
+    sku: "OphthalmicPharmacology",
+    gumroadPermalink: "OphthalmicPharmacology",
     icon: "Rx",
     cardTitle: "Ophthalmic Pharmacology Q&A",
     schemaName:
@@ -49,8 +49,8 @@ export const STORE_PRODUCTS = Object.freeze([
     image: "https://public-files.gumroad.com/c3nr4lbeon6hm4oywq8xq2eqmp4c",
   }),
   Object.freeze({
-    sku: "jmczyx",
-    gumroadPermalink: "jmczyx",
+    sku: "DrugTherapy",
+    gumroadPermalink: "DrugTherapy",
     icon: "ED",
     cardTitle: "Patient Education and Drug Therapy Q&A",
     schemaName:
@@ -62,8 +62,8 @@ export const STORE_PRODUCTS = Object.freeze([
     image: "https://public-files.gumroad.com/abzo3nzcmdzialhwf60rhblais1h",
   }),
   Object.freeze({
-    sku: "eyfmy",
-    gumroadPermalink: "eyfmy",
+    sku: "OTCDrugsD441",
+    gumroadPermalink: "OTCDrugsD441",
     icon: "OTC",
     cardTitle: "OTC Drugs and Herbal Supplements Q&A",
     schemaName:
@@ -73,6 +73,80 @@ export const STORE_PRODUCTS = Object.freeze([
     price: "15.00",
     priceCurrency: "USD",
     image: "https://public-files.gumroad.com/inyomfm593vgq4vp2v6a3s6uihzi",
+  }),
+  Object.freeze({
+    sku: "ControllingDrugsD441",
+    gumroadPermalink: "ControllingDrugsD441",
+    icon: "GI",
+    cardTitle: "Acid-Controlling Drugs Study Guide",
+    schemaName: "Acid-Controlling Drugs Study Guide — D441 (Ch. 50)",
+    description:
+      "High-yield question, answer, and rationale review of acid-controlling drug therapy for nursing pharmacology coursework.",
+    price: "15.00",
+    priceCurrency: "USD",
+    image: "https://public-files.gumroad.com/yqu9wqushd69ey8vhig044w8k4kq",
+  }),
+  Object.freeze({
+    sku: "DermatologicDrugs",
+    gumroadPermalink: "DermatologicDrugs",
+    icon: "Rx",
+    cardTitle: "Dermatologic Drugs Q&A",
+    schemaName: "Dermatologic Drugs — Nursing Pharmacology Q&A with Rationale",
+    description:
+      "Question, answer, and rationale review of dermatologic drug therapy for nursing pharmacology exam prep.",
+    price: "15.00",
+    priceCurrency: "USD",
+    image: "https://public-files.gumroad.com/czjkihqtntsmtqsjoux01frgf7w1",
+  }),
+  Object.freeze({
+    sku: "NURSG5315Exam2",
+    gumroadPermalink: "NURSG5315Exam2",
+    icon: "Ex2",
+    cardTitle: "NURSG 5315 Exam 2 Mastery Workbook",
+    schemaName: "NURSG5315 Exam2 Mastery Workbook — Advanced Pathophysiology",
+    description:
+      "Structured Exam 2 review workbook with high-yield notes, application-style questions, and rationale-backed answers.",
+    price: "15.00",
+    priceCurrency: "USD",
+    image: "https://public-files.gumroad.com/r7608jhiotjcyjsweuwcuazvfwuo",
+  }),
+  Object.freeze({
+    sku: "Exam5",
+    gumroadPermalink: "Exam5",
+    icon: "Ex5",
+    cardTitle: "The Night Before Exam 5 Study Pack",
+    schemaName:
+      "The Night Before Exam 5: Endocrine, GI, and Obesity Done in One Pack — Advanced Pathophysiology",
+    description:
+      "Five-module last-mile review covering endocrine, GI, and obesity content, with practice questions and answer rationales.",
+    price: "12.00",
+    priceCurrency: "USD",
+    image: "https://public-files.gumroad.com/u4ocseu6zxpiscw85fi6bfr6d2xj",
+  }),
+  Object.freeze({
+    sku: "NURSG5315_Exam2",
+    gumroadPermalink: "NURSG5315_Exam2",
+    icon: "Ex2",
+    cardTitle: "NURSG 5315 Exam 2 Study Pack",
+    schemaName: "NURSG 5315 Exam 2 — Advanced Pathophysiology Review",
+    description:
+      "Exam 2 review covering tumor markers, immunology, and musculoskeletal pathophysiology, with rationale-backed practice questions.",
+    price: "12.00",
+    priceCurrency: "USD",
+    image: "https://public-files.gumroad.com/p400unamm1ur0poy0h489u2u99z2",
+  }),
+  Object.freeze({
+    sku: "Exam5_5315",
+    gumroadPermalink: "Exam5_5315",
+    icon: "Ex5",
+    cardTitle: "Advanced Pathophysiology Exam 5 Study Pack",
+    schemaName:
+      "Advanced Pathophysiology Exam 5 Study Pack: Obesity, Endocrine, GI, Neuro & Renal Review",
+    description:
+      "Cross-system Exam 5 review connecting obesity, endocrine, GI, neuro, and renal pathophysiology with integrated practice questions.",
+    price: "10.00",
+    priceCurrency: "USD",
+    image: "https://public-files.gumroad.com/kmidy9rwcsddnvz6nh01k4du8l38",
   }),
 ]);
 

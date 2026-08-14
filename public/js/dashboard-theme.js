@@ -3,7 +3,6 @@
 
   const STORAGE_KEY = "sleekAcademia.dashboardTheme.v1";
   const root = document.documentElement;
-  const systemPreference = window.matchMedia("(prefers-color-scheme: dark)");
 
   function storedTheme() {
     try {
@@ -12,10 +11,6 @@
     } catch {
       return null;
     }
-  }
-
-  function systemTheme() {
-    return systemPreference.matches ? "night" : "light";
   }
 
   function updateControls(theme) {
@@ -41,11 +36,9 @@
     return applyTheme(root.dataset.theme === "night" ? "light" : "night", true);
   }
 
-  applyTheme(storedTheme() || systemTheme(), false);
-
-  systemPreference.addEventListener("change", () => {
-    if (!storedTheme()) applyTheme(systemTheme(), false);
-  });
+  // Light is the default for everyone until they explicitly toggle to night — the
+  // dashboard must not follow the OS/browser prefers-color-scheme setting.
+  applyTheme(storedTheme() || "light", false);
 
   document.addEventListener("click", (event) => {
     if (event.target.closest("[data-theme-toggle]")) toggleTheme();
