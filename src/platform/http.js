@@ -99,6 +99,14 @@ export function createPlatformRouter({
       if (!saleId || !orderId || !Number.isSafeInteger(priceCents) || priceCents <= 0) {
         return res.status(400).json({ error: "The Gumroad payload is missing required fields." });
       }
+      // Order ids are always a real randomUUID(). Production's store queries a
+      // uuid database column, which throws on malformed input rather than
+      // returning null — reject the shape here so a garbage id (a bad link, a
+      // Gumroad test-ping with no real order attached) is a clean 404 rather
+      // than a 500 from an unhandled database error.
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderId)) {
+        return res.status(404).json({ error: "The order for this payment could not be found." });
+      }
 
       const order = await store.getRequestForUser(orderId, null, { role: "admin" });
       if (!order) return res.status(404).json({ error: "The order for this payment could not be found." });

@@ -69,10 +69,36 @@ test("a Ping for a different Gumroad product is safely ignored, not an error", a
   assert.equal(unchanged.paidCents, 0);
 });
 
-test("a Ping for an order that doesn't exist is rejected so Gumroad retries", async () => {
+test("a malformed order_id is rejected with a clean 404, never reaching the store", async () => {
+  // Production's Supabase store queries a uuid column — a non-UUID id throws
+  // there instead of returning null, so this has to be caught before the
+  // store call, not after. A stub that throws on any call proves it.
+  const throwingStore = { available: true, getRequestForUser: () => { throw new Error("must not be called"); } };
+  const app = express();
+  app.use("/api/platform", (req, _res, next) => { req.platformStore = throwingStore; next(); });
+  app.use("/api/platform", createPlatformRouter({ resolveIdentity, gumroadWebhookSecret: WEBHOOK_SECRET }));
+  const throwServer = app.listen(0, "127.0.0.1");
+  await new Promise((resolve) => throwServer.once("listening", resolve));
+  const throwBaseUrl = `http://127.0.0.1:${throwServer.address().port}`;
+  try {
+    const response = await fetch(`${throwBaseUrl}/api/platform/payments/gumroad-webhook?key=${WEBHOOK_SECRET}`, {
+      method: "POST",
+      headers: { "content-type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        sale_id: "gum_2", price: "12000", product_permalink: "OrderPayment",
+        "url_params[order_id]": "not-a-real-order", "url_params[milestone]": "deposit",
+      }).toString(),
+    });
+    assert.equal(response.status, 404);
+  } finally {
+    throwServer.close();
+  }
+});
+
+test("a well-formed but nonexistent order id is rejected so Gumroad retries", async () => {
   const response = await ping({
     sale_id: "gum_2", price: "12000", product_permalink: "OrderPayment",
-    "url_params[order_id]": "not_a_real_order", "url_params[milestone]": "deposit",
+    "url_params[order_id]": "00000000-0000-4000-8000-000000000000", "url_params[milestone]": "deposit",
   });
   assert.notEqual(response.status, 200);
 });
