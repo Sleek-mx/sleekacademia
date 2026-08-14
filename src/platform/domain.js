@@ -165,6 +165,18 @@ export function canTransitionRequest(request, nextStatus) {
   return { ok: true };
 }
 
+/**
+ * The deposit threshold an order's paidCents must reach before work can start.
+ * Prefers the immutable pricing snapshot taken at quote time; only falls back
+ * to a flat 50% when no snapshot exists. Shared so every caller that decides
+ * "has the deposit cleared?" agrees, even if a future service stops splitting
+ * exactly 50/50.
+ */
+export function depositThresholdCents(order) {
+  const quoteCents = positiveCents(order?.quoteCents);
+  return positiveCents(order?.pricingSnapshot?.depositCents) || Math.ceil(quoteCents / 2);
+}
+
 export function canTransitionOrder(order, nextStatus, context = {}) {
   const currentStatus = clean(order?.status);
   const targetStatus = clean(nextStatus);
@@ -177,7 +189,7 @@ export function canTransitionOrder(order, nextStatus, context = {}) {
   const paidCents = Math.max(0, Number.isSafeInteger(order?.paidCents) ? order.paidCents : 0);
   const pricingSnapshot = order?.pricingSnapshot;
   const snapshotTotal = positiveCents(pricingSnapshot?.totalCents);
-  const depositCents = positiveCents(pricingSnapshot?.depositCents) || Math.ceil(quoteCents / 2);
+  const depositCents = depositThresholdCents(order);
 
   if (targetStatus === "Deposit Due" && (!quoteCents || snapshotTotal !== quoteCents)) {
     return { ok: false, error: "A valid immutable pricing snapshot is required before requesting a deposit." };

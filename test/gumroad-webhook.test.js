@@ -1,0 +1,115 @@
+import assert from "node:assert/strict";
+import { after, before, beforeEach, test } from "node:test";
+
+import express from "express";
+
+import { createPlatformRouter } from "../src/platform/http.js";
+import { MemoryPlatformStore } from "../src/platform/memory-store.js";
+
+const WEBHOOK_SECRET = "test-secret-abc123";
+
+let server;
+let baseUrl;
+let store;
+let request;
+
+function resolveIdentity(req) {
+  const userId = req.get("x-test-user");
+  if (!userId) return null;
+  return { userId, role: req.get("x-test-role") || "student", email: `${userId}@example.com`, fullName: userId, demo: false };
+}
+
+before(async () => {
+  const app = express();
+  app.use("/api/platform", (req, _res, next) => { req.platformStore = store; next(); });
+  app.use("/api/platform", createPlatformRouter({ resolveIdentity, gumroadWebhookSecret: WEBHOOK_SECRET }));
+  server = app.listen(0, "127.0.0.1");
+  await new Promise((resolve) => server.once("listening", resolve));
+  baseUrl = `http://127.0.0.1:${server.address().port}`;
+});
+
+after(() => server?.close());
+
+beforeEach(async () => {
+  store = new MemoryPlatformStore();
+  await store.upsertProfile({ userId: "client", role: "student", email: "client@example.com", fullName: "Client" });
+  request = await store.createRequest({
+    userId: "client", idempotencyKey: "gumroad-webhook-request", service: "essay", subject: "Nursing",
+    description: "Brief", name: "Client", email: "client@example.com", status: "Deposit Due",
+    quoteCents: 24000, paidCents: 0,
+  });
+});
+
+function ping(body, { key = WEBHOOK_SECRET } = {}) {
+  return fetch(`${baseUrl}/api/platform/payments/gumroad-webhook?key=${encodeURIComponent(key)}`, {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams(body).toString(),
+  });
+}
+
+test("a Ping with the wrong secret is rejected without touching any order", async () => {
+  const response = await ping({
+    sale_id: "gum_1", price: "12000", product_permalink: "OrderPayment",
+    "url_params[order_id]": request.id, "url_params[milestone]": "deposit",
+  }, { key: "wrong-secret" });
+  assert.equal(response.status, 404);
+  const unchanged = await store.getRequestForUser(request.id, "client");
+  assert.equal(unchanged.paidCents, 0);
+});
+
+test("a Ping for a different Gumroad product is safely ignored, not an error", async () => {
+  const response = await ping({
+    sale_id: "gum_other", price: "1500", product_permalink: "SomeQuizPack",
+    "url_params[order_id]": request.id, "url_params[milestone]": "deposit",
+  });
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).ignored, true);
+  const unchanged = await store.getRequestForUser(request.id, "client");
+  assert.equal(unchanged.paidCents, 0);
+});
+
+test("a Ping for an order that doesn't exist is rejected so Gumroad retries", async () => {
+  const response = await ping({
+    sale_id: "gum_2", price: "12000", product_permalink: "OrderPayment",
+    "url_params[order_id]": "not_a_real_order", "url_params[milestone]": "deposit",
+  });
+  assert.notEqual(response.status, 200);
+});
+
+test("a verified deposit Ping credits the order and moves work into progress", async () => {
+  const response = await ping({
+    sale_id: "gum_3", price: "12000", product_permalink: "OrderPayment",
+    "url_params[order_id]": request.id, "url_params[milestone]": "deposit",
+  });
+  assert.equal(response.status, 200);
+  const payload = await response.json();
+  assert.equal(payload.recorded, true);
+  assert.equal(payload.status, "In Progress");
+  const updated = await store.getRequestForUser(request.id, "client");
+  assert.equal(updated.paidCents, 12000);
+  assert.equal(updated.status, "In Progress");
+});
+
+test("an underpaid deposit Ping still credits the order without unlocking progress", async () => {
+  const response = await ping({
+    sale_id: "gum_4", price: "8000", product_permalink: "OrderPayment",
+    "url_params[order_id]": request.id, "url_params[milestone]": "deposit",
+  });
+  assert.equal(response.status, 200);
+  const updated = await store.getRequestForUser(request.id, "client");
+  assert.equal(updated.paidCents, 8000);
+  assert.equal(updated.status, "Deposit Due");
+});
+
+test("a duplicate sale id is a no-op the second time", async () => {
+  const body = {
+    sale_id: "gum_5", price: "12000", product_permalink: "OrderPayment",
+    "url_params[order_id]": request.id, "url_params[milestone]": "deposit",
+  };
+  await ping(body);
+  const second = await ping(body);
+  assert.equal(second.status, 200);
+  assert.equal((await second.json()).duplicate, true);
+  assert.equal((await store.listPayments(request.id)).length, 1);
+});

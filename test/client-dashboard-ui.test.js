@@ -30,7 +30,7 @@ test("client dashboard exposes the complete client workspace without admin contr
 
 test("client controller uses server-owned payment and revision state", () => {
   const script = read("public/js/client-dashboard.js");
-  for (const name of ["loadSession", "loadOrders", "loadOrder", "renderOverview", "renderOrders", "renderOrderDetail", "renderDelivery", "sendMessage", "uploadMaterial", "payWithStripe", "downloadAttachment", "requestRevision", "saveProfile", "logout"]) {
+  for (const name of ["loadSession", "loadOrders", "loadOrder", "renderOverview", "renderOrders", "renderOrderDetail", "renderDelivery", "sendMessage", "uploadMaterial", "gumroadPaymentUrl", "downloadAttachment", "requestRevision", "saveProfile", "logout"]) {
     assert.match(script, new RegExp(`function\\s+${name}\\b|const\\s+${name}\\s*=`), `${name} is missing`);
   }
   assert.match(script, /\/api\/platform\/session/);
@@ -39,11 +39,12 @@ test("client controller uses server-owned payment and revision state", () => {
   assert.match(script, /response\.status\s*===\s*423/);
   assert.match(script, /Locked - pay balance to download/);
   assert.match(script, /x-csrf-token/i);
-  assert.match(script, /\/payments\/stripe-intent/);
-  // PayPal is gone. With no card processor configured the dashboard must still
-  // offer a way to pay, which is the MoneyGram-to-M-Pesa route on the order page.
+  assert.match(script, /sleekmx\.gumroad\.com\/l\/OrderPayment/);
+  // Stripe and PayPal are both gone. All custom-order payments route through
+  // Gumroad, with MoneyGram-to-M-Pesa kept as a manual backup on the order page.
   assert.doesNotMatch(script, /paypal/i);
-  assert.match(script, /Pay by MoneyGram to M-Pesa/);
+  assert.doesNotMatch(script, /stripe/i);
+  assert.match(script, /pay by MoneyGram to M-Pesa/i);
   assert.doesNotMatch(script, /quoteCents\s*=|paidCents\s*=|amountCents\s*:/);
   assert.doesNotMatch(script, /x-demo-role|admin\/orders|manual paid|mark.{0,10}paid/i);
 });

@@ -314,6 +314,35 @@ export function notifyManualPaymentClaim({ order, reference, milestone, amountCe
 }
 
 /**
+ * A Gumroad payment landed for less than what's owed at this milestone. The
+ * order is already credited for the real amount by the time this fires (see
+ * recordGumroadPayment) — this alert exists only so Max notices the shortfall
+ * and can follow up, since Gumroad's own PWYW checkout lets a buyer edit the
+ * prefilled amount.
+ */
+export function notifyPaymentUnderpaid({ order, milestone, paidAmountCents, dueAmountCents, currency, transactionId }, { now = new Date() } = {}) {
+  return alertOwner({
+    subject: `ACTION: Gumroad underpayment — ${money(paidAmountCents, currency)} of ${money(dueAmountCents, currency)} — ${order?.email || "unknown"}`,
+    heading: "A Gumroad payment came in short",
+    intro: "The amount received has already been applied to the order. A balance remains — follow up with the client if needed.",
+    rows: [
+      ["Client", order?.name || "not given"],
+      ["Email", order?.email || "not given"],
+      ["Milestone", milestone || "unknown"],
+      ["Amount received", money(paidAmountCents, currency)],
+      ["Amount due", money(dueAmountCents, currency)],
+      ["Transaction", transactionId || "unknown"],
+      ["Order id", order?.id || "unknown"],
+      ["Received", stamp(now)],
+    ],
+    replyTo: order?.email || "",
+    actionUrl: dashboardUrl("/admin.html"),
+    actionLabel: "Open the order",
+    dedupeKey: `underpaid:gumroad:${transactionId}`,
+  });
+}
+
+/**
  * Someone used the contact dock instead of the order wizard. This is the
  * "I have a question before I commit" lead, and it is the one the site had no
  * way of capturing at all.
