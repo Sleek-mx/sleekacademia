@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 import express from "express";
 
 import { createAdminRouter } from "./admin-router.js";
@@ -5,6 +7,13 @@ import { createClientRouter } from "./client-router.js";
 import { asyncRoute, getStore, text } from "./http-utils.js";
 import { settleAlert, notifyPaymentAbandoned, notifyPaymentConfirmed, notifyPaymentUnderpaid } from "./owner-alerts.js";
 import { getServerPaymentDue, recordGumroadPayment, recordVerifiedPayment } from "./payments.js";
+
+function timingSafeEqual(a, b) {
+  const left = Buffer.from(a);
+  const right = Buffer.from(b);
+  if (left.length !== right.length) return false;
+  return crypto.timingSafeEqual(left, right);
+}
 
 export function createPlatformRouter({
   store: fallbackStore,
@@ -76,7 +85,7 @@ export function createPlatformRouter({
       const store = getStore(req, fallbackStore);
       if (!store?.available) return res.status(503).json({ error: "Payment storage is unavailable." });
       const providedKey = text(req.query?.key, 200);
-      if (!gumroadWebhookSecret || !providedKey || providedKey !== gumroadWebhookSecret) {
+      if (!gumroadWebhookSecret || !providedKey || !timingSafeEqual(providedKey, gumroadWebhookSecret)) {
         return res.status(404).end();
       }
 

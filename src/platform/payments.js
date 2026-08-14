@@ -1,4 +1,4 @@
-import { amountDueForMilestone, nextPaymentMilestone } from "./domain.js";
+import { amountDueForMilestone, depositThresholdCents, nextPaymentMilestone } from "./domain.js";
 
 function clean(value, max = 200) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
@@ -117,7 +117,7 @@ export async function recordGumroadPayment({
     status: "confirmed",
   });
   const paidCents = Math.min(current.quoteCents, (current.paidCents || 0) + amountCents);
-  const depositCents = Math.ceil((current.quoteCents || 0) / 2);
+  const depositCents = depositThresholdCents(current);
   let status = current.status;
   if (current.status === "Deposit Due" && paidCents >= depositCents) status = "In Progress";
   const underpaid = milestoneName === "deposit"
