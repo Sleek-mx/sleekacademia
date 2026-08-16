@@ -8,15 +8,13 @@
 //      here — not in the browser.
 //   2. Paid questions are neither served nor graded without a verified
 //      entitlement. Entitlements are only ever issued by this server — either
-//      from a verified payment capture, or by the operator's access code after
-//      manually confirming a payment. A client's own claim is never trusted.
+//      from a verified Gumroad sale, or by the operator's access code after
+//      manually confirming a backup payment. A client's own claim is never trusted.
 //   3. Entitlements are scoped per quiz, so unlocking one quiz does not unlock
 //      another.
 //
-// PayPal is currently restricted on the account this quiz used, so the paywall
-// runs on a manual MoneyGram-to-mobile-money claim (see "/unlock/manual-claim"
-// below) until an automated processor is back in place. The PayPal integration
-// was deleted after the account was restricted.
+// Gumroad is the primary automated checkout. The manual MoneyGram-to-mobile-money
+// claim below remains available only as a backup when Gumroad cannot be used.
 
 import express from "express";
 import {
@@ -350,7 +348,8 @@ export function createQuizRouter(quiz = antimicrobialQuiz) {
       bank: bank.bankStats(),
       bankProblems: bankProblems.length,
       tutorConfigured: nemotron.isConfigured(),
-      paywallMode: "manual-moneygram",
+      paywallMode: "gumroad-primary",
+      paywallBackup: "manual-moneygram",
       moneygramRecipient: MONEYGRAM_RECIPIENT.phone,
       notifications: {
         configured: notify.isConfigured(),

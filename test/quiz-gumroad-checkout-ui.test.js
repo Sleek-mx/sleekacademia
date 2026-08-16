@@ -41,3 +41,9 @@ test("the quiz engine builds a Gumroad checkout link carrying the quiz id and pr
   assert.match(script, /Unlock " \+ remaining/);
   assert.match(script, /renderGumroadCheckout\(remaining\)/);
 });
+
+test("quiz health diagnostics report Gumroad as primary and MoneyGram as backup", () => {
+  const router = fs.readFileSync(path.join(rootDir, "src", "quiz", "router.js"), "utf8");
+  assert.match(router, /paywallMode:\s*"gumroad-primary"/);
+  assert.match(router, /paywallBackup:\s*"manual-moneygram"/);
+});

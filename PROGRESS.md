@@ -246,10 +246,11 @@ Goal: Ship verified free/paid study tools, working Gumroad quiz delivery, and re
 - [x] Rotated the masked Vercel webhook secret, configured Gumroad Ping to the protected production route, saved the setting, and received Gumroad's HTTP 200 test-Ping confirmation.
 - [x] Passed 415/415 application tests, resource/store generation checks, zero-vulnerability audit, 143-file security scan, and diff validation.
 - [x] Browser-tested study-pack filters, mobile overflow, free quiz start, answer selection, and rationale feedback.
+- [x] Corrected quiz health diagnostics to report Gumroad as primary and MoneyGram as the manual backup, with regression coverage.
 
 ## Next
 
-- [x] Committed the complete redesign as `9dae8e2`, pushed the feature branch, fast-forwarded production, and verified final Vercel deployment `dpl_J5ngm8i3hLWmAASN7UrN8u8FCcU3` reached Ready.
+- [x] Committed the complete redesign as `9dae8e2`, pushed the feature branch, fast-forwarded production, and verified the resulting Vercel production deployment reached Ready.
 - [x] Repeated Gumroad test Ping after deployment and confirmed the endpoint responded with HTTP 200.
 - [x] Verified public resources, onboarding through secure account handoff, quiz start/answer/rationale, all quiz health routes, all nine Gumroad product pages, the Quiz Unlock page, and responsive rendering without horizontal overflow.
 
