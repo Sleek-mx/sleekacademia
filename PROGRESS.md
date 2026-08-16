@@ -243,15 +243,15 @@ Goal: Ship verified free/paid study tools, working Gumroad quiz delivery, and re
 - [x] Verified onboarding desktop/mobile layouts, validation, project brief, contact flow, and final review without submitting a test order.
 - [x] Confirmed all nine paid study packs contain their promised PDF attachment in Gumroad.
 - [x] Added and saved Quiz Unlock listing copy, Gumroad content instructions, receipt copy, a square thumbnail, and a horizontal cover.
-- [x] Configured Gumroad Ping to the protected production route. Test currently returns 404 because the live deployment predates the new production webhook secret; redeployment is required.
-- [x] Passed 415/415 application tests, resource/store generation checks, zero-vulnerability audit, 137-file security scan, and diff validation.
+- [x] Rotated the masked Vercel webhook secret, configured Gumroad Ping to the protected production route, saved the setting, and received Gumroad's HTTP 200 test-Ping confirmation.
+- [x] Passed 415/415 application tests, resource/store generation checks, zero-vulnerability audit, 143-file security scan, and diff validation.
 - [x] Browser-tested study-pack filters, mobile overflow, free quiz start, answer selection, and rationale feedback.
 
 ## Next
 
-- [x] Committed the complete redesign as `9dae8e2`, pushed the feature branch, fast-forwarded production, and verified Vercel deployment `dpl_79vVvQJrLR65C7YHPWrD8DWcKN3B` reached Ready.
-- [ ] Repeat Gumroad test Ping after deployment and require a success response.
-- [ ] Verify public resources, onboarding, quiz checkout/paywall contract, health routes, and responsive rendering.
+- [x] Committed the complete redesign as `9dae8e2`, pushed the feature branch, fast-forwarded production, and verified final Vercel deployment `dpl_J5ngm8i3hLWmAASN7UrN8u8FCcU3` reached Ready.
+- [x] Repeated Gumroad test Ping after deployment and confirmed the endpoint responded with HTTP 200.
+- [x] Verified public resources, onboarding through secure account handoff, quiz start/answer/rationale, all quiz health routes, all nine Gumroad product pages, the Quiz Unlock page, and responsive rendering without horizontal overflow.
 
 ## Current facts
 
@@ -262,5 +262,5 @@ Goal: Ship verified free/paid study tools, working Gumroad quiz delivery, and re
 - Gumroad account: `Sleek Academia Research`; storefront `https://sleekmx.gumroad.com`
 - Quiz Unlock: permalink `QuizUnlock`, product id `sufivx`, price `$10`
 - Webhook: `POST /api/platform/payments/gumroad-webhook?key=<GUMROAD_WEBHOOK_SECRET>`
-- Vercel masks sensitive values as `[Sensitive]` in pulled env files. The invalid placeholder URL was identified, and the production webhook secret was rotated on 2026-08-16; Gumroad Ping must be updated to the rotated value before the final test.
+- Vercel masks sensitive values as `[Sensitive]` in pulled env files. The invalid placeholder URL was identified, the production webhook secret was rotated, Gumroad Ping was updated, and temporary local secret copies were removed on 2026-08-16.
 - Credentials stay in local Obsidian/Vercel. Never copy values into Git, progress notes, logs, or chat.
