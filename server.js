@@ -251,7 +251,6 @@ const legacySeoRedirects = new Map([
   ["/ai-tools.html", "/"],
   ["/ai-tools-pro.html", "/"],
   ["/courses.html", "/"],
-  ["/pricing.html", "/onboard.html"],
   ["/blogs.html", "/blog.html"]
 ]);
 

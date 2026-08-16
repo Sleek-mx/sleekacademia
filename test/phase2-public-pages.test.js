@@ -35,7 +35,6 @@ function allHtmlFiles(directory = publicDir, prefix = "") {
 
 test("About, Blog, and Store use the approved shared public system", () => {
   const currentPages = {
-    "index.html": "/",
     "about.html": "/about.html",
     "blog.html": "/blog.html",
     "store.html": "/store.html",
@@ -93,12 +92,18 @@ test("every HTML surface uses the standalone woman-head browser icons", () => {
   }
 });
 
-test("public marketing pages contain no Pricing or package detours", () => {
+test("public marketing pages contain no dead pricing anchors or package detours", () => {
   for (const page of publicMarketingHtml()) {
     const html = read(page);
     assert.doesNotMatch(html, /href=["'][^"']*#pricing/i, `${page}: legacy pricing link`);
-    assert.doesNotMatch(html, />\s*Pricing\s*</i, `${page}: Pricing navigation`);
     assert.doesNotMatch(html, /View Tutoring Packages|Compare [^<]{0,40} plans/i, `${page}: package CTA`);
+    // index.html now carries an approved "Pricing" nav item, but only because it
+    // links straight to store.html's real, visible prices — not a dead detour.
+    if (page !== "index.html") {
+      assert.doesNotMatch(html, />\s*Pricing\s*</i, `${page}: Pricing navigation`);
+    } else {
+      assert.match(html, /href="\/pricing\.html">Pricing</, `${page}: Pricing nav should link to the real pricing page`);
+    }
   }
 });
 

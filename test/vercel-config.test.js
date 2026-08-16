@@ -30,6 +30,7 @@ test("Vercel preserves the canonical 301 redirects before static file handling",
 
   assert.deepEqual(redirects.get("/index.html"), { destination: "/", statusCode: 301 });
   assert.deepEqual(redirects.get("/services.html"), { destination: "/", statusCode: 301 });
-  assert.deepEqual(redirects.get("/pricing.html"), { destination: "/onboard.html", statusCode: 301 });
+  // /pricing.html is now a real page, not a redirect — see public/pricing.html
+  assert.equal(redirects.has("/pricing.html"), false);
   assert.deepEqual(redirects.get("/blogs.html"), { destination: "/blog.html", statusCode: 301 });
 });

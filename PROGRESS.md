@@ -227,3 +227,39 @@ Goal: Restore `https://sleekacademia.com` by making the Express listener compati
 - The failing code gates `app.listen()` behind `seedDemoPlatform(platformStore).then(...)`; production seeding is a no-op, but the promise still defers the listen hook to a microtask.
 - Namecheap remains a non-public fallback until its LiteSpeed/Passenger socket handoff can serve the full application on a staging hostname.
 - Do not store credentials, hashes, or secret values in this progress file or the future Obsidian incident note.
+
+---
+
+# Current checkpoint — Commerce and onboarding completion (2026-08-16)
+
+Goal: Ship verified free/paid study tools, working Gumroad quiz delivery, and redesigned service onboarding on sleekacademia.com.
+
+## Done
+
+- [x] Audited canonical repo, redesign diff, Gumroad account, product catalog, quiz checkout, webhook route, and production environment names without exposing secrets.
+- [x] Replaced fake resource-to-onboarding cards with three free adaptive quizzes and nine direct paid study-pack links generated from code-owned product data.
+- [x] Made Gumroad the primary quiz payment action, preserved free-results access, retained MoneyGram as a collapsed manual backup, and added explicit emailed-access guidance.
+- [x] Rebuilt onboarding as a service-only four-step glass workspace while preserving every field, pricing estimate, validation, and protected handoff hook.
+- [x] Verified onboarding desktop/mobile layouts, validation, project brief, contact flow, and final review without submitting a test order.
+- [x] Confirmed all nine paid study packs contain their promised PDF attachment in Gumroad.
+- [x] Added and saved Quiz Unlock listing copy, Gumroad content instructions, receipt copy, a square thumbnail, and a horizontal cover.
+- [x] Configured Gumroad Ping to the protected production route. Test currently returns 404 because the live deployment predates the new production webhook secret; redeployment is required.
+- [x] Passed 415/415 application tests, resource/store generation checks, zero-vulnerability audit, 137-file security scan, and diff validation.
+- [x] Browser-tested study-pack filters, mobile overflow, free quiz start, answer selection, and rationale feedback.
+
+## Next
+
+- [ ] Commit the complete redesign, push the feature branch, fast-forward production, and wait for the Vercel Git deployment.
+- [ ] Repeat Gumroad test Ping after deployment and require a success response.
+- [ ] Verify public resources, onboarding, quiz checkout/paywall contract, health routes, and responsive rendering.
+
+## Current facts
+
+- Canonical repo: `/Users/ephantusmacharia/Websites/Active Projects/sleek-academia-render`
+- Branch: `feature/finish-redesign-commerce`
+- Remote: `https://github.com/Sleek-mx/sleekacademia.git`
+- Production: Vercel project `sleek-academia`; public URL `https://sleekacademia.com`
+- Gumroad account: `Sleek Academia Research`; storefront `https://sleekmx.gumroad.com`
+- Quiz Unlock: permalink `QuizUnlock`, product id `sufivx`, price `$10`
+- Webhook: `POST /api/platform/payments/gumroad-webhook?key=<GUMROAD_WEBHOOK_SECRET>`
+- Credentials stay in local Obsidian/Vercel. Never copy values into Git, progress notes, logs, or chat.

@@ -4,14 +4,58 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/brand/favicon-32.png"><link rel="apple-touch-icon" href="/images/brand/apple-touch-icon.png">
   <title>Create Account | Sleek Academia</title><meta name="description" content="Create your secure Sleek Academia workspace account."><link rel="canonical" href="https://sleekacademia.com/sign-up.html">
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/css/workspace-v2.css">
+  <link rel="stylesheet" href="/css/brand-v2.css">
+  <link rel="stylesheet" href="/css/glass-college.css?v=20260815d">
 </head>
-<body class="ws-body">
-  <main class="auth-layout">
-    <section class="auth-panel"><div class="auth-card"><a class="ws-logo" href="/"><img src="/images/brand/sleek-academia-logo.webp" alt="Sleek Academia"></a><span class="ws-kicker">Create your workspace</span><h1>Keep the whole order together.</h1><p>Your client account connects each order to its messages, files, payment milestones, and protected delivery.</p><div class="auth-status" id="auth-status">Loading secure sign up...</div><div id="clerk-sign-up" class="clerk-frame"></div><div class="auth-links">Already have an account? <a href="/login.html">Sign in</a><br>Still deciding? <a href="/">Return to the site</a></div></div></section>
-    <section class="auth-visual"><div class="auth-visual-content"><span class="ws-kicker" style="color:#bfe9fb">One order record</span><h2>Context in. Clear progress out.</h2><p>Your private workspace gives the brief, conversation, status, files, and delivery one dependable home.</p><div class="auth-steps"><div class="auth-step"><strong>Share</strong><span>Send the real brief and requirements.</span></div><div class="auth-step"><strong>Track</strong><span>See status and next milestones.</span></div><div class="auth-step"><strong>Receive</strong><span>Download protected final work.</span></div></div></div></section>
+<body class="glass-college gc-login-body">
+  <main class="gc-login-frame">
+    <div class="gc-login-grid">
+      <section class="gc-login-form-panel">
+        <a class="gc-wordmark" href="/" aria-label="Sleek Academia home" style="margin-bottom:1.6rem">
+          <img src="/images/brand/sleek-academia-mark.webp" width="591" height="591" alt="" />
+          <span><b>S</b><b>L</b><b>E</b><b>E</b><b>K</b> <b>A</b><b>C</b><b>A</b><b>D</b><b>E</b><b>M</b><b>I</b><b>A</b></span>
+        </a>
+
+        <div class="gc-auth-tabs" role="navigation" aria-label="Sign in or create an account">
+          <a class="gc-auth-tab" href="/login.html">Log in</a>
+          <a class="gc-auth-tab" href="/sign-up.html" aria-current="page">Sign up</a>
+        </div>
+
+        <p class="gc-eyebrow" style="color:var(--gc-cobalt);margin-bottom:0.7rem">Create your workspace</p>
+        <h1 class="gc-headline" style="font-size:clamp(1.9rem,3.6vw,2.6rem)">Start your college week here.</h1>
+        <p class="gc-lead" style="margin-bottom:1.6rem">Create an account to keep your plan, study tools and guidance in one place.</p>
+
+        <div class="auth-status" id="auth-status" role="status" aria-live="polite" style="font-size:0.84rem;color:var(--gc-muted);margin-bottom:0.9rem">Loading secure sign up...</div>
+        <div id="clerk-sign-up" class="clerk-frame"></div>
+
+        <p class="gc-auth-links" style="color:var(--gc-body);font-weight:600">Already have an account? <a href="/login.html">Log in</a></p>
+        <p class="gc-auth-links"><a href="/">Return to the site</a></p>
+
+        <div class="gc-login-waves" aria-hidden="true">
+          <svg viewBox="0 0 100 800" preserveAspectRatio="none">
+            <path d="M0 0 C 62 85, 8 185, 48 288 C 86 388, 22 468, 58 568 C 88 658, 34 728, 50 800 L0 800 Z" fill="#ffffff" opacity="0.5"/>
+            <path d="M0 0 C 50 92, 0 192, 36 296 C 72 396, 12 476, 44 580 C 74 670, 24 732, 38 800 L0 800 Z" fill="#ffffff" opacity="0.72"/>
+            <path d="M0 0 C 38 98, -8 198, 24 304 C 56 408, 2 490, 30 594 C 56 684, 12 738, 24 800 L0 800 Z" fill="#ffffff" opacity="0.9"/>
+            <path d="M0 0 C 24 102, -16 202, 13 312 C 43 418, -6 496, 17 602 C 40 690, 2 742, 12 800 L0 800 Z" fill="#fdfbf7"/>
+          </svg>
+        </div>
+      </section>
+
+      <section class="gc-login-photo" style="background-image:url('/images/college/login-books.webp')">
+        <div class="gc-login-tag">
+          <span class="gc-login-tag-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 4 2.5 8.5 12 13l9.5-4.5L12 4Z" stroke="#14181f" stroke-width="1.7" stroke-linejoin="round"/><path d="M6 10.6V15c0 1.4 2.7 2.6 6 2.6s6-1.2 6-2.6v-4.4" stroke="#14181f" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          </span>
+          <div>
+            <strong>College online.<br />Not alone.</strong>
+            <span>Your plans, guidance and study tools&mdash;ready when you are.</span>
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
-  <script src="/js/auth.js" defer></script>
+
+  <script src="/js/auth.js?v=20260815" defer></script>
 <!-- Sleek Academia chat widget -->
 <link rel="stylesheet" href="/css/chat-widget.css?v=20260802" />
 <script src="/js/chat-widget.js?v=20260802" defer></script>

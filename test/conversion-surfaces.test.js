@@ -36,50 +36,61 @@ function publicPages() {
   return pages;
 }
 
-test("every public page loads the contact dock", () => {
+// The floating "Talk to us" dock and the standalone WhatsApp links were retired.
+// Sleekie is now the single route to a human, so the guarantee is: every public
+// page carries the assistant, and none of them carry the old dock.
+test("every public page routes to a human through Sleekie, not the retired dock", () => {
   const pages = publicPages();
   assert.ok(pages.length >= 20, "expected the full public page set");
+  // The three paid quiz pages deliberately ship without the assistant
+  // (see EXCLUDED_PAGES in scripts/inject-chat-widget.mjs).
+  const noAssistant = new Set(["antimicrobial-quiz.html", "renal-cardiac-quiz.html", "pharmacology-quiz.html"]);
   for (const page of pages) {
     const html = fs.readFileSync(page, "utf8");
     const name = path.relative(publicDir, page);
-    assert.match(html, /\/js\/contact-dock\.js/, `${name} has no contact dock script`);
-    assert.match(html, /\/css\/contact-dock\.css/, `${name} has no contact dock stylesheet`);
+    if (!noAssistant.has(name)) {
+      assert.match(html, /\/js\/chat-widget\.js/, `${name} has no Sleekie assistant`);
+    }
+    assert.doesNotMatch(html, /contact-dock/, `${name} still loads the retired contact dock`);
   }
 });
 
-test("the contact dock offers WhatsApp and a message form that reaches the owner", () => {
-  const script = read("public/js/contact-dock.js");
+test("Sleekie only hands off to WhatsApp after it has collected the student's details", () => {
+  const script = read("public/js/chat-widget.js");
   assert.match(script, /wa\.me\//);
-  assert.match(script, /254724543489/);
-  assert.match(script, /"\/api\/contact"/);
-  assert.match(script, /No account needed/i);
-  // A failed send must point somewhere, not dead-end.
-  assert.match(script, /WhatsApp instead/i);
+  assert.match(script, /254742836835/);
+  // The WhatsApp chip is offered from the handoff step, and the message it opens
+  // carries the collected summary rather than an empty "hi".
+  assert.match(script, /function offerHandoff\(\)/);
+  assert.match(script, /Continue on WhatsApp/);
+  assert.match(script, /function sendWhatsApp\(\)[\s\S]*?summary\(\)/);
+  assert.match(script, /function summary\(\)[\s\S]*?Name[\s\S]*?Needs/);
 });
 
-test("the homepage shows real prices above the order wizard", () => {
+test("a human contact route stays reachable from the homepage", () => {
   const home = read("public/index.html");
-  assert.match(home, /\$15/);
-  assert.match(home, /\$16\.50/);
-  assert.match(home, /\$150/);
-  assert.match(home, /No account needed to get a price/i);
-  assert.match(home, /wa\.me\/254724543489/);
+  assert.match(home, /data-open-sleekie/);
+  assert.doesNotMatch(home, /wa\.me\//, "WhatsApp should now be reached through Sleekie only");
 });
 
-test("the homepage leads with the free question banks", () => {
+test("prices stay visible one click away, without an account or signup detour", () => {
   const home = read("public/index.html");
-  assert.match(home, /Free practice questions/i);
-  for (const quiz of ["/antimicrobial-quiz.html", "/renal-cardiac-quiz.html", "/pharmacology-quiz.html"]) {
-    assert.match(home, new RegExp(quiz.replace(/[/.]/g, "\\$&")), `${quiz} is not linked from the homepage`);
+  assert.match(home, /href="\/store\.html"/);
+  const store = read("public/store.html");
+  assert.match(store, /\$1[025]\s*&middot;\s*one-time digital purchase/);
+});
+
+test("the practice question banks stay reachable without being deleted", () => {
+  for (const quiz of ["public/antimicrobial-quiz.html", "public/renal-cardiac-quiz.html", "public/pharmacology-quiz.html"]) {
+    assert.ok(fs.existsSync(path.join(rootDir, quiz)), `${quiz} was removed`);
   }
-  assert.match(home, /Start free/);
 });
 
 test("homepage calls to action are measurable", () => {
   const home = read("public/index.html");
   assert.match(home, /js\/analytics\.js/, "the CTA tracker is not loaded");
   const tagged = home.match(/data-cta-location="[^"]+"/g) || [];
-  assert.ok(tagged.length >= 6, `expected tagged CTAs, found ${tagged.length}`);
+  assert.ok(tagged.length >= 4, `expected tagged CTAs, found ${tagged.length}`);
 });
 
 test("no public surface still advertises PayPal", () => {

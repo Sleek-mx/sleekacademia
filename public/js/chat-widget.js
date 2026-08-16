@@ -19,13 +19,12 @@
   var MAX_TURNS = 12;
 
   var GREETING =
-    "Hi, I'm Sleekie — the assistant here at Sleek Academia. " +
-    'I can explain how our support works, what things cost, or take your details through to the team. ' +
-    'What brings you in today?';
+    "Hi, I'm Sleekie. I can explain how guidance works, help you find study tools, " +
+    'or pass a question to the team. What brings you in today?';
 
   var SUGGESTIONS = [
-    'What do you charge?',
-    'How does it work?',
+    'How does guidance work?',
+    'Show me study tools',
     'I need exam prep help'
   ];
 
@@ -111,7 +110,7 @@
     var composer = el('div', 'sa-composer');
     input = el('textarea', 'sa-input');
     input.rows = 1;
-    input.placeholder = 'Ask about our support…';
+    input.placeholder = 'Ask Sleekie…';
     input.setAttribute('aria-label', 'Message');
     sendBtn = el('button', 'sa-send');
     sendBtn.type = 'button';
@@ -124,7 +123,7 @@
     var legal = el(
       'div',
       'sa-legal',
-      'Sleekie is an assistant and does not give academic, clinical or legal advice.'
+      'Sleekie gives general guidance, not academic, clinical or legal advice.'
     );
 
     panel.appendChild(head);
@@ -233,11 +232,23 @@
     return html;
   }
 
+  function formatTime(date) {
+    try {
+      return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    } catch (err) {
+      return '';
+    }
+  }
+
   function addMessage(role, text) {
+    var wrap = el('div', 'sa-msg-group sa-msg-group-' + (role === 'user' ? 'user' : 'ai'));
+    var label = el('div', 'sa-msg-label', (role === 'user' ? 'You' : 'Sleekie') + ' · ' + formatTime(new Date()));
     var node = el('div', 'sa-msg sa-msg-' + (role === 'user' ? 'user' : 'ai'));
     if (role === 'user') node.textContent = text;
     else node.innerHTML = render(text);
-    log.appendChild(node);
+    wrap.appendChild(label);
+    wrap.appendChild(node);
+    log.appendChild(wrap);
     scroll();
     return node;
   }
@@ -328,7 +339,7 @@
         history.push({ role: 'assistant', content: reply });
         addMessage('assistant', reply);
         save();
-        if (data.ready) enterHandoff();
+        if (data.ready || wantsHandoff(reply)) enterHandoff();
       })
       .catch(function () {
         typing.remove();
@@ -363,12 +374,28 @@
     for (var i = history.length - 1; i >= 0; i--) {
       if (history[i].role === 'assistant') { lastSleekie = history[i].content; break; }
     }
-    var labels = ['Name', 'Field or exam', 'Timing', 'Needs'];
+    // Positional: these line up with the four intake questions only when the
+    // visitor answered them in order. Someone who asks a question first shifts
+    // them, so the block says "in the order given" and the full transcript is
+    // always attached underneath.
+    var labels = ['Name', 'Studying', 'Timing', 'Needs'];
     var lines = labels.map(function (label, index) {
       return label + ': ' + (answers[index] ? answers[index].content.trim() : 'not given');
     });
     lines.push('Page: ' + window.location.pathname);
-    return lines.join('\n') + '\n\n' + lastSleekie + '\n\n--- Full conversation ---\n' + transcript();
+    return 'First answers, in the order given\n' + lines.join('\n') +
+      '\n\n' + lastSleekie + '\n\n--- Full conversation ---\n' + transcript();
+  }
+
+  /* The model is meant to close intake with the READY marker, but it does not
+   * emit it every time — it sometimes just says "shall I pass this on?" in
+   * prose. When that happens the visitor is offered a route with no button to
+   * take it, which is the one failure this widget cannot afford. So the reply
+   * text is checked too: if it offers to hand over, show the chips anyway. */
+  var HANDOFF_INTENT = /(pass|send|forward)(ing)?\s+(this|these|your|it)\b[^.?!]{0,40}\b(to\s+)?the\s+team|open\s+a?\s*whatsapp|shall i (send|pass)|would you like me to (send|pass)|how would you like to send/i;
+
+  function wantsHandoff(reply) {
+    return HANDOFF_INTENT.test(reply);
   }
 
   function enterHandoff() {
@@ -382,9 +409,11 @@
   function offerHandoff() {
     readyToSend = true;
     setBusy(true);
+    // WhatsApp leads: it is now the site's only direct line to a human, and the
+    // details collected above are attached to the message.
     setChips([
-      { label: 'Send to the team', primary: true, onClick: sendEmail },
-      { label: 'Open WhatsApp', onClick: sendWhatsApp },
+      { label: 'Continue on WhatsApp', primary: true, onClick: sendWhatsApp },
+      { label: 'Send to the team', onClick: sendEmail },
       { label: 'Start a request', onClick: function () { window.location.href = '/onboard.html'; } },
       { label: 'Start over', onClick: reset }
     ]);
@@ -433,7 +462,7 @@
     readyToSend = false;
     log.innerHTML = '';
     clearChips();
-    input.placeholder = 'Ask about our support…';
+    input.placeholder = 'Ask Sleekie…';
     setBusy(false);
     save();
     start();
@@ -465,7 +494,20 @@
     if (document.getElementById('sa-chat-root')) return;
     build();
     restore();
+
+    // The floating contact dock and the standalone WhatsApp links were removed;
+    // Sleekie is now the single route to a human, and it only hands off to
+    // WhatsApp once it has collected the student's details. Any element marked
+    // data-open-sleekie opens the panel.
+    document.querySelectorAll('[data-open-sleekie]').forEach(function (trigger) {
+      trigger.addEventListener('click', function (event) {
+        event.preventDefault();
+        open();
+      });
+    });
   }
+
+  window.SleekieChat = { open: open, close: close, toggle: toggle };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

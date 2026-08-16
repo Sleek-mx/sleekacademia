@@ -1,0 +1,157 @@
+/* Service onboarding: approved college-under-glass language without changing form behavior. */
+
+body.page-onboard.glass-college {
+  min-height: 100dvh;
+  background:
+    linear-gradient(rgba(211, 227, 239, 0.72), rgba(247, 239, 226, 0.78)),
+    url("/images/college/planning-flatlay.webp") center / cover fixed;
+  color: var(--gc-ink);
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.page-onboard .onboard-nav-band { padding-bottom: 0; }
+
+.page-onboard .onboard-shell {
+  width: min(94rem, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: clamp(1rem, 2.5vw, 2.4rem) 0 clamp(3rem, 7vw, 6rem);
+  grid-template-columns: minmax(19rem, 0.68fr) minmax(0, 1.32fr);
+  gap: clamp(1rem, 2.2vw, 2rem);
+}
+
+.page-onboard .wizard-aside,
+.page-onboard .wizard-panel {
+  border: 1px solid rgba(255, 255, 255, 0.66);
+  border-radius: var(--gc-r-glass);
+  box-shadow: var(--gc-shadow-glass), inset 0 1px 0 rgba(255, 255, 255, 0.64);
+  -webkit-backdrop-filter: blur(14px) saturate(1.08);
+  backdrop-filter: blur(14px) saturate(1.08);
+}
+
+.page-onboard .wizard-aside {
+  top: 1rem;
+  min-height: 38rem;
+  padding: clamp(1.7rem, 3.2vw, 3rem);
+  overflow: hidden;
+  background:
+    linear-gradient(155deg, rgba(20, 24, 31, 0.94), rgba(20, 24, 31, 0.76)),
+    url("/images/college/login-books.webp") center / cover;
+  color: #fff;
+}
+
+.page-onboard .wizard-aside::before {
+  position: absolute;
+  inset: auto -3rem -3rem auto;
+  width: 12rem;
+  height: 12rem;
+  border: 1.15rem solid rgba(255, 255, 255, 0.07);
+  border-radius: 50%;
+  content: "";
+}
+
+.page-onboard .wizard-aside::after { content: none; }
+.page-onboard .wizard-aside .ws-kicker { color: #ffd23f; }
+
+.page-onboard .wizard-aside h1 {
+  max-width: 8ch;
+  margin: 1.2rem 0 1.1rem;
+  font-family: "Archivo", sans-serif;
+  font-size: clamp(2.6rem, 5vw, 5.2rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.055em;
+}
+
+.page-onboard .wizard-aside > p { max-width: 36rem; color: rgba(255, 255, 255, 0.74); }
+.page-onboard .wizard-assurance { position: relative; z-index: 1; margin-top: 2rem; }
+.page-onboard .wizard-assurance div { border-radius: 0.65rem; background: rgba(255, 255, 255, 0.07); }
+.page-onboard .wizard-assurance b { color: #ffd23f; font-family: "Archivo", sans-serif; font-variant-numeric: tabular-nums; }
+.page-onboard .wizard-assurance span { color: rgba(255, 255, 255, 0.68); }
+.page-onboard .wizard-assurance strong { color: #fff; }
+
+.page-onboard .onboard-self-serve { position: relative; z-index: 1; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.16); font-size: 0.84rem; }
+.page-onboard .onboard-self-serve a { color: #fff; font-weight: 800; text-underline-offset: 0.25em; }
+
+.page-onboard .wizard-panel {
+  padding: clamp(1.5rem, 3.4vw, 3.2rem);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.page-onboard .wizard-progress { gap: 0.55rem; margin-bottom: 2.2rem; }
+.page-onboard .wizard-progress span {
+  position: relative;
+  height: 0.48rem;
+  overflow: hidden;
+  background: rgba(20, 24, 31, 0.1);
+  box-shadow: inset 0 1px 2px rgba(20, 24, 31, 0.08);
+}
+.page-onboard .wizard-progress span.is-active { background: var(--gc-spectrum); }
+
+.page-onboard .wizard-step h2 {
+  max-width: 17ch;
+  font-family: "Archivo", sans-serif;
+  font-size: clamp(2rem, 4vw, 3.65rem);
+  font-weight: 900;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.page-onboard .wizard-step > p { max-width: 42rem; color: var(--gc-body); }
+.page-onboard .ws-kicker { color: var(--gc-cobalt); font-family: "Archivo", sans-serif; letter-spacing: 0.13em; }
+
+.page-onboard .service-grid { gap: 0.8rem; }
+.page-onboard .service-choice {
+  min-height: 11rem;
+  padding: 1.2rem;
+  border: 1px solid rgba(20, 24, 31, 0.1);
+  border-radius: 0.7rem 1.35rem 1.35rem 0.7rem;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0.8rem 1.8rem rgba(20, 24, 31, 0.08);
+  text-align: left;
+  transition: transform 0.2s var(--gc-ease), box-shadow 0.2s var(--gc-ease), border-color 0.2s var(--gc-ease);
+}
+.page-onboard .service-choice:hover { transform: translateY(-2px); border-color: rgba(52, 87, 213, 0.36); box-shadow: 0 1.2rem 2.4rem rgba(20, 24, 31, 0.12); }
+.page-onboard .service-choice[aria-pressed="true"] { border-color: var(--gc-cobalt); background: rgba(255, 255, 255, 0.94); box-shadow: 0 0 0 3px rgba(52, 87, 213, 0.12), 0 1.2rem 2.4rem rgba(20, 24, 31, 0.12); }
+.page-onboard .service-icon { border-radius: 0.45rem; background: var(--gc-ink) !important; color: #fff; box-shadow: none; }
+
+.page-onboard .form-field input,
+.page-onboard .form-field select,
+.page-onboard .form-field textarea {
+  border: 1px solid rgba(20, 24, 31, 0.13);
+  border-radius: 0.62rem;
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: inset 0 1px 2px rgba(20, 24, 31, 0.04);
+}
+.page-onboard .form-field input:focus,
+.page-onboard .form-field select:focus,
+.page-onboard .form-field textarea:focus { outline: 3px solid rgba(52, 87, 213, 0.28); outline-offset: 1px; border-color: var(--gc-cobalt); }
+
+.page-onboard .upload-zone,
+.page-onboard #order-estimate,
+.page-onboard .review-item,
+.page-onboard .clerk-frame { border-color: rgba(20, 24, 31, 0.12); background: rgba(255, 255, 255, 0.55); box-shadow: none; }
+
+.page-onboard .wizard-actions { border-color: rgba(20, 24, 31, 0.12); }
+.page-onboard .ws-button { min-height: 46px; border-radius: var(--gc-r-btn); box-shadow: none; }
+.page-onboard .ws-button.primary { border-color: var(--gc-ink); background: var(--gc-ink); color: #fff; }
+.page-onboard .ws-button:focus-visible,
+.page-onboard .service-choice:focus-visible { outline: 3px solid var(--gc-cobalt); outline-offset: 3px; }
+
+@media (max-width: 920px) {
+  .page-onboard .onboard-shell { grid-template-columns: 1fr; }
+  .page-onboard .wizard-aside { position: relative; top: 0; min-height: 0; }
+  .page-onboard .wizard-aside h1 { max-width: 11ch; }
+}
+
+@media (max-width: 640px) {
+  .page-onboard .onboard-shell { width: min(100% - 1rem, 94rem); padding-top: 0.5rem; }
+  .page-onboard .wizard-aside,
+  .page-onboard .wizard-panel { padding: 1.3rem 1.05rem; border-radius: 1.1rem; }
+  .page-onboard .wizard-aside h1 { font-size: clamp(2.5rem, 14vw, 4rem); }
+  .page-onboard .service-grid { grid-template-columns: 1fr; }
+  .page-onboard .service-choice { min-height: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-onboard * { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+}

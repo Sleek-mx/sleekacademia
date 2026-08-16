@@ -8,7 +8,6 @@ async function withFixture({ includeCanonical = true, includeSocialProfiles = tr
     const redirects = {
       "/index.html": "/",
       "/services.html": "/",
-      "/pricing.html": "/onboard.html",
       "/blogs.html": "/blog.html",
     };
 
@@ -57,7 +56,8 @@ test("live SEO checker accepts a conforming site", async () => {
   const { checkSite } = await import("../scripts/check-live-seo.mjs");
   await withFixture({ includeCanonical: true }, async (baseUrl) => {
     const result = await checkSite(baseUrl);
-    assert.equal(result.checkedUrls, 9);
+    // 8 since /pricing.html became a real page instead of a legacy redirect.
+    assert.equal(result.checkedUrls, 8);
   });
 });
 

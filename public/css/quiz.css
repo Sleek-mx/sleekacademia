@@ -355,6 +355,27 @@ main { max-width: var(--container); margin: 0 auto; padding: 1rem .9rem 2.5rem; 
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 .unlock-caption { color: var(--muted); font-size: .82rem; }
+.gumroad-checkout { margin-bottom: .65rem; }
+.gumroad-checkout .btn { width: 100%; }
+.purchase-delivery {
+  max-width: var(--measure);
+  margin: 0 0 1rem;
+  padding: .8rem .9rem;
+  border-left: .25rem solid var(--brand);
+  border-radius: .2rem var(--r-sm) var(--r-sm) .2rem;
+  background: color-mix(in srgb, var(--brand) 8%, var(--surface));
+  color: var(--txt);
+  font-size: .86rem;
+  line-height: 1.55;
+}
+.payment-backup {
+  margin-top: 1rem;
+  padding: .85rem 1rem;
+  border-radius: var(--r-sm);
+  box-shadow: var(--press);
+}
+.payment-backup > summary { cursor: pointer; color: var(--muted); font-size: .86rem; font-weight: 700; }
+.payment-backup[open] > summary { margin-bottom: .8rem; color: var(--txt); }
 .checkout-container { min-height: 3rem; margin-bottom: .5rem; }
 
 /* MoneyGram claim wizard */

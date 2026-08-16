@@ -6,43 +6,46 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/images/brand/favicon-32.png">
   <link rel="apple-touch-icon" href="/images/brand/apple-touch-icon.png">
   <meta name="robots" content="noindex,follow">
-  <title>Start an Order | Sleek Academia</title>
-  <meta name="description" content="Share your academic support order and continue securely in your Sleek Academia workspace.">
+  <title>Request Academic Support | Sleek Academia</title>
+  <meta name="description" content="Share your course, deadline, and sticking point. Review your request before continuing securely to your Sleek Academia workspace.">
   <link rel="canonical" href="https://sleekacademia.com/onboard.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/brand-v2.css">
+  <link rel="stylesheet" href="/css/glass-college.css?v=20260816a">
   <link rel="stylesheet" href="/css/platform-v2.css">
-  <link rel="stylesheet" href="/css/public-neumorphic.css?v=20260715">
   <link rel="stylesheet" href="/css/workspace-v2.css">
+  <link rel="stylesheet" href="/css/onboarding-glass.css?v=20260816a">
   <link rel="stylesheet" href="/css/social.css?v=20260725" />
-  <link rel="stylesheet" href="/css/liquid-nav.css?v=20260725" />
 </head>
-<body class="ws-body page-onboard">
+<body class="ws-body page-onboard glass-college">
   <a class="skip-link" href="#main-content">Skip to content</a>
-  <header class="site-header site-shell">
-    <nav class="site-nav" aria-label="Primary navigation">
-      <a class="brand-lockup" href="/" aria-label="Sleek Academia home"><img class="brand-lockup__mark" src="/images/brand/sleek-academia-mark.webp" width="591" height="591" alt=""><span class="brand-lockup__copy"><span class="brand-lockup__name">Sleek Academia</span><span class="brand-lockup__tagline">Pass. Guaranteed.</span></span></a>
-      <div class="nav-links" id="primary-links"><a class="nav-link" href="/">Home</a><a class="nav-link" href="/about.html">About Us</a><a class="nav-link" href="/blog.html">Blog</a><a class="nav-link" href="/store.html">Store</a></div>
-      <div class="nav-actions"><a class="nav-login" href="/login.html">Log in</a><a class="button button--primary" href="/onboard.html" aria-current="page">Get Started <span class="button__arrow" aria-hidden="true">→</span></a><button class="menu-button" type="button" aria-controls="primary-links" aria-expanded="false" aria-label="Open navigation menu"><span></span></button></div>
-    </nav>
-  </header>
+  <section class="gc-band gc-band--hero gc-band--slim onboard-nav-band" style="--band-photo:url('/images/college/hero-flatlay.webp')">
+    <div class="gc-glass gc-glass--hero">
+      <header class="gc-nav">
+        <a class="gc-wordmark gc-wordmark--plain" href="/" aria-label="Sleek Academia home"><img src="/images/brand/sleek-academia-mark.webp" width="591" height="591" alt=""><span>Sleek Academia</span></a>
+        <nav class="gc-nav-links" id="primary-links" aria-label="Primary navigation"><a href="/">Home</a><a href="/resources.html">Study tools</a><a href="/pricing.html">Pricing</a><a href="/about.html">About</a><a href="/login.html" class="gc-nav-mobile-login">Log in</a></nav>
+        <div class="gc-nav-actions"><a class="gc-nav-login" href="/login.html">Log in</a><span class="gc-btn-dark"><a class="gc-btn" href="/onboard.html" aria-current="page">Request support</a></span><button class="gc-nav-toggle menu-button" type="button" aria-controls="primary-links" aria-expanded="false" aria-label="Open navigation menu"><span></span></button></div>
+      </header>
+    </div>
+  </section>
 
-  <main id="main-content" class="ws-shell wizard-layout">
+  <main id="main-content" class="wizard-layout onboard-shell">
     <aside class="wizard-aside">
-      <span class="ws-kicker" style="color:#bfe9fb">Start with context</span>
+      <span class="ws-kicker">Request academic support</span>
       <h1>Tell us what is on your desk.</h1>
-      <p>A good order gives us enough context to understand the work, clarify the scope, and respond with the right next step.</p>
+      <p>Share the course, deadline, and sticking point. We use that context to review the scope and give you a clear next step.</p>
       <div class="wizard-assurance">
-        <div><b>01</b><span><strong>No payment is taken here</strong>Your confirmed quote and payment milestones appear later in your private workspace.</span></div>
-        <div><b>02</b><span><strong>Your files stay connected</strong>Briefs, messages, and deliverables belong to one order record.</span></div>
-        <div><b>03</b><span><strong>You stay in control</strong>Review every detail before creating an account or submitting in localhost demo mode.</span></div>
+        <div><b>01</b><span><strong>No payment is taken here</strong>Your quote and payment milestones appear later in your private workspace.</span></div>
+        <div><b>02</b><span><strong>One connected request</strong>Briefs, files, messages, and deliverables stay with the same order.</span></div>
+        <div><b>03</b><span><strong>Review before sign-up</strong>Check every detail before creating your secure workspace.</span></div>
       </div>
+      <p class="onboard-self-serve">Looking for self-serve practice instead? <a href="/resources.html">Browse study tools</a>.</p>
     </aside>
 
     <section class="wizard-panel">
-      <div class="wizard-progress" aria-label="Order progress"><span class="is-active"></span><span></span><span></span><span></span></div>
+      <div class="wizard-progress" aria-label="Request progress"><span class="is-active" aria-label="Support type"></span><span aria-label="Project brief"></span><span aria-label="Contact details"></span><span aria-label="Secure review"></span></div>
       <form id="request-wizard" novalidate>
         <section class="wizard-step is-active" data-wizard-step="service">
           <span class="ws-kicker">Step 1 of 4</span>
@@ -126,11 +129,7 @@
     </section>
   </main>
   <script src="/js/platform-motion.js" defer></script>
-  <script src="/js/liquid-nav.js?v=20260725" defer></script>
-  <script src="/js/onboard.js" defer></script>
-<!-- Sleek Academia contact dock -->
-<link rel="stylesheet" href="/css/contact-dock.css?v=20260812" />
-<script src="/js/contact-dock.js?v=20260812" defer></script>
+  <script src="/js/onboard.js?v=20260816a" defer></script>
 <!-- Sleek Academia chat widget -->
 <link rel="stylesheet" href="/css/chat-widget.css?v=20260802" />
 <script src="/js/chat-widget.js?v=20260802" defer></script>

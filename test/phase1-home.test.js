@@ -17,19 +17,18 @@ async function readBrandCss() {
   return readFile(brandCssPath, "utf8");
 }
 
+async function readGlassCss() {
+  return readFile(path.join(rootDir, "public", "css", "glass-college.css"), "utf8");
+}
+
 test("homepage uses the approved Sleek Academia brand foundation", async () => {
   const home = await readHome();
 
   assert.match(home, /\/css\/brand-v2\.css/);
+  assert.match(home, /\/css\/glass-college\.css/);
   assert.match(home, /\/images\/brand\/sleek-academia-mark\.webp/);
-  assert.match(home, /class="brand-lockup__name">Sleek Academia</);
-  assert.match(home, /class="brand-lockup__tagline">Pass\. Guaranteed\.</);
-  assert.match(home, /\/video\/sleek-academia-woman-hero\.mp4/);
-  assert.match(home, /\/images\/brand\/sleek-academia-woman-hero-poster\.webp/);
-  assert.match(
-    home,
-    /<video\b(?=[^>]*\bautoplay\b)(?=[^>]*\bmuted\b)(?=[^>]*\bloop\b)(?=[^>]*\bplaysinline\b)[^>]*>/i,
-  );
+  assert.match(home, /class="gc-wordmark[^"]*"/);
+  assert.match(home, /\/images\/college\/hero-flatlay\.webp/);
   assert.match(home, /\/images\/brand\/favicon-32\.png/);
   assert.match(home, /\/images\/brand\/apple-touch-icon\.png/);
 });
@@ -37,29 +36,44 @@ test("homepage uses the approved Sleek Academia brand foundation", async () => {
 test("homepage exposes the approved navigation and service entry points", async () => {
   const home = await readHome();
 
-  assert.match(home, /href="\/about\.html"/);
-  assert.match(home, /href="\/blog\.html"/);
+  assert.match(home, /href="\/resources\.html"/);
   assert.match(home, /href="\/store\.html"/);
-  assert.match(home, /href="\/onboard\.html\?goal=essay"/);
-  assert.match(home, /href="\/onboard\.html\?goal=exam"/);
-  assert.match(home, /Authorship matters at Sleek Academia/);
+  assert.match(home, /href="\/login\.html"/);
+  assert.match(home, /href="\/onboard\.html"/);
+  assert.match(home, />Start free check</);
 });
 
-test("homepage hero uses content-led desktop and purpose-built mobile composition", async () => {
-  const [home, css] = await Promise.all([readHome(), readBrandCss()]);
+test("homepage hero uses the glass spectrum-border composition, responsive down to mobile", async () => {
+  const [home, css] = await Promise.all([readHome(), readGlassCss()]);
 
-  assert.match(home, /<video class="hero__video" data-ambient-video/);
-  assert.match(css, /\.hero\s*{[^}]*min-height:\s*auto/s);
-  assert.match(css, /\.hero__media\s*{[^}]*aspect-ratio:\s*8\s*\/\s*7/s);
-  assert.match(css, /\.hero__video\s*{[^}]*object-fit:\s*cover[^}]*object-position:\s*right center/s);
+  assert.match(home, /class="[^"]*\bgc-hero\b/);
+  // "ONLINE COLLEGE DIFFICULTIES? SAY LESS.", with ONLINE and LESS. set in the
+  // marker face and carrying their own drawn underline / lasso
+  assert.match(home, /gc-mark gc-mark--coral">Online<svg/);
+  assert.match(home, /gc-mark gc-mark--blue">Less\.<svg/);
+  assert.match(home, /College <br \/>Difficulties\? <br \/>Say /, "headline must keep word spacing across its line breaks");
+  assert.match(css, /"Permanent Marker"/);
+  assert.match(css, /\.gc-glass--spectrum::after\s*{[^}]*background:\s*var\(--gc-spectrum\)/s);
   assert.match(
     css,
-    /@media \(max-width: 58rem\)[\s\S]*\.hero__media\s*{[^}]*aspect-ratio:\s*4\s*\/\s*3/s,
+    /@media \(max-width: 640px\)[\s\S]*\.gc-band--hero\s*{[^}]*min-height:\s*0/,
   );
-  assert.match(
-    css,
-    /@media \(max-width: 42rem\)[\s\S]*\.hero__actions\s*{[^}]*grid-template-columns:\s*1fr/s,
-  );
+});
+
+// The structural rule the approved references are built on: the photograph is a
+// full-bleed band and the glass panel is inset on top of it, so the image runs
+// past every edge of the glass. Regressing this back to a photo clipped inside
+// the panel is the single most visible way to break the design.
+test("every section is a full-bleed photo band with the glass panel inset on top", async () => {
+  const [home, css] = await Promise.all([readHome(), readGlassCss()]);
+
+  for (const photo of ["hero-flatlay", "guidance-flatlay", "planning-flatlay"]) {
+    assert.match(home, new RegExp(`--band-photo:url\\('/images/college/${photo}\\.webp'\\)`), `${photo} band missing`);
+  }
+  assert.match(css, /\.gc-band::before\s*{[^}]*background-image:\s*var\(--band-photo\)/s);
+  assert.match(css, /\.gc-band\s*{[^}]*padding:\s*var\(--gc-band-pad\)/s, "glass panel is not inset from the band edge");
+  // bands fade into one another rather than butting up hard
+  assert.match(css, /\.gc-band::before\s*{[\s\S]*?mask-image:\s*linear-gradient\(to bottom, transparent/);
 });
 
 test("homepage removes public pricing and tutoring packages", async () => {

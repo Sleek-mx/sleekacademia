@@ -66,7 +66,7 @@ test("social buttons are labelled for assistive tech", () => {
 
 test("pages with the shared nav load the liquid glass layer", () => {
   const navPages = htmlPages().filter((page) => read(page).includes('class="nav-links"'));
-  assert.ok(navPages.length >= 4, "expected the shared nav on at least four pages");
+  assert.ok(navPages.length >= 3, "expected the remaining legacy public pages to share the liquid nav");
 
   for (const page of navPages) {
     const html = read(page);

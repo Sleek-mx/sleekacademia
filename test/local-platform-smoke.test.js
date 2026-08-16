@@ -42,7 +42,7 @@ test("all review surfaces load from the real Express app", async () => {
 
   const homepage = await fetch(`${base}/`);
   const homepageHtml = await homepage.text();
-  assert.match(homepageHtml, /class="site-footer"/);
+  assert.match(homepageHtml, /class="gc-footer"/);
   assert.doesNotMatch(homepageHtml, /sleek-academia-logo-source|1595|993/);
   assert.match(homepage.headers.get("content-security-policy") || "", /default-src 'self'/);
   assert.equal(homepage.headers.get("x-content-type-options"), "nosniff");

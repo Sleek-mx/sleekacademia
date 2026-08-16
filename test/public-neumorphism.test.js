@@ -3,7 +3,9 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
-const publicPages = ["index.html", "about.html", "blog.html", "store.html"];
+// index.html deliberately left the shared neumorphic theme for its own glass
+// design system (glass-college.css) — see phase1-home.test.js for its checks.
+const publicPages = ["about.html", "blog.html", "store.html"];
 // onboard.html deliberately wears the public theme (commit a71fafb) — it is a
 // marketing surface, not a workspace one.
 const workspacePages = ["dashboard.html", "admin.html", "client-order.html", "admin-order.html", "login.html", "sign-up.html"];

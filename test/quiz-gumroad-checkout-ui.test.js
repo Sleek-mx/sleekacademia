@@ -22,6 +22,9 @@ test("every quiz page has the Gumroad checkout mount point ahead of the MoneyGra
   for (const page of QUIZ_PAGES) {
     const html = read(page);
     assert.match(html, /id="gumroad-checkout"/, `${page} is missing the Gumroad checkout mount point`);
+    assert.match(html, /id="paywall-delivery"/, `${page} is missing post-purchase delivery guidance`);
+    assert.match(html, /<details class="payment-backup">[\s\S]*id="checkout-container"[\s\S]*<\/details>/, `${page}: MoneyGram should be a disclosed backup`);
+    assert.match(html, /id="btn-see-results"/, `${page}: free-results escape hatch missing`);
     const gumroadIndex = html.indexOf('id="gumroad-checkout"');
     const checkoutIndex = html.indexOf('id="checkout-container"');
     assert.ok(gumroadIndex > 0 && gumroadIndex < checkoutIndex, `${page}: Gumroad option must appear before the MoneyGram wizard`);
@@ -33,5 +36,8 @@ test("the quiz engine builds a Gumroad checkout link carrying the quiz id and pr
   assert.match(script, /sleekmx\.gumroad\.com\/l\/QuizUnlock/);
   assert.match(script, /function renderGumroadCheckout/);
   assert.match(script, /quiz_id:\s*config\.quizId/);
-  assert.match(script, /renderGumroadCheckout\(\)/);
+  assert.match(script, /paywall-delivery/);
+  assert.match(script, /personal access link/);
+  assert.match(script, /Unlock " \+ remaining/);
+  assert.match(script, /renderGumroadCheckout\(remaining\)/);
 });

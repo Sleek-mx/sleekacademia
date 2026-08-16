@@ -14,11 +14,13 @@ test("footer cannot render the redundant full-resolution logo", () => {
   assert.match(css, /\[hidden\]\s*\{[^}]*display:\s*none\s*!important/s);
 });
 
-test("footer preserves the constrained visible brand lockup and public theme", () => {
+test("homepage preserves the constrained visible brand mark and public theme", () => {
   assert.match(home, /href="\/css\/brand-v2\.css"/);
-  assert.match(home, /class="brand-lockup"/);
-  assert.match(home, /class="brand-lockup__mark"[^>]*sleek-academia-mark\.webp/);
-  assert.match(home, /class="brand-lockup__name">Sleek Academia</);
+  assert.match(home, /class="gc-wordmark[^"]*"/);
+  assert.match(home, /sleek-academia-mark\.webp/);
+  // the nav lockup is plain dark text; the per-letter spectrum wordmark is
+  // reserved for the login and sign-up panels
+  assert.match(home, /gc-wordmark--plain[\s\S]{0,220}<span>Sleek Academia<\/span>/);
 });
 
 test("public pages clip decorative artwork without widening the document", () => {

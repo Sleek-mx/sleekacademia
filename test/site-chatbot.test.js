@@ -35,9 +35,20 @@ test("no unresolved template tokens survive into the knowledge base", () => {
 
 test("the invented subscription pricing of the old widget is gone for good", () => {
   const haystack = `${KNOWLEDGE_BASE}\n${widgetJs}`;
-  for (const phrase of ["$400", "$350", "per month", "/month"]) {
+  for (const phrase of ["$400", "$350", "/month"]) {
     assert.ok(!haystack.includes(phrase), `"${phrase}" is not a real Sleek Academia price`);
   }
+  // Monthly plans are real now (see public/pricing.html), but only these two
+  // figures are published — any other monthly number is invented.
+  const monthly = [...KNOWLEDGE_BASE.matchAll(/\$(\d+(?:\.\d+)?) per month/g)].map((m) => m[1]);
+  assert.deepEqual([...new Set(monthly)].sort(), ["300", "450"]);
+});
+
+test("the knowledge base carries the published guidance plans", () => {
+  for (const phrase of ["Study Starter", "Weekly Guidance", "Guided Momentum", "$250", "$300 per month", "$450 per month"]) {
+    assert.ok(KNOWLEDGE_BASE.includes(phrase), `${phrase} is missing from the knowledge base`);
+  }
+  assert.match(KNOWLEDGE_BASE, /No plan guarantees a grade/i);
 });
 
 test("every marketing page is covered by a knowledge-base document", () => {
@@ -208,9 +219,9 @@ test("the retired chatbot files are gone", () => {
 
 // ── theme and motion ───────────────────────────────────────────────────────
 
-test("the widget uses the site's neumorphic tokens", () => {
-  for (const token of ["#e7e4f1", "#c3bdd8", "#ffffff", "#009fe3", "#5c6d7d"]) {
-    assert.ok(widgetCss.includes(token), `${token} is part of the site's neumorphism palette`);
+test("the widget uses the site's glass design tokens", () => {
+  for (const token of ["--sa-spectrum", "--sa-glass", "--sa-user-bubble", "#3457d5"]) {
+    assert.ok(widgetCss.includes(token), `${token} is part of the site's glass design system`);
   }
 });
 

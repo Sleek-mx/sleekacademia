@@ -711,18 +711,22 @@
 
     var answered = state.history.length;
     var correct = state.history.filter(function (h) { return h.correct; }).length;
+    var remaining = config.totalQuestions - config.freeQuestions;
     // Deliberately says "material", not "classes": this engine serves a
     // pathophysiology quiz as well as a pharmacology one.
     text($("paywall-summary"),
       "You have answered " + answered + " question(s) with " + correct + " correct. " +
-      "The remaining " + (config.totalQuestions - config.freeQuestions) +
+      "The remaining " + remaining +
       " questions cover the material most likely to appear on your exam.");
+    text($("paywall-delivery"),
+      "Pay once on Gumroad. Your personal access link for all " + remaining +
+      " remaining questions is emailed after payment.");
 
     $("paywall-error").hidden = true;
     text($("paywall-mode"), "MoneyGram to mobile money is also available below as a manual backup — " +
       "an access code follows by email once payment is confirmed.");
 
-    renderGumroadCheckout();
+    renderGumroadCheckout(remaining);
 
     wizardStep = 0;
     wizardSubmitted = false;
@@ -735,7 +739,7 @@
   // quiz id rides in url_params so the webhook (src/platform/http.js) knows
   // which quiz's entitlement to mint. Gumroad's own buyer-email field is used
   // to deliver the access link — no account or login needed on this side.
-  function renderGumroadCheckout() {
+  function renderGumroadCheckout(remaining) {
     var container = $("gumroad-checkout");
     if (!container) return;
     var params = new URLSearchParams({
@@ -747,7 +751,9 @@
     link.target = "_blank";
     link.rel = "noopener";
     link.href = GUMROAD_QUIZ_UNLOCK_URL + "?" + params.toString();
-    link.textContent = "Pay via Gumroad — $" + String(config.unlockPriceUsd || "10").replace(/\.00$/, "");
+    link.setAttribute("aria-describedby", "paywall-delivery");
+    link.textContent = "Unlock " + remaining + " questions with Gumroad — $" +
+      String(config.unlockPriceUsd || "10").replace(/\.00$/, "");
     container.replaceChildren(link);
   }
 

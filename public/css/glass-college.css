@@ -1,0 +1,2054 @@
+/* ============================================================
+   Sleek Academia — glass design system (online-college redesign)
+
+   Structural rule, taken straight from the approved references:
+   every section is a FULL-BLEED PHOTO BAND with a translucent glass
+   panel inset on top of it, so the photograph bleeds past the glass
+   on all four edges. Bands sit flush against each other and their
+   photo layers fade at top/bottom, so one image morphs into the next.
+
+   Scoped under .glass-college so it never leaks into brand-v2 pages.
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Permanent+Marker&family=Plus+Jakarta+Sans:ital,wght@0,500;0,600;0,700;0,800;1,600&display=swap");
+
+.glass-college {
+  --gc-coral: #ff6b5e;
+  --gc-orange: #ff9c4a;
+  --gc-yellow: #ffd23f;
+  --gc-lime: #a6d84a;
+  --gc-teal: #37c2b0;
+  --gc-blue: #3aa0e8;
+  --gc-cobalt: #3457d5;
+  --gc-violet: #9457e0;
+  --gc-magenta: #e0499c;
+  --gc-spectrum: linear-gradient(
+    115deg,
+    var(--gc-coral),
+    var(--gc-orange),
+    var(--gc-yellow),
+    var(--gc-lime),
+    var(--gc-teal),
+    var(--gc-blue),
+    var(--gc-violet),
+    var(--gc-magenta)
+  );
+
+  --gc-ink: #14181f;
+  --gc-body: #4a5567;
+  --gc-muted: #8089a0;
+
+  --gc-sky: #d3e3ef;
+  --gc-cream: #f7efe2;
+  --gc-blush: #f9e4e2;
+  --gc-paper: #faf7f1;
+
+  --gc-r-glass: 1.75rem;
+  --gc-r-lg: 1.3rem;
+  --gc-r-md: 0.85rem;
+  --gc-r-sm: 0.6rem;
+  --gc-r-pill: 999px;
+  --gc-r-btn: 0.7rem;
+
+  --gc-shadow-card: 0 1.1rem 2.4rem rgba(20, 24, 31, 0.16);
+  --gc-shadow-glass: 0 1.6rem 3.6rem rgba(20, 24, 31, 0.12);
+
+  --gc-band-pad: clamp(0.9rem, 2vw, 1.9rem);
+  --gc-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  font-family: "Plus Jakarta Sans", "Manrope", sans-serif;
+  color: var(--gc-ink);
+  overflow-x: clip;
+
+  /* Base wash the photo bands fade into, so section edges morph. */
+  background: linear-gradient(
+    to bottom,
+    var(--gc-sky) 0%,
+    var(--gc-cream) 26%,
+    #e7eef4 50%,
+    var(--gc-blush) 72%,
+    var(--gc-sky) 100%
+  );
+}
+
+.glass-college *,
+.glass-college *::before,
+.glass-college *::after {
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   Photo band + inset glass panel
+   ============================================================ */
+
+.glass-college .gc-band {
+  position: relative;
+  isolation: isolate;
+  padding: var(--gc-band-pad);
+}
+
+/* The photograph. Bleeds the full width of the band, so it is visible
+   outside every edge of the glass panel. Masked at top and bottom so
+   neighbouring bands blend instead of butting up against each other. */
+.glass-college .gc-band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--band-photo);
+  background-size: cover;
+  background-position: var(--band-pos, center);
+  filter: var(--band-filter, none);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+}
+
+/* The hero photo runs to the very top of the page — only its bottom fades. */
+.glass-college .gc-band--hero::before {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 88%, transparent 100%);
+}
+
+.glass-college .gc-glass {
+  position: relative;
+  border-radius: var(--gc-r-glass);
+  background: rgba(255, 255, 255, 0.26);
+  -webkit-backdrop-filter: blur(4px) saturate(1.05);
+  backdrop-filter: blur(4px) saturate(1.05);
+  box-shadow: var(--gc-shadow-glass), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+/* Heavily softened photo layer, used behind the reviews stage. */
+.glass-college .gc-band--soft::before {
+  filter: blur(30px) saturate(1.35);
+  transform: scale(1.16);
+}
+
+/* The closing CTA carries no photograph of its own. */
+.glass-college .gc-band--cta::before { content: none; }
+
+/* On desktop the rails are layout-neutral so their cards position against
+   the stage; below 1024px they become real horizontal scrollers. */
+.glass-college .gc-loop-rail,
+.glass-college .gc-review-rail { display: contents; }
+
+/* Thin spectrum perimeter — gradient ring drawn in the element's padding. */
+.glass-college .gc-glass--spectrum {
+  border-color: transparent;
+}
+
+.glass-college .gc-glass--spectrum::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: var(--gc-spectrum);
+  opacity: 0.85;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* ============================================================
+   Type
+   ============================================================ */
+
+.glass-college .gc-eyebrow {
+  font-family: "Archivo", sans-serif;
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gc-ink);
+  margin: 0 0 1rem;
+}
+
+.glass-college .gc-display {
+  font-family: "Archivo", sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.022em;
+  line-height: 0.93;
+  margin: 0;
+}
+
+.glass-college .gc-headline {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.018em;
+  margin: 0;
+}
+
+.glass-college .gc-lead {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--gc-body);
+  margin: 1.1rem 0 0;
+  max-width: 32rem;
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+
+.glass-college .gc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+  min-height: 44px;
+  padding: 0.85rem 1.7rem;
+  border-radius: var(--gc-r-btn);
+  transition: transform 0.2s var(--gc-ease), box-shadow 0.2s var(--gc-ease);
+}
+
+.glass-college .gc-btn:hover { transform: translateY(-1px); }
+
+/* Spectrum perimeter drawn as a RING (masked border), so it never fills the
+   element behind it. Reused by the buttons and the 01/02/03 strip. */
+.glass-college .gc-btn-dark,
+.glass-college .gc-btn-ghost,
+.glass-college .gc-steps {
+  position: relative;
+}
+
+.glass-college .gc-btn-dark::after,
+.glass-college .gc-btn-ghost::after,
+.glass-college .gc-steps::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.6px;
+  background: var(--gc-spectrum);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Dark primary */
+.glass-college .gc-btn-dark {
+  display: inline-flex;
+  align-self: flex-start;
+  border-radius: var(--gc-r-btn);
+  background: #14181f;
+}
+.glass-college .gc-btn-dark .gc-btn { color: #fff; background: transparent; }
+
+/* Translucent secondary */
+.glass-college .gc-btn-ghost {
+  display: inline-flex;
+  align-self: flex-start;
+  border-radius: var(--gc-r-btn);
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+.glass-college .gc-btn-ghost .gc-btn { color: var(--gc-ink); background: transparent; }
+
+/* Wide squared-off dark button used inside sections */
+.glass-college .gc-btn-block {
+  border-radius: var(--gc-r-md);
+}
+.glass-college .gc-btn-block .gc-btn {
+  border-radius: var(--gc-r-md);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  padding: 1rem 1.9rem;
+  gap: 2.4rem;
+}
+
+/* ============================================================
+   Wordmark + navigation (lives INSIDE the hero glass panel)
+   ============================================================ */
+
+.glass-college .gc-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+  flex: none;
+}
+
+.glass-college .gc-wordmark img { width: 2.3rem; height: 2.3rem; }
+
+.glass-college .gc-wordmark span {
+  font-family: "Archivo", sans-serif;
+  font-weight: 900;
+  font-size: 1.2rem;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* The nav lockup in the hero reference is plain dark mixed-case text, not the
+   per-letter spectrum wordmark used on the login and pricing panels. */
+.glass-college .gc-wordmark--plain span {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 700;
+  font-size: 1.32rem;
+  letter-spacing: -0.015em;
+  text-transform: none;
+  color: var(--gc-ink);
+}
+
+.glass-college .gc-wordmark b:nth-child(8n + 1) { color: var(--gc-coral); }
+.glass-college .gc-wordmark b:nth-child(8n + 2) { color: var(--gc-orange); }
+.glass-college .gc-wordmark b:nth-child(8n + 3) { color: var(--gc-yellow); }
+.glass-college .gc-wordmark b:nth-child(8n + 4) { color: var(--gc-lime); }
+.glass-college .gc-wordmark b:nth-child(8n + 5) { color: var(--gc-teal); }
+.glass-college .gc-wordmark b:nth-child(8n + 6) { color: var(--gc-blue); }
+.glass-college .gc-wordmark b:nth-child(8n + 7) { color: var(--gc-cobalt); }
+.glass-college .gc-wordmark b:nth-child(8n) { color: var(--gc-violet); }
+
+/* No gradient fill on the bar itself — a plain frosted strip, per reference. */
+.glass-college .gc-nav {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.05rem clamp(1rem, 2.2vw, 1.9rem);
+  background: rgba(255, 255, 255, 0.42);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--gc-r-glass) var(--gc-r-glass) 0 0;
+}
+
+.glass-college .gc-nav-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.2rem, 2.6vw, 2.6rem);
+  margin-inline: auto;
+}
+
+.glass-college .gc-nav-links a {
+  color: var(--gc-ink);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.glass-college .gc-nav-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+.glass-college .gc-nav-mobile-login { display: none; }
+
+.glass-college .gc-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex: none;
+}
+
+.glass-college .gc-nav-login {
+  color: var(--gc-ink);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.glass-college .gc-nav .gc-btn { padding: 0.7rem 1.4rem; font-size: 0.9rem; }
+
+.glass-college .gc-nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.6rem;
+  min-width: 44px;
+  min-height: 44px;
+}
+.glass-college .gc-nav-toggle span,
+.glass-college .gc-nav-toggle span::before,
+.glass-college .gc-nav-toggle span::after {
+  content: "";
+  display: block;
+  width: 1.4rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--gc-ink);
+  position: relative;
+}
+.glass-college .gc-nav-toggle span::before { top: -6px; }
+.glass-college .gc-nav-toggle span::after { top: 4px; }
+
+/* ============================================================
+   Hero
+   ============================================================ */
+
+.glass-college .gc-band--hero { min-height: min(94vh, 58rem); display: flex; }
+
+/* In the reference the hero photograph stays SHARP inside the panel — the desk
+   texture and pencil detail read through it. The panel is only a light white
+   wash, not a frosted blur. */
+.glass-college .gc-glass--hero {
+  overflow: hidden; /* keeps the nav strip inside the rounded corners */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.16);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* The reference sets the copy well in from the panel edge, and lets the
+   headline run wider than the paragraph beneath it. */
+.glass-college .gc-hero-body {
+  padding: clamp(2rem, 7vw, 6.5rem) clamp(1.2rem, 3vw, 3rem) clamp(2.2rem, 4.5vw, 4rem) clamp(1.2rem, 14vw, 13rem);
+}
+
+.glass-college .gc-hero-title {
+  font-size: clamp(2.1rem, 6.2vw, 5.6rem);
+  /* looser than the display default so the drawn underline has room to sit
+     between line one and line two */
+  line-height: 1.13;
+}
+
+/* Hand-drawn marker words inside the headline ("ONLINE", "LESS."), each with
+   its own drawn annotation — an underline swoosh and a lasso ellipse. */
+.glass-college .gc-mark {
+  position: relative;
+  display: inline-block;
+  font-family: "Permanent Marker", "Archivo", cursive;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  /* the reference letters lean right; the drawn marks are counter-skewed
+     below so they stay upright */
+  transform: skewX(-7deg);
+  padding-inline: 0.06em;
+}
+
+.glass-college .gc-mark--coral { color: #f04a3a; }
+.glass-college .gc-mark--blue { color: #1b7fea; margin-left: 0.2em; }
+
+.glass-college .gc-mark svg {
+  position: absolute;
+  left: 50%;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* underline sweep, clear of the baseline of "ONLINE" */
+/* Permanent Marker's baseline sits ~1.11em below the line-box top (measured),
+   so the sweep is placed just under that rather than guessed from the box. */
+.glass-college .gc-mark--coral svg {
+  top: 1.02em;
+  width: 116%;
+  height: 0.4em;
+  stroke-width: 8;
+  transform: translateX(-50%) skewX(7deg);
+}
+
+/* lasso wrapping the whole of "LESS." */
+.glass-college .gc-mark--blue svg {
+  top: 50%;
+  width: 132%;
+  height: 1.62em;
+  stroke-width: 7;
+  transform: translate(-50%, -50%) skewX(7deg);
+}
+
+.glass-college .gc-hero-body .gc-lead { max-width: 30rem; }
+
+.glass-college .gc-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* 01 / 02 / 03 strip */
+.glass-college .gc-steps {
+  display: inline-flex;
+  margin-top: 1.9rem;
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  max-width: 100%;
+}
+
+.glass-college .gc-step {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.95rem clamp(0.9rem, 1.6vw, 1.5rem);
+  font-family: "Archivo", sans-serif;
+  font-weight: 800;
+  font-size: 0.76rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--gc-ink);
+  white-space: nowrap;
+  border-right: 1px solid rgba(20, 24, 31, 0.14);
+}
+.glass-college .gc-step:last-child { border-right: none; }
+.glass-college .gc-step em { font-style: normal; font-size: 1.02rem; letter-spacing: 0.02em; }
+.glass-college .gc-step:nth-child(1) em { color: var(--gc-violet); }
+.glass-college .gc-step:nth-child(2) em { color: #17233b; }
+.glass-college .gc-step:nth-child(3) em { color: #17233b; }
+
+/* ============================================================
+   Section 2 — weekly guidance
+   ============================================================ */
+
+/* Height tracks the photograph's own 16:9-ish proportion, so the backpack,
+   pen and pens stay in frame instead of being cropped away. */
+.glass-college .gc-guidance {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  min-height: min(52vw, 50rem);
+  /* Cream veil over the copy column only; the photo shows through on the right. */
+  background:
+    linear-gradient(
+      to right,
+      rgba(250, 246, 239, 0.96) 0%,
+      rgba(250, 246, 239, 0.94) 34%,
+      rgba(250, 246, 239, 0.5) 48%,
+      rgba(250, 246, 239, 0) 60%
+    );
+  /* the photograph stays sharp on the right, exactly as in the reference */
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.glass-college .gc-guidance-copy {
+  padding: clamp(1.6rem, 5vw, 5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Held to the reference's narrow measure so the headline breaks across three
+   lines rather than running the full width of the cream panel. */
+.glass-college .gc-guidance-copy > * { max-width: 24rem; }
+.glass-college .gc-guidance-title { font-size: clamp(1.9rem, 3.6vw, 3.1rem); }
+
+.glass-college .gc-mini-list {
+  list-style: none;
+  margin: 1.8rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  max-width: 27rem;
+}
+
+.glass-college .gc-mini-list li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 1.2rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1.5px solid;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.glass-college .gc-mini-list em {
+  font-style: normal;
+  font-family: "Archivo", sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  padding-right: 1rem;
+  border-right: 1px solid rgba(20, 24, 31, 0.16);
+}
+
+.glass-college .gc-mini-list li:nth-child(1) { border-color: var(--gc-magenta); }
+.glass-college .gc-mini-list li:nth-child(1) em { color: var(--gc-magenta); }
+.glass-college .gc-mini-list li:nth-child(2) { border-color: var(--gc-cobalt); }
+.glass-college .gc-mini-list li:nth-child(2) em { color: var(--gc-cobalt); }
+.glass-college .gc-mini-list li:nth-child(3) { border-color: var(--gc-teal); }
+.glass-college .gc-mini-list li:nth-child(3) em { color: var(--gc-teal); }
+
+.glass-college .gc-guidance-copy .gc-btn-dark { margin-top: 2rem; }
+
+/* Graduation-cap pin sitting on the backpack, as in the reference. It is a
+   design element, not part of the supplied photograph. */
+.glass-college .gc-guidance-photo-slot { position: relative; }
+
+.glass-college .gc-guidance-pin {
+  position: absolute;
+  right: 6.5%;
+  top: 45%;
+  width: clamp(2.2rem, 3.4vw, 3.1rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(150deg, #9d7bef, #7d55e0);
+  box-shadow: 0 0.5rem 1.1rem rgba(50, 25, 110, 0.32);
+}
+.glass-college .gc-guidance-pin svg { width: 58%; height: auto; display: block; }
+
+/* ============================================================
+   Section 3 — the weekly loop
+   ============================================================ */
+
+.glass-college .gc-loop {
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.86) 0%, rgba(240, 246, 252, 0.82) 55%, rgba(255, 255, 255, 0.74) 100%);
+  padding: clamp(1.2rem, 2vw, 1.9rem);
+}
+
+.glass-college .gc-loop-stage {
+  position: relative;
+  height: clamp(31rem, 52vw, 47rem);
+}
+
+/* Faceted cream panel holding the section heading */
+.glass-college .gc-loop-head {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 57%;
+  height: 60%;
+  padding: clamp(1.4rem, 2.6vw, 2.6rem);
+  background: linear-gradient(150deg, #fbf6ec 0%, #f4ece0 100%);
+  border-radius: var(--gc-r-lg);
+  clip-path: polygon(0 0, 94% 0, 100% 17%, 88% 52%, 74% 100%, 0 100%);
+  z-index: 1;
+}
+
+.glass-college .gc-loop-title { font-size: clamp(1.9rem, 3.6vw, 3.1rem); }
+
+.glass-college .gc-loop-head-icon {
+  position: absolute;
+  top: clamp(1.4rem, 2.6vw, 2.6rem);
+  left: 62%;
+  width: clamp(2.6rem, 4vw, 3.6rem);
+  color: rgba(20, 24, 31, 0.13);
+}
+.glass-college .gc-loop-head-icon svg { width: 100%; height: auto; display: block; }
+
+.glass-college .gc-loop-card {
+  position: absolute;
+  border-radius: var(--gc-r-lg);
+  padding: clamp(1.1rem, 1.8vw, 1.7rem);
+  box-shadow: var(--gc-shadow-card);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: transform 0.28s var(--gc-ease), box-shadow 0.28s var(--gc-ease);
+}
+
+.glass-college .gc-loop-card:hover {
+  box-shadow: 0 1.7rem 3.4rem rgba(20, 24, 31, 0.24);
+}
+
+.glass-college .gc-loop-num {
+  font-family: "Archivo", sans-serif;
+  font-weight: 900;
+  font-size: clamp(1.7rem, 2.6vw, 2.5rem);
+  line-height: 1;
+}
+
+.glass-college .gc-loop-rule {
+  display: block;
+  width: 2.2rem;
+  height: 3px;
+  border-radius: 3px;
+  margin: 0.65rem 0 0.85rem;
+}
+
+.glass-college .gc-loop-card h3 {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 800;
+  font-size: clamp(0.85rem, 1.1vw, 1rem);
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+}
+
+.glass-college .gc-loop-card p {
+  font-size: clamp(0.78rem, 0.95vw, 0.88rem);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.glass-college .gc-loop-icon {
+  position: absolute;
+  width: clamp(1.5rem, 2.1vw, 2rem);
+  opacity: 0.5;
+}
+.glass-college .gc-loop-icon svg { width: 100%; height: auto; display: block; }
+.glass-college .gc-loop-icon--tr { top: 1.2rem; right: 1.2rem; }
+.glass-college .gc-loop-icon--br { bottom: 1.2rem; right: 1.2rem; }
+
+.glass-college .gc-loop-card--01 {
+  left: 4.8%;
+  top: 47.9%;
+  width: 35.6%;
+  height: 39.3%;
+  background: linear-gradient(150deg, #fdfbf6 0%, #f3ece1 100%);
+  color: var(--gc-ink);
+  transform: rotate(-1.2deg);
+  z-index: 2;
+}
+.glass-college .gc-loop-card--01 .gc-loop-rule { background: var(--gc-teal); }
+
+.glass-college .gc-loop-card--02 {
+  left: 35.9%;
+  top: 36.6%;
+  width: 31.7%;
+  height: 49.5%;
+  background: linear-gradient(155deg, #ffa06a 0%, #f4653c 100%);
+  color: #fff;
+  transform: rotate(0.8deg);
+  z-index: 3;
+}
+.glass-college .gc-loop-card--02 .gc-loop-rule { background: rgba(255, 255, 255, 0.85); }
+
+.glass-college .gc-loop-card--03 {
+  left: 59.2%;
+  top: 10.2%;
+  width: 27.8%;
+  height: 43.2%;
+  background: linear-gradient(155deg, #2273ad 0%, #0e3a63 100%);
+  color: #fff;
+  transform: rotate(-1deg);
+  z-index: 4;
+}
+.glass-college .gc-loop-card--03 .gc-loop-rule { background: rgba(255, 255, 255, 0.8); }
+
+.glass-college .gc-loop-card--04 {
+  left: 67.9%;
+  top: 49.7%;
+  width: 30.6%;
+  height: 43.7%;
+  background: linear-gradient(155deg, #ddeb9e 0%, #b6d75f 100%);
+  color: #24400f;
+  transform: rotate(1.4deg);
+  z-index: 5;
+}
+.glass-college .gc-loop-card--04 .gc-loop-rule { background: #4c6b1f; }
+
+/* ============================================================
+   Section 4 — student reviews
+   ============================================================ */
+
+.glass-college .gc-reviews {
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.34) 100%);
+  padding: clamp(1.2rem, 2vw, 1.9rem);
+}
+
+.glass-college .gc-review-stage {
+  position: relative;
+  height: clamp(31rem, 52vw, 47rem);
+}
+
+.glass-college .gc-reviews-copy {
+  position: absolute;
+  left: 2.9%;
+  top: 7.6%;
+  width: 51%;
+  padding: clamp(1.5rem, 2.6vw, 2.6rem);
+  border-radius: var(--gc-r-lg);
+  background: rgba(255, 255, 255, 0.88);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: var(--gc-shadow-card);
+  transform: rotate(-1.5deg);
+  z-index: 1;
+}
+
+/* The navy card lands on this card's right third, so the copy is held to a
+   column that stays clear of it. */
+.glass-college .gc-reviews-copy > * { max-width: 22rem; }
+
+.glass-college .gc-reviews-title { font-size: clamp(1.8rem, 3.4vw, 3rem); }
+
+.glass-college .gc-review-card {
+  position: absolute;
+  border-radius: var(--gc-r-lg);
+  padding: clamp(1.2rem, 1.9vw, 1.9rem);
+  box-shadow: var(--gc-shadow-card);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: transform 0.28s var(--gc-ease), box-shadow 0.28s var(--gc-ease);
+}
+
+.glass-college .gc-review-card:hover {
+  box-shadow: 0 1.7rem 3.4rem rgba(20, 24, 31, 0.24);
+}
+
+.glass-college .gc-review-stars {
+  color: #ff8a2b;
+  letter-spacing: 0.22em;
+  font-size: clamp(0.8rem, 1vw, 0.95rem);
+  margin-bottom: 0.9rem;
+}
+
+.glass-college .gc-review-card blockquote {
+  margin: 0 0 1.4rem;
+  font-size: clamp(0.9rem, 1.25vw, 1.15rem);
+  line-height: 1.42;
+  font-weight: 600;
+}
+
+.glass-college .gc-review-person {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.glass-college .gc-review-avatar {
+  width: 2.6rem;
+  height: 2.6rem;
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.78rem;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.glass-college .gc-review-name {
+  font-weight: 800;
+  font-size: 0.86rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  display: block;
+}
+
+.glass-college .gc-review-meta {
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+.glass-college .gc-review-card--navy {
+  left: 37%;
+  top: 20%;
+  width: 39%;
+  height: 62%;
+  background: linear-gradient(155deg, #1d6ba4 0%, #0d3357 100%);
+  color: #fff;
+  transform: rotate(-5deg);
+  z-index: 3;
+}
+
+.glass-college .gc-review-card--coral {
+  left: 65%;
+  top: 8.5%;
+  width: 33%;
+  height: 47%;
+  background: linear-gradient(155deg, #ffbd93 0%, #ff8f66 100%);
+  color: #3d1c0d;
+  transform: rotate(-4deg);
+  z-index: 2;
+  /* the navy card overlaps this card's left edge, so its copy sits inboard */
+  padding-left: clamp(1.2rem, 11.5vw, 10.5rem);
+}
+
+.glass-college .gc-review-card--green {
+  left: 9%;
+  top: 58%;
+  width: 39%;
+  height: 40%;
+  background: linear-gradient(155deg, #eef4d6 0%, #dfeab4 100%);
+  color: #24400f;
+  transform: rotate(-4deg);
+  z-index: 2;
+  padding-right: clamp(1.2rem, 11.5vw, 10.5rem);
+}
+
+/* ============================================================
+   Closing CTA + footer
+   ============================================================ */
+
+.glass-college .gc-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: clamp(1.8rem, 3vw, 2.8rem);
+  background: rgba(20, 24, 31, 0.92);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.glass-college .gc-cta h2 { color: #fff; font-size: clamp(1.5rem, 2.8vw, 2.1rem); }
+.glass-college .gc-cta p { color: #c7cad3; margin: 0.6rem 0 0; max-width: 32rem; }
+
+.glass-college .gc-footer {
+  padding: 3rem var(--gc-band-pad) 2.5rem;
+  text-align: center;
+  color: var(--gc-body);
+  font-size: 0.85rem;
+}
+.glass-college .gc-footer a { color: var(--gc-body); }
+
+/* ============================================================
+   Study Tools
+   ============================================================ */
+
+/* Nav-only band on interior pages — must not inherit the hero's full height. */
+.glass-college .gc-band--slim {
+  min-height: 0;
+  padding-bottom: 0;
+}
+
+.glass-college .gc-tools {
+  padding: clamp(1.6rem, 3vw, 3rem);
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(20, 24, 31, 0) 0,
+      rgba(20, 24, 31, 0) 2.35rem,
+      rgba(20, 24, 31, 0.055) 2.35rem,
+      rgba(20, 24, 31, 0.055) calc(2.35rem + 1px)
+    ),
+    linear-gradient(150deg, rgba(253, 250, 244, 0.95) 0%, rgba(250, 245, 236, 0.92) 100%);
+}
+
+.glass-college .gc-tools-layout {
+  display: grid;
+  grid-template-columns: minmax(16rem, 24rem) minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+  align-items: start;
+}
+
+.glass-college .gc-pill-eyebrow {
+  display: inline-block;
+  background: rgba(20, 24, 31, 0.07);
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--gc-r-pill);
+  font-family: "Archivo", sans-serif;
+  font-weight: 800;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+}
+
+.glass-college .gc-tools-title { font-size: clamp(2.2rem, 4.6vw, 3.6rem); }
+
+.glass-college .gc-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 2rem;
+}
+
+.glass-college .gc-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.1rem;
+  min-height: 44px;
+  border-radius: var(--gc-r-pill);
+  border: 1.5px solid var(--gc-line-color, rgba(20, 24, 31, 0.18));
+  background: rgba(255, 255, 255, 0.5);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.83rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-align: left;
+  color: var(--gc-ink);
+  transition: background 0.2s var(--gc-ease);
+}
+
+.glass-college .gc-filter svg { width: 1.05rem; height: 1.05rem; flex: none; color: var(--gc-line-color, currentColor); }
+.glass-college .gc-filter:hover { background: rgba(255, 255, 255, 0.9); }
+
+.glass-college .gc-filter[aria-pressed="true"] {
+  background: #14181f;
+  color: #fff;
+  border-color: #14181f;
+}
+.glass-college .gc-filter[aria-pressed="true"] svg { color: #fff; }
+
+.glass-college .gc-filter--all { --gc-line-color: #14181f; }
+.glass-college .gc-filter--planning { --gc-line-color: var(--gc-coral); }
+.glass-college .gc-filter--methods { --gc-line-color: var(--gc-magenta); }
+.glass-college .gc-filter--writing { --gc-line-color: var(--gc-blue); }
+.glass-college .gc-filter--exams { --gc-line-color: var(--gc-teal); }
+.glass-college .gc-filter--online { --gc-line-color: var(--gc-lime); }
+
+.glass-college .gc-notes-wrap { position: relative; }
+
+/* dashed connector doodle behind the pinned notes */
+.glass-college .gc-notes-thread {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glass-college .gc-notes {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.6rem, 2.6vw, 2.4rem) clamp(1rem, 1.8vw, 1.6rem);
+  padding-top: 0.9rem;
+}
+
+.glass-college .gc-note {
+  position: relative;
+  background: #fff;
+  border-radius: 0.9rem;
+  padding: 0.6rem;
+  box-shadow: 0 0.9rem 1.9rem rgba(20, 24, 31, 0.16);
+  transition: transform 0.25s var(--gc-ease), box-shadow 0.25s var(--gc-ease);
+}
+
+.glass-college .gc-note:nth-child(odd) { transform: rotate(-1deg); }
+.glass-college .gc-note:nth-child(even) { transform: rotate(1deg); }
+.glass-college .gc-note:hover {
+  transform: rotate(0deg) translateY(-3px);
+  box-shadow: 0 1.3rem 2.6rem rgba(20, 24, 31, 0.22);
+}
+
+.glass-college .gc-note[hidden] { display: none; }
+
+.glass-college .gc-note-inner {
+  border-radius: 0.55rem;
+  padding: 1.2rem 1.1rem 1.3rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* push pin */
+.glass-college .gc-note-pin {
+  position: absolute;
+  top: -0.62rem;
+  left: 30%;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  z-index: 2;
+  box-shadow: 0 0.28rem 0.45rem rgba(20, 24, 31, 0.35);
+}
+.glass-college .gc-note-pin::after {
+  content: "";
+  position: absolute;
+  top: 0.2rem;
+  left: 0.26rem;
+  width: 0.36rem;
+  height: 0.36rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.glass-college .gc-note-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.glass-college .gc-note-num {
+  font-family: "Archivo", sans-serif;
+  font-weight: 900;
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.glass-college .gc-note-icon { width: 1.35rem; color: rgba(20, 24, 31, 0.75); }
+.glass-college .gc-note-icon svg { width: 100%; height: auto; display: block; }
+
+.glass-college .gc-note h3 {
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  line-height: 1.25;
+  margin: 0.85rem 0 0.5rem;
+}
+
+.glass-college .gc-note p {
+  font-size: 0.82rem;
+  color: var(--gc-body);
+  line-height: 1.5;
+  margin: 0 0 1.1rem;
+}
+
+.glass-college .gc-note a {
+  margin-top: auto;
+  align-self: flex-start;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--gc-ink);
+  text-decoration: none;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid var(--note-accent, var(--gc-ink));
+}
+
+.glass-college .gc-note--1 { --note-accent: var(--gc-coral); }
+.glass-college .gc-note--1 .gc-note-inner { background: #fde5dc; }
+.glass-college .gc-note--1 .gc-note-num { color: #e8623c; }
+.glass-college .gc-note--1 .gc-note-pin { background: radial-gradient(circle at 32% 30%, #ff8a6d, #e33f18); }
+
+.glass-college .gc-note--2 { --note-accent: var(--gc-magenta); }
+.glass-college .gc-note--2 .gc-note-inner { background: #fbdde8; }
+.glass-college .gc-note--2 .gc-note-num { color: #d63d7c; }
+.glass-college .gc-note--2 .gc-note-pin { background: radial-gradient(circle at 32% 30%, #ff6fa8, #cc1d63); }
+
+.glass-college .gc-note--3 { --note-accent: #6ba32c; }
+.glass-college .gc-note--3 .gc-note-inner { background: #e3f0d7; }
+.glass-college .gc-note--3 .gc-note-num { color: #5f9227; }
+.glass-college .gc-note--3 .gc-note-pin { background: radial-gradient(circle at 32% 30%, #a8dd63, #5f9227); }
+
+.glass-college .gc-note--4 { --note-accent: var(--gc-teal); }
+.glass-college .gc-note--4 .gc-note-inner { background: #d8eef3; }
+.glass-college .gc-note--4 .gc-note-num { color: #1e93a6; }
+.glass-college .gc-note--4 .gc-note-pin { background: radial-gradient(circle at 32% 30%, #58d2e0, #17879a); }
+
+.glass-college .gc-note--5 { --note-accent: #d9a11a; }
+.glass-college .gc-note--5 .gc-note-inner { background: #fbecc6; }
+.glass-college .gc-note--5 .gc-note-num { color: #d9a11a; }
+.glass-college .gc-note--5 .gc-note-pin { background: radial-gradient(circle at 32% 30%, #ffd569, #d99b12); }
+
+.glass-college .gc-note--6 { --note-accent: var(--gc-violet); }
+.glass-college .gc-note--6 .gc-note-inner { background: #e7dcf7; }
+.glass-college .gc-note--6 .gc-note-num { color: #7c46cf; }
+.glass-college .gc-note--6 .gc-note-pin { background: radial-gradient(circle at 32% 30%, #b07fef, #6b32c4); }
+
+/* ============================================================
+   Pricing
+   ============================================================ */
+
+.glass-college .gc-pricing {
+  padding: clamp(1.6rem, 3vw, 3rem) clamp(1.4rem, 3vw, 3.2rem) clamp(2rem, 3.5vw, 3.4rem);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.3) 100%);
+}
+
+.glass-college .gc-pricing-head {
+  text-align: center;
+  margin: 0 auto clamp(1.6rem, 2.6vw, 2.4rem);
+  max-width: 54rem;
+}
+
+.glass-college .gc-pricing-head .gc-eyebrow { margin-bottom: 0.5rem; }
+.glass-college .gc-pricing-title { font-size: clamp(1.9rem, 4vw, 3.3rem); }
+.glass-college .gc-pricing-head .gc-lead { margin-inline: auto; max-width: 40rem; }
+
+/* the wordmark sits top-left, over the centred heading block */
+.glass-college .gc-pricing-mark {
+  position: absolute;
+  top: clamp(1.2rem, 2.4vw, 2.2rem);
+  left: clamp(1.2rem, 2.4vw, 2.2rem);
+  z-index: 3;
+}
+
+.glass-college .gc-plans {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.9rem, 1.6vw, 1.5rem);
+  align-items: start;
+}
+
+.glass-college .gc-plan {
+  position: relative;
+  border-radius: var(--gc-r-lg);
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  padding: clamp(1.3rem, 2vw, 2rem);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0.7rem 1.8rem rgba(20, 24, 31, 0.08);
+}
+
+/* featured plan: spectrum ring, lifted and slightly taller */
+.glass-college .gc-plan--featured {
+  border-color: transparent;
+  background: linear-gradient(170deg, rgba(255, 252, 240, 0.92) 0%, rgba(255, 255, 255, 0.82) 45%, rgba(252, 244, 252, 0.9) 100%);
+  margin-top: -0.7rem;
+  padding-bottom: calc(clamp(1.3rem, 2vw, 2rem) + 0.7rem);
+  box-shadow: 0 1.2rem 2.6rem rgba(20, 24, 31, 0.14);
+}
+
+.glass-college .gc-plan--featured::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.6px;
+  background: var(--gc-spectrum);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.glass-college .gc-plan-badge {
+  position: absolute;
+  top: -0.85rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(120deg, #e8f6c9, #cfeaa4);
+  color: #2c4a12;
+  font-weight: 800;
+  font-size: 0.68rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  padding: 0.4rem 1rem;
+  border-radius: var(--gc-r-pill);
+  white-space: nowrap;
+}
+
+.glass-college .gc-plan-kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gc-body);
+  margin: 0 0 0.7rem;
+}
+
+.glass-college .gc-plan--featured .gc-plan-kicker { visibility: hidden; }
+
+.glass-college .gc-plan h3 {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.1rem, 1.6vw, 1.45rem);
+  letter-spacing: -0.01em;
+  margin: 0 0 0.7rem;
+}
+
+.glass-college .gc-plan-from {
+  font-size: 0.95rem;
+  color: var(--gc-ink);
+  margin: 0;
+}
+
+.glass-college .gc-plan-price {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.3rem, 3.6vw, 3.3rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.1rem;
+}
+.glass-college .gc-plan-price sup {
+  font-size: 0.44em;
+  font-weight: 800;
+  top: 0.35em;
+  position: relative;
+}
+
+.glass-college .gc-plan-term {
+  font-size: 0.95rem;
+  color: var(--gc-body);
+  margin: 0.7rem 0 0;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid rgba(20, 24, 31, 0.12);
+}
+
+.glass-college .gc-plan-features {
+  list-style: none;
+  margin: 1.1rem 0 1.5rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  flex: 1;
+}
+
+.glass-college .gc-plan-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.87rem;
+  line-height: 1.4;
+}
+
+.glass-college .gc-tick {
+  flex: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  margin-top: 0.1rem;
+  border-radius: 50%;
+  background: #55b848;
+  display: grid;
+  place-items: center;
+}
+.glass-college .gc-tick svg { width: 0.64rem; height: 0.64rem; }
+
+/* "Everything in X, plus:" carry-over row */
+.glass-college .gc-plan-carry {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--gc-r-pill);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+.glass-college .gc-plan--featured .gc-plan-carry {
+  background: linear-gradient(100deg, #e4f5cf, #f3e2f5);
+}
+.glass-college .gc-plan--momentum .gc-plan-carry {
+  background: linear-gradient(100deg, #e4f5cf, #dff0e6);
+}
+
+.glass-college .gc-plan .gc-btn-dark { width: 100%; margin-top: auto; }
+.glass-college .gc-plan .gc-btn-dark .gc-btn {
+  width: 100%;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-size: 0.85rem;
+}
+
+/* included-in-every-plan strip */
+.glass-college .gc-included {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem clamp(1rem, 2.6vw, 2.6rem);
+  margin-top: clamp(1rem, 1.8vw, 1.6rem);
+  padding: 0.9rem clamp(1rem, 2vw, 1.8rem);
+  border-radius: var(--gc-r-pill);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+}
+
+.glass-college .gc-included dt {
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.glass-college .gc-included dd {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0;
+  font-size: 0.87rem;
+}
+
+.glass-college .gc-included dd::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--dot, var(--gc-ink));
+}
+
+/* FAQ */
+.glass-college .gc-faq {
+  margin-top: clamp(1.6rem, 2.8vw, 2.6rem);
+  text-align: center;
+}
+
+.glass-college .gc-faq-title {
+  font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+  margin-bottom: clamp(1rem, 1.8vw, 1.5rem);
+}
+
+.glass-college .gc-faq-list {
+  max-width: 46rem;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  text-align: left;
+}
+
+.glass-college .gc-faq-item {
+  border-radius: var(--gc-r-md);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+}
+
+.glass-college .gc-faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.95rem 1.2rem;
+  min-height: 44px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  list-style: none;
+}
+.glass-college .gc-faq-item summary::-webkit-details-marker { display: none; }
+
+.glass-college .gc-faq-item summary::after {
+  content: "+";
+  flex: none;
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--gc-body);
+}
+.glass-college .gc-faq-item[open] summary::after { content: "–"; }
+
+.glass-college .gc-faq-item p {
+  margin: 0;
+  padding: 0 1.2rem 1.1rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--gc-body);
+}
+
+/* ============================================================
+   Login
+   ============================================================ */
+
+.glass-college.gc-login-body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gc-band-pad);
+  background: var(--gc-sky);
+}
+
+.glass-college .gc-login-frame {
+  position: relative;
+  width: min(74rem, 100%);
+  border-radius: var(--gc-r-glass);
+  overflow: hidden;
+  box-shadow: var(--gc-shadow-glass);
+  isolation: isolate;
+}
+
+.glass-college .gc-login-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: var(--gc-spectrum);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.glass-college .gc-login-grid {
+  display: grid;
+  grid-template-columns: minmax(20rem, 27rem) minmax(0, 1fr);
+  min-height: min(46rem, 92vh);
+  background: var(--gc-paper);
+}
+
+.glass-college .gc-login-form-panel {
+  padding: clamp(1.6rem, 3vw, 3rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 3;
+  background: #fdfbf7;
+}
+
+/* layered paper waves between the form and the photograph */
+.glass-college .gc-login-waves {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  width: clamp(4.5rem, 10vw, 11rem);
+  z-index: 2;
+  pointer-events: none;
+}
+.glass-college .gc-login-waves svg { width: 100%; height: 100%; display: block; }
+
+.glass-college .gc-login-photo {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+}
+
+/* LOG IN / SIGN UP segmented control */
+.glass-college .gc-auth-tabs {
+  display: inline-flex;
+  padding: 0.28rem;
+  border-radius: 0.75rem;
+  background: rgba(20, 24, 31, 0.05);
+  border: 1px solid rgba(20, 24, 31, 0.08);
+  margin-bottom: 1.4rem;
+}
+
+.glass-college .gc-auth-tab {
+  padding: 0.6rem 1.5rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 0.55rem;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--gc-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.glass-college .gc-auth-tab[aria-current="page"] {
+  background: #fff;
+  color: var(--gc-ink);
+  box-shadow: 0 0.2rem 0.5rem rgba(20, 24, 31, 0.12);
+}
+
+/* Frosted badge over the photograph */
+.glass-college .gc-login-tag {
+  position: absolute;
+  right: clamp(1rem, 2vw, 1.8rem);
+  bottom: clamp(1rem, 2vw, 1.8rem);
+  max-width: 19rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--gc-ink);
+  border-radius: var(--gc-r-lg);
+  padding: 1.1rem 1.3rem;
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
+  border: 1.5px solid transparent;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.62)), var(--gc-spectrum);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+.glass-college .gc-login-tag-icon {
+  width: 3rem;
+  height: 3rem;
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 2px solid transparent;
+  background-image: linear-gradient(#fdfcfa, #fdfcfa), var(--gc-spectrum);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+.glass-college .gc-login-tag-icon svg { width: 1.4rem; height: 1.4rem; }
+
+.glass-college .gc-login-tag strong {
+  display: block;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 800;
+  font-size: 0.92rem;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+  margin-bottom: 0.4rem;
+}
+.glass-college .gc-login-tag span { font-size: 0.8rem; color: var(--gc-body); line-height: 1.45; }
+
+.glass-college .gc-field { margin-bottom: 1.05rem; }
+.glass-college .gc-field label { display: block; font-weight: 700; font-size: 0.84rem; margin-bottom: 0.4rem; }
+.glass-college .gc-field-control { position: relative; }
+.glass-college .gc-field input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 0.7rem;
+  border: 1.5px solid rgba(20, 24, 31, 0.12);
+  background: #fff;
+  font: inherit;
+  font-size: 0.95rem;
+  box-shadow: inset 0 1px 2px rgba(20, 24, 31, 0.05);
+}
+.glass-college .gc-field input:focus { outline: 2px solid var(--gc-cobalt); outline-offset: 1px; }
+
+.glass-college .gc-pw-toggle {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--gc-muted);
+  padding: 0.5rem;
+  min-width: 44px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+}
+.glass-college .gc-pw-toggle svg { width: 1.15rem; height: 1.15rem; }
+
+.glass-college .gc-login-form-panel .gc-btn-dark { width: 100%; }
+.glass-college .gc-login-form-panel .gc-btn-dark .gc-btn {
+  width: 100%;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+.glass-college .gc-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 1.4rem 0;
+  color: var(--gc-muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+}
+.glass-college .gc-divider::before,
+.glass-college .gc-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(20, 24, 31, 0.14);
+}
+
+.glass-college .gc-oauth-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.glass-college .gc-oauth-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.8rem;
+  min-height: 44px;
+  border-radius: 0.7rem;
+  border: 1.5px solid transparent;
+  background-image: linear-gradient(#fff, #fff), var(--gc-spectrum);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--gc-ink);
+}
+.glass-college .gc-oauth-btn svg { width: 1.05rem; height: 1.05rem; }
+
+.glass-college .gc-auth-links { font-size: 0.85rem; margin: 0.45rem 0 0; }
+.glass-college .gc-auth-links a {
+  color: var(--gc-cobalt);
+  font-weight: 800;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+/* ============================================================
+   Responsive — 1024 tablet
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .glass-college .gc-nav-links {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0.6rem;
+    right: 0.6rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    margin-inline: 0;
+    background: rgba(255, 255, 255, 0.97);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-radius: var(--gc-r-lg);
+    box-shadow: var(--gc-shadow-glass);
+    padding: 0.5rem;
+    z-index: 30;
+  }
+  .glass-college .gc-nav-links.is-open { display: flex; }
+  .glass-college .gc-nav-links a {
+    padding: 0.9rem 0.9rem;
+    border-radius: var(--gc-r-md);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  .glass-college .gc-nav-links a:hover { background: rgba(20, 24, 31, 0.05); text-decoration: none; }
+  .glass-college .gc-nav-mobile-login { display: flex; }
+  .glass-college .gc-nav-login { display: none; }
+  .glass-college .gc-nav-toggle { display: block; }
+  .glass-college .gc-nav-actions { margin-left: auto; }
+
+  .glass-college .gc-guidance { grid-template-columns: 1fr; }
+  /* Stacked: the copy carries its own solid cream so it never sits on the
+     photograph, and the photo gets its own full-strength row underneath. */
+  .glass-college .gc-guidance {
+    background: none;
+    min-height: 0;
+  }
+  .glass-college .gc-guidance-copy { background: rgba(250, 246, 239, 0.97); }
+  .glass-college .gc-guidance-photo-slot { min-height: 17rem; }
+  /* the pin is aligned to the backpack in the desktop crop only */
+  .glass-college .gc-guidance-pin { display: none; }
+  .glass-college .gc-guidance-copy > * { max-width: none; }
+
+  /* Overlapping stages become controlled horizontal scrollers, keeping the
+     tilt and colour identity of each card. */
+  .glass-college .gc-loop-stage,
+  .glass-college .gc-review-stage { height: auto; }
+
+  .glass-college .gc-loop-head,
+  .glass-college .gc-reviews-copy {
+    position: static;
+    width: 100%;
+    height: auto;
+    clip-path: none;
+    transform: none;
+    margin-bottom: 1.4rem;
+  }
+
+  .glass-college .gc-loop-head-icon { display: none; }
+
+  .glass-college .gc-loop-rail,
+  .glass-college .gc-review-rail {
+    display: flex;
+    gap: 1.1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 0.6rem 0.2rem 1.4rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .glass-college .gc-loop-card,
+  .glass-college .gc-review-card {
+    position: relative;
+    left: auto;
+    top: auto;
+    flex: 0 0 clamp(15rem, 46vw, 21rem);
+    width: auto;
+    height: auto;
+    min-height: 15rem;
+    scroll-snap-align: start;
+  }
+
+  .glass-college .gc-plans { grid-template-columns: 1fr; max-width: 32rem; margin-inline: auto; }
+  .glass-college .gc-plan--featured { margin-top: 0; }
+  .glass-college .gc-plan--featured .gc-plan-kicker { visibility: visible; }
+  .glass-college .gc-pricing-mark { position: static; margin-bottom: 1.2rem; display: flex; }
+  .glass-college .gc-included { border-radius: var(--gc-r-lg); }
+
+  .glass-college .gc-tools-layout { grid-template-columns: 1fr; }
+  .glass-college .gc-notes { grid-template-columns: repeat(2, 1fr); }
+  .glass-college .gc-notes-thread { display: none; }
+  .glass-college .gc-filters { flex-direction: row; flex-wrap: wrap; }
+
+  .glass-college .gc-login-grid { grid-template-columns: 1fr; min-height: 0; }
+  .glass-college .gc-login-photo { min-height: 16rem; order: -1; }
+  .glass-college .gc-login-waves { display: none; }
+}
+
+/* ============================================================
+   Responsive — 640 mobile
+   ============================================================ */
+
+@media (max-width: 640px) {
+  .glass-college {
+    --gc-r-glass: 1.15rem;
+  }
+
+  /* Reduced blur and decorative depth on small screens. */
+  .glass-college .gc-glass {
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    background: rgba(255, 255, 255, 0.42);
+  }
+
+  .glass-college .gc-band--hero { min-height: 0; }
+  /* sized so "ONLINE COLLEGE" still holds one line, keeping the headline to
+     the three-line cap on a 390px screen */
+  .glass-college .gc-hero-title {
+    font-size: clamp(1.6rem, 8.4vw, 2.15rem);
+    line-height: 1.2;
+  }
+  .glass-college .gc-hero-body { padding: 2rem 1.2rem 2.2rem; }
+
+  .glass-college .gc-nav { padding: 0.75rem 0.8rem; gap: 0.6rem; }
+  .glass-college .gc-wordmark img { width: 1.85rem; height: 1.85rem; }
+  .glass-college .gc-wordmark span { font-size: 0.82rem; letter-spacing: 0.02em; }
+  .glass-college .gc-nav .gc-btn { padding: 0.6rem 0.9rem; font-size: 0.78rem; }
+  .glass-college .gc-nav-actions { gap: 0.4rem; }
+
+  .glass-college .gc-steps { flex-direction: column; width: 100%; align-items: stretch; }
+  .glass-college .gc-step { border-right: none; border-bottom: 1px solid rgba(20, 24, 31, 0.14); }
+  .glass-college .gc-step:last-child { border-bottom: none; }
+
+  .glass-college .gc-hero-actions > * { width: 100%; }
+  .glass-college .gc-hero-actions .gc-btn { width: 100%; }
+
+  .glass-college .gc-guidance-copy { padding: 1.6rem 1.2rem; }
+  .glass-college .gc-loop,
+  .glass-college .gc-reviews,
+  .glass-college .gc-tools { padding: 1.4rem 1.1rem; }
+
+  .glass-college .gc-loop-card,
+  .glass-college .gc-review-card { flex-basis: 78vw; transform: none; }
+
+  .glass-college .gc-notes { grid-template-columns: 1fr; }
+  .glass-college .gc-note:nth-child(odd),
+  .glass-college .gc-note:nth-child(even) { transform: none; }
+
+  .glass-college .gc-cta { flex-direction: column; align-items: flex-start; }
+  .glass-college .gc-oauth-row { grid-template-columns: 1fr; }
+  .glass-college .gc-login-form-panel { padding: 1.6rem 1.2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-college * { transition-duration: 0.01ms !important; }
+}
+
+/* ============================================================
+   Study tools — value-first storefront
+   ============================================================ */
+
+.glass-college .gc-market-hero,
+.glass-college .gc-market-section,
+.glass-college .gc-market-help {
+  max-width: 92rem;
+  margin-inline: auto;
+}
+
+.glass-college .gc-market-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.65fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: end;
+  padding: clamp(2.2rem, 6vw, 5.8rem);
+  min-height: 34rem;
+}
+
+.glass-college .gc-market-title {
+  max-width: 13ch;
+  font-family: "Archivo", sans-serif;
+  font-size: clamp(2.8rem, 7vw, 6.9rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.glass-college .gc-market-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.8rem;
+}
+
+.glass-college .gc-market-proof {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  border-top: 1px solid rgba(20, 24, 31, 0.2);
+}
+
+.glass-college .gc-market-proof div {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid rgba(20, 24, 31, 0.2);
+}
+
+.glass-college .gc-market-proof dt {
+  font-family: "Archivo", sans-serif;
+  font-size: 2rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.glass-college .gc-market-proof dd {
+  margin: 0;
+  color: var(--gc-body);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.glass-college .gc-market-section { padding: clamp(2rem, 5vw, 4.8rem); }
+
+.glass-college .gc-market-heading { max-width: 49rem; margin-bottom: 2rem; }
+.glass-college .gc-market-heading h2 { font-size: clamp(2.15rem, 5vw, 4.5rem); }
+.glass-college .gc-market-heading > p,
+.glass-college .gc-market-heading--split > p { color: var(--gc-body); line-height: 1.65; }
+
+.glass-college .gc-market-heading--split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(15rem, 0.8fr);
+  gap: 2rem;
+  align-items: end;
+  max-width: none;
+}
+
+.glass-college .gc-quiz-sheets {
+  display: grid;
+  grid-template-columns: 1.08fr 0.92fr;
+  gap: 1rem;
+}
+
+.glass-college .gc-quiz-sheet {
+  --sheet-accent: var(--gc-teal);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 21rem;
+  padding: clamp(1.4rem, 3vw, 2.25rem);
+  overflow: hidden;
+  border: 1px solid rgba(20, 24, 31, 0.12);
+  border-left: 0.42rem solid var(--sheet-accent);
+  border-radius: 0.25rem 1.2rem 1.2rem 0.25rem;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0, transparent 2.55rem, rgba(52, 87, 213, 0.08) 2.6rem),
+    rgba(255, 255, 255, 0.86);
+  box-shadow: 0 1.25rem 2.5rem rgba(20, 24, 31, 0.13);
+  transition: transform 0.24s var(--gc-ease), box-shadow 0.24s var(--gc-ease);
+}
+
+.glass-college .gc-quiz-sheet:nth-child(2) { --sheet-accent: var(--gc-cobalt); transform: rotate(0.8deg); }
+.glass-college .gc-quiz-sheet:nth-child(3) { --sheet-accent: var(--gc-magenta); grid-column: 1 / -1; min-height: 16rem; }
+.glass-college .gc-quiz-sheet:hover { transform: translateY(-3px) rotate(0); box-shadow: 0 1.6rem 3rem rgba(20, 24, 31, 0.17); }
+
+.glass-college .gc-quiz-sheet__top,
+.glass-college .gc-quiz-sheet__foot,
+.glass-college .gc-pack-card__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.glass-college .gc-quiz-sheet__top {
+  color: var(--gc-body);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.glass-college .gc-quiz-sheet__top strong { color: var(--sheet-accent); }
+.glass-college .gc-quiz-sheet__course { margin: auto 0 0.55rem; color: var(--gc-muted); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.glass-college .gc-quiz-sheet h3 { max-width: 24ch; margin: 0; font-family: "Archivo", sans-serif; font-size: clamp(1.65rem, 3vw, 2.55rem); line-height: 1; letter-spacing: -0.035em; }
+.glass-college .gc-quiz-sheet > p:not(.gc-quiz-sheet__course) { max-width: 44rem; color: var(--gc-body); line-height: 1.6; }
+.glass-college .gc-quiz-sheet__foot { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(20, 24, 31, 0.14); font-size: 0.82rem; font-weight: 700; }
+.glass-college .gc-quiz-sheet__foot a { color: var(--gc-ink); text-underline-offset: 0.3em; }
+
+.glass-college .gc-market-filters { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-bottom: 0.7rem; }
+.glass-college .gc-market-filters button {
+  min-height: 44px;
+  padding: 0.7rem 1rem;
+  border: 1px solid rgba(20, 24, 31, 0.18);
+  border-radius: var(--gc-r-btn);
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--gc-ink);
+  font: 700 0.84rem/1 "Plus Jakarta Sans", sans-serif;
+  cursor: pointer;
+}
+.glass-college .gc-market-filters button[aria-pressed="true"] { border-color: var(--gc-ink); background: var(--gc-ink); color: #fff; }
+.glass-college .gc-market-filters button:focus-visible,
+.glass-college .gc-pack-card a:focus-visible,
+.glass-college .gc-quiz-sheet a:focus-visible { outline: 3px solid var(--gc-cobalt); outline-offset: 3px; }
+.glass-college .gc-filter-status { min-height: 1.2em; margin: 0 0 1.2rem; color: var(--gc-muted); font-size: 0.78rem; }
+
+.glass-college .gc-pack-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 1rem; }
+.glass-college .gc-pack-card {
+  grid-column: span 4;
+  display: grid;
+  grid-template-rows: 13rem 1fr;
+  overflow: hidden;
+  border-radius: var(--gc-r-lg);
+  background: rgba(255, 255, 255, 0.77);
+  box-shadow: 0 1rem 2.2rem rgba(20, 24, 31, 0.12);
+}
+.glass-college .gc-pack-card:nth-child(-n + 2) { grid-column: span 6; grid-template-rows: 17rem 1fr; }
+.glass-college .gc-pack-card[hidden] { display: none; }
+.glass-college .gc-pack-card__cover { position: relative; display: block; overflow: hidden; background: rgba(20, 24, 31, 0.08); }
+.glass-college .gc-pack-card__cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s var(--gc-ease); }
+.glass-college .gc-pack-card:hover .gc-pack-card__cover img { transform: scale(1.025); }
+.glass-college .gc-pack-card__cover > span { position: absolute; right: 0.85rem; bottom: 0.85rem; display: grid; width: 2.8rem; height: 2.8rem; place-items: center; border-radius: 0.5rem; background: rgba(20, 24, 31, 0.9); color: #fff; font: 900 0.78rem/1 "Archivo", sans-serif; }
+.glass-college .gc-pack-card__body { display: flex; flex-direction: column; padding: 1.25rem; }
+.glass-college .gc-pack-card__meta { margin: 0 0 0.9rem; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+.glass-college .gc-pack-card__meta span { color: var(--gc-cobalt); }
+.glass-college .gc-pack-card__meta strong { font-variant-numeric: tabular-nums; }
+.glass-college .gc-pack-card h3 { margin: 0; font-family: "Archivo", sans-serif; font-size: 1.25rem; line-height: 1.08; letter-spacing: -0.025em; }
+.glass-college .gc-pack-card__body > p:not(.gc-pack-card__meta) { color: var(--gc-body); font-size: 0.86rem; line-height: 1.55; }
+.glass-college .gc-pack-card__link { margin-top: auto; color: var(--gc-ink); font-size: 0.83rem; font-weight: 800; text-underline-offset: 0.3em; }
+
+.glass-college .gc-market-help { display: flex; justify-content: space-between; gap: 2rem; align-items: center; padding: clamp(2rem, 5vw, 4.2rem); }
+.glass-college .gc-market-help h2 { max-width: 24ch; font-size: clamp(1.9rem, 4vw, 3.5rem); }
+
+@media (max-width: 900px) {
+  .glass-college .gc-market-hero,
+  .glass-college .gc-market-heading--split { grid-template-columns: 1fr; }
+  .glass-college .gc-market-hero { min-height: 0; align-items: start; }
+  .glass-college .gc-quiz-sheets { grid-template-columns: 1fr; }
+  .glass-college .gc-quiz-sheet:nth-child(3) { grid-column: auto; }
+  .glass-college .gc-pack-card,
+  .glass-college .gc-pack-card:nth-child(-n + 2) { grid-column: span 6; }
+}
+
+@media (max-width: 640px) {
+  .glass-college .gc-market-hero,
+  .glass-college .gc-market-section,
+  .glass-college .gc-market-help { padding: 1.45rem 1.15rem; }
+  .glass-college .gc-market-title { font-size: clamp(2.4rem, 13vw, 4rem); }
+  .glass-college .gc-market-actions > span,
+  .glass-college .gc-market-actions .gc-btn { width: 100%; }
+  .glass-college .gc-market-proof div { grid-template-columns: 4.5rem 1fr; }
+  .glass-college .gc-quiz-sheet { min-height: 19rem; transform: none !important; }
+  .glass-college .gc-quiz-sheet__top,
+  .glass-college .gc-quiz-sheet__foot,
+  .glass-college .gc-pack-card__meta { align-items: flex-start; flex-direction: column; gap: 0.35rem; }
+  .glass-college .gc-pack-card,
+  .glass-college .gc-pack-card:nth-child(-n + 2) { grid-column: 1 / -1; grid-template-rows: 13rem 1fr; }
+  .glass-college .gc-market-help { align-items: flex-start; flex-direction: column; }
+}

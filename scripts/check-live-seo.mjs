@@ -50,10 +50,10 @@ export async function checkSite(inputBaseUrl = "https://sleekacademia.com") {
     "homepage verified YouTube profile is missing",
   );
 
+  // /pricing.html is a real published page now, not a legacy redirect.
   const redirects = new Map([
     ["/index.html", "/"],
     ["/services.html", "/"],
-    ["/pricing.html", "/onboard.html"],
     ["/blogs.html", "/blog.html"],
   ]);
   for (const [source, destination] of redirects) {

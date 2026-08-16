@@ -34,11 +34,6 @@
       "statusCode": 301
     },
     {
-      "source": "/pricing.html",
-      "destination": "/onboard.html",
-      "statusCode": 301
-    },
-    {
       "source": "/blogs.html",
       "destination": "/blog.html",
       "statusCode": 301

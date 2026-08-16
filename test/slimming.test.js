@@ -34,7 +34,6 @@ before(async () => {
 after(() => server && server.kill());
 
 const REDIRECTS = {
-  "/pricing.html": "/onboard.html",
   "/courses.html": "/",
   "/ai-tools.html": "/",
   "/ai-tools-pro.html": "/",
@@ -62,7 +61,7 @@ test("landing routes service visitors into the signup-first request flow", async
   const html = await (await fetch(`${BASE}/`)).text();
   assert.doesNotMatch(html, /id="pricing"|href="\/?#pricing"/i);
   assert.match(html, /href="\/onboard\.html(?:\?goal=[^"]+)?"/i);
-  assert.match(html, /Authorship matters at Sleek Academia/i);
+  assert.match(html, /no account needed/i);
 });
 
 test("service-request rejects anonymous submissions", async () => {

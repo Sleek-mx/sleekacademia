@@ -3,33 +3,121 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/brand/favicon-32.png"><link rel="apple-touch-icon" href="/images/brand/apple-touch-icon.png">
-  <title>Login | Sleek Academia</title><meta name="description" content="Sign in to the secure Sleek Academia client or admin workspace."><link rel="canonical" href="https://sleekacademia.com/login.html">
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/css/workspace-v2.css">
+  <title>Login | Sleek Academia</title><meta name="description" content="Sign in to your Sleek Academia workspace."><link rel="canonical" href="https://sleekacademia.com/login.html">
+  <link rel="stylesheet" href="/css/brand-v2.css">
+  <link rel="stylesheet" href="/css/glass-college.css?v=20260815d">
 </head>
-<body class="ws-body">
-  <main class="auth-layout">
-    <section class="auth-panel"><div class="auth-card">
-      <a class="ws-logo" href="/"><img src="/images/brand/sleek-academia-logo.webp" alt="Sleek Academia"></a>
-      <span class="ws-kicker">Welcome back</span><h1>Open your workspace.</h1><p>Enter your sign-in details and we will take you to the right workspace.</p>
-      <div class="auth-status" id="auth-status" role="status" aria-live="polite">Loading secure sign-in...</div>
-      <form id="unified-login-form" autocomplete="on">
-        <div class="form-field"><label for="login-identifier">Email or username</label><input id="login-identifier" name="identifier" maxlength="320" autocomplete="username" required></div>
-        <div class="form-field"><label for="login-password">Password</label><input id="login-password" name="password" type="password" maxlength="1024" autocomplete="current-password" required></div>
-        <button class="ws-button primary" type="submit">Sign in</button>
-      </form>
-      <form id="client-trust-form" autocomplete="one-time-code" hidden>
-        <div class="form-field"><label for="client-trust-code">Verification code</label><input id="client-trust-code" name="code" inputmode="numeric" pattern="[0-9]*" maxlength="12" autocomplete="one-time-code" required></div>
-        <button class="ws-button primary" type="submit">Verify and continue</button>
-        <button id="client-trust-resend" class="auth-text-button" type="button">Send a new code</button>
-      </form>
-      <button id="clerk-options-toggle" class="auth-text-button" type="button">Use Google or another secure sign-in option</button>
-      <div id="clerk-sign-in" class="clerk-frame" hidden></div>
-      <div class="auth-links">New here? <a href="/sign-up.html">Create an account</a></div>
-      <div class="auth-links">Want to browse first? <a href="/">Return to the site</a></div>
-    </div></section>
-    <section class="auth-visual"><div class="auth-visual-content"><span class="ws-kicker" style="color:#bfe9fb">One clear workspace</span><h2>Orders, messages, payments, and delivery in the right place.</h2><p>Your credentials are checked through the protected access path assigned to your account.</p><div class="auth-steps"><div class="auth-step"><strong>Private</strong><span>Protected account and file access.</span></div><div class="auth-step"><strong>Traceable</strong><span>A clear record of every milestone.</span></div><div class="auth-step"><strong>Practical</strong><span>Only the next action you need.</span></div></div></div></section>
+<body class="glass-college gc-login-body">
+  <main class="gc-login-frame">
+    <div class="gc-login-grid">
+      <section class="gc-login-form-panel">
+        <a class="gc-wordmark" href="/" aria-label="Sleek Academia home" style="margin-bottom:1.6rem">
+          <img src="/images/brand/sleek-academia-mark.webp" width="591" height="591" alt="" />
+          <span><b>S</b><b>L</b><b>E</b><b>E</b><b>K</b> <b>A</b><b>C</b><b>A</b><b>D</b><b>E</b><b>M</b><b>I</b><b>A</b></span>
+        </a>
+
+        <div class="gc-auth-tabs" role="navigation" aria-label="Sign in or create an account">
+          <a class="gc-auth-tab" href="/login.html" aria-current="page">Log in</a>
+          <a class="gc-auth-tab" href="/sign-up.html">Sign up</a>
+        </div>
+
+        <p class="gc-eyebrow" style="color:var(--gc-cobalt);margin-bottom:0.7rem">Welcome back</p>
+        <h1 class="gc-headline" style="font-size:clamp(1.9rem,3.6vw,2.6rem)">Your college week starts here.</h1>
+        <p class="gc-lead" style="margin-bottom:1.6rem">Sign in to continue your plan, study tools and guidance.</p>
+
+        <div class="auth-status" id="auth-status" role="status" aria-live="polite" style="font-size:0.84rem;color:var(--gc-muted);margin-bottom:0.9rem">Loading secure sign-in...</div>
+
+        <form id="unified-login-form" autocomplete="on">
+          <div class="gc-field">
+            <label for="login-identifier">Email or username</label>
+            <div class="gc-field-control"><input id="login-identifier" name="identifier" maxlength="320" autocomplete="username" required></div>
+          </div>
+          <div class="gc-field">
+            <label for="login-password">Password</label>
+            <div class="gc-field-control">
+              <input id="login-password" name="password" type="password" maxlength="1024" autocomplete="current-password" required>
+              <button type="button" class="gc-pw-toggle" data-pw-toggle aria-label="Show password" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/></svg>
+              </button>
+            </div>
+          </div>
+          <p style="margin:0 0 1.3rem">
+            <button type="button" data-open-sleekie style="background:none;border:none;padding:0;cursor:pointer;color:var(--gc-cobalt);font-family:inherit;font-weight:600;font-size:0.85rem">Forgot password?</button>
+          </p>
+          <span class="gc-btn-dark"><button class="gc-btn" type="submit">Log in</button></span>
+        </form>
+
+        <form id="client-trust-form" autocomplete="one-time-code" hidden>
+          <div class="gc-field">
+            <label for="client-trust-code">Verification code</label>
+            <div class="gc-field-control"><input id="client-trust-code" name="code" inputmode="numeric" pattern="[0-9]*" maxlength="12" autocomplete="one-time-code" required></div>
+          </div>
+          <span class="gc-btn-dark"><button class="gc-btn" type="submit">Verify and continue</button></span>
+          <p style="margin-top:0.9rem"><button id="client-trust-resend" type="button" style="background:none;border:none;color:var(--gc-cobalt);font-weight:700;cursor:pointer;padding:0;font-size:0.85rem">Send a new code</button></p>
+        </form>
+
+        <div class="gc-divider">or continue with</div>
+        <div class="gc-oauth-row">
+          <button type="button" class="gc-oauth-btn" data-provider-reveal>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.4a5.5 5.5 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.6-5.2 3.6-8.8Z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3a7.2 7.2 0 0 1-10.7-3.8h-4v3.1A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.3 14.3a7.1 7.1 0 0 1 0-4.6v-3h-4a12 12 0 0 0 0 10.7l4-3.1Z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.4.6 4.6 1.8l3.5-3.5A12 12 0 0 0 1.4 6.6l4 3.1A7.2 7.2 0 0 1 12 4.8Z"/></svg>
+            Google
+          </button>
+          <button type="button" class="gc-oauth-btn" data-provider-reveal>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#F25022" d="M2 2h9.5v9.5H2z"/><path fill="#7FBA00" d="M12.5 2H22v9.5h-9.5z"/><path fill="#00A4EF" d="M2 12.5h9.5V22H2z"/><path fill="#FFB900" d="M12.5 12.5H22V22h-9.5z"/></svg>
+            Microsoft
+          </button>
+        </div>
+        <button id="clerk-options-toggle" type="button" style="display:none">Use Google or another secure sign-in option</button>
+        <div id="clerk-sign-in" hidden style="margin-top:1rem"></div>
+
+        <p class="gc-auth-links" style="color:var(--gc-body);font-weight:600">New here? <a href="/sign-up.html">Create an account</a></p>
+        <p class="gc-auth-links"><a href="/">Return to the site</a></p>
+
+        <div class="gc-login-waves" aria-hidden="true">
+          <svg viewBox="0 0 100 800" preserveAspectRatio="none">
+            <path d="M0 0 C 62 85, 8 185, 48 288 C 86 388, 22 468, 58 568 C 88 658, 34 728, 50 800 L0 800 Z" fill="#ffffff" opacity="0.5"/>
+            <path d="M0 0 C 50 92, 0 192, 36 296 C 72 396, 12 476, 44 580 C 74 670, 24 732, 38 800 L0 800 Z" fill="#ffffff" opacity="0.72"/>
+            <path d="M0 0 C 38 98, -8 198, 24 304 C 56 408, 2 490, 30 594 C 56 684, 12 738, 24 800 L0 800 Z" fill="#ffffff" opacity="0.9"/>
+            <path d="M0 0 C 24 102, -16 202, 13 312 C 43 418, -6 496, 17 602 C 40 690, 2 742, 12 800 L0 800 Z" fill="#fdfbf7"/>
+          </svg>
+        </div>
+      </section>
+
+      <section class="gc-login-photo" style="background-image:url('/images/college/login-books.webp')">
+        <div class="gc-login-tag">
+          <span class="gc-login-tag-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 4 2.5 8.5 12 13l9.5-4.5L12 4Z" stroke="#14181f" stroke-width="1.7" stroke-linejoin="round"/><path d="M6 10.6V15c0 1.4 2.7 2.6 6 2.6s6-1.2 6-2.6v-4.4" stroke="#14181f" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          </span>
+          <div>
+            <strong>College online.<br />Not alone.</strong>
+            <span>Your plans, guidance and study tools&mdash;ready when you are.</span>
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
-  <script src="/js/auth.js?v=20260714-3" defer></script>
+
+  <script src="/js/auth.js?v=20260815" defer></script>
+  <script>
+    (function () {
+      document.addEventListener("DOMContentLoaded", function () {
+        var pwToggle = document.querySelector("[data-pw-toggle]");
+        var pwInput = document.getElementById("login-password");
+        if (pwToggle && pwInput) {
+          pwToggle.addEventListener("click", function () {
+            var show = pwInput.type === "password";
+            pwInput.type = show ? "text" : "password";
+            pwToggle.setAttribute("aria-pressed", String(show));
+            pwToggle.setAttribute("aria-label", show ? "Hide password" : "Show password");
+          });
+        }
+        var realToggle = document.getElementById("clerk-options-toggle");
+        document.querySelectorAll("[data-provider-reveal]").forEach(function (btn) {
+          btn.addEventListener("click", function () { if (realToggle) realToggle.click(); });
+        });
+      });
+    })();
+  </script>
 <!-- Sleek Academia chat widget -->
 <link rel="stylesheet" href="/css/chat-widget.css?v=20260802" />
 <script src="/js/chat-widget.js?v=20260802" defer></script>

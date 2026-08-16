@@ -35,14 +35,23 @@ test("request wizard persists an idempotent pending handoff and supports localho
 });
 
 test("authentication pages preserve Clerk mount targets and the official brand", () => {
-  for (const page of ["sign-up.html", "login.html"]) {
-    const html = read(`public/${page}`);
-    assert.match(html, /\/images\/brand\/sleek-academia-logo\.webp/);
-    assert.match(html, /\/css\/workspace-v2\.css/);
-    assert.match(html, /\/js\/auth\.js/);
-  }
-  assert.match(read("public/sign-up.html"), /id="clerk-sign-up"/);
-  assert.match(read("public/login.html"), /id="clerk-sign-in"/);
+  // Both auth pages now share the glass design system and the LOG IN / SIGN UP
+  // tab pair; the Clerk mount targets and auth.js wiring are unchanged.
+  const signUp = read("public/sign-up.html");
+  assert.match(signUp, /\/images\/brand\/sleek-academia-mark\.webp/);
+  assert.match(signUp, /\/css\/glass-college\.css/);
+  assert.match(signUp, /\/js\/auth\.js/);
+  assert.match(signUp, /id="clerk-sign-up"/);
+  assert.match(signUp, /href="\/sign-up\.html" aria-current="page"/);
+
+  // login.html moved to the glass design system (glass-college.css) — it keeps
+  // the approved mark, just not the full logo lockup or the old workspace CSS.
+  const login = read("public/login.html");
+  assert.match(login, /\/images\/brand\/sleek-academia-mark\.webp/);
+  assert.match(login, /\/css\/glass-college\.css/);
+  assert.match(login, /\/js\/auth\.js/);
+  assert.match(login, /id="clerk-sign-in"/);
+  assert.match(login, /href="\/login\.html" aria-current="page"/);
 });
 
 test("workspace exposes complete client navigation and resilient states", () => {
