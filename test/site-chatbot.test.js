@@ -20,6 +20,25 @@ const publicDir = path.join(repoRoot, "public");
 const widgetJs = fs.readFileSync(path.join(publicDir, "js", "chat-widget.js"), "utf8");
 const widgetCss = fs.readFileSync(path.join(publicDir, "css", "chat-widget.css"), "utf8");
 
+function cssHexToken(name) {
+  const match = widgetCss.match(new RegExp(`${name}:\\s*(#[0-9a-f]{6})`, "i"));
+  assert.ok(match, `${name} must be a six-digit hex token`);
+  return match[1];
+}
+
+function contrastRatio(foreground, background) {
+  const luminance = (hex) => {
+    const channels = hex.match(/[0-9a-f]{2}/gi).map((value) => parseInt(value, 16) / 255);
+    const linear = channels.map((value) =>
+      value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
+    );
+    return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
+  };
+  const first = luminance(foreground);
+  const second = luminance(background);
+  return (Math.max(first, second) + 0.05) / (Math.min(first, second) + 0.05);
+}
+
 // ── knowledge base ─────────────────────────────────────────────────────────
 
 test("prices in the knowledge base come from the server's pricing table", () => {
@@ -219,10 +238,43 @@ test("the retired chatbot files are gone", () => {
 
 // ── theme and motion ───────────────────────────────────────────────────────
 
-test("the widget uses the site's glass design tokens", () => {
-  for (const token of ["--sa-spectrum", "--sa-glass", "--sa-user-bubble", "#3457d5"]) {
-    assert.ok(widgetCss.includes(token), `${token} is part of the site's glass design system`);
+test("the widget keeps its theme isolated from whichever page it appears on", () => {
+  for (const token of ["--sa-surface", "--sa-shadow", "--sa-highlight", "--sa-brand"]) {
+    assert.ok(widgetCss.includes(token), `${token} is part of Sleekie's scoped design system`);
   }
+});
+
+test("Sleekie uses the original single-cyan neumorphic theme", () => {
+  assert.ok(widgetCss.includes("--sa-brand: #009fe3"));
+  assert.ok(widgetCss.includes("--sa-surface: #e7e4f1"));
+  assert.ok(widgetCss.includes("--sa-raised:"));
+  assert.doesNotMatch(widgetCss, /--sa-spectrum|--sa-(?:coral|orange|yellow|lime|teal|blue|cobalt|violet):/);
+});
+
+test("Sleekie's text colors meet WCAG AA contrast", () => {
+  const surface = cssHexToken("--sa-surface");
+  const muted = cssHexToken("--sa-muted");
+  const action = cssHexToken("--sa-brand-deep");
+
+  assert.ok(contrastRatio(muted, surface) >= 4.5, "muted text must remain readable on the panel");
+  assert.ok(contrastRatio("#ffffff", action) >= 4.5, "white action text must remain readable on cyan");
+  assert.match(widgetCss, /\.sa-legal\s*\{[^}]*opacity:\s*1/s);
+  assert.match(widgetCss, /\.sa-msg-user\s*\{[^}]*background:\s*var\(--sa-brand-deep\)/s);
+});
+
+test("Sleekie has a purpose-built mobile sheet instead of a shrunken desktop panel", () => {
+  const mobileStart = widgetCss.indexOf("@media (max-width: 560px)");
+  const mobileEnd = widgetCss.indexOf("@media (prefers-reduced-motion: reduce)");
+  const mobileCss = widgetCss.slice(mobileStart, mobileEnd);
+
+  assert.ok(mobileStart >= 0, "mobile breakpoint is required");
+  assert.match(mobileCss, /grid-template-rows:\s*auto minmax\(0,\s*1fr\) auto auto auto/);
+  assert.match(mobileCss, /height:\s*min\(78dvh,\s*42rem\)/);
+  assert.match(mobileCss, /#sa-chat-root\[data-open="true"\] \.sa-launcher\s*\{[^}]*opacity:\s*0[^}]*pointer-events:\s*none/s);
+  assert.match(mobileCss, /\.sa-launcher\s*\{[^}]*visibility 0s linear 0s/s);
+  assert.match(mobileCss, /#sa-chat-root\[data-open="true"\] \.sa-launcher\s*\{[^}]*visibility 0s linear 0\.2s/s);
+  assert.match(mobileCss, /\.sa-chips\s*\{[^}]*flex-wrap:\s*nowrap[^}]*overflow-x:\s*auto/s);
+  assert.match(mobileCss, /\.sa-head-close\s*\{[^}]*min-width:\s*44px[^}]*min-height:\s*44px/s);
 });
 
 test("the launcher is pinned, safe-area aware and honours reduced motion", () => {

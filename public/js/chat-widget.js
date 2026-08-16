@@ -12,7 +12,7 @@
 (function () {
   'use strict';
 
-  var VERSION = '20260802';
+  var VERSION = '2026081601';
   var STORE_KEY = 'sleek.chat.v1';
   var WHATSAPP_NUMBER = '254742836835';
   var MARK = '/images/brand/sleek-academia-mark.webp';

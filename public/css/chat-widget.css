@@ -1,7 +1,7 @@
 /* ============================================================
    Sleek Academia — floating chat widget ("Sleekie")
-   Glass system matching glass-college.css: frosted panels, spectrum-color
-   borders, dark gradient user bubbles.
+   Single-accent neumorphism, preserving Sleekie's original calm cyan identity.
+   Mobile uses a dedicated bottom-sheet composition rather than scaling desktop.
 
    Everything is scoped under #sa-chat-root and declares its own tokens,
    because the widget ships on every public page and must not inherit
@@ -12,22 +12,17 @@
    ============================================================ */
 
 #sa-chat-root {
-  --sa-coral: #ff6b5e;
-  --sa-orange: #ff9c4a;
-  --sa-yellow: #ffd23f;
-  --sa-lime: #a6d84a;
-  --sa-teal: #37c2b0;
-  --sa-blue: #3aa0e8;
-  --sa-cobalt: #3457d5;
-  --sa-violet: #9457e0;
-  --sa-spectrum: linear-gradient(120deg, var(--sa-coral), var(--sa-orange), var(--sa-yellow), var(--sa-lime), var(--sa-teal), var(--sa-blue), var(--sa-violet));
-
-  --sa-txt: #14181f;
-  --sa-muted: #7c8496;
-  --sa-glass: rgba(255, 255, 255, 0.68);
-  --sa-glass-strong: rgba(255, 255, 255, 0.85);
-  --sa-blur: blur(20px);
-  --sa-user-bubble: linear-gradient(135deg, #1c5f9e, #123a63);
+  --sa-surface: #e7e4f1;
+  --sa-shadow: #c3bdd8;
+  --sa-highlight: #ffffff;
+  --sa-txt: #1b1f24;
+  --sa-muted: #52606d;
+  --sa-brand: #009fe3;
+  --sa-brand-deep: #006b99;
+  --sa-raised: 10px 10px 24px var(--sa-shadow), -10px -10px 24px var(--sa-highlight);
+  --sa-raised-sm: 6px 6px 14px var(--sa-shadow), -6px -6px 14px var(--sa-highlight);
+  --sa-pressed: inset 6px 6px 12px var(--sa-shadow), inset -6px -6px 12px var(--sa-highlight);
+  --sa-pressed-sm: inset 4px 4px 9px var(--sa-shadow), inset -4px -4px 9px var(--sa-highlight);
 
   --sa-gap: 22px;
   --sa-ease: cubic-bezier(0.2, 0.9, 0.25, 1);
@@ -58,43 +53,32 @@
   width: 64px;
   height: 64px;
   margin-left: auto;
-  padding: 2px;
+  padding: 0;
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  background: var(--sa-spectrum);
-  box-shadow: 0 1rem 2.4rem rgba(20, 24, 31, 0.22);
+  background: var(--sa-surface);
+  box-shadow: var(--sa-raised);
   animation: sa-float 5.5s var(--sa-ease) infinite;
   transition: box-shadow 0.3s var(--sa-ease), transform 0.3s var(--sa-spring);
 }
 
-.sa-launcher::before {
-  content: "";
-  position: absolute;
-  inset: 2px;
-  border-radius: 50%;
-  background: var(--sa-glass-strong);
-  -webkit-backdrop-filter: var(--sa-blur);
-  backdrop-filter: var(--sa-blur);
-  z-index: 0;
-}
-
 .sa-launcher:hover {
   transform: translateY(-4px) scale(1.04);
+  box-shadow: 15px 15px 32px var(--sa-shadow), -14px -14px 30px var(--sa-highlight);
 }
 
 .sa-launcher:active {
   transform: translateY(0) scale(0.96);
+  box-shadow: var(--sa-pressed);
 }
 
 .sa-launcher:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(52, 87, 213, 0.4);
+  box-shadow: var(--sa-raised), 0 0 0 3px rgba(0, 159, 227, 0.35);
 }
 
 .sa-launcher img {
-  position: relative;
-  z-index: 1;
   width: 38px;
   height: 38px;
   border-radius: 50%;
@@ -104,28 +88,39 @@
 }
 
 .sa-launcher .sa-close-glyph {
-  position: relative;
-  z-index: 1;
+  position: absolute;
   font-size: 26px;
   font-weight: 300;
   line-height: 1;
-  color: var(--sa-txt);
+  color: var(--sa-brand);
   opacity: 0;
   transform: rotate(-90deg) scale(0.5);
   transition: opacity 0.28s var(--sa-ease), transform 0.4s var(--sa-spring);
+}
+
+/* One cyan pulse keeps Sleekie discoverable without visual noise. */
+.sa-launcher::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 2px solid rgba(0, 159, 227, 0.35);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  animation: sa-pulse 3.2s ease-out infinite;
 }
 
 /* unread nudge dot, shown until the panel is opened once */
 .sa-launcher::after {
   content: "";
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 6px;
+  right: 6px;
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: var(--sa-coral);
-  box-shadow: 0 0 0 3px #fff, 0 0 12px rgba(255, 107, 94, 0.7);
+  background: var(--sa-brand);
+  box-shadow: 0 0 0 3px var(--sa-surface), 0 0 12px rgba(0, 159, 227, 0.6);
   transform: scale(0);
   transition: transform 0.4s var(--sa-spring);
   z-index: 2;
@@ -136,6 +131,10 @@
 }
 
 #sa-chat-root[data-open="true"] .sa-launcher {
+  animation: none;
+}
+
+#sa-chat-root[data-open="true"] .sa-launcher::before {
   animation: none;
 }
 
@@ -153,6 +152,11 @@
   50% { transform: translateY(-7px); }
 }
 
+@keyframes sa-pulse {
+  0% { opacity: 0.5; transform: scale(1); }
+  70%, 100% { opacity: 0; transform: scale(1.35); }
+}
+
 /* ---------- panel ---------- */
 
 .sa-panel {
@@ -161,12 +165,11 @@
   bottom: 78px;
   display: flex;
   flex-direction: column;
-  width: 384px;
-  height: min(600px, calc(100vh - 140px));
+  width: 374px;
+  height: min(560px, calc(100vh - 140px));
   border-radius: 28px;
-  padding: 1.5px;
-  background: var(--sa-spectrum);
-  box-shadow: 0 1.5rem 3.5rem rgba(20, 24, 31, 0.28);
+  background: var(--sa-surface);
+  box-shadow: var(--sa-raised);
   overflow: hidden;
   transform-origin: 100% 100%;
   opacity: 0;
@@ -177,22 +180,6 @@
     opacity 0.26s var(--sa-ease),
     transform 0.44s var(--sa-spring),
     visibility 0s linear 0.44s;
-}
-
-.sa-panel::before {
-  content: "";
-  position: absolute;
-  inset: 1.5px;
-  border-radius: 26.5px;
-  background: var(--sa-glass);
-  -webkit-backdrop-filter: var(--sa-blur);
-  backdrop-filter: var(--sa-blur);
-  z-index: 0;
-}
-
-.sa-panel > * {
-  position: relative;
-  z-index: 1;
 }
 
 #sa-chat-root[data-open="true"] .sa-panel {
@@ -211,7 +198,7 @@
   gap: 12px;
   padding: 18px 18px 14px;
   flex: none;
-  border-bottom: 1px solid rgba(20, 24, 31, 0.08);
+  border-bottom: 1px solid rgba(92, 109, 125, 0.12);
 }
 
 .sa-head-avatar {
@@ -221,7 +208,7 @@
   height: 42px;
   flex: none;
   border-radius: 50%;
-  background: var(--sa-glass-strong);
+  box-shadow: var(--sa-pressed-sm);
 }
 
 .sa-head-avatar img {
@@ -234,15 +221,11 @@
 
 .sa-head-text strong {
   display: block;
-  font-family: "Archivo", "Plus Jakarta Sans", sans-serif;
-  font-weight: 900;
+  font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+  font-weight: 800;
   font-size: 15px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  background: var(--sa-spectrum);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.01em;
+  color: var(--sa-txt);
 }
 
 .sa-head-text span {
@@ -257,8 +240,8 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--sa-lime);
-  box-shadow: 0 0 9px rgba(166, 216, 74, 0.7);
+  background: var(--sa-brand);
+  box-shadow: 0 0 9px rgba(0, 159, 227, 0.6);
   animation: sa-blink 2.2s ease-in-out infinite;
 }
 
@@ -280,13 +263,13 @@
   font-size: 20px;
   line-height: 1;
   color: var(--sa-muted);
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 0.3rem 0.7rem rgba(20, 24, 31, 0.1);
-  transition: color 0.22s, transform 0.22s var(--sa-spring);
+  background: var(--sa-surface);
+  box-shadow: 4px 4px 9px var(--sa-shadow), -4px -4px 9px var(--sa-highlight);
+  transition: box-shadow 0.22s, color 0.22s, transform 0.22s var(--sa-spring);
 }
 
-.sa-head-close:hover { color: var(--sa-txt); transform: scale(1.06); }
-.sa-head-close:active { transform: scale(0.94); }
+.sa-head-close:hover { color: var(--sa-brand); transform: scale(1.06); }
+.sa-head-close:active { box-shadow: var(--sa-pressed-sm); transform: scale(0.94); }
 
 /* ---------- message log ---------- */
 
@@ -295,16 +278,16 @@
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 12px 18px 14px;
+  padding: 10px 18px 14px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(20, 24, 31, 0.25) transparent;
+  scrollbar-color: var(--sa-shadow) transparent;
 }
 
 .sa-log::-webkit-scrollbar { width: 6px; }
-.sa-log::-webkit-scrollbar-thumb { background: rgba(20, 24, 31, 0.25); border-radius: 6px; }
+.sa-log::-webkit-scrollbar-thumb { background: var(--sa-shadow); border-radius: 6px; }
 
 .sa-msg-group {
   display: flex;
@@ -331,19 +314,19 @@
   word-wrap: break-word;
 }
 
-.sa-msg a { color: var(--sa-cobalt); font-weight: 700; }
+.sa-msg a { color: var(--sa-brand-deep); font-weight: 700; }
 
 .sa-msg-ai {
   border-bottom-left-radius: 7px;
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 0.3rem 0.9rem rgba(20, 24, 31, 0.08);
+  background: var(--sa-surface);
+  box-shadow: var(--sa-raised-sm);
 }
 
 .sa-msg-user {
   border-bottom-right-radius: 7px;
   color: #fff;
-  background: var(--sa-user-bubble);
-  box-shadow: 0 0.4rem 1rem rgba(18, 58, 99, 0.35);
+  background: var(--sa-brand-deep);
+  box-shadow: 6px 6px 16px rgba(0, 107, 153, 0.28), -5px -5px 12px var(--sa-highlight);
 }
 
 .sa-msg-note {
@@ -354,7 +337,8 @@
   text-align: center;
   padding: 8px 16px;
   border-radius: 30px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--sa-surface);
+  box-shadow: var(--sa-pressed-sm);
   animation: sa-msg-in 0.4s var(--sa-ease) both;
 }
 
@@ -371,8 +355,8 @@
   gap: 5px;
   padding: 14px 16px;
   border-radius: 18px 18px 18px 7px;
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 0.3rem 0.9rem rgba(20, 24, 31, 0.08);
+  background: var(--sa-surface);
+  box-shadow: var(--sa-raised-sm);
   animation: sa-msg-in 0.3s var(--sa-ease) both;
 }
 
@@ -380,7 +364,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--sa-cobalt);
+  background: var(--sa-brand);
   animation: sa-bounce 1.3s ease-in-out infinite;
 }
 
@@ -403,31 +387,27 @@
 }
 
 .sa-chip {
-  padding: 7px 13px;
-  border: 1.5px solid;
+  padding: 8px 14px;
+  border: none;
   border-radius: 30px;
   cursor: pointer;
   font-family: inherit;
   font-size: 12.4px;
-  font-weight: 700;
-  color: var(--sa-txt);
-  background: rgba(255, 255, 255, 0.7);
-  transition: transform 0.22s var(--sa-spring), background 0.22s;
+  font-weight: 600;
+  color: var(--sa-muted);
+  background: var(--sa-surface);
+  box-shadow: 4px 4px 9px var(--sa-shadow), -4px -4px 9px var(--sa-highlight);
+  transition: color 0.22s, box-shadow 0.22s, transform 0.22s var(--sa-spring);
   animation: sa-msg-in 0.4s var(--sa-ease) both;
 }
 
-.sa-chip:nth-child(4n + 1) { border-color: var(--sa-coral); }
-.sa-chip:nth-child(4n + 2) { border-color: var(--sa-cobalt); }
-.sa-chip:nth-child(4n + 3) { border-color: var(--sa-teal); }
-.sa-chip:nth-child(4n) { border-color: var(--sa-violet); }
-
-.sa-chip:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.95); }
-.sa-chip:active { transform: translateY(0) scale(0.97); }
+.sa-chip:hover { color: var(--sa-brand-deep); transform: translateY(-2px); }
+.sa-chip:active { box-shadow: var(--sa-pressed-sm); transform: translateY(0) scale(0.97); }
 
 .sa-chip.sa-chip-primary {
   color: #fff;
-  border-color: transparent;
-  background: var(--sa-user-bubble);
+  background: var(--sa-brand-deep);
+  box-shadow: 6px 6px 16px rgba(0, 107, 153, 0.3), -5px -5px 12px var(--sa-highlight);
 }
 
 /* ---------- composer ---------- */
@@ -444,19 +424,20 @@
   flex: 1 1 auto;
   max-height: 92px;
   padding: 12px 16px;
-  border: 1.5px solid rgba(20, 24, 31, 0.14);
+  border: none;
   border-radius: 18px;
   resize: none;
   font-family: inherit;
   font-size: 13.6px;
   line-height: 1.5;
   color: var(--sa-txt);
-  background: rgba(255, 255, 255, 0.75);
-  transition: border-color 0.25s;
+  background: var(--sa-surface);
+  box-shadow: var(--sa-pressed);
+  transition: box-shadow 0.25s;
 }
 
 .sa-input::placeholder { color: var(--sa-muted); }
-.sa-input:focus { outline: none; border-color: var(--sa-cobalt); }
+.sa-input:focus { outline: none; box-shadow: var(--sa-pressed), 0 0 0 2px rgba(0, 159, 227, 0.3); }
 .sa-input:disabled { opacity: 0.6; }
 
 .sa-send {
@@ -465,33 +446,24 @@
   width: 44px;
   height: 44px;
   flex: none;
-  padding: 1.5px;
+  padding: 0;
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  background: var(--sa-spectrum);
-  transition: transform 0.25s var(--sa-spring), opacity 0.25s;
-}
-
-.sa-send::before {
-  content: "";
-  position: absolute;
-  inset: 0;
+  color: #fff;
+  background: var(--sa-brand-deep);
+  box-shadow: 6px 6px 16px rgba(0, 107, 153, 0.3), -5px -5px 12px var(--sa-highlight);
+  transition: transform 0.25s var(--sa-spring), box-shadow 0.25s, opacity 0.25s;
 }
 
 .sa-send svg {
-  position: relative;
   width: 19px;
   height: 19px;
-  fill: #fff;
-  background: #14181f;
-  border-radius: 50%;
-  padding: 12.5px;
-  box-sizing: border-box;
+  fill: currentColor;
 }
 
 .sa-send:hover { transform: translateY(-2px) scale(1.05); }
-.sa-send:active { transform: scale(0.94); }
+.sa-send:active { transform: scale(0.94); box-shadow: var(--sa-pressed-sm); }
 .sa-send:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
 .sa-legal {
@@ -500,31 +472,138 @@
   font-size: 10.5px;
   text-align: center;
   color: var(--sa-muted);
-  opacity: 0.85;
+  opacity: 1;
 }
 
 /* ---------- mobile: bottom sheet ---------- */
 
 @media (max-width: 560px) {
   #sa-chat-root {
-    right: max(16px, env(safe-area-inset-right));
-    bottom: max(16px, env(safe-area-inset-bottom));
-    left: max(16px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    left: max(12px, env(safe-area-inset-left));
     pointer-events: none;
   }
 
   #sa-chat-root > * { pointer-events: auto; }
 
-  .sa-launcher { width: 58px; height: 58px; }
-  .sa-launcher img { width: 34px; height: 34px; }
+  .sa-launcher {
+    width: 56px;
+    height: 56px;
+    transition: opacity 0.2s var(--sa-ease), transform 0.25s var(--sa-spring), visibility 0s linear 0s;
+  }
+
+  .sa-launcher img { width: 32px; height: 32px; }
+
+  #sa-chat-root[data-open="true"] .sa-launcher {
+    opacity: 0;
+    transform: translateY(8px) scale(0.86);
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.2s var(--sa-ease), transform 0.25s var(--sa-spring), visibility 0s linear 0.2s;
+  }
 
   .sa-panel {
     left: 0;
     right: 0;
-    bottom: 72px;
+    bottom: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto auto auto;
     width: auto;
-    height: min(74vh, calc(100dvh - 120px));
-    border-radius: 26px;
+    height: min(78dvh, 42rem);
+    max-height: calc(100dvh - max(24px, env(safe-area-inset-top)) - max(12px, env(safe-area-inset-bottom)));
+    border-radius: 24px;
+    transform-origin: 50% 100%;
+    transform: translateY(18px) scale(0.98);
+  }
+
+  .sa-head {
+    gap: 10px;
+    min-height: 62px;
+    padding: 10px 12px 9px;
+  }
+
+  .sa-head-avatar {
+    width: 38px;
+    height: 38px;
+  }
+
+  .sa-head-avatar img { width: 24px; height: 24px; }
+  .sa-head-text strong { font-size: 14px; }
+  .sa-head-text span { font-size: 11px; }
+
+  .sa-head-close {
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .sa-log {
+    padding: 12px 14px 16px;
+    gap: 12px;
+    scroll-padding-block: 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sa-msg-group-ai { max-width: 92%; }
+  .sa-msg-group-user { max-width: 78%; }
+
+  .sa-msg-label {
+    margin-bottom: 3px;
+    font-size: 10px;
+  }
+
+  .sa-msg {
+    padding: 10px 12px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .sa-msg-ai { border-bottom-left-radius: 6px; }
+  .sa-msg-user { border-bottom-right-radius: 6px; }
+
+  .sa-chips {
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 3px 14px 11px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+
+  .sa-chips::-webkit-scrollbar { display: none; }
+
+  .sa-chip {
+    flex: 0 0 auto;
+    min-height: 40px;
+    padding-inline: 14px;
+  }
+
+  .sa-composer {
+    gap: 9px;
+    padding: 10px 12px 9px;
+    border-top: 1px solid rgba(92, 109, 125, 0.12);
+    background: var(--sa-surface);
+    box-shadow: 0 -10px 22px rgba(195, 189, 216, 0.24);
+  }
+
+  .sa-input {
+    min-height: 48px;
+    padding: 13px 14px;
+    font-size: 16px;
+  }
+
+  .sa-send {
+    width: 48px;
+    height: 48px;
+  }
+
+  .sa-legal {
+    padding: 0 14px 10px;
+    font-size: 9.5px;
+    line-height: 1.35;
   }
 }
 
