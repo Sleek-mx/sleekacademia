@@ -249,7 +249,7 @@ Goal: Ship verified free/paid study tools, working Gumroad quiz delivery, and re
 
 ## Next
 
-- [ ] Commit the complete redesign, push the feature branch, fast-forward production, and wait for the Vercel Git deployment.
+- [x] Committed the complete redesign as `9dae8e2`, pushed the feature branch, fast-forwarded production, and verified Vercel deployment `dpl_79vVvQJrLR65C7YHPWrD8DWcKN3B` reached Ready.
 - [ ] Repeat Gumroad test Ping after deployment and require a success response.
 - [ ] Verify public resources, onboarding, quiz checkout/paywall contract, health routes, and responsive rendering.
 
@@ -262,4 +262,5 @@ Goal: Ship verified free/paid study tools, working Gumroad quiz delivery, and re
 - Gumroad account: `Sleek Academia Research`; storefront `https://sleekmx.gumroad.com`
 - Quiz Unlock: permalink `QuizUnlock`, product id `sufivx`, price `$10`
 - Webhook: `POST /api/platform/payments/gumroad-webhook?key=<GUMROAD_WEBHOOK_SECRET>`
+- Vercel masks sensitive values as `[Sensitive]` in pulled env files. The invalid placeholder URL was identified, and the production webhook secret was rotated on 2026-08-16; Gumroad Ping must be updated to the rotated value before the final test.
 - Credentials stay in local Obsidian/Vercel. Never copy values into Git, progress notes, logs, or chat.
