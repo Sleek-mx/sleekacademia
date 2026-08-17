@@ -60,6 +60,22 @@ test("homepage hero uses the glass spectrum-border composition, responsive down 
   );
 });
 
+test("mobile homepage keeps navigation compact and gives guidance photo a purposeful crop", async () => {
+  const css = await readGlassCss();
+  const mobile = css.match(/@media \(max-width: 640px\) \{([\s\S]*?)\n\}/)?.[1] ?? "";
+
+  assert.match(mobile, /\.gc-nav[^\{]*\.gc-btn-dark\s*\{[^}]*display:\s*none/);
+  assert.match(mobile, /\.gc-guidance-photo-slot\s*\{[^}]*min-height:\s*clamp\(12rem,\s*42vw,\s*16rem\)/);
+  assert.match(mobile, /\.gc-guidance-photo-slot\s*\{[^}]*background-image:[^;]*var\(--band-photo\)/);
+  assert.match(mobile, /\.gc-guidance-photo-slot\s*\{[^}]*background-position:\s*[^;]*74%\s+center/);
+});
+
+test("mobile navigation keeps its primary CTA inside the opened menu", async () => {
+  const home = await readHome();
+
+  assert.match(home, /class="gc-nav-mobile-cta" href="\/onboard\.html"[^>]*>Start free check<\/a>/);
+});
+
 // The structural rule the approved references are built on: the photograph is a
 // full-bleed band and the glass panel is inset on top of it, so the image runs
 // past every edge of the glass. Regressing this back to a photo clipped inside

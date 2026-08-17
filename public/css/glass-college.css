@@ -351,6 +351,7 @@
 .glass-college .gc-nav-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
 
 .glass-college .gc-nav-mobile-login { display: none; }
+.glass-college .gc-nav-mobile-cta { display: none; }
 
 .glass-college .gc-nav-actions {
   display: flex;
@@ -1717,6 +1718,13 @@
   }
   .glass-college .gc-nav-links a:hover { background: rgba(20, 24, 31, 0.05); text-decoration: none; }
   .glass-college .gc-nav-mobile-login { display: flex; }
+  .glass-college .gc-nav-mobile-cta {
+    display: flex;
+    justify-content: center;
+    background: var(--gc-ink);
+    color: #fff !important;
+    font-weight: 800;
+  }
   .glass-college .gc-nav-login { display: none; }
   .glass-college .gc-nav-toggle { display: block; }
   .glass-college .gc-nav-actions { margin-left: auto; }
@@ -1819,6 +1827,9 @@
   .glass-college .gc-wordmark span { font-size: 0.82rem; letter-spacing: 0.02em; }
   .glass-college .gc-nav .gc-btn { padding: 0.6rem 0.9rem; font-size: 0.78rem; }
   .glass-college .gc-nav-actions { gap: 0.4rem; }
+  /* Keep the wordmark and menu control readable; the CTA remains available
+     as the first item in the opened navigation sheet. */
+  .glass-college .gc-nav > .gc-nav-actions > .gc-btn-dark { display: none; }
 
   .glass-college .gc-steps { flex-direction: column; width: 100%; align-items: stretch; }
   .glass-college .gc-step { border-right: none; border-bottom: 1px solid rgba(20, 24, 31, 0.14); }
@@ -1827,7 +1838,18 @@
   .glass-college .gc-hero-actions > * { width: 100%; }
   .glass-college .gc-hero-actions .gc-btn { width: 100%; }
 
-  .glass-college .gc-guidance-copy { padding: 1.6rem 1.2rem; }
+  .glass-college .gc-guidance-copy { padding: 1.6rem 1.2rem 1.8rem; }
+  /* The source photo has a large cream field on its left. Give the mobile
+     slot its own intentional crop so it reads as a useful image, not as a
+     blurry empty continuation of the copy panel. */
+  .glass-college .gc-guidance-photo-slot {
+    min-height: clamp(12rem, 42vw, 16rem);
+    background-image: linear-gradient(180deg, rgba(250, 246, 239, 0.02), rgba(20, 24, 31, 0.06)), var(--band-photo);
+    background-position: center, 74% center;
+    background-size: cover, cover;
+    background-repeat: no-repeat;
+    border-top: 1px solid rgba(20, 24, 31, 0.08);
+  }
   .glass-college .gc-loop,
   .glass-college .gc-reviews,
   .glass-college .gc-tools { padding: 1.4rem 1.1rem; }
