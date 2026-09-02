@@ -1910,7 +1910,7 @@
 
 .glass-college .gc-market-proof div {
   display: grid;
-  grid-template-columns: 5.5rem 1fr;
+  grid-template-columns: max-content 1fr;
   gap: 1rem;
   align-items: baseline;
   padding: 1.1rem 0;
@@ -1919,9 +1919,10 @@
 
 .glass-college .gc-market-proof dt {
   font-family: "Archivo", sans-serif;
-  font-size: 2rem;
+  font-size: clamp(1.55rem, 3.4vw, 2rem);
   font-weight: 900;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .glass-college .gc-market-proof dd {
@@ -2059,7 +2060,7 @@
   .glass-college .gc-market-title { font-size: clamp(2.4rem, 13vw, 4rem); }
   .glass-college .gc-market-actions > span,
   .glass-college .gc-market-actions .gc-btn { width: 100%; }
-  .glass-college .gc-market-proof div { grid-template-columns: 4.5rem 1fr; }
+  .glass-college .gc-market-proof div { grid-template-columns: max-content 1fr; }
   .glass-college .gc-quiz-sheet { min-height: 19rem; transform: none !important; }
   .glass-college .gc-quiz-sheet__top,
   .glass-college .gc-quiz-sheet__foot,
@@ -2699,4 +2700,14 @@ html[data-theme="dark"] .glass-college .theme-toggle__sun { display: block; }
   .glass-college .gc-nav-links .theme-toggle {
     display: none;
   }
+}
+
+
+html[data-theme="dark"] body {
+  background-color: #221f2e;
+}
+
+html[data-theme="dark"] .glass-college .gc-market-proof,
+html[data-theme="dark"] .glass-college .gc-market-proof div {
+  border-color: rgba(243, 241, 248, 0.12);
 }

@@ -120,3 +120,23 @@
     transform: none;
   }
 }
+
+
+/* ===== dark theme (2026-09-02) ===== */
+html[data-theme="dark"] .sa-social {
+  background: #221f2e;
+  border-top-color: rgba(76, 196, 240, 0.22);
+}
+
+html[data-theme="dark"] .sa-social .sa-social__label {
+  color: #a49db8;
+}
+
+html[data-theme="dark"] .sa-social .sa-social__btn {
+  box-shadow: 8px 8px 18px rgba(0, 159, 227, 0.28), -8px -8px 18px #322e42;
+}
+
+html[data-theme="dark"] .sa-social .sa-social__btn:hover,
+html[data-theme="dark"] .sa-social .sa-social__btn:focus-visible {
+  box-shadow: 8px 8px 22px rgba(0, 159, 227, 0.4), -8px -8px 18px #322e42;
+}
