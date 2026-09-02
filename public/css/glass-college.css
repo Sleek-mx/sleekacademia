@@ -2539,3 +2539,164 @@
     transform: none;
   }
 }
+
+/* ===== public dark neumorphism (2026-09-02) ===== */
+
+html { background-color: #e7e4f1; }
+html[data-theme="dark"] {
+  background-color: #221f2e;
+  color-scheme: dark;
+}
+html[data-theme="light"] { color-scheme: light; }
+
+html[data-theme="dark"] .glass-college {
+  --gc-ink: #f3f1f8;
+  --gc-body: #cfc9de;
+  --gc-muted: #a49db8;
+  --gc-sky: #221f2e;
+  --gc-cream: #221f2e;
+  --gc-blush: #221f2e;
+  --gc-paper: #221f2e;
+  --gc-surface: #221f2e;
+  --gc-dark: #14121c;
+  --gc-light: #322e42;
+  --gc-brand: #4cc4f0;
+  --gc-brand2: #4cc4f0;
+  --gc-brand-dark: #009fe3;
+  --gc-coral: #007ab8;
+  --gc-orange: #4cc4f0;
+  --gc-yellow: #4cc4f0;
+  --gc-lime: #4cc4f0;
+  --gc-teal: #4cc4f0;
+  --gc-blue: #4cc4f0;
+  --gc-cobalt: #4cc4f0;
+  --gc-violet: #4cc4f0;
+  --gc-magenta: #4cc4f0;
+  --gc-shadow-card: 8px 8px 18px #14121c, -8px -8px 18px #322e42;
+  --gc-shadow-glass: 8px 8px 18px #14121c, -8px -8px 18px #322e42;
+  --gc-shadow-raised: 8px 8px 18px #14121c, -8px -8px 18px #322e42;
+  --gc-shadow-raised-sm: 5px 5px 12px #14121c, -5px -5px 12px #322e42;
+  --gc-shadow-raised-hover: 10px 10px 22px #14121c, -10px -10px 22px #322e42;
+  --gc-shadow-pressed: inset 6px 6px 12px #14121c, inset -6px -6px 12px #322e42;
+  --gc-shadow-cta: 8px 8px 18px rgba(0, 159, 227, 0.38), -8px -8px 18px #322e42, inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  color: var(--gc-ink);
+  background: var(--gc-surface);
+}
+
+html[data-theme="dark"] .glass-college .gc-band::before {
+  opacity: 0.055;
+  filter: grayscale(0.5) saturate(0.38) contrast(0.9) brightness(0.48);
+}
+
+html[data-theme="dark"] .glass-college .gc-band--soft::before {
+  opacity: 0.035;
+  filter: grayscale(0.55) saturate(0.3) blur(18px) brightness(0.42);
+}
+
+html[data-theme="dark"] .glass-college .gc-btn-dark .gc-btn {
+  color: #fff;
+  background: linear-gradient(135deg, #009fe3, #4cc4f0);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: var(--gc-shadow-cta);
+}
+
+html[data-theme="dark"] .glass-college .gc-btn-dark .gc-btn:hover {
+  color: #fff;
+  box-shadow: 10px 10px 22px rgba(0, 159, 227, 0.4), -8px -8px 18px #322e42, inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+html[data-theme="dark"] .glass-college .gc-nav-mobile-cta {
+  background: linear-gradient(135deg, #009fe3, #4cc4f0);
+}
+
+html[data-theme="dark"] .glass-college .gc-review-card--navy {
+  background: linear-gradient(155deg, color-mix(in srgb, #4cc4f0 58%, #221f2e), color-mix(in srgb, #007ab8 68%, #14121c));
+  color: #f3f1f8;
+}
+
+html[data-theme="dark"] .glass-college .gc-review-card--coral,
+html[data-theme="dark"] .glass-college .gc-review-card--green {
+  background: color-mix(in srgb, var(--gc-surface) 88%, #4cc4f0 12%);
+  color: var(--gc-ink);
+}
+
+html[data-theme="dark"] .glass-college .gc-loop-card--02 {
+  background: linear-gradient(155deg, color-mix(in srgb, #4cc4f0 70%, #221f2e), color-mix(in srgb, #009fe3 78%, #14121c));
+}
+
+html[data-theme="dark"] .glass-college .gc-wordmark img {
+  filter: brightness(1.18) saturate(1.06);
+}
+
+html[data-theme="dark"] .glass-college .gc-mark--coral { color: #5ec8f2; }
+html[data-theme="dark"] .glass-college .gc-mark--blue { color: #7ad4f5; }
+
+html[data-theme="dark"] .glass-college .gc-login-waves path { fill: #322e42; }
+html[data-theme="dark"] .glass-college .gc-login-photo {
+  background-color: #221f2e;
+  background-blend-mode: multiply;
+}
+
+html[data-theme="dark"] .glass-college :focus-visible {
+  outline-color: #4cc4f0;
+}
+
+.glass-college .theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 2.55rem;
+  height: 2.55rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--gc-ink);
+  background: var(--gc-surface);
+  box-shadow: var(--gc-shadow-raised-sm);
+  flex: none;
+}
+
+.glass-college .theme-toggle:hover {
+  color: var(--gc-brand);
+  box-shadow: var(--gc-shadow-raised);
+}
+
+.glass-college .theme-toggle:active {
+  box-shadow: var(--gc-shadow-pressed);
+}
+
+.glass-college .theme-toggle:focus-visible {
+  outline: 2px solid var(--gc-brand);
+  outline-offset: 2px;
+}
+
+.glass-college .theme-toggle svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  display: block;
+}
+
+.glass-college .theme-toggle__sun { display: none; }
+
+html[data-theme="dark"] .glass-college .theme-toggle__moon { display: none; }
+html[data-theme="dark"] .glass-college .theme-toggle__sun { display: block; }
+
+.glass-college .gc-login-form-panel > .theme-toggle {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 4;
+}
+
+@media (max-width: 1024px) {
+  .glass-college .gc-nav-links .theme-toggle {
+    display: inline-grid;
+    margin: 0.35rem auto 0;
+  }
+}
+
+@media (min-width: 1025px) {
+  .glass-college .gc-nav-links .theme-toggle {
+    display: none;
+  }
+}

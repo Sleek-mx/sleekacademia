@@ -236,3 +236,69 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* ===== public dark neumorphism (2026-09-02) ===== */
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --surface: #221f2e;
+  --dark: #14121c;
+  --light: #322e42;
+  --txt: #f3f1f8;
+  --muted: #a49db8;
+  --brand: #4cc4f0;
+  --brand2: #4cc4f0;
+  background-color: #221f2e;
+}
+
+html[data-theme="dark"] .btn.primary {
+  color: #fff !important;
+  background: linear-gradient(135deg, #009fe3, #4cc4f0);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 8px 8px 18px rgba(0, 159, 227, 0.38), -8px -8px 18px #322e42,
+              inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 0 0 1px rgba(0, 159, 227, 0.2);
+}
+
+html[data-theme="dark"] .btn.primary:hover {
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 10px 10px 22px rgba(0, 159, 227, 0.4), -8px -8px 18px #322e42,
+              inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 0 0 1px rgba(0, 159, 227, 0.2);
+}
+
+html[data-theme="dark"] :focus-visible {
+  outline-color: #4cc4f0;
+}
+
+html[data-theme="dark"] .neu-nav .logo img,
+html[data-theme="dark"] .neu-nav img {
+  filter: brightness(1.18) saturate(1.06);
+}
+
+.theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 2.55rem;
+  height: 2.55rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--txt);
+  background: var(--surface);
+  box-shadow: 5px 5px 12px var(--dark), -5px -5px 12px var(--light);
+  flex: none;
+}
+
+.theme-toggle:hover { color: var(--brand); }
+.theme-toggle:active {
+  box-shadow: inset 6px 6px 12px var(--dark), inset -6px -6px 12px var(--light);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+.theme-toggle svg { width: 1.15rem; height: 1.15rem; display: block; }
+.theme-toggle__sun { display: none; }
+html[data-theme="dark"] .theme-toggle__moon { display: none; }
+html[data-theme="dark"] .theme-toggle__sun { display: block; }
