@@ -14,11 +14,11 @@
   --public-neu-brand-dark: #007ab8;
   --public-neu-yellow: var(--public-neu-brand);
   --public-neu-line: rgba(92, 109, 125, 0.18);
-  --public-neu-raised: 10px 10px 24px #c3bdd8, -10px -10px 24px #ffffff;
-  --public-neu-raised-small: 6px 6px 14px #c3bdd8, -6px -6px 14px #ffffff;
-  --public-neu-raised-hover: 15px 15px 32px #c3bdd8, -14px -14px 30px #ffffff;
+  --public-neu-raised: 8px 8px 18px #c3bdd8, -8px -8px 18px #ffffff;
+  --public-neu-raised-small: 5px 5px 12px #c3bdd8, -5px -5px 12px #ffffff;
+  --public-neu-raised-hover: 10px 10px 22px #c3bdd8, -10px -10px 22px #ffffff;
   --public-neu-pressed: inset 6px 6px 12px #c3bdd8, inset -6px -6px 12px #ffffff;
-  --public-neu-cta: 8px 8px 20px rgba(0, 159, 227, 0.30), -8px -8px 18px #ffffff, inset 0 1px 0 rgba(255, 255, 255, 0.38);
+  --public-neu-cta: 8px 8px 18px rgba(0, 159, 227, 0.28), -8px -8px 18px #ffffff, inset 0 1px 0 rgba(255, 255, 255, 0.38);
 
   --ink: var(--public-neu-text);
   --body: var(--public-neu-muted);
@@ -131,7 +131,7 @@ body.platform-page::before {
 .platform-page .store-button--primary {
   border: 2px solid rgba(255, 255, 255, 0.88);
   color: #ffffff !important;
-  background: var(--public-neu-brand);
+  background: linear-gradient(135deg, var(--public-neu-brand), var(--public-neu-brand-light));
   box-shadow: var(--public-neu-cta);
 }
 
@@ -437,7 +437,7 @@ body.platform-page::before {
   .product-card-v2,
   .store-feature,
   .platform-cta {
-    box-shadow: 7px 7px 17px var(--public-neu-shadow), -7px -7px 17px var(--public-neu-highlight);
+    box-shadow: 6px 6px 14px var(--public-neu-shadow), -6px -6px 14px var(--public-neu-highlight);
   }
 
   .nav-link[aria-current="page"] {
@@ -524,3 +524,23 @@ body.platform-page::before {
 @media (prefers-reduced-motion: reduce) {
   .practice-card:hover { transform: none; }
 }
+
+
+.site-nav,
+.platform-header { border-radius: 999px; }
+
+.blog-card,
+.platform-card,
+.product-card-v2,
+.service-feature,
+.service-row,
+.testimonial { border-radius: 1.25rem; }
+
+.button,
+.platform-button { border-radius: 999px; }
+
+.practice-grid,
+.pricing-grid { gap: 1.5rem; }
+
+.practice-card,
+.pricing-card { padding: 1.85rem; border-radius: 1.25rem; }

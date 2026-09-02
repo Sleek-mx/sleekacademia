@@ -1,5 +1,5 @@
 /* ============================================================
-   Sleek Academia — glass design system (online-college redesign)
+   Sleek Academia — modern neumorphism for public college pages
 
    Structural rule, taken straight from the approved references:
    every section is a FULL-BLEED PHOTO BAND with a translucent glass
@@ -13,47 +13,37 @@
 @import url("https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Permanent+Marker&family=Plus+Jakarta+Sans:ital,wght@0,500;0,600;0,700;0,800;1,600&display=swap");
 
 .glass-college {
-  --gc-coral: #ff6b5e;
-  --gc-orange: #ff9c4a;
-  --gc-yellow: #ffd23f;
-  --gc-lime: #a6d84a;
-  --gc-teal: #37c2b0;
-  --gc-blue: #3aa0e8;
-  --gc-cobalt: #3457d5;
-  --gc-violet: #9457e0;
-  --gc-magenta: #e0499c;
-  --gc-spectrum: linear-gradient(
-    115deg,
-    var(--gc-coral),
-    var(--gc-orange),
-    var(--gc-yellow),
-    var(--gc-lime),
-    var(--gc-teal),
-    var(--gc-blue),
-    var(--gc-violet),
-    var(--gc-magenta)
-  );
+  --gc-coral: #007ab8;
+  --gc-orange: #009fe3;
+  --gc-yellow: #4cc4f0;
+  --gc-lime: #009fe3;
+  --gc-teal: #4cc4f0;
+  --gc-blue: #009fe3;
+  --gc-cobalt: #007ab8;
+  --gc-violet: #009fe3;
+  --gc-magenta: #007ab8;
+  --gc-spectrum: linear-gradient(135deg, #009fe3, #4cc4f0);
 
-  --gc-ink: #14181f;
-  --gc-body: #4a5567;
-  --gc-muted: #8089a0;
+  --gc-ink: #372f52;
+  --gc-body: #4a435c;
+  --gc-muted: #6b6488;
 
-  --gc-sky: #d3e3ef;
-  --gc-cream: #f7efe2;
-  --gc-blush: #f9e4e2;
-  --gc-paper: #faf7f1;
+  --gc-sky: #e7e4f1;
+  --gc-cream: #e7e4f1;
+  --gc-blush: #e7e4f1;
+  --gc-paper: #e7e4f1;
 
   --gc-r-glass: 1.75rem;
   --gc-r-lg: 1.3rem;
   --gc-r-md: 0.85rem;
   --gc-r-sm: 0.6rem;
   --gc-r-pill: 999px;
-  --gc-r-btn: 0.7rem;
+  --gc-r-btn: 999px;
 
-  --gc-shadow-card: 0 1.1rem 2.4rem rgba(20, 24, 31, 0.16);
-  --gc-shadow-glass: 0 1.6rem 3.6rem rgba(20, 24, 31, 0.12);
+  --gc-shadow-card: 8px 8px 18px #c3bdd8, -8px -8px 18px #ffffff;
+  --gc-shadow-glass: 8px 8px 18px #c3bdd8, -8px -8px 18px #ffffff;
 
-  --gc-band-pad: clamp(0.9rem, 2vw, 1.9rem);
+  --gc-band-pad: clamp(1.4rem, 3.2vw, 2.6rem);
   --gc-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   font-family: "Plus Jakarta Sans", "Manrope", sans-serif;
@@ -61,14 +51,18 @@
   overflow-x: clip;
 
   /* Base wash the photo bands fade into, so section edges morph. */
-  background: linear-gradient(
-    to bottom,
-    var(--gc-sky) 0%,
-    var(--gc-cream) 26%,
-    #e7eef4 50%,
-    var(--gc-blush) 72%,
-    var(--gc-sky) 100%
-  );
+  --gc-surface: #e7e4f1;
+  --gc-dark: #c3bdd8;
+  --gc-light: #ffffff;
+  --gc-brand: #009fe3;
+  --gc-brand2: #4cc4f0;
+  --gc-brand-dark: #007ab8;
+  --gc-shadow-raised: 8px 8px 18px #c3bdd8, -8px -8px 18px #ffffff;
+  --gc-shadow-raised-sm: 5px 5px 12px #c3bdd8, -5px -5px 12px #ffffff;
+  --gc-shadow-raised-hover: 10px 10px 22px #c3bdd8, -10px -10px 22px #ffffff;
+  --gc-shadow-pressed: inset 6px 6px 12px #c3bdd8, inset -6px -6px 12px #ffffff;
+  --gc-shadow-cta: 8px 8px 18px rgba(0, 159, 227, 0.28), -8px -8px 18px #ffffff, inset 0 1px 0 rgba(255, 255, 255, 0.38);
+  background: var(--gc-surface);
 }
 
 .glass-college *,
@@ -2073,4 +2067,377 @@
   .glass-college .gc-pack-card,
   .glass-college .gc-pack-card:nth-child(-n + 2) { grid-column: 1 / -1; grid-template-rows: 13rem 1fr; }
   .glass-college .gc-market-help { align-items: flex-start; flex-direction: column; }
+}
+
+/* ===== modern neu overrides (2026-09-02) ===== */
+
+.glass-college .gc-band { background: var(--gc-surface); }
+
+.glass-college .gc-band::before {
+  opacity: 0.12;
+  filter: grayscale(0.35) saturate(0.55) contrast(0.95);
+  pointer-events: none;
+}
+
+.glass-college .gc-band--soft::before {
+  filter: grayscale(0.4) saturate(0.45) blur(18px);
+  opacity: 0.08;
+  transform: scale(1.08);
+}
+
+.glass-college .gc-glass,
+.glass-college .gc-glass--hero {
+  background: var(--gc-surface);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: none;
+  box-shadow: var(--gc-shadow-raised);
+}
+
+.glass-college .gc-glass--spectrum { border-color: transparent; }
+.glass-college .gc-glass--spectrum::after { content: none; }
+
+.glass-college .gc-eyebrow { color: var(--gc-brand); margin-bottom: 1.15rem; }
+.glass-college .gc-display { font-weight: 800; letter-spacing: -0.028em; line-height: 1.02; }
+.glass-college .gc-lead { font-size: 1.05rem; line-height: 1.7; color: var(--gc-body); margin-top: 1.25rem; }
+
+.glass-college .gc-btn {
+  border-radius: var(--gc-r-btn);
+  background: var(--gc-surface);
+  color: var(--gc-ink);
+  box-shadow: var(--gc-shadow-raised-sm);
+  padding: 0.9rem 1.8rem;
+}
+.glass-college .gc-btn:hover { transform: translateY(-2px); box-shadow: var(--gc-shadow-raised); color: var(--gc-brand); }
+.glass-college .gc-btn:active { transform: translateY(0) scale(0.98); box-shadow: var(--gc-shadow-pressed); }
+
+.glass-college .gc-btn-dark::after,
+.glass-college .gc-btn-ghost::after,
+.glass-college .gc-steps::after { content: none; }
+
+.glass-college .gc-btn-dark { background: transparent; box-shadow: none; }
+.glass-college .gc-btn-dark .gc-btn {
+  color: #fff;
+  background: linear-gradient(135deg, var(--gc-brand), var(--gc-brand2));
+  border: 2px solid #fff;
+  box-shadow: var(--gc-shadow-cta);
+}
+.glass-college .gc-btn-dark .gc-btn:hover {
+  color: #fff;
+  box-shadow: 10px 10px 22px rgba(0, 159, 227, 0.34), -8px -8px 18px #ffffff, inset 0 1px 0 rgba(255, 255, 255, 0.48);
+}
+.glass-college .gc-btn-ghost { background: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.glass-college .gc-btn-ghost .gc-btn {
+  color: var(--gc-ink);
+  background: var(--gc-surface);
+  box-shadow: var(--gc-shadow-raised-sm);
+}
+
+.glass-college .gc-wordmark b { color: var(--gc-brand); }
+
+.glass-college .gc-nav {
+  background: var(--gc-surface);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-bottom: none;
+  padding: 0.95rem clamp(1.1rem, 2.4vw, 2rem);
+  box-shadow: inset 0 -1px 0 rgba(195, 189, 216, 0.45);
+}
+.glass-college .gc-nav-links a {
+  color: var(--gc-muted);
+  padding: 0.55rem 0.95rem;
+  border-radius: 40px;
+}
+.glass-college .gc-nav-links a:hover { color: var(--gc-brand); text-decoration: none; }
+.glass-college .gc-nav-links a[aria-current="page"] { color: var(--gc-brand); box-shadow: var(--gc-shadow-pressed); }
+.glass-college .gc-nav-login:hover { color: var(--gc-brand); }
+
+.glass-college .gc-hero-body {
+  padding: clamp(2.4rem, 7.5vw, 6.8rem) clamp(1.4rem, 4vw, 3.4rem) clamp(2.6rem, 5vw, 4.6rem) clamp(1.4rem, 12vw, 11rem);
+}
+.glass-college .gc-mark--coral { color: var(--gc-brand-dark); }
+.glass-college .gc-mark--blue { color: var(--gc-brand); }
+
+.glass-college .gc-steps {
+  margin-top: 2.2rem;
+  border-radius: 999px;
+  background: var(--gc-surface);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: var(--gc-shadow-pressed);
+}
+.glass-college .gc-step:nth-child(1) em { color: var(--gc-brand); }
+.glass-college .gc-step:nth-child(2) em,
+.glass-college .gc-step:nth-child(3) em { color: var(--gc-ink); }
+
+.glass-college .gc-guidance {
+  background: linear-gradient(to right, var(--gc-surface) 0%, var(--gc-surface) 42%, color-mix(in srgb, var(--gc-surface) 55%, transparent) 62%, transparent 78%);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.glass-college .gc-mini-list li {
+  border: none;
+  border-radius: 999px;
+  background: var(--gc-surface);
+  box-shadow: var(--gc-shadow-raised-sm);
+  padding: 0.9rem 1.25rem;
+}
+.glass-college .gc-mini-list li:nth-child(1),
+.glass-college .gc-mini-list li:nth-child(2),
+.glass-college .gc-mini-list li:nth-child(3) { border-color: transparent; }
+.glass-college .gc-mini-list li:nth-child(1) em,
+.glass-college .gc-mini-list li:nth-child(2) em,
+.glass-college .gc-mini-list li:nth-child(3) em { color: var(--gc-brand); }
+.glass-college .gc-guidance-pin {
+  background: linear-gradient(150deg, var(--gc-brand2), var(--gc-brand));
+  box-shadow: var(--gc-shadow-raised-sm);
+}
+
+.glass-college .gc-loop,
+.glass-college .gc-reviews,
+.glass-college .gc-tools,
+.glass-college .gc-pricing { background: var(--gc-surface); padding: clamp(1.6rem, 3vw, 2.6rem); }
+
+.glass-college .gc-loop-head {
+  background: var(--gc-surface);
+  box-shadow: var(--gc-shadow-raised);
+}
+.glass-college .gc-loop-card,
+.glass-college .gc-review-card { box-shadow: var(--gc-shadow-raised); }
+.glass-college .gc-loop-card:hover,
+.glass-college .gc-review-card:hover { box-shadow: var(--gc-shadow-raised-hover); }
+
+.glass-college .gc-loop-card--01,
+.glass-college .gc-loop-card--03,
+.glass-college .gc-loop-card--04 {
+  background: var(--gc-surface);
+  color: var(--gc-ink);
+}
+.glass-college .gc-loop-card--02 {
+  background: linear-gradient(155deg, var(--gc-brand2) 0%, var(--gc-brand) 100%);
+  color: #fff;
+  box-shadow: var(--gc-shadow-cta);
+}
+.glass-college .gc-loop-card--03 .gc-loop-rule,
+.glass-college .gc-loop-card--04 .gc-loop-rule { background: var(--gc-brand); }
+
+.glass-college .gc-reviews-copy {
+  background: var(--gc-surface);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: var(--gc-shadow-raised);
+}
+.glass-college .gc-review-stars { color: var(--gc-brand); }
+.glass-college .gc-review-card--navy {
+  background: linear-gradient(155deg, var(--gc-brand2) 0%, var(--gc-brand-dark) 100%);
+  color: #fff;
+  box-shadow: var(--gc-shadow-cta);
+}
+.glass-college .gc-review-card--coral,
+.glass-college .gc-review-card--green {
+  background: var(--gc-surface);
+  color: var(--gc-ink);
+}
+
+.glass-college .gc-cta {
+  background: var(--gc-surface);
+  border-color: transparent;
+  box-shadow: var(--gc-shadow-raised);
+  gap: 1.8rem;
+  padding: clamp(2.2rem, 3.6vw, 3.4rem);
+}
+.glass-college .gc-cta h2 { color: var(--gc-ink); }
+.glass-college .gc-cta p { color: var(--gc-body); }
+.glass-college .gc-footer a:hover { color: var(--gc-brand); }
+
+.glass-college .gc-pill-eyebrow {
+  background: var(--gc-surface);
+  color: var(--gc-brand);
+  box-shadow: var(--gc-shadow-pressed);
+}
+.glass-college .gc-filter {
+  border: none;
+  background: var(--gc-surface);
+  box-shadow: var(--gc-shadow-raised-sm);
+}
+.glass-college .gc-filter:hover { background: var(--gc-surface); color: var(--gc-brand); }
+.glass-college .gc-filter[aria-pressed="true"] {
+  background: var(--gc-surface);
+  color: var(--gc-brand);
+  border-color: transparent;
+  box-shadow: var(--gc-shadow-pressed);
+}
+.glass-college .gc-filter[aria-pressed="true"] svg { color: var(--gc-brand); }
+
+.glass-college .gc-note {
+  background: var(--gc-surface);
+  box-shadow: var(--gc-shadow-raised);
+}
+.glass-college .gc-note:hover { box-shadow: var(--gc-shadow-raised-hover); }
+.glass-college .gc-note--1,
+.glass-college .gc-note--2,
+.glass-college .gc-note--3,
+.glass-college .gc-note--4,
+.glass-college .gc-note--5,
+.glass-college .gc-note--6 { --note-accent: var(--gc-brand); }
+.glass-college .gc-note-inner { background: var(--gc-surface) !important; }
+.glass-college .gc-note-num { color: var(--gc-brand) !important; }
+.glass-college .gc-note-pin { background: radial-gradient(circle at 32% 30%, var(--gc-brand2), var(--gc-brand-dark)) !important; }
+
+.glass-college .gc-plan {
+  background: var(--gc-surface);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: none;
+  box-shadow: var(--gc-shadow-raised);
+  padding: clamp(1.5rem, 2.2vw, 2.2rem);
+}
+.glass-college .gc-plan--featured {
+  background: var(--gc-surface);
+  box-shadow: var(--gc-shadow-raised-hover);
+}
+.glass-college .gc-plan--featured::after { content: none; }
+.glass-college .gc-plan-badge {
+  background: linear-gradient(135deg, var(--gc-brand), var(--gc-brand2));
+  color: #fff;
+  box-shadow: var(--gc-shadow-cta);
+}
+.glass-college .gc-tick { background: var(--gc-brand); color: #fff; box-shadow: var(--gc-shadow-pressed); }
+.glass-college .gc-plan--featured .gc-plan-carry,
+.glass-college .gc-plan--momentum .gc-plan-carry {
+  background: var(--gc-surface);
+  box-shadow: var(--gc-shadow-pressed);
+}
+.glass-college .gc-included {
+  background: var(--gc-surface);
+  border: none;
+  box-shadow: var(--gc-shadow-pressed);
+}
+.glass-college .gc-faq-item {
+  background: var(--gc-surface);
+  border: none;
+  box-shadow: var(--gc-shadow-raised-sm);
+}
+
+.glass-college.gc-login-body { background: var(--gc-surface); }
+.glass-college .gc-login-frame { box-shadow: var(--gc-shadow-raised); background: var(--gc-surface); }
+.glass-college .gc-login-frame::after { content: none; }
+.glass-college .gc-login-grid { background: var(--gc-surface); }
+.glass-college .gc-login-form-panel { background: var(--gc-surface); }
+.glass-college .gc-auth-tabs {
+  background: var(--gc-surface);
+  border: none;
+  border-radius: 999px;
+  box-shadow: var(--gc-shadow-pressed);
+}
+.glass-college .gc-auth-tab[aria-current="page"] {
+  background: var(--gc-surface);
+  color: var(--gc-brand);
+  box-shadow: var(--gc-shadow-raised-sm);
+}
+.glass-college .gc-login-tag {
+  background: var(--gc-surface);
+  background-image: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: none;
+  box-shadow: var(--gc-shadow-raised);
+}
+.glass-college .gc-login-tag-icon {
+  background: var(--gc-surface);
+  background-image: none;
+  border: none;
+  color: var(--gc-brand);
+  box-shadow: var(--gc-shadow-pressed);
+}
+.glass-college .gc-field input {
+  border: none;
+  background: var(--gc-surface);
+  color: var(--gc-ink);
+  border-radius: 1rem;
+  box-shadow: var(--gc-shadow-pressed);
+}
+.glass-college .gc-field input:focus {
+  outline: none;
+  box-shadow: var(--gc-shadow-pressed), 0 0 0 2px rgba(0, 159, 227, 0.28);
+}
+.glass-college .gc-oauth-btn {
+  border: none;
+  border-radius: 999px;
+  background: var(--gc-surface);
+  background-image: none;
+  box-shadow: var(--gc-shadow-raised-sm);
+}
+.glass-college .gc-auth-links a { color: var(--gc-brand); }
+
+.glass-college .gc-quiz-sheet {
+  background: var(--gc-surface);
+  border-color: transparent;
+  border-left: 0.42rem solid var(--gc-brand);
+  box-shadow: var(--gc-shadow-raised);
+}
+.glass-college .gc-quiz-sheet:hover { box-shadow: var(--gc-shadow-raised-hover); }
+.glass-college .gc-market-filters button {
+  border: none;
+  background: var(--gc-surface);
+  box-shadow: var(--gc-shadow-raised-sm);
+}
+.glass-college .gc-market-filters button[aria-pressed="true"] {
+  background: var(--gc-surface);
+  color: var(--gc-brand);
+  box-shadow: var(--gc-shadow-pressed);
+}
+.glass-college .gc-pack-card {
+  background: var(--gc-surface);
+  box-shadow: var(--gc-shadow-raised);
+}
+.glass-college .gc-pack-card__cover > span {
+  background: linear-gradient(135deg, var(--gc-brand), var(--gc-brand2));
+}
+.glass-college .gc-pack-card__meta span { color: var(--gc-brand); }
+
+@media (max-width: 1024px) {
+  .glass-college .gc-nav-links {
+    background: var(--gc-surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: var(--gc-shadow-raised);
+  }
+  .glass-college .gc-nav-mobile-cta {
+    background: linear-gradient(135deg, var(--gc-brand), var(--gc-brand2));
+    color: #fff !important;
+    box-shadow: var(--gc-shadow-cta);
+  }
+  .glass-college .gc-guidance-copy { background: var(--gc-surface); }
+}
+
+@media (max-width: 640px) {
+  .glass-college .gc-glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--gc-surface);
+  }
+  .glass-college .gc-guidance-photo-slot {
+    background-image: linear-gradient(180deg, var(--gc-surface), color-mix(in srgb, var(--gc-surface) 88%, transparent)), var(--band-photo);
+    border-top: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-college *,
+  .glass-college *::before,
+  .glass-college *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .glass-college .gc-btn:hover,
+  .glass-college .gc-loop-card:hover,
+  .glass-college .gc-review-card:hover,
+  .glass-college .gc-note:hover,
+  .glass-college .gc-quiz-sheet:hover,
+  .glass-college .gc-pack-card:hover .gc-pack-card__cover img {
+    transform: none;
+  }
 }

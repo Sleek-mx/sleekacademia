@@ -35,19 +35,19 @@
 
 /* 1180px up to ~1640px viewports, then scales with the screen. */
 .neu-main { position: relative; max-width: clamp(1180px, 72vw, 1620px); margin: 0 auto; padding: 0 24px; }
-.neu-section { padding: 60px 0; }
+.neu-section { padding: 72px 0; }
 
 /* ---------- neumorphic primitives ---------- */
 .neu {
   background: var(--surface);            /* same as page — non-negotiable */
   border-radius: var(--r);
-  box-shadow: 10px 10px 24px var(--dark), -10px -10px 24px var(--light);
+  box-shadow: 8px 8px 18px var(--dark), -8px -8px 18px var(--light);
   transition: box-shadow .35s cubic-bezier(.2,.8,.3,1),
               transform .35s cubic-bezier(.2,.9,.3,1.4);
 }
 .neu.lift:hover {
-  transform: translateY(-5px);
-  box-shadow: 16px 16px 34px var(--dark), -14px -14px 30px var(--light);
+  transform: translateY(-4px);
+  box-shadow: 10px 10px 22px var(--dark), -10px -10px 22px var(--light);
 }
 .well {                                   /* pressed / debossed */
   background: var(--surface);
@@ -74,17 +74,17 @@
 .btn.primary {
   color: #fff !important; background: linear-gradient(135deg, var(--brand), var(--brand2));
   border: 2px solid #fff;
-  box-shadow: 8px 8px 20px rgba(112,42,225,.35), -8px -8px 18px var(--light),
-              inset 0 1px 0 rgba(255,255,255,.35), 0 0 0 1px rgba(112,42,225,.2);
+  box-shadow: 8px 8px 18px rgba(0,159,227,.32), -8px -8px 18px var(--light),
+              inset 0 1px 0 rgba(255,255,255,.35), 0 0 0 1px rgba(0,159,227,.2);
 }
 .btn.primary:hover {
   color: #fff !important;
   border-color: #fff;
-  box-shadow: 12px 12px 28px rgba(112,42,225,.45), -8px -8px 18px var(--light),
-              inset 0 1px 0 rgba(255,255,255,.45), 0 0 0 1px rgba(112,42,225,.2);
+  box-shadow: 10px 10px 22px rgba(0,159,227,.40), -8px -8px 18px var(--light),
+              inset 0 1px 0 rgba(255,255,255,.45), 0 0 0 1px rgba(0,159,227,.2);
 }
 .btn.primary:active {
-  box-shadow: inset 5px 5px 12px rgba(60,10,140,.55), inset -4px -4px 10px rgba(200,160,255,.5);
+  box-shadow: inset 5px 5px 12px rgba(0,90,140,.50), inset -4px -4px 10px rgba(150,220,250,.45);
 }
 .btn.block { display: flex; width: 100%; }
 .btn.lg { padding: 17px 34px; font-size: 16px; }
@@ -96,7 +96,7 @@
   display: flex; align-items: center; gap: 26px; padding: 12px 22px; border-radius: 60px;
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   backdrop-filter: blur(14px);
-  box-shadow: 10px 10px 26px var(--dark), -10px -10px 26px var(--light);
+  box-shadow: 8px 8px 18px var(--dark), -8px -8px 18px var(--light);
   animation: navIn .9s cubic-bezier(.2,.9,.25,1) both;
 }
 @keyframes navIn { from { opacity: 0; transform: translate(-50%, -26px); } to { opacity: 1; transform: translate(-50%, 0); } }
@@ -110,7 +110,7 @@
 
 /* ---------- section head ---------- */
 .eyebrow { display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--brand); margin-bottom: 16px; }
-.sec-head { text-align: center; max-width: 640px; margin: 0 auto 56px; }
+.sec-head { text-align: center; max-width: 640px; margin: 0 auto 64px; }
 .sec-head h2 { font-size: clamp(30px,3.6vw,44px); letter-spacing: -1.2px; font-weight: 800; line-height: 1.12; }
 .sec-head p { color: var(--muted); margin-top: 16px; font-size: 16px; line-height: 1.6; }
 
@@ -132,7 +132,7 @@
 
 /* chip */
 .chip { display: inline-flex; align-items: center; gap: 9px; font-size: 12.5px; font-weight: 700; color: var(--muted); padding: 10px 18px; border-radius: 40px; box-shadow: inset 5px 5px 10px var(--dark), inset -5px -5px 10px var(--light); }
-.chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 10px rgba(112,42,225,.7); animation: pulse 2.2s infinite; }
+.chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 10px rgba(0,159,227,.55); animation: pulse 2.2s infinite; }
 @keyframes pulse { 50% { opacity: .35; } }
 
 /* ---------- grids ---------- */
@@ -175,9 +175,9 @@
 .price li { display: flex; gap: 11px; font-size: 13.5px; color: var(--txt); align-items: flex-start; }
 .price li .tick { flex: none; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; margin-top: -1px; color: var(--brand); box-shadow: inset 3px 3px 6px var(--dark), inset -3px -3px 6px var(--light); }
 .price .btn { margin-top: auto; }
-.pop { transform: scale(1.05); box-shadow: 14px 14px 34px rgba(112,42,225,.28), -12px -12px 28px var(--light), 0 0 0 2px rgba(112,42,225,.25); }
+.pop { transform: scale(1.03); box-shadow: 10px 10px 22px rgba(0,159,227,.24), -10px -10px 20px var(--light), 0 0 0 2px rgba(0,159,227,.22); }
 .pop.lift:hover { transform: scale(1.05) translateY(-5px); }
-.pop-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; padding: 8px 18px; border-radius: 30px; color: #fff; background: linear-gradient(135deg, var(--brand), var(--brand2)); box-shadow: 0 6px 16px rgba(112,42,225,.45); white-space: nowrap; }
+.pop-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; padding: 8px 18px; border-radius: 30px; color: #fff; background: linear-gradient(135deg, var(--brand), var(--brand2)); box-shadow: 0 6px 14px rgba(0,159,227,.35); white-space: nowrap; }
 
 /* ---------- marquee (debossed track) ---------- */
 .marquee { margin: 8px 0 40px; padding: 22px 0; border-radius: 20px; overflow: hidden; position: relative; box-shadow: inset 7px 7px 14px var(--dark), inset -7px -7px 14px var(--light); }
@@ -197,7 +197,7 @@
   transition: box-shadow .25s;
 }
 .neu-field::placeholder { color: #9a92b8; }
-.neu-field:focus { outline: none; box-shadow: inset 6px 6px 12px var(--dark), inset -6px -6px 12px var(--light), 0 0 0 2px rgba(112,42,225,.28); }
+.neu-field:focus { outline: none; box-shadow: inset 6px 6px 12px var(--dark), inset -6px -6px 12px var(--light), 0 0 0 2px rgba(0,159,227,.28); }
 
 /* ---------- final cta ---------- */
 .final { padding: 72px 40px; text-align: center; border-radius: 36px; }
