@@ -48,7 +48,7 @@
     return applyTheme(currentTheme() === "dark" ? "light" : "dark", true);
   }
 
-  applyTheme(storedTheme() || currentTheme(), false);
+  applyTheme(storedTheme() || "light", false);
 
   document.addEventListener("click", function (event) {
     if (event.target.closest("[data-theme-toggle]")) toggleTheme();
