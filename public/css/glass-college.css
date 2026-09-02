@@ -2441,3 +2441,101 @@
     transform: none;
   }
 }
+
+
+/* ===== modern neu motion (2026-09-02) ===== */
+
+.glass-college {
+  scroll-behavior: smooth;
+}
+
+.glass-college .gc-glass,
+.glass-college .gc-loop-card,
+.glass-college .gc-review-card,
+.glass-college .gc-note,
+.glass-college .gc-mini-list li,
+.glass-college .gc-plan,
+.glass-college .gc-faq-item,
+.glass-college .gc-filter {
+  transition:
+    transform 420ms var(--gc-ease),
+    box-shadow 420ms var(--gc-ease),
+    color 280ms var(--gc-ease),
+    background-color 280ms var(--gc-ease);
+}
+
+.glass-college .gc-btn {
+  transition:
+    transform 280ms var(--gc-ease),
+    box-shadow 280ms var(--gc-ease),
+    color 220ms var(--gc-ease),
+    background 220ms var(--gc-ease);
+}
+
+.glass-college .gc-loop-card:hover,
+.glass-college .gc-review-card:hover,
+.glass-college .gc-note:hover {
+  transform: translateY(-6px);
+}
+
+.glass-college .gc-mini-list li:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--gc-shadow-raised);
+}
+
+.glass-college [data-reveal] {
+  opacity: 0;
+  transform: translateY(1.15rem);
+  transition:
+    opacity 720ms var(--gc-ease),
+    transform 720ms var(--gc-ease),
+    box-shadow 420ms var(--gc-ease);
+}
+
+.glass-college [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.glass-college .gc-loop-card[data-reveal].is-visible:hover,
+.glass-college .gc-review-card[data-reveal].is-visible:hover,
+.glass-college .gc-note[data-reveal].is-visible:hover {
+  transform: translateY(-6px);
+}
+
+.glass-college .gc-nav[data-reveal] { transition-delay: 40ms; }
+.glass-college .gc-hero-body[data-reveal] { transition-delay: 120ms; }
+.glass-college .gc-loop-card--01[data-reveal] { transition-delay: 40ms; }
+.glass-college .gc-loop-card--02[data-reveal] { transition-delay: 120ms; }
+.glass-college .gc-loop-card--03[data-reveal] { transition-delay: 200ms; }
+.glass-college .gc-loop-card--04[data-reveal] { transition-delay: 280ms; }
+.glass-college .gc-review-card--navy[data-reveal] { transition-delay: 60ms; }
+.glass-college .gc-review-card--coral[data-reveal] { transition-delay: 140ms; }
+.glass-college .gc-review-card--green[data-reveal] { transition-delay: 220ms; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .glass-college .gc-hero-title {
+    animation: gc-hero-settle 900ms var(--gc-ease) both;
+  }
+  .glass-college .gc-mark svg path {
+    stroke-dasharray: 520;
+    stroke-dashoffset: 520;
+    animation: gc-draw 1.1s var(--gc-ease) 0.35s forwards;
+  }
+}
+
+@keyframes gc-hero-settle {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes gc-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-college [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
