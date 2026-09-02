@@ -14,11 +14,11 @@
   --public-neu-brand-dark: #007ab8;
   --public-neu-yellow: var(--public-neu-brand);
   --public-neu-line: rgba(92, 109, 125, 0.18);
-  --public-neu-raised: 10px 10px 24px #c3bdd8, -10px -10px 24px #ffffff;
-  --public-neu-raised-small: 6px 6px 14px #c3bdd8, -6px -6px 14px #ffffff;
-  --public-neu-raised-hover: 15px 15px 32px #c3bdd8, -14px -14px 30px #ffffff;
+  --public-neu-raised: 8px 8px 18px #c3bdd8, -8px -8px 18px #ffffff;
+  --public-neu-raised-small: 5px 5px 12px #c3bdd8, -5px -5px 12px #ffffff;
+  --public-neu-raised-hover: 10px 10px 22px #c3bdd8, -10px -10px 22px #ffffff;
   --public-neu-pressed: inset 6px 6px 12px #c3bdd8, inset -6px -6px 12px #ffffff;
-  --public-neu-cta: 8px 8px 20px rgba(0, 159, 227, 0.30), -8px -8px 18px #ffffff, inset 0 1px 0 rgba(255, 255, 255, 0.38);
+  --public-neu-cta: 8px 8px 18px rgba(0, 159, 227, 0.28), -8px -8px 18px #ffffff, inset 0 1px 0 rgba(255, 255, 255, 0.38);
 
   --ink: var(--public-neu-text);
   --body: var(--public-neu-muted);
@@ -131,7 +131,7 @@ body.platform-page::before {
 .platform-page .store-button--primary {
   border: 2px solid rgba(255, 255, 255, 0.88);
   color: #ffffff !important;
-  background: var(--public-neu-brand);
+  background: linear-gradient(135deg, var(--public-neu-brand), var(--public-neu-brand-light));
   box-shadow: var(--public-neu-cta);
 }
 
@@ -437,7 +437,7 @@ body.platform-page::before {
   .product-card-v2,
   .store-feature,
   .platform-cta {
-    box-shadow: 7px 7px 17px var(--public-neu-shadow), -7px -7px 17px var(--public-neu-highlight);
+    box-shadow: 6px 6px 14px var(--public-neu-shadow), -6px -6px 14px var(--public-neu-highlight);
   }
 
   .nav-link[aria-current="page"] {
@@ -523,4 +523,181 @@ body.platform-page::before {
 
 @media (prefers-reduced-motion: reduce) {
   .practice-card:hover { transform: none; }
+}
+
+
+.site-nav,
+.platform-header { border-radius: 999px; }
+
+.blog-card,
+.platform-card,
+.product-card-v2,
+.service-feature,
+.service-row,
+.testimonial { border-radius: 1.25rem; }
+
+.button,
+.platform-button { border-radius: 999px; }
+
+.practice-grid,
+.pricing-grid { gap: 1.5rem; }
+
+.practice-card,
+.pricing-card { padding: 1.85rem; border-radius: 1.25rem; }
+
+
+/* ===== modern neu motion (2026-09-02) ===== */
+.blog-card,
+.platform-card,
+.product-card-v2,
+.practice-card,
+.pricing-card,
+.testimonial {
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.blog-card:hover,
+.platform-card:hover,
+.product-card-v2:hover,
+.practice-card:hover,
+.pricing-card:hover {
+  transform: translateY(-5px);
+}
+[data-reveal] {
+  transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.blog-grid [data-reveal]:nth-child(1) { transition-delay: 40ms; }
+.blog-grid [data-reveal]:nth-child(2) { transition-delay: 90ms; }
+.blog-grid [data-reveal]:nth-child(3) { transition-delay: 140ms; }
+.blog-grid [data-reveal]:nth-child(4) { transition-delay: 190ms; }
+.blog-grid [data-reveal]:nth-child(5) { transition-delay: 240ms; }
+.blog-grid [data-reveal]:nth-child(6) { transition-delay: 290ms; }
+@media (prefers-reduced-motion: reduce) {
+  .blog-card:hover,
+  .platform-card:hover,
+  .product-card-v2:hover,
+  .practice-card:hover,
+  .pricing-card:hover { transform: none; }
+}
+
+/* ===== public dark neumorphism (2026-09-02) ===== */
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --public-neu-surface: #221f2e;
+  --public-neu-shadow: #14121c;
+  --public-neu-highlight: #322e42;
+  --public-neu-text: #f3f1f8;
+  --public-neu-muted: #a49db8;
+  --public-neu-brand: #4cc4f0;
+  --public-neu-brand-light: #4cc4f0;
+  --public-neu-brand-dark: #009fe3;
+  --public-neu-yellow: var(--public-neu-brand);
+  --public-neu-line: rgba(164, 157, 184, 0.22);
+  --public-neu-raised: 8px 8px 18px #14121c, -8px -8px 18px #322e42;
+  --public-neu-raised-small: 5px 5px 12px #14121c, -5px -5px 12px #322e42;
+  --public-neu-raised-hover: 10px 10px 22px #14121c, -10px -10px 22px #322e42;
+  --public-neu-pressed: inset 6px 6px 12px #14121c, inset -6px -6px 12px #322e42;
+  --public-neu-cta: 8px 8px 18px rgba(0, 159, 227, 0.38), -8px -8px 18px #322e42, inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --ink: var(--public-neu-text);
+  --body: var(--public-neu-muted);
+  --muted: var(--public-neu-muted);
+  --line: var(--public-neu-line);
+  --surface: var(--public-neu-surface);
+  --surface-blue: var(--public-neu-surface);
+  --blue: var(--public-neu-brand);
+  --teal: var(--public-neu-brand-light);
+  --navy: var(--public-neu-text);
+  --shadow-soft: var(--public-neu-raised);
+  --shadow-card: var(--public-neu-raised-small);
+  --platform-ink: var(--public-neu-text);
+  --platform-muted: var(--public-neu-muted);
+  --platform-paper: var(--public-neu-surface);
+  --platform-wash: var(--public-neu-surface);
+  --platform-violet: var(--public-neu-brand);
+  --platform-violet-dark: #009fe3;
+  --platform-cyan: var(--public-neu-brand-light);
+  --platform-line: var(--public-neu-line);
+  --platform-shadow: var(--public-neu-raised);
+  --platform-inset: var(--public-neu-pressed);
+}
+
+html[data-theme="dark"] .button--primary,
+html[data-theme="dark"] .platform-page .platform-button.primary,
+html[data-theme="dark"] .platform-page .store-button--primary,
+html[data-theme="dark"] .final-cta .button {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #009fe3, #4cc4f0);
+  box-shadow: var(--public-neu-cta);
+}
+
+html[data-theme="dark"] .button--primary:hover,
+html[data-theme="dark"] .platform-page .platform-button.primary:hover,
+html[data-theme="dark"] .platform-page .store-button--primary:hover {
+  color: #ffffff !important;
+  background: #007ab8;
+  box-shadow: 12px 12px 28px rgba(0, 159, 227, 0.38), -8px -8px 18px #322e42, inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+html[data-theme="dark"] .brand-lockup__mark,
+html[data-theme="dark"] .platform-footer-logo {
+  filter: brightness(1.18) saturate(1.06);
+}
+
+html[data-theme="dark"] :focus-visible {
+  outline-color: #4cc4f0;
+}
+
+.theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 2.55rem;
+  height: 2.55rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--public-neu-text);
+  background: var(--public-neu-surface);
+  box-shadow: var(--public-neu-raised-small);
+  flex: none;
+}
+
+.theme-toggle:hover {
+  color: var(--public-neu-brand);
+  box-shadow: var(--public-neu-raised);
+}
+
+.theme-toggle:active,
+.theme-toggle[aria-pressed="true"]:active {
+  box-shadow: var(--public-neu-pressed);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--public-neu-brand);
+  outline-offset: 2px;
+}
+
+.theme-toggle svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  display: block;
+}
+
+.theme-toggle__sun { display: none; }
+
+html[data-theme="dark"] .theme-toggle__moon { display: none; }
+html[data-theme="dark"] .theme-toggle__sun { display: block; }
+
+@media (max-width: 76rem) {
+  .nav-links .theme-toggle {
+    margin: 0.4rem auto 0;
+  }
+}
+
+@media (min-width: 76.01rem) {
+  .nav-links .theme-toggle--drawer { display: none; }
+}
+.theme-toggle--drawer { display: none; }
+@media (max-width: 76rem) {
+  .nav-links .theme-toggle--drawer { display: inline-grid; }
 }

@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>(function(){try{var k="sleek-theme",t=localStorage.getItem(k);if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";var r=document.documentElement;r.setAttribute("data-theme",t);if(r.dataset)r.dataset.theme=t;}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
   <link rel="icon" type="image/png" sizes="32x32" href="/images/brand/favicon-32.png">
   <link rel="apple-touch-icon" href="/images/brand/apple-touch-icon.png">
   <meta name="robots" content="noindex,follow">
@@ -13,11 +14,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/brand-v2.css">
-  <link rel="stylesheet" href="/css/glass-college.css?v=20260816a">
+  <link rel="stylesheet" href="/css/glass-college.css?v=20260902neu4">
   <link rel="stylesheet" href="/css/platform-v2.css">
   <link rel="stylesheet" href="/css/workspace-v2.css">
   <link rel="stylesheet" href="/css/onboarding-glass.css?v=20260816a">
-  <link rel="stylesheet" href="/css/social.css?v=20260725" />
+  <link rel="stylesheet" href="/css/social.css?v=20260902neu4" />
 </head>
 <body class="ws-body page-onboard glass-college">
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -25,8 +26,8 @@
     <div class="gc-glass gc-glass--hero">
       <header class="gc-nav">
         <a class="gc-wordmark gc-wordmark--plain" href="/" aria-label="Sleek Academia home"><img src="/images/brand/sleek-academia-mark.webp" width="591" height="591" alt=""><span>Sleek Academia</span></a>
-        <nav class="gc-nav-links" id="primary-links" aria-label="Primary navigation"><a href="/">Home</a><a href="/resources.html">Study tools</a><a href="/pricing.html">Pricing</a><a href="/about.html">About</a><a href="/login.html" class="gc-nav-mobile-login">Log in</a></nav>
-        <div class="gc-nav-actions"><a class="gc-nav-login" href="/login.html">Log in</a><span class="gc-btn-dark"><a class="gc-btn" href="/onboard.html" aria-current="page">Request support</a></span><button class="gc-nav-toggle menu-button" type="button" aria-controls="primary-links" aria-expanded="false" aria-label="Open navigation menu"><span></span></button></div>
+        <nav class="gc-nav-links" id="primary-links" aria-label="Primary navigation"><a href="/">Home</a><a href="/resources.html">Study tools</a><a href="/pricing.html">Pricing</a><a href="/about.html">About</a><a href="/login.html" class="gc-nav-mobile-login">Log in</a><button type="button" class="theme-toggle theme-toggle--drawer" data-theme-toggle aria-pressed="false" aria-label="Switch to dark mode"><svg class="theme-toggle__moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.2 14.3A8.2 8.2 0 0 1 9.7 3.8 8.4 8.4 0 1 0 20.2 14.3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><svg class="theme-toggle__sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 3.2v1.6M12 19.2v1.6M3.2 12h1.6M19.2 12h1.6M5.6 5.6l1.1 1.1M17.3 17.3l1.1 1.1M18.4 5.6l-1.1 1.1M6.7 17.3l-1.1 1.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></nav>
+        <div class="gc-nav-actions"><button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false" aria-label="Switch to dark mode"><svg class="theme-toggle__moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.2 14.3A8.2 8.2 0 0 1 9.7 3.8 8.4 8.4 0 1 0 20.2 14.3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><svg class="theme-toggle__sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 3.2v1.6M12 19.2v1.6M3.2 12h1.6M19.2 12h1.6M5.6 5.6l1.1 1.1M17.3 17.3l1.1 1.1M18.4 5.6l-1.1 1.1M6.7 17.3l-1.1 1.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><a class="gc-nav-login" href="/login.html">Log in</a><span class="gc-btn-dark"><a class="gc-btn" href="/onboard.html" aria-current="page">Request support</a></span><button class="gc-nav-toggle menu-button" type="button" aria-controls="primary-links" aria-expanded="false" aria-label="Open navigation menu"><span></span></button></div>
       </header>
     </div>
   </section>
@@ -130,6 +131,7 @@
   </main>
   <script src="/js/platform-motion.js" defer></script>
   <script src="/js/onboard.js?v=20260816a" defer></script>
+<script src="/js/theme.js?v=20260902neu3" defer></script>
 <!-- Sleek Academia chat widget -->
 <link rel="stylesheet" href="/css/chat-widget.css?v=2026081601" />
 <script src="/js/chat-widget.js?v=2026081601" defer></script>
